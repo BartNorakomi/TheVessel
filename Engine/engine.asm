@@ -14,9 +14,693 @@ LevelEngine:
 ;  jr    nc,.checkflag
 ;  ld    (hl),0
 
+  call  PutBossRatty
 
+  halt
 
   jp    LevelEngine
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+PutBossRatty:
+  ld    de,BossRattyAll_0
+  jp    PutSf2Object4FramesNew                ;CHANGES IX - puts object in 7 frames
+
+
+BossRattyAll_0:  db    BossRattyframelistblock, BossRattyspritedatablock | dw    BossRattyAll_0_0
+
+
+
+PutSf2Object4FramesNew:
+	ld    a,(RestoreBackgroundSF2Object?)
+	or    a  
+	call  nz,restoreBackgroundObject1
+  call  MultV7Times4
+
+
+  inc   hl
+	ld    a,(hl)
+	ld    (Player1Frame),a                    ;only on slice 1 we need to set the address of this slice
+	inc   hl                                  ;all consecutive slices are set at the end of their previous slice in engine.asm (when exiting the blitloop at .exit:)
+	ld    a,(hl)
+	ld    (Player1Frame+1),a
+	call  PutSF2Object                        ;in: b=frame list block, c=sprite data block. CHANGES IX 
+	jp    switchpageSF2Engine
+
+
+MultV7Times4:                               ;each frame= 4 bytes
+  ex    de,hl
+	ld    b,(hl)                              ;frame list block
+	inc   hl
+	ld    c,(hl)                              ;sprite data block
+  ret
+
+
+
+
+Object1RestoreBackgroundTable:
+  dw    RestoreBackgroundObject1Page3,RestoreBackgroundObject1Page0,RestoreBackgroundObject1Page1,RestoreBackgroundObject1Page2
+Object2RestoreBackgroundTable:
+  dw    RestoreBackgroundObject2Page3,RestoreBackgroundObject2Page0,RestoreBackgroundObject2Page1,RestoreBackgroundObject2Page2
+
+;if we are in page 0 we prepare to restore page 1 in the next frame
+;if we are in page 1 we prepare to restore page 2 in the next frame
+;if we are in page 2 we prepare to restore page 3 in the next frame
+;if we are in page 3 we prepare to restore page 0 in the next frame
+restoreBackgroundObject1:
+  ld    hl,Object1RestoreBackgroundTable
+  jp    GoRestoreObject
+restoreBackgroundObject2:
+  ld    hl,Object2RestoreBackgroundTable
+  jp    GoRestoreObject
+
+GoRestoreObject:
+  ld    a,(screenpage)
+  add   a,a
+  ld    b,0
+  ld    c,a
+  add   hl,bc
+  ld    a,(hl)
+  inc   hl
+  ld    h,(hl)
+  ld    l,a
+  jp    docopy
+
+
+
+RestoreBackgroundObject1Page0:
+	db    0,0,0,3
+	db    0,0,0,0
+	db    $02,0,$02,0
+	db    0,0,$d0  
+RestoreBackgroundObject1Page1:
+	db    0,0,0,0
+	db    0,0,0,1
+	db    $02,0,$02,0
+	db    0,0,$d0  
+RestoreBackgroundObject1Page2:
+	db    0,0,0,1
+	db    0,0,0,2
+	db    $02,0,$02,0
+	db    0,0,$d0  
+RestoreBackgroundObject1Page3:
+	db    0,0,0,2
+	db    0,0,0,3
+	db    $02,0,$02,0
+	db    0,0,$d0  
+
+RestoreBackgroundObject2Page0:
+	db    0,0,0,3
+	db    0,0,0,0
+	db    $02,0,$02,0
+	db    0,0,$d0  
+RestoreBackgroundObject2Page1:
+	db    0,0,0,0
+	db    0,0,0,1
+	db    $02,0,$02,0
+	db    0,0,$d0  
+RestoreBackgroundObject2Page2:
+	db    0,0,0,1
+	db    0,0,0,2
+	db    $02,0,$02,0
+	db    0,0,$d0  
+RestoreBackgroundObject2Page3:
+	db    0,0,0,2
+	db    0,0,0,3
+	db    $02,0,$02,0
+	db    0,0,$d0  
+
+
+;SF2 global properties for current object and frame
+HugeObjectFrame:	db  -1
+blitpage:			db  0
+screenpage:			db  2
+Player1Frame:		dw  0
+Object1y:			db  100
+Object1x:			db  100
+PutObjectInPage3?:				db  0
+RestoreBackgroundSF2Object?:	db  1
+
+;Frameinfo looks like this:
+;width, height, offset x, offset y
+;x offset for first line
+;lenght ($1f)+increment ($80) next spriteline, source address (base+00000h etc)
+;  dw 01F80h,base+00000h
+ScreenLimitxRight:				equ 256-10
+ScreenLimitxLeft:				equ 10
+moveplayerleftinscreen:			equ 128
+
+Object1RestoreTable:
+  dw    RestoreBackgroundObject1Page1,RestoreBackgroundObject1Page2,RestoreBackgroundObject1Page3,RestoreBackgroundObject1Page0
+Object2RestoreTable:
+  dw    RestoreBackgroundObject2Page1,RestoreBackgroundObject2Page2,RestoreBackgroundObject2Page3,RestoreBackgroundObject2Page0
+
+PutSF2Object:	;section#1
+  ld    hl,Object1RestoreTable
+  jp    PutSF2ObjectSlice
+PutSF2Object2:	;section#2
+  ld    hl,Object2RestoreTable
+  jp    PutSF2ObjectSlice
+
+;if we are in page 0 we prepare to restore page 1 in the next frame
+;if we are in page 1 we prepare to restore page 2 in the next frame
+;if we are in page 2 we prepare to restore page 3 in the next frame
+;if we are in page 3 we prepare to restore page 0 in the next frame
+PutSF2ObjectSlice:
+	ld    a,(screenpage)
+  add   a,a
+  ld    d,0
+  ld    e,a
+  add   hl,de
+  ld    a,(hl)
+  ld    ixl,a
+  inc   hl
+  ld    a,(hl)
+  ld    ixh,a
+
+;Put a section of a SF2 object on screen, max 5 sections.
+;in b->framelistblock, c->spritedatablock
+	ld		a,(slot.page12rom)		;all RAM except page 1+2
+	out		($a8),a	
+	ld		a,(memblocks.2)
+	push	af		;store current block
+	ld		a,c		;set framedata in page 1 in rom ($4000 - $7fff)  
+	call	block12
+	ld		a,b		;set framelist in page 2 in rom ($8000 - $bfff)
+	call	block34
+ 
+	di
+	call  GoPutSF2Object
+	ei
+
+;edit: general movement pattern block is not required anymore at this point
+;set the general movement pattern block at address $4000 in page 1
+;	di
+;	ld	a,MovementPatternsFixedPage1block
+	ld	(memblocks.1),a
+	ld	($6000),a
+;*** LITTLE CORRECTION for PutSf2Object3Frames when using   jp    switchpageSF2Engine after putting SF2 object
+;set the movement pattern block of this enemy/object at address $8000 in page 2 
+	pop	af                    ;recall movement pattern block of current object
+	ld	(memblocks.2),a
+	ld	($7000),a
+;	ei
+  ret
+
+
+
+
+GoPutSF2Object:
+	ld    bc,(object1y)		;b=x,c=y ;bc,Object1y
+	ld    hl,(Player1Frame)	;points to object width
+;	ld    iy,Player1SxB1	;player collision detection blocks
+
+;20240531;ro;removed as it didn't do anything, really
+;;screen limit right
+;	ld    a,(bc)                ;object x
+;	cp    ScreenLimitxRight
+;	jp    c,.LimitRight
+;	ld    a,ScreenLimitxRight
+;;	ld    (bc),a
+;.LimitRight:
+;;screen limit left
+;	ld    a,(bc)                ;object x
+;	cp    ScreenLimitxLeft
+;	jp    nc,.LimitLeft
+;	ld    a,ScreenLimitxLeft
+;; 	ld    (bc),a
+;.LimitLeft:
+
+;Prep restore-copy for this slice. IX=copyTable
+	ld    a,(hl)		;(sliceWidth)
+	inc   hl
+	ld    (ix+nx),a		
+	ld    a,(hl)		;(sliceHeight)
+	inc   hl
+	ld    (ix+ny),a
+;set sy,dy by adding offset y to object y
+	ld    a,c ;(bc)		;object Y
+	inc   hl
+	add   a,(hl)		;(sliceY)
+	dec   hl
+	ld    d,a
+	ld    (ix+sy),a
+	ld    (ix+dy),a
+	ld    (iy+1),a		;Player1SyB1 (set block 1 sy)
+;set sx,dx by adding slice.x to object.x
+	ld    e,(hl)		;(sliceX)
+	inc   hl			;=sliceY
+	inc   hl			;=sliceOffset
+	ld    a,b ;(bc)		;object x
+	or    a
+	jp    p,PutSpriteleftSideOfScreen
+
+PutSpriteRightSideOfScreen:
+	sub   a,moveplayerleftinscreen
+	add   a,e
+	jp    c,putplayer_clipright_totallyoutofscreenright
+
+	ld    (ix+sx),a		;set sx/dx to restore by background
+	ld    (ix+dx),a
+
+;clipping check
+	ld    a,b			;(bc)		;object X
+	sub   moveplayerleftinscreen
+	add   a,e			;object.X+frame.X
+	add   a,(ix+nx)
+	jp    c,putplayer_clipright
+	jp    putplayer_noclip
+
+ 
+PutSpriteleftSideOfScreen:
+	sub   a,moveplayerleftinscreen
+	add   a,e	;e=frame.X
+	jr    c,.carry
+	xor   a
+.carry:
+	ld    (ix+sx),a             ;set sx/dx to restore by background
+	ld    (ix+dx),a
+;set sy,dy by adding offset y to object y
+;	inc   hl
+;	dec   bc
+;	ld    a,(bc)		;object Y
+;	add   a,(hl)		;FrameY
+;	ld    d,a
+;	ld    (ix+sy),a		;set sy/dy to restore by background
+;	ld    (ix+dy),a
+;	ld    (iy+1),a		;Player1SyB1 (set block 1 sy)
+;Set up restore background que player
+;	inc   bc			;=object x
+;clipping check
+	ld    a,b		;(bc)		;object X
+	sub   a,moveplayerleftinscreen
+	add   a,e			;object.X+frame.X
+	jp    nc,putplayer_clipleft
+	jp    putplayer_noclip
+
+
+;The old list files had unused bytes, skip if that version is used.
+SkipFrameBytes:
+	inc   hl
+	ld    a,(hl)
+	dec   hl
+	and   A
+	ret   nz
+	ld    bc,7			;skip unused bytes
+	add   hl,bc  
+	ret
+
+;in: HL=frameHeader.frameOffset
+putplayer_noclip:
+	ld    a,b ;(bc)		;object.X
+	add   a,(hl)		;add frameOffset for first line to destination x
+	inc   hl
+	sub   a,moveplayerleftinscreen
+	ld    e,a
+
+	call	SkipFrameBytes
+
+	ld    a,(PutObjectInPage3?)
+	or    a
+	jr    nz,.not3
+  ;if screenpage=0 then blit in page 1
+  ;if screenpage=1 then blit in page 2
+  ;if screenpage=2 then blit in page 3
+  ;if screenpage=3 then blit in page 0
+	ld    a,(screenpage)
+	inc   a
+
+;	cp    4 ;4 would be the new way, 3 is the old way
+;	jr    nz,.not3
+;	xor   a
+	and   3
+.not3: 
+	add   a,a
+	bit   7,d
+	jp    z,.setpage
+	inc   a
+.setpage:
+	ld    (blitpage),a
+	out   ($99),a               ;write page instellen
+	ld    a,14+128
+	out   ($99),a
+
+	srl   d                     ;write addres is de/2
+	rr    e
+	set   6,d                   ;set write access
+
+;Transfer pixel array to screen
+	ld    (spatpointer),sp  
+	ld    sp,hl
+
+	ld    a,e
+	ld    c,$98
+.loop:
+	out   ($99),a               ;set x to write to
+	ld    a,d
+	out   ($99),a               ;set y to write to
+
+	pop   hl                    ;  
+	ld    b,h                   ;numPix
+	ld    a,l                   ;totalLength (numpix+whitespace)
+	pop   hl                    ;pop array address
+	otir
+	or    a						;is there more?
+	jr    z,.exit
+
+	add   a,e                   ;To next array
+	ld    e,a                   ;new x
+	jr    nc,.loop
+	inc   d                     ;0100 0000
+	jp    p,.loop
+
+	set   6,d
+	res   7,d
+
+	ld    a,(blitpage)
+	xor   1
+	out   ($99),a               ;write page instellen
+	ld    a,14+128
+	out   ($99),a
+
+	ld    a,e
+	jp    .loop
+
+.exit:
+  ld    (Player1Frame),sp     ;store end of this slice (when will be the start of the next slice)
+	ld    sp,(spatpointer)
+	ret
+  
+  
+;Player1Frame: ds  2
+
+putplayer_clipright_totallyoutofscreenright:
+;20240531;ro;this does absolutely nothing...
+;  inc   hl                    ;player y offset
+;  inc   hl                    ;=frameOffset
+;  inc   hl                    ;=...
+;  inc   bc                    ;player x
+;  ld    a,(bc)                ;player x
+;  sub   a,moveplayerleftinscreen
+;  add   a,(hl)                ;add player x offset for first line
+;  ld    e,a
+;;  jp    SetOffsetBlocksAndAttackpoints
+	ret
+  
+putplayer_clipright:
+	ld    a,b ;(bc)		;object.X
+	add   a,(hl)		;add frameOffset for first line to destination x
+	inc   hl
+	sub   a,moveplayerleftinscreen
+	ld    e,a
+
+	call  SkipFrameBytes
+
+	ld    a,(PutObjectInPage3?)
+	or    a
+	jr    nz,.not3
+;if screenpage=0 then blit in page 1
+;if screenpage=1 then blit in page 2
+;if screenpage=2 then blit in page 0
+	ld    a,(screenpage)
+	inc   a
+;	cp    4 ;4 would be the new way, 3 is the old way
+;	jr    nz,.not3
+;	xor   a
+	and   3
+.not3:  
+	add   a,a
+	bit   7,d
+	jp    z,.setpage
+	inc   a
+  .setpage:
+	ld    (blitpage),a
+	out   ($99),a               ;write page instellen
+	ld    a,14+128
+	out   ($99),a
+
+	srl   d                     ;write addres is de/2
+	rr    e
+	set   6,d                   ;write access
+
+;Transfer pixel array to screen
+	ld    (spatpointer),sp  
+	ld    sp,hl
+
+	ld    a,e
+	ld    c,$98
+.loop:
+	out   ($99),a               ;set x to write to
+	ld    a,d
+	out   ($99),a               ;set y to write to
+
+	pop   hl                    ;pop lenght + increment  
+	ld    b,h                   ;length
+
+;extra code in case of clipping right
+;first check if total piece is out of screen right (or x<64)
+	bit   6,e                   
+	jr    z,.totallyoutofscreenright
+;check if piece is fully within screen
+	ld    a,e                   ;x
+	or    %1000 0000
+	add   a,b
+	jr    nc,.endoverflowcheck1  ;nc-> piece is fully within screen
+	sub   a,b
+	neg
+	ld    b,a
+.endoverflowcheck1:
+;/extra code in case of clipping right
+
+	ld    a,l                   ;totalLength (numpix+whitespace)
+	pop   hl                    ;pop array address
+	otir
+  .skipotir:
+	or    a
+	jr    z,.exit
+
+	add   a,e                   ;add increment to x
+	ld    e,a                   ;new x
+	jr    nc,.loop
+	inc   d                     ;0100 0000
+	jp    p,.loop
+
+	set   6,d
+	res   7,d
+
+	ld    a,(blitpage)
+	xor   1
+	out   ($99),a               ;write page instellen
+	ld    a,14+128
+	out   ($99),a
+
+	ld    a,e
+	jp    .loop
+
+.exit:
+  ld    (Player1Frame),sp
+	ld    sp,(spatpointer)
+	ret
+
+.totallyoutofscreenright:
+	ld    a,l
+	pop   hl
+	jp    .skipotir             ;piece is totally out of screen, dont otir
+
+
+putplayer_clipleft:
+	ld    a,b	;X (bc)
+	add   a,(hl)
+	inc   hl
+	sub   a,moveplayerleftinscreen
+	ld    e,a
+	jp    nc,.notcarry
+	dec   d
+.notcarry:
+	call	SkipFrameBytes
+
+	ld    a,(PutObjectInPage3?)
+	or    a
+	jr    nz,.not3
+  ;if screenpage=0 then blit in page 1
+  ;if screenpage=1 then blit in page 2
+  ;if screenpage=2 then blit in page 0
+	ld    a,(screenpage)
+	inc   a
+;	cp    4 ;4 would be the new way, 3 is the old way
+;	jr    nz,.not3
+;	xor   a
+	and   3
+.not3:  
+	add   a,a
+	bit   7,d
+	jp    z,.setpage
+	inc   a
+.setpage:
+	ld    (blitpage),a
+	out   ($99),a               ;write page instellen
+	ld    a,14+128
+	out   ($99),a
+
+	srl   d                     ;write addres is de/2
+	rr    e
+	set   6,d                   ;set write access
+
+;Transfer pixel array to screen
+	ld    (spatpointer),sp  
+	ld    sp,hl
+
+	ld    a,e
+	ld    c,$98
+.loop:
+	pop   hl                    ;pop lenght + increment  
+	ld    b,h                   ;length
+
+;check if piece is fully in screen
+	bit   6,e                   ;first check if total piece is in screen left (or x<64)
+	jr    z,.totallyinscreen    ;z-> piece is fully within screen left
+
+	;look at current x, add lenght, set new lenght accordingly, and then dont output if piece is totally out of screen
+	ld    a,e
+	or    %1000 0000
+	ld    h,a
+	add   a,b
+	ld    b,a                   ;set new lenght (this is the part that is in screen)
+	dec   a
+	jp    m,.totallyoutofscreen
+
+	;set new write address
+	ld    a,h
+	neg
+	ld    h,a                   ;distance from x to border of screen
+	add   a,e
+	out   ($99),a               ;set x to write to
+	ld    a,d
+	adc   a,0
+	jp    p,.nopageoverflow
+
+	set   6,a
+	res   7,a
+	out   ($99),a               ;set y to write to
+
+	ld    a,(blitpage)
+	xor   1
+	out   ($99),a               ;write page instellen
+	ld    a,14+128
+.nopageoverflow:
+	out   ($99),a               ;set y to write to
+
+.gosourceaddress:
+;set new source address
+	ld    a,l                   ;increment
+	ex    af,af'                ;store increment
+	ld    a,h                   ;distance from x to border of screen
+
+	pop   hl                    ;source address
+	add   a,l                   ;add distance from x to border of screen to source address
+	ld    l,a
+	jr    nc,.noinch
+	inc   h
+.noinch:
+  ex    af,af'                ;recall stored increment
+	otir
+	jp    .skipotir
+
+.totallyoutofscreen:
+	ld    a,l
+	pop   hl
+	jp    .skipotir             ;piece is totally out of screen, dont otir
+
+.totallyinscreen:
+	ld    a,e
+	out   ($99),a               ;set x to write to
+	ld    a,d
+	out   ($99),a               ;set y to write to
+
+	ld    a,l                   ;increment
+	pop   hl                    ;pop source address
+
+	otir
+.skipotir:
+	or    a                     ;check increment
+	jr    z,.exit
+
+	add   a,e                   ;add increment to x
+	ld    e,a                   ;new x
+	jr    nc,.loop
+
+	inc   d                     ;01xx xxxx
+
+	jp    p,.loop
+
+	set   6,d
+	res   7,d
+
+	ld    a,(blitpage)
+	xor   1
+	out   ($99),a               ;write page instellen
+	ld    a,14+128
+	out   ($99),a
+
+	ld    a,e
+	jp    .loop
+
+  .exit:
+  ld    (Player1Frame),sp
+	ld    sp,(spatpointer)
+	ret  
+
+
+
+
+
+
+
+
+
+
+;switch to next page
+switchpageSF2Engine:
+	ld    a,(screenpage)
+	inc   a
+	cp    4
+	jr    nz,SetSF2DisplayPage
+	xor   a
+SetSF2DisplayPage:
+	ld    (screenpage),a
+	add   a,a                   ;x32
+	add   a,a
+	add   a,a
+	add   a,a
+	add   a,a
+	add   a,31
+	ld    (PageOnNextVblank),a
+	ret
+
+
+
+
+
+
+
 
 
 
@@ -65,6 +749,10 @@ vblank:
  ; pop   af
 ;	ld		($6000),a                       ;recall block 1 setting
 	
+  ld    a,(PageOnNextVblank)  ;set page
+  out   ($99),a
+  ld    a,2+128
+  out   ($99),a
 
   ld    a,(vblankintflag)
   inc   a                               ;vblank flag gets incremented

@@ -1,7 +1,7 @@
 phase	$c000
 
 StartAtTitleScreen?:                equ 0
-MusicOn?:                           equ 1
+MusicOn?:                           equ 0
 Promo?:                             equ 0
 
 InitiateGame:
@@ -840,6 +840,11 @@ framecounter:               rb    1
 Controls:	                  rb		1
 NewPrContr:	                rb		1
 oldControls: 				        rb    1
+
+base: 											equ $4000
+spatpointer:                rb		2
+PageOnNextVblank:           rb    1
+
 
 endenginepage3variables:  equ $+enginepage3length
 org variables

@@ -454,6 +454,16 @@ ArcadeHallGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
   incbin "..\grapx\arcadehall\arcade1.SC5",7,212 * 128      ;212 lines
 	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
 
+;boss ratty
+BossRattyframelistblock:			equ ($-RomStartAddress) and (romsize-1) /RomBlockSize
+									phase	$8000
+									include "..\grapx\BossRatty\BossRattyAll.asm" 
+									DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
+									dephase
+BossRattyspritedatablock:			equ ($-RomStartAddress) and (romsize-1) /RomBlockSize
+									incbin "..\grapx\BossRatty\BossRatty.dat"
+									DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
+
 TheVesselrepBlock:				equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
 	incbin "msxlegends.rep"
 	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
