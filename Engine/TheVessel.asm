@@ -268,10 +268,20 @@ init:
   bit 5,a
   ret z
 
-  ld    a,15        ;is zwart in onze huidige pallet
+  ld    a,15        ;set color 15 to be foreground, background and border color
 	ld		($f3e9),a	  ;foreground color 
 	ld		($f3ea),a	  ;background color 
 	ld		($f3eb),a	  ;border color
+
+  ld    a,15        ;start write to palette color 15
+  di
+	out		($99),a
+	ld		a,16+128
+	out		($99),a
+	xor		a
+	out		($9a),a
+  ei
+	out		($9a),a
 
 	ld 		a,5			    ;switch to screen 5
 	call 	$5f

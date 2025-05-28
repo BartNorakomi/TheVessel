@@ -8,7 +8,7 @@ page1ram: equ 0C0CAh ; last def. pass 3
 endengine: equ 0431h ; last def. pass 3
 MoonSound_WAVE_BASE: equ 07Eh ; last def. pass 3
 MoonSound_ReadStatusRegister: equ 0C2D8h ; last def. pass 3
-engine: equ 04D73h ; last def. pass 3
+engine: equ 04D88h ; last def. pass 3
 CopyPage1To0: equ 0C69Dh ; last def. pass 3
 SetNumber16BitCastle.Check10Folds: equ 02F9h ; last def. pass 3
 RePlayer_Tick.DontChangeSong: equ 0C39Ch ; last def. pass 3
@@ -122,10 +122,10 @@ MoonSound_FM1_ADDRESS: equ 0C4h ; last def. pass 3
 RePlayer_Restore: equ 0C5C2h ; last def. pass 3
 findRam.read: equ 0C142h ; last def. pass 3
 MoonSound_WriteBlock_Unrolled: equ 0C092h ; last def. pass 3
-variables: equ 04D73h ; last def. pass 3
+variables: equ 04D88h ; last def. pass 3
 SongHaze: equ 07h ; last def. pass 3
 MultiplyHlWithDE: equ 0F5h ; last def. pass 3
-enginepage3: equ 04281h ; last def. pass 3
+enginepage3: equ 04296h ; last def. pass 3
 SetPage: equ 0C72Ah ; last def. pass 3
 Depack: equ 0C7FFh ; last def. pass 3
 RePlayer_stack: equ 0C43Bh ; last def. pass 3
@@ -148,7 +148,7 @@ SetNumber16BitCastle.Set10Fold: equ 0306h ; last def. pass 3
 TheVesselrepBlock: equ 03h ; last def. pass 3
 PopulateControls: equ 0C85Dh ; last def. pass 3
 MoonSound_Call: equ 0C228h ; last def. pass 3
-tempisr: equ 0427Bh ; last def. pass 3
+tempisr: equ 04290h ; last def. pass 3
 block1234: equ 0C74Eh ; last def. pass 3
 Mult16_NoAdd: equ 0101h ; last def. pass 3
 sprattaddr: equ 07600h ; last def. pass 3
@@ -275,7 +275,7 @@ initMem.enaRam: equ 0C0C1h ; last def. pass 3
 TextDX: equ 0C6B8h ; last def. pass 3
 vblank: equ 04Ch ; last def. pass 3
 endenginepage3variables: equ 0D61Ch ; last def. pass 3
-MusicOn?: equ 00h ; last def. pass 3
+MusicOn?: equ 01h ; last def. pass 3
 framecounter: equ 0CB26h ; last def. pass 3
 outix160: equ 0C9B1h ; last def. pass 3
 EXTROM: equ 015Fh ; last def. pass 3
