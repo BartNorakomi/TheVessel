@@ -454,14 +454,34 @@ ArcadeHallGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
   incbin "..\grapx\arcadehall\arcade1.SC5",7,212 * 128      ;212 lines
 	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
 
-;boss ratty
-BossRattyframelistblock:			equ ($-RomStartAddress) and (romsize-1) /RomBlockSize
+;the vessel
+TheVesselframelistblock:			equ ($-RomStartAddress) and (romsize-1) /RomBlockSize
 									phase	$8000
-									include "..\grapx\BossRatty\BossRattyAll.asm" 
+									include "..\..\Usas2\grapx\test\Vessel.asm" 
 									DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
 									dephase
-BossRattyspritedatablock:			equ ($-RomStartAddress) and (romsize-1) /RomBlockSize
-									incbin "..\grapx\BossRatty\BossRatty.dat"
+TheVesselspritedatablock:			equ ($-RomStartAddress) and (romsize-1) /RomBlockSize
+									incbin "..\..\Usas2\grapx\test\Vessel.dat"
+									DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
+
+;the vessel left
+TheVesselleftframelistblock:			equ ($-RomStartAddress) and (romsize-1) /RomBlockSize
+									phase	$8000
+									include "..\..\Usas2\grapx\test\Vesselleft.asm" 
+									DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
+									dephase
+TheVesselleftspritedatablock:			equ ($-RomStartAddress) and (romsize-1) /RomBlockSize
+									incbin "..\..\Usas2\grapx\test\Vesselleft.dat"
+									DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
+
+;host
+Hostframelistblock:			equ ($-RomStartAddress) and (romsize-1) /RomBlockSize
+									phase	$8000
+									include "..\..\Usas2\grapx\test\host.asm" 
+									DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
+									dephase
+Hostspritedatablock:			equ ($-RomStartAddress) and (romsize-1) /RomBlockSize
+									incbin "..\..\Usas2\grapx\test\host.dat"
 									DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
 
 TheVesselrepBlock:				equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize

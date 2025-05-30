@@ -14,85 +14,192 @@ LevelEngine:
 ;  jr    nc,.checkflag
 ;  ld    (hl),0
 
-  call  PutBossRatty
+  
+;  call  BackdropGreen
+  call  HandleObjects
+;  call  BackdropBlack
 
   halt
-
   jp    LevelEngine
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-PutBossRatty:
-  ld    de,BossRattyAll_0
-  jp    PutSf2Object4FramesNew                ;CHANGES IX - puts object in 7 frames
-
-
-BossRattyAll_0:  db    BossRattyframelistblock, BossRattyspritedatablock | dw    BossRattyAll_0_0
-
-
-
-PutSf2Object4FramesNew:
-	ld    a,(RestoreBackgroundSF2Object?)
-	or    a  
-	call  nz,restoreBackgroundObject1
-  call  MultV7Times4
-
-
-  inc   hl
-	ld    a,(hl)
-	ld    (Player1Frame),a                    ;only on slice 1 we need to set the address of this slice
-	inc   hl                                  ;all consecutive slices are set at the end of their previous slice in engine.asm (when exiting the blitloop at .exit:)
-	ld    a,(hl)
-	ld    (Player1Frame+1),a
-	call  PutSF2Object                        ;in: b=frame list block, c=sprite data block. CHANGES IX 
-	jp    switchpageSF2Engine
-
-
-MultV7Times4:                               ;each frame= 4 bytes
-  ex    de,hl
-	ld    b,(hl)                              ;frame list block
-	inc   hl
-	ld    c,(hl)                              ;sprite data block
-  ret
-
-
-
 
 Object1RestoreBackgroundTable:
   dw    RestoreBackgroundObject1Page3,RestoreBackgroundObject1Page0,RestoreBackgroundObject1Page1,RestoreBackgroundObject1Page2
 Object2RestoreBackgroundTable:
   dw    RestoreBackgroundObject2Page3,RestoreBackgroundObject2Page0,RestoreBackgroundObject2Page1,RestoreBackgroundObject2Page2
+Object3RestoreBackgroundTable:
+  dw    RestoreBackgroundObject3Page3,RestoreBackgroundObject3Page0,RestoreBackgroundObject3Page1,RestoreBackgroundObject3Page2
+Object4RestoreBackgroundTable:
+  dw    RestoreBackgroundObject4Page3,RestoreBackgroundObject4Page0,RestoreBackgroundObject4Page1,RestoreBackgroundObject4Page2
+
+Object1RestoreTable:
+  dw    RestoreBackgroundObject1Page1,RestoreBackgroundObject1Page2,RestoreBackgroundObject1Page3,RestoreBackgroundObject1Page0
+Object2RestoreTable:
+  dw    RestoreBackgroundObject2Page1,RestoreBackgroundObject2Page2,RestoreBackgroundObject2Page3,RestoreBackgroundObject2Page0
+Object3RestoreTable:
+  dw    RestoreBackgroundObject3Page1,RestoreBackgroundObject3Page2,RestoreBackgroundObject3Page3,RestoreBackgroundObject3Page0
+Object4RestoreTable:
+  dw    RestoreBackgroundObject4Page1,RestoreBackgroundObject4Page2,RestoreBackgroundObject4Page3,RestoreBackgroundObject4Page0
+
+;           on?,  y,  x,  sprite restore table                                ,sprite data        ;put on frame ,movement routine block ,movement routine 
+Object1:  db  1,030,100 | dw Object1RestoreBackgroundTable,Object1RestoreTable,Host_15            | db 0        ,10                 | dw VesselMovementRoutine
+Object2:  db  1,050,080 | dw Object2RestoreBackgroundTable,Object2RestoreTable,TheVessel_11       | db 1        ,11                 | dw HostMovementRoutine
+Object3:  db  1,070,030 | dw Object3RestoreBackgroundTable,Object3RestoreTable,TheVessel_12       | db 2        ,11                 | dw GirlMovementRoutine
+Object4:  db  1,100,150 | dw Object4RestoreBackgroundTable,Object4RestoreTable,TheVessel_0        | db 3        ,11                 | dw CapGirlMovementRoutine
+
+HandleObjects:
+  ld    iy,Object1
+  call  HandleObjectRoutine
+  ld    iy,Object2
+  call  HandleObjectRoutine
+  ld    iy,Object3
+  call  HandleObjectRoutine
+  ld    iy,Object4
+  call  HandleObjectRoutine
+
+  ld    a,(framecounter)
+  and   3
+  cp    3
+  ret   nz
+	jp    switchpageSF2Engine
+
+HandleObjectRoutine:
+  bit   0,(iy+0)                            ;on?
+  ret   z
+
+  call  .HandleMovementRoutine
+
+  ld    a,(framecounter)                    ;at max 4 objects can be put in screen divided over 4 frames
+  and   3
+  cp    (iy+9)                              ;put on frame
+  call  z,PutObject
+  ret
+
+  .HandleMovementRoutine:
+  ld    a,(iy+10)                           ;movement routine block
+  ld    l,(iy+11)                           ;movement routine 
+  ld    h,(iy+12)
+  jp    (hl)
+
+VesselMovementRoutine:
+  ld    a,(framecounter)                    ;at max 4 objects can be put in screen divided over 4 frames
+  and   3
+  ret   nz
+
+  ld    a,(iy+2)                            ;x
+  add   a,2
+  ld    (iy+2),a                            ;x
+  ret
+
+HostMovementRoutine:
+  ld    a,(framecounter)                    ;at max 4 objects can be put in screen divided over 4 frames
+  and   3
+  ret   nz
+
+  ld    a,(iy+2)                            ;x
+  add   a,1
+  ld    (iy+2),a                            ;x
+  ret
+
+GirlMovementRoutine:
+  ld    a,(framecounter)                    ;at max 4 objects can be put in screen divided over 4 frames
+  and   3
+  ret   nz
+
+  ld    a,(iy+2)                            ;x
+  add   a,3
+  ld    (iy+2),a                            ;x
+  ret
+
+CapGirlMovementRoutine:
+  ld    a,(framecounter)                    ;at max 4 objects can be put in screen divided over 4 frames
+  and   3
+  ret   nz
+
+  ld    a,(iy+2)                            ;x
+  add   a,4
+  ld    (iy+2),a                            ;x
+  ret
+
+TheVessel_0:        db    TheVesselframelistblock, TheVesselspritedatablock | dw    Vessel_0_0
+TheVessel_1:        db    TheVesselframelistblock, TheVesselspritedatablock | dw    Vessel_1_0
+TheVessel_2:        db    TheVesselframelistblock, TheVesselspritedatablock | dw    Vessel_2_0
+TheVessel_3:        db    TheVesselframelistblock, TheVesselspritedatablock | dw    Vessel_3_0
+TheVessel_4:        db    TheVesselframelistblock, TheVesselspritedatablock | dw    Vessel_4_0
+TheVessel_5:        db    TheVesselframelistblock, TheVesselspritedatablock | dw    Vessel_5_0
+TheVessel_6:        db    TheVesselframelistblock, TheVesselspritedatablock | dw    Vessel_6_0
+TheVessel_7:        db    TheVesselframelistblock, TheVesselspritedatablock | dw    Vessel_7_0
+TheVessel_8:        db    TheVesselframelistblock, TheVesselspritedatablock | dw    Vessel_8_0
+TheVessel_9:        db    TheVesselframelistblock, TheVesselspritedatablock | dw    Vessel_9_0
+TheVessel_10:        db    TheVesselframelistblock, TheVesselspritedatablock | dw    Vessel_10_0
+TheVessel_11:        db    TheVesselframelistblock, TheVesselspritedatablock | dw    Vessel_11_0
+TheVessel_12:        db    TheVesselframelistblock, TheVesselspritedatablock | dw    Vessel_12_0
+
+TheVesselleft_0:        db    TheVesselleftframelistblock, TheVesselleftspritedatablock | dw    Vesselleft_12_0
+TheVesselleft_1:        db    TheVesselleftframelistblock, TheVesselleftspritedatablock | dw    Vesselleft_11_0
+TheVesselleft_2:        db    TheVesselleftframelistblock, TheVesselleftspritedatablock | dw    Vesselleft_10_0
+TheVesselleft_3:        db    TheVesselleftframelistblock, TheVesselleftspritedatablock | dw    Vesselleft_9_0
+TheVesselleft_4:        db    TheVesselleftframelistblock, TheVesselleftspritedatablock | dw    Vesselleft_8_0
+TheVesselleft_5:        db    TheVesselleftframelistblock, TheVesselleftspritedatablock | dw    Vesselleft_7_0
+TheVesselleft_6:        db    TheVesselleftframelistblock, TheVesselleftspritedatablock | dw    Vesselleft_6_0
+TheVesselleft_7:        db    TheVesselleftframelistblock, TheVesselleftspritedatablock | dw    Vesselleft_5_0
+TheVesselleft_8:        db    TheVesselleftframelistblock, TheVesselleftspritedatablock | dw    Vesselleft_4_0
+TheVesselleft_9:        db    TheVesselleftframelistblock, TheVesselleftspritedatablock | dw    Vesselleft_3_0
+TheVesselleft_10:        db    TheVesselleftframelistblock, TheVesselleftspritedatablock | dw    Vesselleft_2_0
+TheVesselleft_11:        db    TheVesselleftframelistblock, TheVesselleftspritedatablock | dw    Vesselleft_1_0
+TheVesselleft_12:        db    TheVesselleftframelistblock, TheVesselleftspritedatablock | dw    Vesselleft_0_0
+
+Host_0:        db    Hostframelistblock, Hostspritedatablock | dw    host_0_0
+Host_1:        db    Hostframelistblock, Hostspritedatablock | dw    host_1_0
+Host_2:        db    Hostframelistblock, Hostspritedatablock | dw    host_2_0
+Host_3:        db    Hostframelistblock, Hostspritedatablock | dw    host_3_0
+Host_4:        db    Hostframelistblock, Hostspritedatablock | dw    host_4_0
+Host_5:        db    Hostframelistblock, Hostspritedatablock | dw    host_5_0
+Host_6:        db    Hostframelistblock, Hostspritedatablock | dw    host_6_0
+Host_7:        db    Hostframelistblock, Hostspritedatablock | dw    host_7_0
+Host_8:        db    Hostframelistblock, Hostspritedatablock | dw    host_8_0
+Host_9:        db    Hostframelistblock, Hostspritedatablock | dw    host_9_0
+Host_10:        db    Hostframelistblock, Hostspritedatablock | dw    host_10_0
+Host_11:        db    Hostframelistblock, Hostspritedatablock | dw    host_11_0
+Host_12:        db    Hostframelistblock, Hostspritedatablock | dw    host_12_0
+Host_13:        db    Hostframelistblock, Hostspritedatablock | dw    host_13_0
+Host_14:        db    Hostframelistblock, Hostspritedatablock | dw    host_14_0
+Host_15:        db    Hostframelistblock, Hostspritedatablock | dw    host_15_0
+
+
+
+PutObject:
+	call  GoRestoreObject                     ;restore sprite in previous page with (fast) vdp copy
+
+  ld    l,(iy+7)                            ;sprite data
+  ld    h,(iy+8)
+	ld    b,(hl)                              ;frame list block
+	inc   hl
+	ld    c,(hl)                              ;sprite data block
+  inc   hl
+	ld    a,(hl)
+	ld    (ObjectFrame),a                     ;only on slice 1 we need to set the address of this slice
+	inc   hl                                  ;all consecutive slices are set at the end of their previous slice in engine.asm (when exiting the blitloop at .exit:)
+	ld    a,(hl)
+	ld    (ObjectFrame+1),a
+
+  ld    a,(iy+1)                            ;y
+  ld    (Objecty),a
+  ld    a,(iy+2)                            ;x
+  ld    (Objectx),a
+	jp    PutSF2ObjectSlice                   ;in: b=frame list block, c=sprite data block. CHANGES IX 
+
+
+
+
 
 ;if we are in page 0 we prepare to restore page 1 in the next frame
 ;if we are in page 1 we prepare to restore page 2 in the next frame
 ;if we are in page 2 we prepare to restore page 3 in the next frame
 ;if we are in page 3 we prepare to restore page 0 in the next frame
-restoreBackgroundObject1:
-  ld    hl,Object1RestoreBackgroundTable
-  jp    GoRestoreObject
-restoreBackgroundObject2:
-  ld    hl,Object2RestoreBackgroundTable
-  jp    GoRestoreObject
-
 GoRestoreObject:
+  ld    l,(iy+3)
+  ld    h,(iy+4)
+
   ld    a,(screenpage)
   add   a,a
   ld    b,0
@@ -103,8 +210,6 @@ GoRestoreObject:
   ld    h,(hl)
   ld    l,a
   jp    docopy
-
-
 
 RestoreBackgroundObject1Page0:
 	db    0,0,0,3
@@ -148,16 +253,54 @@ RestoreBackgroundObject2Page3:
 	db    $02,0,$02,0
 	db    0,0,$d0  
 
+RestoreBackgroundObject3Page0:
+	db    0,0,0,3
+	db    0,0,0,0
+	db    $02,0,$02,0
+	db    0,0,$d0  
+RestoreBackgroundObject3Page1:
+	db    0,0,0,0
+	db    0,0,0,1
+	db    $02,0,$02,0
+	db    0,0,$d0  
+RestoreBackgroundObject3Page2:
+	db    0,0,0,1
+	db    0,0,0,2
+	db    $02,0,$02,0
+	db    0,0,$d0  
+RestoreBackgroundObject3Page3:
+	db    0,0,0,2
+	db    0,0,0,3
+	db    $02,0,$02,0
+	db    0,0,$d0  
+
+RestoreBackgroundObject4Page0:
+	db    0,0,0,3
+	db    0,0,0,0
+	db    $02,0,$02,0
+	db    0,0,$d0  
+RestoreBackgroundObject4Page1:
+	db    0,0,0,0
+	db    0,0,0,1
+	db    $02,0,$02,0
+	db    0,0,$d0  
+RestoreBackgroundObject4Page2:
+	db    0,0,0,1
+	db    0,0,0,2
+	db    $02,0,$02,0
+	db    0,0,$d0  
+RestoreBackgroundObject4Page3:
+	db    0,0,0,2
+	db    0,0,0,3
+	db    $02,0,$02,0
+	db    0,0,$d0  
 
 ;SF2 global properties for current object and frame
-HugeObjectFrame:	db  -1
 blitpage:			db  0
 screenpage:			db  2
-Player1Frame:		dw  0
-Object1y:			db  100
-Object1x:			db  100
-PutObjectInPage3?:				db  0
-RestoreBackgroundSF2Object?:	db  1
+ObjectFrame:		dw  0
+Objecty:			db  100
+Objectx:			db  100
 
 ;Frameinfo looks like this:
 ;width, height, offset x, offset y
@@ -168,23 +311,18 @@ ScreenLimitxRight:				equ 256-10
 ScreenLimitxLeft:				equ 10
 moveplayerleftinscreen:			equ 128
 
-Object1RestoreTable:
-  dw    RestoreBackgroundObject1Page1,RestoreBackgroundObject1Page2,RestoreBackgroundObject1Page3,RestoreBackgroundObject1Page0
-Object2RestoreTable:
-  dw    RestoreBackgroundObject2Page1,RestoreBackgroundObject2Page2,RestoreBackgroundObject2Page3,RestoreBackgroundObject2Page0
 
-PutSF2Object:	;section#1
-  ld    hl,Object1RestoreTable
-  jp    PutSF2ObjectSlice
-PutSF2Object2:	;section#2
-  ld    hl,Object2RestoreTable
-  jp    PutSF2ObjectSlice
+
+
 
 ;if we are in page 0 we prepare to restore page 1 in the next frame
 ;if we are in page 1 we prepare to restore page 2 in the next frame
 ;if we are in page 2 we prepare to restore page 3 in the next frame
 ;if we are in page 3 we prepare to restore page 0 in the next frame
 PutSF2ObjectSlice:
+  ld    l,(iy+5)
+  ld    h,(iy+6)
+
 	ld    a,(screenpage)
   add   a,a
   ld    d,0
@@ -196,7 +334,7 @@ PutSF2ObjectSlice:
   ld    a,(hl)
   ld    ixh,a
 
-;Put a section of a SF2 object on screen, max 5 sections.
+;Put a (section of a) SF2 object on screen
 ;in b->framelistblock, c->spritedatablock
 	ld		a,(slot.page12rom)		;all RAM except page 1+2
 	out		($a8),a	
@@ -229,8 +367,8 @@ PutSF2ObjectSlice:
 
 
 GoPutSF2Object:
-	ld    bc,(object1y)		;b=x,c=y ;bc,Object1y
-	ld    hl,(Player1Frame)	;points to object width
+	ld    bc,(objecty)		;b=x,c=y ;bc,Object1y
+	ld    hl,(ObjectFrame)	;points to object width
 ;	ld    iy,Player1SxB1	;player collision detection blocks
 
 ;20240531;ro;removed as it didn't do anything, really
@@ -264,7 +402,7 @@ GoPutSF2Object:
 	ld    d,a
 	ld    (ix+sy),a
 	ld    (ix+dy),a
-	ld    (iy+1),a		;Player1SyB1 (set block 1 sy)
+;	ld    (iy+1),a		;Player1SyB1 (set block 1 sy)
 ;set sx,dx by adding slice.x to object.x
 	ld    e,(hl)		;(sliceX)
 	inc   hl			;=sliceY
@@ -338,21 +476,13 @@ putplayer_noclip:
 
 	call	SkipFrameBytes
 
-	ld    a,(PutObjectInPage3?)
-	or    a
-	jr    nz,.not3
   ;if screenpage=0 then blit in page 1
   ;if screenpage=1 then blit in page 2
   ;if screenpage=2 then blit in page 3
   ;if screenpage=3 then blit in page 0
 	ld    a,(screenpage)
 	inc   a
-
-;	cp    4 ;4 would be the new way, 3 is the old way
-;	jr    nz,.not3
-;	xor   a
 	and   3
-.not3: 
 	add   a,a
 	bit   7,d
 	jp    z,.setpage
@@ -405,12 +535,12 @@ putplayer_noclip:
 	jp    .loop
 
 .exit:
-  ld    (Player1Frame),sp     ;store end of this slice (when will be the start of the next slice)
+  ld    (ObjectFrame),sp     ;store end of this slice (when will be the start of the next slice)
 	ld    sp,(spatpointer)
 	ret
   
   
-;Player1Frame: ds  2
+;ObjectFrame: ds  2
 
 putplayer_clipright_totallyoutofscreenright:
 ;20240531;ro;this does absolutely nothing...
@@ -434,19 +564,12 @@ putplayer_clipright:
 
 	call  SkipFrameBytes
 
-	ld    a,(PutObjectInPage3?)
-	or    a
-	jr    nz,.not3
 ;if screenpage=0 then blit in page 1
 ;if screenpage=1 then blit in page 2
 ;if screenpage=2 then blit in page 0
 	ld    a,(screenpage)
 	inc   a
-;	cp    4 ;4 would be the new way, 3 is the old way
-;	jr    nz,.not3
-;	xor   a
 	and   3
-.not3:  
 	add   a,a
 	bit   7,d
 	jp    z,.setpage
@@ -516,7 +639,7 @@ putplayer_clipright:
 	jp    .loop
 
 .exit:
-  ld    (Player1Frame),sp
+  ld    (ObjectFrame),sp
 	ld    sp,(spatpointer)
 	ret
 
@@ -537,19 +660,12 @@ putplayer_clipleft:
 .notcarry:
 	call	SkipFrameBytes
 
-	ld    a,(PutObjectInPage3?)
-	or    a
-	jr    nz,.not3
   ;if screenpage=0 then blit in page 1
   ;if screenpage=1 then blit in page 2
   ;if screenpage=2 then blit in page 0
 	ld    a,(screenpage)
 	inc   a
-;	cp    4 ;4 would be the new way, 3 is the old way
-;	jr    nz,.not3
-;	xor   a
 	and   3
-.not3:  
 	add   a,a
 	bit   7,d
 	jp    z,.setpage
@@ -664,7 +780,7 @@ putplayer_clipleft:
 	jp    .loop
 
   .exit:
-  ld    (Player1Frame),sp
+  ld    (ObjectFrame),sp
 	ld    sp,(spatpointer)
 	ret  
 
@@ -1297,6 +1413,21 @@ putlettre:
 	db		40,0,40,0
 	db		16,0,5,0
 	db		0,%0000 0000,$98	
+
+BackdropGreen:
+  ld    a,10
+  jp    SetBackDrop
+BackdropBlack:
+  ld    a,15
+  jp    SetBackDrop
+SetBackDrop:
+	di
+	out   ($99),a
+	ld    a,7+128
+	ei
+	out   ($99),a	
+	ret
+
 
 StartSaveGameData:
 EndSaveGameData:
