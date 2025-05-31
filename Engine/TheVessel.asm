@@ -484,6 +484,10 @@ Hostspritedatablock:			equ ($-RomStartAddress) and (romsize-1) /RomBlockSize
 									incbin "..\..\Usas2\grapx\test\host.dat"
 									DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
 
+MovementRoutinesBlock:	equ ($-RomStartAddress) and (romsize-1) /RomBlockSize ;$04
+								include "MovementRoutines.asm"  
+								DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
+
 TheVesselrepBlock:				equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
 	incbin "msxlegends.rep"
 	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block

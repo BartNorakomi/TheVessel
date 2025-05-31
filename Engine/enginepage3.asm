@@ -626,9 +626,6 @@ PopulateControls:
   ld    a,(freezecontrols?)
   or    a
   jp    nz,.freezecontrols
-
-;	ld		a,(NewPrContr)
-;	ld		(NewPrContrOld),a
 	
 	ld		a,15		                        ; select joystick port 1
 	di
@@ -691,11 +688,6 @@ PopulateControls:
 	and		b
 	ld		(NewPrContr),a
 	ld		(hl),b
-
-;  ld    a,(DoubleTapCounter)
-;  dec   a
-;  ret   z	
-;  ld    (DoubleTapCounter),a
 	ret
 
 .freezecontrols:
@@ -771,6 +763,8 @@ outix8:
 
 
 
+PlayerSpriteStand: 	dw  Rstanding
+PlayerAniCount:     db  0,0
 
 
 endenginepage3:

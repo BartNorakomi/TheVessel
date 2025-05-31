@@ -3,48 +3,24 @@ LevelEngine:
   inc   a
   ld    (framecounter),a
 
-;  ld    hl,vblankintflag    ;this way we speed up the engine when not scrolling
-;  ld    a,(hl)
-;  ld    (PreviousVblankIntFlag),a
-
-;  ld    a,b                ;we can store the previous vblankintflag time and cp the current with that value
-;  ld    hl,vblankintflag    ;this way we speed up the engine when not scrolling
-;  .checkflag:
-;  cp    (hl)
-;  jr    nc,.checkflag
-;  ld    (hl),0
-
-  
+  call  PopulateControls  
 ;  call  BackdropGreen
   call  HandleObjects
 ;  call  BackdropBlack
 
-  halt
+  xor   a
+  ld    hl,vblankintflag    ;this way we speed up the engine when not scrolling
+  .checkflag:
+  cp    (hl)
+  jr    z,.checkflag
+  ld    (hl),a
   jp    LevelEngine
 
-Object1RestoreBackgroundTable:
-  dw    RestoreBackgroundObject1Page3,RestoreBackgroundObject1Page0,RestoreBackgroundObject1Page1,RestoreBackgroundObject1Page2
-Object2RestoreBackgroundTable:
-  dw    RestoreBackgroundObject2Page3,RestoreBackgroundObject2Page0,RestoreBackgroundObject2Page1,RestoreBackgroundObject2Page2
-Object3RestoreBackgroundTable:
-  dw    RestoreBackgroundObject3Page3,RestoreBackgroundObject3Page0,RestoreBackgroundObject3Page1,RestoreBackgroundObject3Page2
-Object4RestoreBackgroundTable:
-  dw    RestoreBackgroundObject4Page3,RestoreBackgroundObject4Page0,RestoreBackgroundObject4Page1,RestoreBackgroundObject4Page2
-
-Object1RestoreTable:
-  dw    RestoreBackgroundObject1Page1,RestoreBackgroundObject1Page2,RestoreBackgroundObject1Page3,RestoreBackgroundObject1Page0
-Object2RestoreTable:
-  dw    RestoreBackgroundObject2Page1,RestoreBackgroundObject2Page2,RestoreBackgroundObject2Page3,RestoreBackgroundObject2Page0
-Object3RestoreTable:
-  dw    RestoreBackgroundObject3Page1,RestoreBackgroundObject3Page2,RestoreBackgroundObject3Page3,RestoreBackgroundObject3Page0
-Object4RestoreTable:
-  dw    RestoreBackgroundObject4Page1,RestoreBackgroundObject4Page2,RestoreBackgroundObject4Page3,RestoreBackgroundObject4Page0
-
-;           on?,  y,  x,  sprite restore table                                ,sprite data        ;put on frame ,movement routine block ,movement routine 
-Object1:  db  1,030,100 | dw Object1RestoreBackgroundTable,Object1RestoreTable,Host_15            | db 0        ,10                 | dw VesselMovementRoutine
-Object2:  db  1,050,080 | dw Object2RestoreBackgroundTable,Object2RestoreTable,TheVessel_11       | db 1        ,11                 | dw HostMovementRoutine
-Object3:  db  1,070,030 | dw Object3RestoreBackgroundTable,Object3RestoreTable,TheVessel_12       | db 2        ,11                 | dw GirlMovementRoutine
-Object4:  db  1,100,150 | dw Object4RestoreBackgroundTable,Object4RestoreTable,TheVessel_0        | db 3        ,11                 | dw CapGirlMovementRoutine
+;           on?,  y,  x,  sprite restore table                                ,sprite data        ;put on frame ,movement routine block,  movement routine 
+Object1:  db  1,030,100 | dw Object1RestoreBackgroundTable,Object1RestoreTable,Host_15            | db 0        ,MovementRoutinesBlock | dw VesselMovementRoutine
+Object2:  db  1,050,080 | dw Object2RestoreBackgroundTable,Object2RestoreTable,TheVessel_11       | db 1        ,MovementRoutinesBlock | dw HostMovementRoutine
+Object3:  db  1,070,030 | dw Object3RestoreBackgroundTable,Object3RestoreTable,TheVessel_12       | db 2        ,MovementRoutinesBlock | dw GirlMovementRoutine
+Object4:  db  1,100,150 | dw Object4RestoreBackgroundTable,Object4RestoreTable,TheVessel_0        | db 3        ,MovementRoutinesBlock | dw CapGirlMovementRoutine
 
 HandleObjects:
   ld    iy,Object1
@@ -75,97 +51,17 @@ HandleObjectRoutine:
   ret
 
   .HandleMovementRoutine:
+  ;we can also use only page 1 for this
+  ld    a,(slot.page12rom)                  ;all RAM except page 1+2
+  out   ($a8),a      
+
   ld    a,(iy+10)                           ;movement routine block
+  ;we can also use only page 1 for this
+  call  block1234                           ;CARE!!! we can only switch block34 if page 1 is in rom  
+
   ld    l,(iy+11)                           ;movement routine 
   ld    h,(iy+12)
   jp    (hl)
-
-VesselMovementRoutine:
-  ld    a,(framecounter)                    ;at max 4 objects can be put in screen divided over 4 frames
-  and   3
-  ret   nz
-
-  ld    a,(iy+2)                            ;x
-  add   a,2
-  ld    (iy+2),a                            ;x
-  ret
-
-HostMovementRoutine:
-  ld    a,(framecounter)                    ;at max 4 objects can be put in screen divided over 4 frames
-  and   3
-  ret   nz
-
-  ld    a,(iy+2)                            ;x
-  add   a,1
-  ld    (iy+2),a                            ;x
-  ret
-
-GirlMovementRoutine:
-  ld    a,(framecounter)                    ;at max 4 objects can be put in screen divided over 4 frames
-  and   3
-  ret   nz
-
-  ld    a,(iy+2)                            ;x
-  add   a,3
-  ld    (iy+2),a                            ;x
-  ret
-
-CapGirlMovementRoutine:
-  ld    a,(framecounter)                    ;at max 4 objects can be put in screen divided over 4 frames
-  and   3
-  ret   nz
-
-  ld    a,(iy+2)                            ;x
-  add   a,4
-  ld    (iy+2),a                            ;x
-  ret
-
-TheVessel_0:        db    TheVesselframelistblock, TheVesselspritedatablock | dw    Vessel_0_0
-TheVessel_1:        db    TheVesselframelistblock, TheVesselspritedatablock | dw    Vessel_1_0
-TheVessel_2:        db    TheVesselframelistblock, TheVesselspritedatablock | dw    Vessel_2_0
-TheVessel_3:        db    TheVesselframelistblock, TheVesselspritedatablock | dw    Vessel_3_0
-TheVessel_4:        db    TheVesselframelistblock, TheVesselspritedatablock | dw    Vessel_4_0
-TheVessel_5:        db    TheVesselframelistblock, TheVesselspritedatablock | dw    Vessel_5_0
-TheVessel_6:        db    TheVesselframelistblock, TheVesselspritedatablock | dw    Vessel_6_0
-TheVessel_7:        db    TheVesselframelistblock, TheVesselspritedatablock | dw    Vessel_7_0
-TheVessel_8:        db    TheVesselframelistblock, TheVesselspritedatablock | dw    Vessel_8_0
-TheVessel_9:        db    TheVesselframelistblock, TheVesselspritedatablock | dw    Vessel_9_0
-TheVessel_10:        db    TheVesselframelistblock, TheVesselspritedatablock | dw    Vessel_10_0
-TheVessel_11:        db    TheVesselframelistblock, TheVesselspritedatablock | dw    Vessel_11_0
-TheVessel_12:        db    TheVesselframelistblock, TheVesselspritedatablock | dw    Vessel_12_0
-
-TheVesselleft_0:        db    TheVesselleftframelistblock, TheVesselleftspritedatablock | dw    Vesselleft_12_0
-TheVesselleft_1:        db    TheVesselleftframelistblock, TheVesselleftspritedatablock | dw    Vesselleft_11_0
-TheVesselleft_2:        db    TheVesselleftframelistblock, TheVesselleftspritedatablock | dw    Vesselleft_10_0
-TheVesselleft_3:        db    TheVesselleftframelistblock, TheVesselleftspritedatablock | dw    Vesselleft_9_0
-TheVesselleft_4:        db    TheVesselleftframelistblock, TheVesselleftspritedatablock | dw    Vesselleft_8_0
-TheVesselleft_5:        db    TheVesselleftframelistblock, TheVesselleftspritedatablock | dw    Vesselleft_7_0
-TheVesselleft_6:        db    TheVesselleftframelistblock, TheVesselleftspritedatablock | dw    Vesselleft_6_0
-TheVesselleft_7:        db    TheVesselleftframelistblock, TheVesselleftspritedatablock | dw    Vesselleft_5_0
-TheVesselleft_8:        db    TheVesselleftframelistblock, TheVesselleftspritedatablock | dw    Vesselleft_4_0
-TheVesselleft_9:        db    TheVesselleftframelistblock, TheVesselleftspritedatablock | dw    Vesselleft_3_0
-TheVesselleft_10:        db    TheVesselleftframelistblock, TheVesselleftspritedatablock | dw    Vesselleft_2_0
-TheVesselleft_11:        db    TheVesselleftframelistblock, TheVesselleftspritedatablock | dw    Vesselleft_1_0
-TheVesselleft_12:        db    TheVesselleftframelistblock, TheVesselleftspritedatablock | dw    Vesselleft_0_0
-
-Host_0:        db    Hostframelistblock, Hostspritedatablock | dw    host_0_0
-Host_1:        db    Hostframelistblock, Hostspritedatablock | dw    host_1_0
-Host_2:        db    Hostframelistblock, Hostspritedatablock | dw    host_2_0
-Host_3:        db    Hostframelistblock, Hostspritedatablock | dw    host_3_0
-Host_4:        db    Hostframelistblock, Hostspritedatablock | dw    host_4_0
-Host_5:        db    Hostframelistblock, Hostspritedatablock | dw    host_5_0
-Host_6:        db    Hostframelistblock, Hostspritedatablock | dw    host_6_0
-Host_7:        db    Hostframelistblock, Hostspritedatablock | dw    host_7_0
-Host_8:        db    Hostframelistblock, Hostspritedatablock | dw    host_8_0
-Host_9:        db    Hostframelistblock, Hostspritedatablock | dw    host_9_0
-Host_10:        db    Hostframelistblock, Hostspritedatablock | dw    host_10_0
-Host_11:        db    Hostframelistblock, Hostspritedatablock | dw    host_11_0
-Host_12:        db    Hostframelistblock, Hostspritedatablock | dw    host_12_0
-Host_13:        db    Hostframelistblock, Hostspritedatablock | dw    host_13_0
-Host_14:        db    Hostframelistblock, Hostspritedatablock | dw    host_14_0
-Host_15:        db    Hostframelistblock, Hostspritedatablock | dw    host_15_0
-
-
 
 PutObject:
 	call  GoRestoreObject                     ;restore sprite in previous page with (fast) vdp copy
@@ -188,10 +84,6 @@ PutObject:
   ld    (Objectx),a
 	jp    PutSF2ObjectSlice                   ;in: b=frame list block, c=sprite data block. CHANGES IX 
 
-
-
-
-
 ;if we are in page 0 we prepare to restore page 1 in the next frame
 ;if we are in page 1 we prepare to restore page 2 in the next frame
 ;if we are in page 2 we prepare to restore page 3 in the next frame
@@ -210,6 +102,24 @@ GoRestoreObject:
   ld    h,(hl)
   ld    l,a
   jp    docopy
+
+Object1RestoreBackgroundTable:
+  dw    RestoreBackgroundObject1Page3,RestoreBackgroundObject1Page0,RestoreBackgroundObject1Page1,RestoreBackgroundObject1Page2
+Object2RestoreBackgroundTable:
+  dw    RestoreBackgroundObject2Page3,RestoreBackgroundObject2Page0,RestoreBackgroundObject2Page1,RestoreBackgroundObject2Page2
+Object3RestoreBackgroundTable:
+  dw    RestoreBackgroundObject3Page3,RestoreBackgroundObject3Page0,RestoreBackgroundObject3Page1,RestoreBackgroundObject3Page2
+Object4RestoreBackgroundTable:
+  dw    RestoreBackgroundObject4Page3,RestoreBackgroundObject4Page0,RestoreBackgroundObject4Page1,RestoreBackgroundObject4Page2
+
+Object1RestoreTable:
+  dw    RestoreBackgroundObject1Page1,RestoreBackgroundObject1Page2,RestoreBackgroundObject1Page3,RestoreBackgroundObject1Page0
+Object2RestoreTable:
+  dw    RestoreBackgroundObject2Page1,RestoreBackgroundObject2Page2,RestoreBackgroundObject2Page3,RestoreBackgroundObject2Page0
+Object3RestoreTable:
+  dw    RestoreBackgroundObject3Page1,RestoreBackgroundObject3Page2,RestoreBackgroundObject3Page3,RestoreBackgroundObject3Page0
+Object4RestoreTable:
+  dw    RestoreBackgroundObject4Page1,RestoreBackgroundObject4Page2,RestoreBackgroundObject4Page3,RestoreBackgroundObject4Page0
 
 RestoreBackgroundObject1Page0:
 	db    0,0,0,3
@@ -310,10 +220,6 @@ Objectx:			db  100
 ScreenLimitxRight:				equ 256-10
 ScreenLimitxLeft:				equ 10
 moveplayerleftinscreen:			equ 128
-
-
-
-
 
 ;if we are in page 0 we prepare to restore page 1 in the next frame
 ;if we are in page 1 we prepare to restore page 2 in the next frame
@@ -869,10 +775,7 @@ vblank:
   out   ($99),a
   ld    a,2+128
   out   ($99),a
-
-  ld    a,(vblankintflag)
-  inc   a                               ;vblank flag gets incremented
-  ld    (vblankintflag),a  
+  ld    (vblankintflag),a               ;set vblank flag (to any value but 0)
 
   pop   hl 
   pop   de 
