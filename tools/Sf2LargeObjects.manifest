@@ -1,10 +1,10 @@
-Vessel=@{
+Vesselright=@{
 		all=`
-	@{	name="Vessel";
-		imagePath="vessel156x125.bmp";
+	@{	name="Vesselright";
+		imagePath="vessel156x125right.bmp";
 		palettePath="..\grapx\arcadehall\arcadehall.PL";
-		destinationPath="sprites";
-		pixelFilePath="Vessel.dat";
+		destinationPath="";
+		pixelFilePath="Vesselright.dat";
 		transparentColor=-1;fillcolor=15;
 		canvasX=0;canvasY=0;canvasWidth=13*156;canvasHeight=(1*125);
 		frameWidth=156;frameHeight=125;
@@ -19,7 +19,7 @@ Vesselleft=@{
 	@{	name="Vesselleft";
 		imagePath="vessel156x125left.bmp";
 		palettePath="..\grapx\arcadehall\arcadehall.PL";
-		destinationPath="sprites";
+		destinationPath="";
 		pixelFilePath="Vesselleft.dat";
 		transparentColor=-1;fillcolor=15;
 		canvasX=0;canvasY=0;canvasWidth=13*156;canvasHeight=(1*125);

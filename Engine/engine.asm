@@ -17,10 +17,10 @@ LevelEngine:
   jp    LevelEngine
 
 ;           on?,  y,  x,  sprite restore table                                ,sprite data        ;put on frame ,movement routine block,  movement routine 
-Object1:  db  1,030,100 | dw Object1RestoreBackgroundTable,Object1RestoreTable,Host_15            | db 0        ,MovementRoutinesBlock | dw VesselMovementRoutine
-Object2:  db  1,050,080 | dw Object2RestoreBackgroundTable,Object2RestoreTable,TheVessel_11       | db 1        ,MovementRoutinesBlock | dw HostMovementRoutine
-Object3:  db  1,070,030 | dw Object3RestoreBackgroundTable,Object3RestoreTable,TheVessel_12       | db 2        ,MovementRoutinesBlock | dw GirlMovementRoutine
-Object4:  db  1,100,150 | dw Object4RestoreBackgroundTable,Object4RestoreTable,TheVessel_0        | db 3        ,MovementRoutinesBlock | dw CapGirlMovementRoutine
+Object1:  db  1,030,100 | dw Object1RestoreBackgroundTable,Object1RestoreTable,Host_15              | db 0      ,MovementRoutinesBlock | dw VesselMovementRoutine
+Object2:  db  1,050,080 | dw Object2RestoreBackgroundTable,Object2RestoreTable,TheVesselrightidle_0 | db 1      ,MovementRoutinesBlock | dw HostMovementRoutine
+Object3:  db  1,070,030 | dw Object3RestoreBackgroundTable,Object3RestoreTable,TheVesselrightidle_0 | db 2      ,MovementRoutinesBlock | dw GirlMovementRoutine
+Object4:  db  1,100,150 | dw Object4RestoreBackgroundTable,Object4RestoreTable,TheVesselrightidle_0 | db 3      ,MovementRoutinesBlock | dw CapGirlMovementRoutine
 
 HandleObjects:
   ld    iy,Object1

@@ -454,24 +454,24 @@ ArcadeHallGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
   incbin "..\grapx\arcadehall\arcade1.SC5",7,212 * 128      ;212 lines
 	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
 
-;the vessel
-TheVesselframelistblock:			equ ($-RomStartAddress) and (romsize-1) /RomBlockSize
+;the vessel right
+TheVesselrightframelistblock:			equ ($-RomStartAddress) and (romsize-1) /RomBlockSize
 									phase	$8000
-									include "..\..\Usas2\grapx\test\Vessel.asm" 
+									include "..\tools\Vesselright.asm" 
 									DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
 									dephase
-TheVesselspritedatablock:			equ ($-RomStartAddress) and (romsize-1) /RomBlockSize
-									incbin "..\..\Usas2\grapx\test\Vessel.dat"
+TheVesselrightspritedatablock:			equ ($-RomStartAddress) and (romsize-1) /RomBlockSize
+									incbin "..\tools\Vesselright.dat"
 									DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
 
 ;the vessel left
 TheVesselleftframelistblock:			equ ($-RomStartAddress) and (romsize-1) /RomBlockSize
 									phase	$8000
-									include "..\..\Usas2\grapx\test\Vesselleft.asm" 
+									include "..\tools\Vesselleft.asm" 
 									DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
 									dephase
 TheVesselleftspritedatablock:			equ ($-RomStartAddress) and (romsize-1) /RomBlockSize
-									incbin "..\..\Usas2\grapx\test\Vesselleft.dat"
+									incbin "..\tools\Vesselleft.dat"
 									DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
 
 ;host

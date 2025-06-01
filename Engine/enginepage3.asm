@@ -761,11 +761,8 @@ outix8:
 	outi	outi	outi	outi	outi	outi	outi	outi	
 	ret	
 
-
-
 PlayerSpriteStand: 	dw  Rstanding
 PlayerAniCount:     db  0,0
-
 
 endenginepage3:
 dephase

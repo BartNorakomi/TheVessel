@@ -3,34 +3,33 @@
 MovementRoutinesAddress:  equ $4000
 Phase MovementRoutinesAddress
 
+TheVesselrightidle_0:        db    TheVesselrightframelistblock, TheVesselrightspritedatablock | dw    Vesselright_0_0
+TheVesselrightrunning_0:        db    TheVesselrightframelistblock, TheVesselrightspritedatablock | dw    Vesselright_1_0
+TheVesselrightrunning_1:        db    TheVesselrightframelistblock, TheVesselrightspritedatablock | dw    Vesselright_2_0
+TheVesselrightrunning_2:        db    TheVesselrightframelistblock, TheVesselrightspritedatablock | dw    Vesselright_3_0
+TheVesselrightrunning_3:        db    TheVesselrightframelistblock, TheVesselrightspritedatablock | dw    Vesselright_4_0
+TheVesselrightrunning_4:        db    TheVesselrightframelistblock, TheVesselrightspritedatablock | dw    Vesselright_5_0
+TheVesselrightrunning_5:        db    TheVesselrightframelistblock, TheVesselrightspritedatablock | dw    Vesselright_6_0
+TheVesselrightrunning_6:        db    TheVesselrightframelistblock, TheVesselrightspritedatablock | dw    Vesselright_7_0
+TheVesselrightrunning_7:        db    TheVesselrightframelistblock, TheVesselrightspritedatablock | dw    Vesselright_8_0
+TheVesselrightrunning_8:        db    TheVesselrightframelistblock, TheVesselrightspritedatablock | dw    Vesselright_9_0
+TheVesselrightrunning_9:        db    TheVesselrightframelistblock, TheVesselrightspritedatablock | dw    Vesselright_10_0
+TheVesselrightrunning_10:        db    TheVesselrightframelistblock, TheVesselrightspritedatablock | dw    Vesselright_11_0
+TheVesselrightsitting_0:        db    TheVesselrightframelistblock, TheVesselrightspritedatablock | dw    Vesselright_12_0
 
-TheVessel_0:        db    TheVesselframelistblock, TheVesselspritedatablock | dw    Vessel_0_0
-TheVessel_1:        db    TheVesselframelistblock, TheVesselspritedatablock | dw    Vessel_1_0
-TheVessel_2:        db    TheVesselframelistblock, TheVesselspritedatablock | dw    Vessel_2_0
-TheVessel_3:        db    TheVesselframelistblock, TheVesselspritedatablock | dw    Vessel_3_0
-TheVessel_4:        db    TheVesselframelistblock, TheVesselspritedatablock | dw    Vessel_4_0
-TheVessel_5:        db    TheVesselframelistblock, TheVesselspritedatablock | dw    Vessel_5_0
-TheVessel_6:        db    TheVesselframelistblock, TheVesselspritedatablock | dw    Vessel_6_0
-TheVessel_7:        db    TheVesselframelistblock, TheVesselspritedatablock | dw    Vessel_7_0
-TheVessel_8:        db    TheVesselframelistblock, TheVesselspritedatablock | dw    Vessel_8_0
-TheVessel_9:        db    TheVesselframelistblock, TheVesselspritedatablock | dw    Vessel_9_0
-TheVessel_10:        db    TheVesselframelistblock, TheVesselspritedatablock | dw    Vessel_10_0
-TheVessel_11:        db    TheVesselframelistblock, TheVesselspritedatablock | dw    Vessel_11_0
-TheVessel_12:        db    TheVesselframelistblock, TheVesselspritedatablock | dw    Vessel_12_0
-
-TheVesselleft_0:        db    TheVesselleftframelistblock, TheVesselleftspritedatablock | dw    Vesselleft_12_0
-TheVesselleft_1:        db    TheVesselleftframelistblock, TheVesselleftspritedatablock | dw    Vesselleft_11_0
-TheVesselleft_2:        db    TheVesselleftframelistblock, TheVesselleftspritedatablock | dw    Vesselleft_10_0
-TheVesselleft_3:        db    TheVesselleftframelistblock, TheVesselleftspritedatablock | dw    Vesselleft_9_0
-TheVesselleft_4:        db    TheVesselleftframelistblock, TheVesselleftspritedatablock | dw    Vesselleft_8_0
-TheVesselleft_5:        db    TheVesselleftframelistblock, TheVesselleftspritedatablock | dw    Vesselleft_7_0
-TheVesselleft_6:        db    TheVesselleftframelistblock, TheVesselleftspritedatablock | dw    Vesselleft_6_0
-TheVesselleft_7:        db    TheVesselleftframelistblock, TheVesselleftspritedatablock | dw    Vesselleft_5_0
-TheVesselleft_8:        db    TheVesselleftframelistblock, TheVesselleftspritedatablock | dw    Vesselleft_4_0
-TheVesselleft_9:        db    TheVesselleftframelistblock, TheVesselleftspritedatablock | dw    Vesselleft_3_0
-TheVesselleft_10:        db    TheVesselleftframelistblock, TheVesselleftspritedatablock | dw    Vesselleft_2_0
-TheVesselleft_11:        db    TheVesselleftframelistblock, TheVesselleftspritedatablock | dw    Vesselleft_1_0
-TheVesselleft_12:        db    TheVesselleftframelistblock, TheVesselleftspritedatablock | dw    Vesselleft_0_0
+TheVesselleftidle_0:        db    TheVesselleftframelistblock, TheVesselleftspritedatablock | dw    Vesselleft_12_0
+TheVesselleftrunning_0:        db    TheVesselleftframelistblock, TheVesselleftspritedatablock | dw    Vesselleft_11_0
+TheVesselleftrunning_1:        db    TheVesselleftframelistblock, TheVesselleftspritedatablock | dw    Vesselleft_10_0
+TheVesselleftrunning_2:        db    TheVesselleftframelistblock, TheVesselleftspritedatablock | dw    Vesselleft_9_0
+TheVesselleftrunning_3:        db    TheVesselleftframelistblock, TheVesselleftspritedatablock | dw    Vesselleft_8_0
+TheVesselleftrunning_4:        db    TheVesselleftframelistblock, TheVesselleftspritedatablock | dw    Vesselleft_7_0
+TheVesselleftrunning_5:        db    TheVesselleftframelistblock, TheVesselleftspritedatablock | dw    Vesselleft_6_0
+TheVesselleftrunning_6:        db    TheVesselleftframelistblock, TheVesselleftspritedatablock | dw    Vesselleft_5_0
+TheVesselleftrunning_7:        db    TheVesselleftframelistblock, TheVesselleftspritedatablock | dw    Vesselleft_4_0
+TheVesselleftrunning_8:        db    TheVesselleftframelistblock, TheVesselleftspritedatablock | dw    Vesselleft_3_0
+TheVesselleftrunning_9:        db    TheVesselleftframelistblock, TheVesselleftspritedatablock | dw    Vesselleft_2_0
+TheVesselleftrunning_10:        db    TheVesselleftframelistblock, TheVesselleftspritedatablock | dw    Vesselleft_1_0
+TheVesselleftsitting_0:        db    TheVesselleftframelistblock, TheVesselleftspritedatablock | dw    Vesselleft_0_0
 VesselMovementRoutine:
   ld    a,(framecounter)                    ;at max 4 objects can be put in screen divided over 4 frames
   and   3
@@ -39,78 +38,100 @@ VesselMovementRoutine:
   jp    (hl)
 
 LStanding:
-;
-; bit	7	6	  5		    4		    3		    2		  1		  0
-;		  0	0	  trig-b	trig-a	right	  left	down	up	(joystick)
-;		 F2	F1	'M'		  space	  right	  left	down	up	(keyboard)
-;
-;  ld    a,(NewPrContr);
-;	bit		4,a           ;space pressed ?
-	ld		a,(Controls)
-	bit		0,a           ;cursor up pressed ?
-	jp		nz,Set_L_run
-	bit		1,a           ;cursor down pressed ?
-	jp		nz,Set_L_run
-	bit		2,a           ;cursor left pressed ?
-	jp		nz,Set_L_run
-	bit		3,a           ;cursor right pressed ?
-	jp		nz,Set_R_run
+  ld    hl,TheVesselleftidle_0
+  call  PutSpritePose                       ;in hl=spritepose, out writes spritepose to objecttable
+
+  call  GetMovementInBC                     ;reads our controls and sets total xy movement in bc 
+  ld    a,b
+  cp    1
+  jp    z,Set_R_stand
+  or    c
+  jp    nz,Set_L_run
   ret
 
+
 RStanding:
-;
-; bit	7	6	  5		    4		    3		    2		  1		  0
-;		  0	0	  trig-b	trig-a	right	  left	down	up	(joystick)
-;		 F2	F1	'M'		  space	  right	  left	down	up	(keyboard)
-;
-;  ld    a,(NewPrContr);
-;	bit		4,a           ;space pressed ?
-	ld		a,(Controls)
-	bit		0,a           ;cursor up pressed ?
-	jp		nz,Set_R_run
-	bit		1,a           ;cursor down pressed ?
-	jp		nz,Set_R_run
-	bit		2,a           ;cursor left pressed ?
-	jp		nz,Set_L_run
-	bit		3,a           ;cursor right pressed ?
-	jp		nz,Set_R_run
+  ld    hl,TheVesselrightidle_0
+  call  PutSpritePose                       ;in hl=spritepose, out writes spritepose to objecttable
+
+  call  GetMovementInBC                     ;reads our controls and sets total xy movement in bc 
+  ld    a,b
+  cp    -1
+  jp    z,Set_L_stand
+  or    c
+  jp    nz,Set_R_run
   ret
 
 Lrunning:
-;
-; bit	7	6	  5		    4		    3		    2		  1		  0
-;		  0	0	  trig-b	trig-a	right	  left	down	up	(joystick)
-;		 F2	F1	'M'		  space	  right	  left	down	up	(keyboard)
-;
-	ld		a,(Controls)
-  and   %0000 1111
+  call  GetMovementInBC                     ;reads our controls and sets total xy movement in bc 
+  ld    a,b
+  cp    1
+  jp    z,Set_R_stand
+  or    c
   jp    z,Set_L_stand
 
   ld    a,(iy+2)                            ;x
-  sub   a,2
+  add   a,b
+  add   a,b
+  add   a,b
+  add   a,b
+  add   a,b
+  add   a,b
   ld    (iy+2),a                            ;x
-;  ld    a,(iy+1)                            ;y
-;  add   a,c
-;  ld    (iy+1),a                            ;y
-  ret
+  ld    a,(iy+1)                            ;y
+  add   a,c
+  ld    (iy+1),a                            ;y
+
+	ld		a,(PlayerAniCount)
+  inc   a
+  cp    11
+  jr    nz,.endchecklastframe
+  xor   a
+  .endchecklastframe:
+	ld		(PlayerAniCount),a
+  add   a,a                                 ;*2
+  add   a,a                                 ;*4 ;each spritepose has 4 bytes
+  ld    e,a
+  ld    d,0
+  ld    hl,TheVesselleftrunning_0
+  add   hl,de
+  jp    PutSpritePose                       ;in hl=spritepose, out writes spritepose to objecttable
 
 Rrunning:
-;
-; bit	7	6	  5		    4		    3		    2		  1		  0
-;		  0	0	  trig-b	trig-a	right	  left	down	up	(joystick)
-;		 F2	F1	'M'		  space	  right	  left	down	up	(keyboard)
-;
-	ld		a,(Controls)
-  and   %0000 1111
+  call  GetMovementInBC                     ;reads our controls and sets total xy movement in bc 
+  ld    a,b
+  cp    -1
+  jp    z,Set_L_stand
+  or    c
   jp    z,Set_R_stand
 
   ld    a,(iy+2)                            ;x
-  add   a,2
+  add   a,b
+  add   a,b
+  add   a,b
+  add   a,b
+  add   a,b
+  add   a,b
   ld    (iy+2),a                            ;x
-;  ld    a,(iy+1)                            ;y
-;  add   a,c
-;  ld    (iy+1),a                            ;y
-  ret
+  ld    a,(iy+1)                            ;y
+  add   a,c
+  ld    (iy+1),a                            ;y
+
+	ld		a,(PlayerAniCount)
+  inc   a
+  cp    11
+  jr    nz,.endchecklastframe
+  xor   a
+  .endchecklastframe:
+	ld		(PlayerAniCount),a
+  add   a,a                                 ;*2
+  add   a,a                                 ;*4 ;each spritepose has 4 bytes
+  ld    e,a
+  ld    d,0
+  ld    hl,TheVesselrightrunning_0
+  add   hl,de
+  jp    PutSpritePose                       ;in hl=spritepose, out writes spritepose to objecttable
+
 
 Set_L_stand:
 	ld		hl,LStanding
@@ -140,6 +161,31 @@ Set_R_run:
 	ld		(PlayerAniCount),a
   ret
 
+PutSpritePose:
+  ld    (iy+7),l
+  ld    (iy+8),h
+  ret
+
+GetMovementInBC:                            ;out bc=xy movement
+  ld    bc,0                                ;b=x, c=y
+	ld		a,(Controls)
+	bit		0,a           ;cursor up pressed ?
+  jr    z,.CheckDown
+  dec   c
+  .CheckDown:
+	bit		1,a           ;cursor down pressed ?
+  jr    z,.CheckLeft
+  inc   c
+  .CheckLeft:
+	bit		2,a           ;cursor left pressed ?
+  jr    z,.CheckRight
+  dec   b
+  .CheckRight:
+	bit		3,a           ;cursor right pressed ?
+  ret   z
+  inc   b
+  ret
+
 Host_0:        db    Hostframelistblock, Hostspritedatablock | dw    host_0_0
 Host_1:        db    Hostframelistblock, Hostspritedatablock | dw    host_1_0
 Host_2:        db    Hostframelistblock, Hostspritedatablock | dw    host_2_0
@@ -160,7 +206,7 @@ HostMovementRoutine:
   ld    a,(framecounter)                    ;at max 4 objects can be put in screen divided over 4 frames
   and   3
   ret   nz
-
+ret
   ld    a,(iy+2)                            ;x
   add   a,1
   ld    (iy+2),a                            ;x
@@ -170,7 +216,7 @@ GirlMovementRoutine:
   ld    a,(framecounter)                    ;at max 4 objects can be put in screen divided over 4 frames
   and   3
   ret   nz
-
+ret
   ld    a,(iy+2)                            ;x
   add   a,3
   ld    (iy+2),a                            ;x
@@ -180,7 +226,7 @@ CapGirlMovementRoutine:
   ld    a,(framecounter)                    ;at max 4 objects can be put in screen divided over 4 frames
   and   3
   ret   nz
-
+ret
   ld    a,(iy+2)                            ;x
   add   a,4
   ld    (iy+2),a                            ;x
