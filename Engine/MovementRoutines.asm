@@ -49,7 +49,6 @@ LStanding:
   jp    nz,Set_L_run
   ret
 
-
 RStanding:
   ld    hl,TheVesselrightidle_0
   call  PutSpritePose                       ;in hl=spritepose, out writes spritepose to objecttable
@@ -70,32 +69,10 @@ Lrunning:
   or    c
   jp    z,Set_L_stand
 
-  ld    a,(iy+2)                            ;x
-  add   a,b
-  add   a,b
-  add   a,b
-  add   a,b
-  add   a,b
-  add   a,b
-  ld    (iy+2),a                            ;x
-  ld    a,(iy+1)                            ;y
-  add   a,c
-  ld    (iy+1),a                            ;y
-
-	ld		a,(PlayerAniCount)
-  inc   a
-  cp    11
-  jr    nz,.endchecklastframe
-  xor   a
-  .endchecklastframe:
-	ld		(PlayerAniCount),a
-  add   a,a                                 ;*2
-  add   a,a                                 ;*4 ;each spritepose has 4 bytes
-  ld    e,a
-  ld    d,0
-  ld    hl,TheVesselleftrunning_0
-  add   hl,de
-  jp    PutSpritePose                       ;in hl=spritepose, out writes spritepose to objecttable
+  call  MovePlayer                          ;move player and check for obstacles/screen edges
+  ld    hl,TheVesselleftrunning_0           ;starting pose
+  call  AnimatePlayerRunning
+  ret
 
 Rrunning:
   call  GetMovementInBC                     ;reads our controls and sets total xy movement in bc 
@@ -105,18 +82,12 @@ Rrunning:
   or    c
   jp    z,Set_R_stand
 
-  ld    a,(iy+2)                            ;x
-  add   a,b
-  add   a,b
-  add   a,b
-  add   a,b
-  add   a,b
-  add   a,b
-  ld    (iy+2),a                            ;x
-  ld    a,(iy+1)                            ;y
-  add   a,c
-  ld    (iy+1),a                            ;y
+  call  MovePlayer                          ;move player and check for obstacles/screen edges
+  ld    hl,TheVesselrightrunning_0          ;starting pose
+  call  AnimatePlayerRunning
+  ret
 
+AnimatePlayerRunning:                       ;in hl=starting pose
 	ld		a,(PlayerAniCount)
   inc   a
   cp    11
@@ -128,10 +99,119 @@ Rrunning:
   add   a,a                                 ;*4 ;each spritepose has 4 bytes
   ld    e,a
   ld    d,0
-  ld    hl,TheVesselrightrunning_0
   add   hl,de
   jp    PutSpritePose                       ;in hl=spritepose, out writes spritepose to objecttable
 
+CheckCollisionNPCs:                         ;out ;d=0(no collision), d=1(collision)
+  ld    d,0                                 ;0=no collision, 1=collision
+  ld    hl,Object2
+  call  .check
+  ld    hl,Object3
+  call  .check
+  ld    hl,Object4
+  call  .check
+  ret
+
+  .check:
+  ld    a,(hl)                              ;on?
+  or    a
+  ret   z
+
+  inc   hl                                  ;y npc
+  .CheckBottomSide:                         ;check collision bottom side
+  ld    a,(hl)
+  add   a,3
+  cp    (iy+1)                              ;y player
+  ret   c
+  .CheckTopSide:                            ;check collision top  side
+  sub   a,12
+  cp    (iy+1)                              ;y player
+  ret   nc
+
+  inc   hl                                  ;x npc
+  .CheckRightSide:                          ;check collision right side
+  ld    a,(hl)
+  add   a,30
+  cp    (iy+2)                              ;x player
+  ret   c
+  .CheckLeftSide:                           ;check collision left side
+  sub   a,60
+  cp    (iy+2)                              ;x player
+  ret   nc
+
+  ld    d,1                                 ;d=0(no collision), d=1(collision)
+  ret
+
+MovePlayer:
+  ld    a,b
+  cp    -1
+  call  z,MoveLeft
+  cp    1
+  call  z,MoveRight
+  ld    a,c
+  cp    -1
+  call  z,MoveUp
+  cp    1
+  call  z,MoveDown
+  ret
+
+MoveLeft:
+  ld    a,(iy+2)                            ;x
+  sub   a,6
+  ret   c
+  ld    (iy+2),a                            ;x
+
+  call  CheckCollisionNPCs                  ;check if player collides with npcs. out ;d=0(no collision), d=1(collision)
+  bit   0,d                                 ;d=0(no collision), d=1(collision)
+  ret   z
+  ld    a,(iy+2)                            ;x
+  add   a,6
+  ld    (iy+2),a                            ;x
+  ret
+
+MoveRight:
+  ld    a,(iy+2)                            ;x
+  add   a,6
+  ret   c
+  ld    (iy+2),a                            ;x
+
+  call  CheckCollisionNPCs                  ;check if player collides with npcs. out ;d=0(no collision), d=1(collision)
+  bit   0,d                                 ;d=0(no collision), d=1(collision)
+  ret   z
+  ld    a,(iy+2)                            ;x
+  sub   a,6
+  ld    (iy+2),a                            ;x
+  ret
+
+MoveUp:
+  ld    a,(iy+1)                            ;y
+  sub   a,3
+  cp    83
+  ret   c
+  ld    (iy+1),a                            ;y
+
+  call  CheckCollisionNPCs                  ;check if player collides with npcs. out ;d=0(no collision), d=1(collision)
+  bit   0,d                                 ;d=0(no collision), d=1(collision)
+  ret   z
+  ld    a,(iy+1)                            ;y
+  add   a,3
+  ld    (iy+1),a                            ;y
+  ret
+
+MoveDown:
+  ld    a,(iy+1)                            ;y
+  add   a,3
+  cp    120
+  ret   nc
+  ld    (iy+1),a                            ;y
+
+  call  CheckCollisionNPCs                  ;check if player collides with npcs. out ;d=0(no collision), d=1(collision)
+  bit   0,d                                 ;d=0(no collision), d=1(collision)
+  ret   z
+  ld    a,(iy+1)                            ;y
+  sub   a,3
+  ld    (iy+1),a                            ;y
+  ret
 
 Set_L_stand:
 	ld		hl,LStanding
@@ -212,7 +292,11 @@ ret
   ld    (iy+2),a                            ;x
   ret
 
+Girlidle_0:        db    npcsframelistblock, npcsspritedatablock | dw    npcs_0_0
 GirlMovementRoutine:
+  ld    hl,Girlidle_0
+  call  PutSpritePose                       ;in hl=spritepose, out writes spritepose to objecttable
+
   ld    a,(framecounter)                    ;at max 4 objects can be put in screen divided over 4 frames
   and   3
   ret   nz
@@ -222,7 +306,11 @@ ret
   ld    (iy+2),a                            ;x
   ret
 
+CapGirlidle_0:        db    npcsframelistblock, npcsspritedatablock | dw    npcs_5_0
 CapGirlMovementRoutine:
+  ld    hl,CapGirlidle_0
+  call  PutSpritePose                       ;in hl=spritepose, out writes spritepose to objecttable
+
   ld    a,(framecounter)                    ;at max 4 objects can be put in screen divided over 4 frames
   and   3
   ret   nz
@@ -232,5 +320,18 @@ ret
   ld    (iy+2),a                            ;x
   ret
 
+RedHeadBoyidle_0:        db    npcsframelistblock, npcsspritedatablock | dw    npcs_3_0
+RedHeadBoyMovementRoutine:
+  ld    hl,RedHeadBoyidle_0
+  call  PutSpritePose                       ;in hl=spritepose, out writes spritepose to objecttable
+
+  ld    a,(framecounter)                    ;at max 4 objects can be put in screen divided over 4 frames
+  and   3
+  ret   nz
+ret
+  ld    a,(iy+2)                            ;x
+  add   a,4
+  ld    (iy+2),a                            ;x
+  ret
 
 dephase

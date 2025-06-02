@@ -484,6 +484,16 @@ Hostspritedatablock:			equ ($-RomStartAddress) and (romsize-1) /RomBlockSize
 									incbin "..\..\Usas2\grapx\test\host.dat"
 									DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
 
+;npcs
+npcsframelistblock:			equ ($-RomStartAddress) and (romsize-1) /RomBlockSize
+									phase	$8000
+									include "..\tools\npcs.asm" 
+									DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
+									dephase
+npcsspritedatablock:			equ ($-RomStartAddress) and (romsize-1) /RomBlockSize
+									incbin "..\tools\npcs.dat"
+									DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
+
 MovementRoutinesBlock:	equ ($-RomStartAddress) and (romsize-1) /RomBlockSize ;$04
 								include "MovementRoutines.asm"  
 								DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block

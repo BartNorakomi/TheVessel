@@ -16,11 +16,17 @@ LevelEngine:
   ld    (hl),a
   jp    LevelEngine
 
+PutOnFrame:             equ 9
+MovementRoutineBlock:   equ 10
+MovementRoutine:        equ 11
+ObjectTable:
 ;           on?,  y,  x,  sprite restore table                                ,sprite data        ;put on frame ,movement routine block,  movement routine 
-Object1:  db  1,030,100 | dw Object1RestoreBackgroundTable,Object1RestoreTable,Host_15              | db 0      ,MovementRoutinesBlock | dw VesselMovementRoutine
-Object2:  db  1,050,080 | dw Object2RestoreBackgroundTable,Object2RestoreTable,TheVesselrightidle_0 | db 1      ,MovementRoutinesBlock | dw HostMovementRoutine
-Object3:  db  1,070,030 | dw Object3RestoreBackgroundTable,Object3RestoreTable,TheVesselrightidle_0 | db 2      ,MovementRoutinesBlock | dw GirlMovementRoutine
-Object4:  db  1,100,150 | dw Object4RestoreBackgroundTable,Object4RestoreTable,TheVesselrightidle_0 | db 3      ,MovementRoutinesBlock | dw CapGirlMovementRoutine
+Object1:  db  1,100,060 | dw Object1RestoreBackgroundTable,Object1RestoreTable,TheVesselrightidle_0 | db 0      ,MovementRoutinesBlock | dw VesselMovementRoutine
+Object2:  db  1,105,150 | dw Object2RestoreBackgroundTable,Object2RestoreTable,RedHeadBoyidle_0     | db 1      ,MovementRoutinesBlock | dw RedHeadBoyMovementRoutine
+Object3:  db  0,098,030 | dw Object3RestoreBackgroundTable,Object3RestoreTable,Girlidle_0           | db 2      ,MovementRoutinesBlock | dw GirlMovementRoutine
+Object4:  db  0,095,200 | dw Object4RestoreBackgroundTable,Object4RestoreTable,CapGirlidle_0        | db 3      ,MovementRoutinesBlock | dw CapGirlMovementRoutine
+
+LenghtObject: equ Object2-Object1
 
 HandleObjects:
   ld    iy,Object1
@@ -36,6 +42,8 @@ HandleObjects:
   and   3
   cp    3
   ret   nz
+
+  call  AssignOrderByY                      ;sort the put on frame value from lowest (y) to highest (y) object
 	jp    switchpageSF2Engine
 
 HandleObjectRoutine:
@@ -46,7 +54,7 @@ HandleObjectRoutine:
 
   ld    a,(framecounter)                    ;at max 4 objects can be put in screen divided over 4 frames
   and   3
-  cp    (iy+9)                              ;put on frame
+  cp    (iy+PutOnFrame)                     ;put on frame
   call  z,PutObject
   ret
 
@@ -55,12 +63,12 @@ HandleObjectRoutine:
   ld    a,(slot.page12rom)                  ;all RAM except page 1+2
   out   ($a8),a      
 
-  ld    a,(iy+10)                           ;movement routine block
+  ld    a,(iy+MovementRoutineBlock)         ;movement routine block
   ;we can also use only page 1 for this
   call  block1234                           ;CARE!!! we can only switch block34 if page 1 is in rom  
 
-  ld    l,(iy+11)                           ;movement routine 
-  ld    h,(iy+12)
+  ld    l,(iy+MovementRoutine)              ;movement routine 
+  ld    h,(iy+MovementRoutine+1)
   jp    (hl)
 
 PutObject:
@@ -792,18 +800,81 @@ vblank:
   ei
   ret
 
+; Routine: AssignOrderByY
+; Sorts objects by Y and assigns put_on_frame = 0..3 accordingly
+; Constants
+OBJECT_COUNT:  equ 4
+Y_OFFSET:      equ 1
+UNASSIGNED:    equ 255
 
-SetPaletteOnInterrupt:
-	xor		a
-	out		($99),a
-	ld		a,16+128
-	out		($99),a
-	ld    c,$9a
-	outi | outi | outi | outi | outi | outi | outi | outi
-	outi | outi | outi | outi | outi | outi | outi | outi
-	outi | outi | outi | outi | outi | outi | outi | outi
-	outi | outi | outi | outi | outi | outi | outi | outi
-	ret
+; Routine: AssignOrderByY
+; Sorts objects by Y and assigns put_on_frame = 0..3 accordingly
+AssignOrderByY:
+    ; Initialize all put_on_frame fields to UNASSIGNED (255)
+    ld a, UNASSIGNED
+    ld (Object1 + PutOnFrame), a
+    ld (Object2 + PutOnFrame), a
+    ld (Object3 + PutOnFrame), a
+    ld (Object4 + PutOnFrame), a
+    ld d, 0            ; Frame number to assign (0 to 3)
+
+  .AssignLoop:
+    ld hl, ObjectTable
+    ld b, OBJECT_COUNT ; Number of objects to process
+    ld e, 255          ; Current minimum Y found (start max)
+    ld ix, 0           ; Index of object with min Y (will store address)
+
+  .FindMin:
+    push hl
+    pop iy             ; Use iy to index into objects
+
+    ld a, (iy + PutOnFrame)
+    cp UNASSIGNED
+    jr nz,.SkipObj     ; Skip if already assigned
+
+    ld a, (iy + Y_OFFSET)
+    cp e
+    jr z,.SkipObj      ; Skip if Y equals current min (to handle duplicates consistently)
+    jr nc,.SkipObj     ; Skip if Y >= current min
+
+    ld e, a            ; Update min Y
+    push hl
+    pop ix             ; Save address of object with min Y
+
+  .SkipObj:
+    push bc            ; Save bc
+    ld bc, LenghtObject
+    add hl, bc         ; Move to next object
+    pop bc
+
+    djnz .FindMin
+
+    ; Check if we found a valid object (ix != 0)
+    ld a, ixh
+    or ixl
+    ret   z
+  
+    ; Store frame number (d) into PutOnFrame field of selected object
+    ld a, d
+    ld (ix + PutOnFrame), a
+
+    inc d
+    ld a, d
+    cp OBJECT_COUNT
+    jr nz,.AssignLoop
+    ret
+
+;SetPaletteOnInterrupt:
+;	xor		a
+;	out		($99),a
+;	ld		a,16+128
+;	out		($99),a
+;	ld    c,$9a
+;	outi | outi | outi | outi | outi | outi | outi | outi
+;	outi | outi | outi | outi | outi | outi | outi | outi
+;	outi | outi | outi | outi | outi | outi | outi | outi
+;	outi | outi | outi | outi | outi | outi | outi | outi
+;	ret
 
 vblankintflag:  db  0
 ;lineintflag:  db  0
@@ -821,7 +892,6 @@ InterruptHandler:
   pop   af 
   ei
   ret
-
 
 DivideBCbyDE:
 ;

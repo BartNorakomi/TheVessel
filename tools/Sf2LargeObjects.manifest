@@ -29,6 +29,21 @@ Vesselleft=@{
 	};
 };
 
+npcs=@{
+		all=`
+	@{	name="npcs";
+		imagePath="npcs156x125.bmp";
+		palettePath="..\grapx\arcadehall\arcadehall.PL";
+		destinationPath="";
+		pixelFilePath="npcs.dat";
+		transparentColor=-1;fillcolor=15;
+		canvasX=0;canvasY=0;canvasWidth=8*156;canvasHeight=(1*125);
+		frameWidth=156;frameHeight=125;
+		subjectX=0;subjectWidth=156;subjectY=-1;subjectHeight=-1;
+		slices=1;
+	};
+};
+
 host=@{
 		all=`
 	@{	name="Host";
