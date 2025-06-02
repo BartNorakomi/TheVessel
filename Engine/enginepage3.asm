@@ -19,8 +19,10 @@ InitiateGame:
 
 INCLUDE "RePlayer.asm"
 
-ArcadeHallPalette:                    ;palette file
+ArcadeHall1Palette:                    ;palette file
   incbin "..\grapx\arcadehall\arcade1.SC5",$7680+7,32      
+ArcadeHall2Palette:                    ;palette file
+  incbin "..\grapx\arcadehall\arcade2.SC5",$7680+7,32      
 LoadArcadeGfx:
   call  SetArcadeGfxPage0
   ;copy from page 0 to page 2
@@ -38,7 +40,7 @@ LoadArcadeGfx:
   ld    (CopyPageToPage212High+dPage),a
   ld    hl,CopyPageToPage212High
   call  DoCopy
-  ld    hl,ArcadeHallPalette
+  ld    hl,ArcadeHall1Palette
   call  SetPalette
   ret
 

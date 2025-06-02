@@ -452,6 +452,7 @@ enlength:	Equ	$-engine
 
 ArcadeHallGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
   incbin "..\grapx\arcadehall\arcade1.SC5",7,212 * 128      ;212 lines
+;  incbin "..\grapx\arcadehall\arcade2.SC5",7,212 * 128      ;212 lines
 	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
 
 ;the vessel right
