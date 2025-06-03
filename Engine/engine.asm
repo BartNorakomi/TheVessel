@@ -21,10 +21,10 @@ MovementRoutineBlock:   equ 10
 MovementRoutine:        equ 11
 ObjectTable:
 ;           on?,  y,  x,  sprite restore table                                ,sprite data        ;put on frame ,movement routine block,  movement routine 
-Object1:  db  1,100,060 | dw Object1RestoreBackgroundTable,Object1RestoreTable,TheVesselrightidle_0 | db 0      ,MovementRoutinesBlock | dw VesselMovementRoutine
-Object2:  db  1,105,150 | dw Object2RestoreBackgroundTable,Object2RestoreTable,RedHeadBoyidle_0     | db 1      ,MovementRoutinesBlock | dw RedHeadBoyMovementRoutine
-Object3:  db  0,098,030 | dw Object3RestoreBackgroundTable,Object3RestoreTable,Girlidle_0           | db 2      ,MovementRoutinesBlock | dw GirlMovementRoutine
-Object4:  db  0,095,200 | dw Object4RestoreBackgroundTable,Object4RestoreTable,CapGirlidle_0        | db 3      ,MovementRoutinesBlock | dw CapGirlMovementRoutine
+Object1:  db  1,100,060 | dw Object1RestoreBackgroundTable,Object1RestoreTable,TheVesselrightidle_0 | db 255    ,MovementRoutinesBlock | dw VesselMovementRoutine
+Object2:  db  1,106,040 | dw Object3RestoreBackgroundTable,Object3RestoreTable,Girlidle_0           | db 255    ,MovementRoutinesBlock | dw GirlMovementRoutine
+Object3:  db  0,105,150 | dw Object2RestoreBackgroundTable,Object2RestoreTable,RedHeadBoyidle_0     | db 255    ,MovementRoutinesBlock | dw RedHeadBoyMovementRoutine
+Object4:  db  0,095,200 | dw Object4RestoreBackgroundTable,Object4RestoreTable,CapGirlidle_0        | db 255    ,MovementRoutinesBlock | dw CapGirlMovementRoutine
 
 LenghtObject: equ Object2-Object1
 

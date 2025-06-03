@@ -1,0 +1,54 @@
+savedata:
+gamesplayed:  ds  1 ;increases after leaving a game. msx=255
+DateCurrentLogin: ds
+DatePreviousLogin: ds
+DailyContinuesUsed: db 0 ;bit 0=readfighter,bit 1=basketball,bit 2=blox,bit 4=bikerace
+HighScoreRoadFighter: db 0
+HighScoreBasketball: db 0
+HighScoreBlox: db 0
+HighScoreBikeRace: db 0
+
+at start of game previous DateCurrentLogin is stored as DatePreviousLogin and current day is saved DateCurrentLogin
+each game has 1 continue per day
+when booting the rom a check is made to see if DateCurrentLogin is DatePreviousLogin,
+if not all continues (DailyContinuesUsed) are reset
+===========================================================
+The girl has a quirky, steampunk flair with a playful tone. 
+the capgirl is a savvy, confident mentor with a bold edge. 
+and the gingerboy is a cocky yet enthusiastic rival.
+===========================================================
+
+The (Steampunk) Girl (appears after 2 games, Convgirl bit 0):
+Girl: "Well, well, look who’s back! Haven’t seen your gears spinning in ages, mate!"
+You: "Oh, you know, been tangled up in life’s cogs and wheels!"
+Girl: "Hold onto your hat—some ginger whirlwind’s been smashing your records lately, leaving a trail of sparks!"
+You: "Seriously?!"
+Girl: "Oh, absolutely! You’ve got a fiery challenger on your hands—bet he’ll strut in later to stir the pot!"
+
+The (Steampunk) Girl (Convgirl bit 1):
+Girl: "Get out there and crank those record-breaking engines, you legend!"
+
+The Capgirl (appears after 4 games, ConvCapgirl bit 0):
+Capgirl: "Well, hotshot, what’s the word on the street with you today?"
+You: "I’m doing alright, I guess."
+Capgirl: "Ha! Just alright? Listen up—each game drops you one free continue daily, straight from the pro playbook!"
+You: "Whoa, didn’t catch that one!"
+Capgirl: "Smart move? Save it for your killer run—trust me, it’s gold advice!"
+
+The Capgirl (ConvCapgirl bit 2, set if gamesplayed > 6):
+Capgirl: "You’re absolutely obliterating it out there, superstar!"
+You: "Oh, thanks, that’s cool!"
+Capgirl: "Hold the phone—I spotted a recruiter prowling around this morning!"
+You: "A recruiter? What’s the deal?"
+Capgirl: "Yeah, that ginger guy’s been shattering records, and it’s drawn some big-shot attention—watch out!"
+
+The Capgirl (ConvCapgirl bit 3):
+Capgirl: "Rumor has it there’s a hidden backroom with a mind-blowing game! Nail an average score above 80% across all games, 
+and you’re in—exclusive access, baby!"
+
+The Gingerboy (appears after 8 games):
+Gingerboy: "Check this out—my average score’s a slick 75%! Pretty epic, huh?"
+You: "Whoa, that’s insane!"
+Gingerboy: "You bet! Snagged a recruiter’s eye, and he’s hyping this backroom game—beat it, and it’s a ticket to some 
+top-secret government gig. I’m on fire!"
+
