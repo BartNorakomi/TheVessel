@@ -7,14 +7,275 @@ LevelEngine:
 ;  call  BackdropGreen
   call  HandleObjects
 ;  call  BackdropBlack
+  call  HandleConversations
 
   xor   a
-  ld    hl,vblankintflag    ;this way we speed up the engine when not scrolling
+  ld    hl,vblankintflag
   .checkflag:
   cp    (hl)
   jr    z,.checkflag
   ld    (hl),a
   jp    LevelEngine
+
+
+ConversationStep:           db  0
+YConversationWindowCentre:  db  80
+YLineintOn:                 ds  1
+YLineintOff:                ds  1
+YCurrentLineint:            ds  1
+PageOnLineInt:              ds  1
+CurrentPortraitPalette: incbin "..\grapx\characters\girl\portraittotal.SC5",$7680+7,32
+
+HandleConversations:
+	ld    a,(PageOnNextVblank)                ;we only start a conversation when current page=0
+  cp    0*32 + 31
+  ret   nz
+  ld    a,(StartConversation?)
+  or    a
+  ret   z
+  xor   a
+  ld    (StartConversation?),a
+  ld    (ConversationStep),a
+  ld    a,(YConversationWindowCentre)
+  ld    (Fill2BlackLinesGoingUp+dy),a
+  ld    (Fill2BlackLinesGoingDown+dy),a
+  ld    a,0*32 + 31
+  ld    (PageOnLineInt),a
+  .engine:
+
+  call  .HandleStep  
+
+  xor   a
+  ld    hl,vblankintflag
+  .checkflag:
+  cp    (hl)
+  jr    z,.checkflag
+  ld    (hl),a
+  jp    .engine
+
+.HandleStep:
+  ld    a,(ConversationStep)
+  or    a
+  jp    z,.Step0            ;open up black window 2 lines per int (page 0 and page 1)
+  dec   a
+  jp    z,.Step1            ;put portrait in mirror page
+  dec   a
+  jp    z,.Step2            ;enable palette split 
+  dec   a
+  jp    z,.Step3            ;swap page
+  dec   a
+  jp    z,.Step4
+  ret
+
+  .Step4:
+  ;lineinterrupt OFF
+;  ld    a,(VDP_0)           ;reset ei1
+;  and   %1110 1111
+;  ld    (VDP_0),a           ;ei0 (which is default at boot) only checks vblankint
+;  di
+;  out   ($99),a
+;  ld    a,128
+;  ei
+;  out   ($99),a
+
+;  pop   de
+  ret
+
+  .Step3:                   ;swap page
+	ld    a,(PageOnLineInt)
+  xor   32
+	ld    (PageOnLineInt),a
+
+  ld    a,(ConversationStep)
+  inc   a
+  ld    (ConversationStep),a
+  ret
+
+  .Step2:                   ;enable palette split 
+  ld    a,(YConversationWindowCentre)
+  sub   a,55
+  ld    (YLineintOn),a
+  add   a,103
+  ld    (YLineintOff),a
+
+  ld    a,(VDP_0)           ;set ei1
+  or    16                  ;ei1 checks for lineint and vblankint
+  ld    (VDP_0),a           ;ei0 (which is default at boot) only checks vblankint
+  di
+  out   ($99),a
+  ld    a,128
+  out   ($99),a
+
+  ld    a,(YLineintOn)
+  ld    (YCurrentLineint),a
+  out   ($99),a
+  ld    a,19+128            ;set lineinterrupt height
+  ei
+  out   ($99),a 
+
+  ld    a,(ConversationStep)
+  inc   a
+  ld    (ConversationStep),a
+  ret
+
+  .Step1:                   ;put portrait in mirror page
+  call  PutPortraitInMirrorPage
+  ld    a,(ConversationStep)
+  inc   a
+  ld    (ConversationStep),a
+  ret
+
+  .Step0:                       ;open up black window 2 lines per int (page 0 and page 1)
+  xor   a
+  ld    (Fill2BlackLinesGoingUp+dPage),a
+  ld    hl,Fill2BlackLinesGoingUp
+  call  DoCopy
+  xor   a
+  ld    (Fill2BlackLinesGoingDown+dPage),a
+  ld    hl,Fill2BlackLinesGoingDown
+  call  DoCopy
+
+  ld    a,1
+  ld    (Fill2BlackLinesGoingUp+dPage),a
+  ld    hl,Fill2BlackLinesGoingUp
+  call  DoCopy
+  ld    a,1
+  ld    (Fill2BlackLinesGoingDown+dPage),a
+  ld    hl,Fill2BlackLinesGoingDown
+  call  DoCopy
+
+  ld    a,(Fill2BlackLinesGoingUp+dy)
+  sub   a,2
+  ld    (Fill2BlackLinesGoingUp+dy),a
+  ld    a,(Fill2BlackLinesGoingDown+dy)
+  add   a,2
+  ld    (Fill2BlackLinesGoingDown+dy),a
+
+  ld    b,a
+  ld    a,(YConversationWindowCentre)
+  add   a,54
+  cp    b
+  ret   nz
+
+  ld    a,(ConversationStep)
+  inc   a
+  ld    (ConversationStep),a
+  ret
+
+PutPortraitInMirrorPage:  
+  ;set de->dx, dy
+  ld    a,(YConversationWindowCentre)
+  sub   a,50
+  ld    d,0
+  ld    e,a
+  ld    hl,128
+  call  MultiplyHlWithDE      ;HL = result
+  ld    de,$0000 + (000*128) + (002/2) - 128
+  add   hl,de
+  ;put portrait in page 0 if current page is 1. put portrait in page 1 if current page is 0. (add $0000 to put portrait in page 0, add $8000 to put portrait in page 1)
+  ld    a,(PageOnLineInt)
+  cp    0*32 + 31
+  ld    de,$8000
+  jr    z,.PageFound
+  ld    de,$0000
+  .PageFound:
+  add   hl,de
+  ex    de,hl
+
+  ld    hl,$4000 + (000*128) + (000/2) - 128
+;  ld    de,$0000 + (010*128) + (002/2) - 128
+  ld    bc,$0000 + (102*256) + (102/2)
+  ld    a,GirlPortraitGfxBlock            ;block to copy graphics from
+  jp    CopyRomToVram                   ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
+
+LineInt:
+  ld    a,(YCurrentLineint)
+  ld    b,a
+  ld    a,(YLineintOn)
+  cp    b
+  jp    z,.LineIntOn
+
+  .LineIntOff:
+  ld    hl,CurrentPalette
+  call  SetPalette
+
+;  ld    a,2               ;Set Status register #2
+;  out   ($99),a
+;  ld    a,15+128          ;we are about to check for HR
+;  out   ($99),a
+ 
+;  .Waitline:                ;wait until end of HBLANK
+;  in    a,($99)           ;Read Status register #2
+;  and   %0010 0000        ;bit to check for HBlank detection
+;  jr    z,.Waitline
+  
+  ld    a,0*32+31         ;set page 0
+  out   ($99),a
+  ld    a,2+128
+  out   ($99),a
+
+;  xor   a                 ;set s#0
+;  out   ($99),a
+;  ld    a,15+128
+;  out   ($99),a
+
+  ld    a,(YLineintOn)      ;set y lineint on
+  ld    (YCurrentLineint),a  
+  out   ($99),a
+  ld    a,19+128            ;set lineinterrupt height
+  out   ($99),a 
+
+  pop   af 
+  ei
+  ret  
+
+  .LineIntOn:
+  ld    hl,CurrentPortraitPalette
+  call  SetPalette
+
+;  ld    a,2               ;Set Status register #2
+;  out   ($99),a
+;  ld    a,15+128          ;we are about to check for HR
+;  out   ($99),a
+ 
+;  .Waitline2:                ;wait until end of HBLANK
+;  in    a,($99)           ;Read Status register #2
+;  and   %0010 0000        ;bit to check for HBlank detection
+;  jr    z,.Waitline2
+
+  ld    a,(PageOnLineInt)
+  out   ($99),a
+  ld    a,2+128
+  out   ($99),a
+
+;  xor   a                 ;set s#0
+;  out   ($99),a
+;  ld    a,15+128
+;  out   ($99),a
+
+  ld    a,(YLineintOff)     ;set y lineint off
+  ld    (YCurrentLineint),a  
+  out   ($99),a
+  ld    a,19+128            ;set lineinterrupt height
+  out   ($99),a 
+
+  pop   af 
+  ei
+  ret  
+
+Fill2BlackLinesGoingUp:
+	db		0,0,0,0
+	db		0,0,100,0
+	db		0,1,2,0
+	db		%1111 1111,0,%1100 0000	
+Fill2BlackLinesGoingDown:
+	db		0,0,0,0
+	db		0,0,100,0
+	db		0,1,2,0
+	db		%1111 1111,0,%1100 0000	
+
+
+
 
 PutOnFrame:             equ 9
 MovementRoutineBlock:   equ 10
@@ -878,20 +1139,56 @@ AssignOrderByY:
 
 vblankintflag:  db  0
 ;lineintflag:  db  0
+;InterruptHandler:
+;  push  af
+
+;  xor   a                               ;set s#0
+;  out   ($99),a
+;  ld    a,15+128
+;  out   ($99),a
+;  in    a,($99)                         ;check and acknowledge vblank interrupt
+;  rlca
+;  jp    c,vblank                        ;vblank detected, so jp to that routine
+ 
+;  pop   af 
+;  ei
+;  ret
+
 InterruptHandler:
   push  af
-
-  xor   a                               ;set s#0
+  
+  ld    a,1               ;set s#1
   out   ($99),a
   ld    a,15+128
   out   ($99),a
-  in    a,($99)                         ;check and acknowledge vblank interrupt
+  in    a,($99)           ;check and acknowledge line interrupt
+  rrca
+  jp    c,lineint         ;ScoreboardSplit/BorderMaskingSplit
+  
+  xor   a                 ;set s#0
+  out   ($99),a
+  ld    a,15+128
+  out   ($99),a
+  in    a,($99)           ;check and acknowledge vblank interrupt
   rlca
-  jp    c,vblank                        ;vblank detected, so jp to that routine
+  jp    c,vblank          ;vblank detected, so jp to that routine
  
   pop   af 
   ei
   ret
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 DivideBCbyDE:
 ;

@@ -20,9 +20,9 @@ InitiateGame:
 INCLUDE "RePlayer.asm"
 
 ArcadeHall1Palette:                    ;palette file
-  incbin "..\grapx\arcadehall\arcade1.SC5",$7680+7,32      
+  incbin "..\grapx\arcadehall\arcade1.SC5",$7680+7,32
 ArcadeHall2Palette:                    ;palette file
-  incbin "..\grapx\arcadehall\arcade2.SC5",$7680+7,32      
+  incbin "..\grapx\arcadehall\arcade2.SC5",$7680+7,32
 LoadArcadeGfx:
   call  SetArcadeGfxPage0
   ;copy from page 0 to page 2
@@ -41,8 +41,14 @@ LoadArcadeGfx:
   ld    hl,CopyPageToPage212High
   call  DoCopy
   ld    hl,ArcadeHall1Palette
+	ld		de,CurrentPalette
+	ld		bc,16*2
+	ldir
+  ld    hl,CurrentPalette
   call  SetPalette
   ret
+
+CurrentPalette:	ds	16*2
 
 SetArcadeGfxPage0:
   ld    hl,$4000 + (000*128) + (000/2) - 128
@@ -765,6 +771,8 @@ outix8:
 
 PlayerSpriteStand: 	dw  Rstanding
 PlayerAniCount:     db  0,0
+StartConversation?:	db	0
+
 
 endenginepage3:
 dephase
@@ -837,7 +845,6 @@ oldControls: 				        rb    1
 base: 											equ $4000
 spatpointer:                rb		2
 PageOnNextVblank:           rb    1
-
 
 endenginepage3variables:  equ $+enginepage3length
 org variables

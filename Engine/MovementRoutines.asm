@@ -1,4 +1,12 @@
-;Rstanding
+;AnimatePlayerRunning
+;CheckCollisionNPCs
+;MovePlayer
+
+;VesselMovementRoutine
+;HostMovementRoutine
+;GirlMovementRoutine
+;CapGirlMovementRoutine
+;RedHeadBoyMovementRoutine
 
 MovementRoutinesAddress:  equ $4000
 Phase MovementRoutinesAddress
@@ -247,6 +255,11 @@ PutSpritePose:
   ret
 
 GetMovementInBC:                            ;out bc=xy movement
+;
+; bit	7	  6	  5		    4		    3		    2		  1		  0
+;		  0	  0	  trig-b	trig-a	right	  left	down	up	(joystick)
+;		  F5	F1	'M'		  space	  right	  left	down	up	(keyboard)
+;
   ld    bc,0                                ;b=x, c=y
 	ld		a,(Controls)
 	bit		0,a           ;cursor up pressed ?
@@ -294,6 +307,18 @@ ret
 
 Girlidle_0:        db    npcsframelistblock, npcsspritedatablock | dw    npcs_0_0
 GirlMovementRoutine:
+;
+; bit	7	  6	  5		    4		    3		    2		  1		  0
+;		  0	  0	  trig-b	trig-a	right	  left	down	up	(joystick)
+;		  F5	F1	'M'		  space	  right	  left	down	up	(keyboard)
+;
+	ld		a,(NewPrContr)
+	bit		4,a           ;trig a pressed ?
+  jr    z,.EndCheckTrigAPressed
+  ld    a,1
+  ld    (StartConversation?),a
+  .EndCheckTrigAPressed:
+
   ld    hl,Girlidle_0
   call  PutSpritePose                       ;in hl=spritepose, out writes spritepose to objecttable
 
