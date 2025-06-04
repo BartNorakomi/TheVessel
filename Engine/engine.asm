@@ -18,13 +18,16 @@ LevelEngine:
   jp    LevelEngine
 
 
-ConversationStep:           db  0
-YConversationWindowCentre:  db  80
-YLineintOn:                 ds  1
-YLineintOff:                ds  1
-YCurrentLineint:            ds  1
-PageOnLineInt:              ds  1
-CurrentPortraitPalette: incbin "..\grapx\characters\girl\portraittotal.SC5",$7680+7,32
+ConversationStep:             db  0
+YConversationWindowCentre:    db  80
+YLineintOn:                   ds  1
+YLineintOff:                  ds  1
+YCurrentLineint:              ds  1
+PageOnLineInt:                ds  1
+FadeStep:                     ds  1
+FadeIn?:                      ds  1
+CurrentPortraitPalette:       incbin "..\grapx\characters\girl\portraittotal.SC5",$7680+7,32
+CurrentPortraitPaletteFaded:  ds 32,0
 
 HandleConversations:
 	ld    a,(PageOnNextVblank)                ;we only start a conversation when current page=0
@@ -42,7 +45,7 @@ HandleConversations:
   ld    a,0*32 + 31
   ld    (PageOnLineInt),a
   .engine:
-
+  call  PopulateControls  
   call  .HandleStep  
 
   xor   a
@@ -58,27 +61,150 @@ HandleConversations:
   or    a
   jp    z,.Step0            ;open up black window 2 lines per int (page 0 and page 1)
   dec   a
-  jp    z,.Step1            ;put portrait in mirror page
+  jp    z,.Step1            ;set ei1 (enable linesplit)
   dec   a
-  jp    z,.Step2            ;enable palette split 
+  jp    z,.Step2            ;put portrait in mirror page
   dec   a
   jp    z,.Step3            ;swap page
   dec   a
-  jp    z,.Step4
+  jp    z,.Step4            ;enable fade in portrait
+  dec   a
+  jp    z,.Step5            ;fade in portrait
+  dec   a
+  jp    z,.Step6            ;wait trig a
+  dec   a
+  jp    z,.Step7            ;enable fade out portrait
+  dec   a
+  jp    z,.Step8            ;fade out portrait
+  dec   a
+  jp    z,.Step6            ;wait trig a
+  dec   a
+  jp    z,.Step10            ;go back to step 4
+
+;  jp    z,.StepXXX            ;turn off lineint and go back to game
   ret
 
-  .Step4:
-  ;lineinterrupt OFF
-;  ld    a,(VDP_0)           ;reset ei1
-;  and   %1110 1111
-;  ld    (VDP_0),a           ;ei0 (which is default at boot) only checks vblankint
-;  di
-;  out   ($99),a
-;  ld    a,128
-;  ei
-;  out   ($99),a
+  .Step10:                         ;go back to step 4
+  ld    a,4
+  ld    (ConversationStep),a
+  ret
 
-;  pop   de
+  .StepXXX:
+  ;lineinterrupt OFF
+  ld    a,(VDP_0)           ;reset ei1
+  and   %1110 1111
+  ld    (VDP_0),a           ;ei0 (which is default at boot) only checks vblankint
+  di
+  out   ($99),a
+  ld    a,128
+  ei
+  out   ($99),a
+
+  pop   de
+  ret
+
+  .Step8:                         ;fade out portrait (CurrentPortraitPalette=actual palette, CurrentPortraitPaletteFaded=faded palette)
+  ld    a,(FadeStep)
+  inc   a
+  ld    (FadeStep),a
+  cp    8
+  jr    z,.EndFade
+  ld    d,a                       ;palette step (0=normal map palette, 7=completely black)
+  ld    ix,CurrentPortraitPaletteFaded  ;faded palette
+  jr    .SetPaletteFadeStep
+
+  .Step7:                   ;enable fade out portrait
+  ld    a,0                 ;palette step (0=normal map palette, 7=completely black)
+  ld    (FadeStep),a
+  ld    a,0
+  ld    (FadeIn?),a
+
+  ld    a,(ConversationStep)
+  inc   a
+  ld    (ConversationStep),a
+  ret
+
+  .Step6:
+;
+; bit	7	  6	  5		    4		    3		    2		  1		  0
+;		  0	  0	  trig-b	trig-a	right	  left	down	up	(joystick)
+;		  F5	F1	'M'		  space	  right	  left	down	up	(keyboard)
+;
+	ld		a,(NewPrContr)
+	bit		4,a           ;trig a pressed ?
+  ret   z
+  ld    a,(ConversationStep)
+  inc   a
+  ld    (ConversationStep),a
+  ret
+
+  .Step5:                         ;fade in portrait (CurrentPortraitPalette=actual palette, CurrentPortraitPaletteFaded=faded palette)
+  ld    a,(FadeStep)
+  dec   a
+  ld    (FadeStep),a
+  cp    -1
+  jr    z,.EndFade
+  ld    d,a                       ;palette step (0=normal map palette, 7=completely black)
+  ld    ix,CurrentPortraitPaletteFaded  ;faded palette
+
+  .SetPaletteFadeStep:
+  ld    b,16                      ;16 colors
+  ld    hl,CurrentPortraitPalette ;actual palette
+  .loop2:                           ;in d=palette step, b=amount of colors
+  ;blue
+  ld    a,(hl)                    ;0 R2 R1 R0 0 B2 B1 B0
+  and   %0000 1111                ;only blue
+  sub   a,d                       ;extract palette step / apply darkening
+  jr    nc,.EndCheckOverFlowBlue  ;overflow ?
+  xor   a                         ;no green
+  .EndCheckOverFlowBlue:
+  ld    c,a                       ;store blue in c
+  ;red
+  ld    a,(hl)                    ;0 R2 R1 R0 0 B2 B1 B0
+  and   %1111 0000                ;only red
+  srl   a                         ;shift all bits 1 step right
+  srl   a                         ;shift all bits 1 step right
+  srl   a                         ;shift all bits 1 step right
+  srl   a                         ;shift all bits 1 step right
+  sub   a,d                       ;extract palette step / apply darkening
+  jr    nc,.EndCheckOverFlowRed   ;overflow ?
+  xor   a                         ;no green
+  .EndCheckOverFlowRed:
+  add   a,a                       ;shift all bits 1 step left
+  add   a,a                       ;shift all bits 1 step left
+  add   a,a                       ;shift all bits 1 step left
+  add   a,a                       ;shift all bits 1 step left
+  or    a,c                       ;add blue to red
+  ld    (ix),a                    ;store new blue and red in CurrentPortraitPaletteFaded
+  ;green
+  inc   hl
+  ld    a,(hl)                    ;0 0 0 0 0 G2 G1 G0
+  sub   a,d                       ;extract palette step / apply darkening
+  jr    nc,.EndCheckOverFlowGreen ;overflow ?
+  xor   a                         ;no green
+  .EndCheckOverFlowGreen:
+  inc   ix
+  ld    (ix),a                    ;store new green in CurrentPortraitPaletteFaded
+
+  inc   hl  
+  inc   ix  
+  djnz  .loop2
+  ret
+  .EndFade:
+  ld    a,(ConversationStep)
+  inc   a
+  ld    (ConversationStep),a
+  ret
+
+  .Step4:                   ;enable fade in portrait
+  ld    a,7                 ;palette step (0=normal map palette, 7=completely black)
+  ld    (FadeStep),a
+  ld    a,1
+  ld    (FadeIn?),a
+
+  ld    a,(ConversationStep)
+  inc   a
+  ld    (ConversationStep),a
   ret
 
   .Step3:                   ;swap page
@@ -91,11 +217,18 @@ HandleConversations:
   ld    (ConversationStep),a
   ret
 
-  .Step2:                   ;enable palette split 
+  .Step2:                   ;put portrait in mirror page
+  call  PutPortraitInMirrorPage
+  ld    a,(ConversationStep)
+  inc   a
+  ld    (ConversationStep),a
+  ret
+
+  .Step1:                   ;enable palette split 
   ld    a,(YConversationWindowCentre)
   sub   a,55
   ld    (YLineintOn),a
-  add   a,103
+  add   a,104
   ld    (YLineintOff),a
 
   ld    a,(VDP_0)           ;set ei1
@@ -113,13 +246,6 @@ HandleConversations:
   ei
   out   ($99),a 
 
-  ld    a,(ConversationStep)
-  inc   a
-  ld    (ConversationStep),a
-  ret
-
-  .Step1:                   ;put portrait in mirror page
-  call  PutPortraitInMirrorPage
   ld    a,(ConversationStep)
   inc   a
   ld    (ConversationStep),a
@@ -189,6 +315,9 @@ PutPortraitInMirrorPage:
   jp    CopyRomToVram                   ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
 
 LineInt:
+  push  bc
+  push  hl
+
   ld    a,(YCurrentLineint)
   ld    b,a
   ld    a,(YLineintOn)
@@ -225,12 +354,14 @@ LineInt:
   ld    a,19+128            ;set lineinterrupt height
   out   ($99),a 
 
+  pop   hl
+  pop   bc
   pop   af 
   ei
   ret  
 
   .LineIntOn:
-  ld    hl,CurrentPortraitPalette
+  ld    hl,CurrentPortraitPaletteFaded
   call  SetPalette
 
 ;  ld    a,2               ;Set Status register #2
@@ -259,6 +390,8 @@ LineInt:
   ld    a,19+128            ;set lineinterrupt height
   out   ($99),a 
 
+  pop   hl
+  pop   bc
   pop   af 
   ei
   ret  
@@ -1001,8 +1134,6 @@ SetSF2DisplayPage:
 
 
 
-vblankintflag2: ds 1
-PreviousVblankIntFlag:  db  1
 page1bank:  ds  1
 page2bank:  ds  1
 vblank:
@@ -1017,7 +1148,6 @@ vblank:
   push  bc
   push  de
   push  hl
-
 
   call  RePlayer_Tick                 ;initialise, load samples
 
@@ -1583,47 +1713,6 @@ SetNumber16BitCastle:                   ;in hl=number (16bit)
   ld    (iy+1),255                      ;end text
   ret
 
-
-
-
-
-
-
-
-EnterSpecificRoutineInExtraRoutines:
-  ld    (.SelfModifyingCodeRoutine),hl
-
-	ld		a,(memblocks.1)                 ;save page 1 block settings
-	push  af
-	ld		a,(memblocks.2)                 ;save page 2 block settings
-	push  af
-  in    a,($a8)      
-  push  af                              ;save ram/rom page settings 
-
-  ld    a,(slot.page12rom)              ;all RAM except page 1 and 2
-  out   ($a8),a
-
-;  ld    a,ExtraRoutinesCodeBlock       ;Map block
-  call  block12                         ;CARE!!! we can only switch block34 if page 1 is in rom  
-
-  .SelfModifyingCodeRoutine:	equ	$+1
-  call  $ffff
-
-  pop   af
-  out   ($a8),a                         ;restore ram/rom page settings     
-  pop   af
-  call  block34                         ;CARE!!! we can only switch block34 if page 1 is in rom  
-  pop   af
-  call  block12                         ;CARE!!! we can only switch block34 if page 1 is in rom    
-
-  xor   a
-  ld    (vblankintflag),a
-;  ld    (GameStatus),a                  ;0=in game, 1=hero overview menu, 2=castle overview, 3=battle, 4=title screen
-  ld    hl,0
-;  ld    (CurrentCursorSpriteCharacter),hl
-;  jp    EnableScrollScreen
-
-	
 putsprite:
 	xor		a				;page 0/1
 	ld		hl,sprattaddr	;sprite attribute table in VRAM ($17600)
