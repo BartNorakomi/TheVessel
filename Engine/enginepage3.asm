@@ -445,6 +445,30 @@ DoCopy:
 	dw    $a3ed,$a3ed,$a3ed
   ret
 
+WaitVdpReady:
+  ld    a,32
+  di
+  out   ($99),a
+  ld    a,17+128
+  ei
+  out   ($99),a
+  ld    c,$9b
+.vdpready:
+  ld    a,2
+  di
+  out   ($99),a
+  ld    a,15+128
+  out   ($99),a
+  in    a,($99)
+  rra
+  ld    a,0
+  out   ($99),a
+  ld    a,15+128
+  ei
+  out   ($99),a
+  jr    c,.vdpready
+  ret
+
 currentpage:                ds  1
 sprcoltableaddress:         ds  2
 spratttableaddress:         ds  2

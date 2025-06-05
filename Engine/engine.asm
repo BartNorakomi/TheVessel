@@ -19,7 +19,7 @@ LevelEngine:
 
 
 ConversationStep:             db  0
-YConversationWindowCentre:    db  80
+YConversationWindowCentre:    db  70
 YLineintOn:                   ds  1
 YLineintOff:                  ds  1
 YCurrentLineint:              ds  1
@@ -102,11 +102,26 @@ HandleConversations:
   dec   a
   jp    z,.Step8            ;fade out portrait
   dec   a
-  jp    z,.Step6            ;wait trig a
+  jp    z,.Step9            ;clear window, swap page and clear window again
   dec   a
-  jp    z,.Step10            ;go back to step 4
+;  jp    z,.Step10            ;go back to step 4
 
-;  jp    z,.StepXXX            ;turn off lineint and go back to game
+  jp    z,.Step11           ;turn off lineint and set top and bot y for restore black lines
+  dec   a
+  jp    z,.Step12           ;close  black window 2 lines per int (page 0 and page 1)
+  dec   a
+  jp    z,.Step13            ;back to game
+  ret
+
+  .Step9:                         ;clear window, swap page and clear window again
+  call  ClearConversationWindowInMirrorPage
+	ld    a,(PageOnLineInt)
+  xor   32
+	ld    (PageOnLineInt),a
+  call  ClearConversationWindowInMirrorPage
+  ld    a,(ConversationStep)
+  inc   a
+  ld    (ConversationStep),a
   ret
 
   .Step10:                         ;go back to step 4
@@ -114,8 +129,53 @@ HandleConversations:
   ld    (ConversationStep),a
   ret
 
-  .StepXXX:
-  ;lineinterrupt OFF
+  .Step13:                  ;back to game
+  pop   de
+  ret
+
+  .Step12:                  ;close  black window 2 lines per int (page 0 and page 1)
+  xor   a
+  ld    (Restore2BlackLinesGoingUp+dPage),a
+  ld    hl,Restore2BlackLinesGoingUp
+  call  DoCopy
+  xor   a
+  ld    (Restore2BlackLinesGoingDown+dPage),a
+  ld    hl,Restore2BlackLinesGoingDown
+  call  DoCopy
+
+  ld    a,1
+  ld    (Restore2BlackLinesGoingUp+dPage),a
+  ld    hl,Restore2BlackLinesGoingUp
+  call  DoCopy
+  ld    a,1
+  ld    (Restore2BlackLinesGoingDown+dPage),a
+  ld    hl,Restore2BlackLinesGoingDown
+  call  DoCopy
+
+  ld    a,(Restore2BlackLinesGoingUp+dy)
+  add   a,2
+  ld    (Restore2BlackLinesGoingUp+dy),a
+  ld    (Restore2BlackLinesGoingUp+sy),a
+  ld    a,(Restore2BlackLinesGoingDown+dy)
+  sub   a,2
+  ld    (Restore2BlackLinesGoingDown+dy),a
+  ld    (Restore2BlackLinesGoingDown+sy),a
+
+  ld    b,a
+  ld    a,(YConversationWindowCentre)
+  sub   a,2
+  cp    b
+  ret   nz
+
+  ld    a,(ConversationStep)
+  inc   a
+  ld    (ConversationStep),a
+  ret
+
+  .Step11:                  ;turn off lineint and set top and bot y for restore black lines
+  call  WaitVdpReady
+  call  WaitVblank
+  call  WaitVblank
   ld    a,(VDP_0)           ;reset ei1
   and   %1110 1111
   ld    (VDP_0),a           ;ei0 (which is default at boot) only checks vblankint
@@ -125,7 +185,16 @@ HandleConversations:
   ei
   out   ($99),a
 
-  pop   de
+  ld    a,(Fill2BlackLinesGoingUp+dy)
+  ld    (Restore2BlackLinesGoingUp+dy),a
+  ld    (Restore2BlackLinesGoingUp+sy),a
+  ld    a,(Fill2BlackLinesGoingDown+dy)
+  ld    (Restore2BlackLinesGoingDown+dy),a
+  ld    (Restore2BlackLinesGoingDown+sy),a
+
+  ld    a,(ConversationStep)
+  inc   a
+  ld    (ConversationStep),a
   ret
 
   .Step8:                         ;fade out portrait (CurrentPortraitPalette=actual palette, CurrentPortraitPaletteFaded=faded palette)
@@ -445,7 +514,16 @@ Fill2BlackLinesGoingDown:
 	db		0,0,100,0
 	db		0,1,2,0
 	db		%1111 1111,0,%1100 0000	
-
+Restore2BlackLinesGoingUp:
+	db		0,0,0,2
+	db		0,0,100,0
+	db		0,1,2,0
+	db		0,0,$d0	
+Restore2BlackLinesGoingDown:
+	db		0,0,0,2
+	db		0,0,100,0
+	db		0,1,2,0
+	db		0,0,$d0	
 
 
 
@@ -1581,6 +1659,29 @@ ClearTextInMirrorPage:
   ld    hl,ClearText
   call  DoCopy
   ret
+
+ClearConversationWindowInMirrorPage:
+  ld    a,(YLineintOn)
+  add   a,5
+  ld    (ClearConversationWindow+dy),a                ;set dy of text
+
+  ld    a,(PageOnLineInt)
+  cp    0*32 + 31
+  ld    a,1
+  jr    z,.PageFound
+  xor   a
+  .PageFound:
+  ld    (ClearConversationWindow+dPage),a                ;set dy of text
+
+  ld    hl,ClearConversationWindow
+  call  DoCopy
+  ret
+
+ClearConversationWindow:
+	db		0,0,0,0
+	db		0,0,0,0
+	db		0,1,102,0
+	db		%1111 1111,0,%1100 0000	
 
 ClearText:
 	db		0,0,0,0
