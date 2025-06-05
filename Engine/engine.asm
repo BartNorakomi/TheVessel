@@ -26,8 +26,30 @@ YCurrentLineint:              ds  1
 PageOnLineInt:                ds  1
 FadeStep:                     ds  1
 FadeIn?:                      ds  1
-CurrentPortraitPalette:       incbin "..\grapx\characters\girl\portraittotal.SC5",$7680+7,32
 CurrentPortraitPaletteFaded:  ds 32,0
+
+CurrentPortraitPalette:       incbin "..\grapx\characters\girl\portraittotal.SC5",$7680+7,32
+PortraitBlock:                db  GirlPortraitGfxBlock
+;CurrentPortraitPalette:       incbin "..\grapx\characters\thevessel\portraittotal.SC5",$7680+7,32
+;PortraitBlock:                db  TheVesselPortraitGfxBlock
+
+NPCConvBlock:                 db  NPCConv1Block
+NPCConvAddress:               dw  NPCConv1
+
+dxText:                       equ 110
+
+StartConversation:
+  ld    a,(slot.page12rom)              ;all RAM except page 1+2
+  out   ($a8),a      
+  ld    a,(NPCConvBlock)
+  call  block1234                       ;CARE!!! we can only switch block34 if page 1 is in rom  
+
+  ld    ix,(NPCConvAddress)
+  call  SetText                         ;in: ix->text
+  ld    a,(ConversationStep)
+  inc   a
+  ld    (ConversationStep),a
+  ret
 
 HandleConversations:
 	ld    a,(PageOnNextVblank)                ;we only start a conversation when current page=0
@@ -44,6 +66,7 @@ HandleConversations:
   ld    (Fill2BlackLinesGoingDown+dy),a
   ld    a,0*32 + 31
   ld    (PageOnLineInt),a
+  call  SetFontPage1Y212                ;set font at (0,212) page 0
   .engine:
   call  PopulateControls  
   call  .HandleStep  
@@ -70,6 +93,8 @@ HandleConversations:
   jp    z,.Step4            ;enable fade in portrait
   dec   a
   jp    z,.Step5            ;fade in portrait
+  dec   a
+  jp    z,StartConversation            ;start conversation
   dec   a
   jp    z,.Step6            ;wait trig a
   dec   a
@@ -311,7 +336,7 @@ PutPortraitInMirrorPage:
   ld    hl,$4000 + (000*128) + (000/2) - 128
 ;  ld    de,$0000 + (010*128) + (002/2) - 128
   ld    bc,$0000 + (102*256) + (102/2)
-  ld    a,GirlPortraitGfxBlock            ;block to copy graphics from
+  ld    a,(PortraitBlock)            ;block to copy graphics from
   jp    CopyRomToVram                   ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
 
 LineInt:
@@ -322,11 +347,29 @@ LineInt:
   ld    b,a
   ld    a,(YLineintOn)
   cp    b
-  jp    z,.LineIntOn
+  jr    z,.LineIntOn
 
   .LineIntOff:
+  ld    a,(YLineintOn)      ;set y lineint on
+  ld    (YCurrentLineint),a  
+  out   ($99),a
+  ld    a,19+128            ;set lineinterrupt height
+  out   ($99),a 
+
+  ld    c,$9a
   ld    hl,CurrentPalette
-  call  SetPalette
+  ld    hl,CurrentPalette ;slight delay needed here
+  ld    hl,CurrentPalette ;slight delay needed here
+
+	xor		a                 ;start writing to palette value 0
+	out		($99),a
+	ld		a,16+128
+	out		($99),a
+
+  ld    a,0*32+31         ;set page 0
+  out   ($99),a
+  ld    a,2+128
+  out   ($99),a
 
 ;  ld    a,2               ;Set Status register #2
 ;  out   ($99),a
@@ -337,22 +380,18 @@ LineInt:
 ;  in    a,($99)           ;Read Status register #2
 ;  and   %0010 0000        ;bit to check for HBlank detection
 ;  jr    z,.Waitline
-  
-  ld    a,0*32+31         ;set page 0
-  out   ($99),a
-  ld    a,2+128
-  out   ($99),a
+
+;back to in game palette
+
+  outi | outi | outi | outi | outi | outi | outi | outi
+  outi | outi | outi | outi | outi | outi | outi | outi
+  outi | outi | outi | outi | outi | outi | outi | outi
+  outi | outi | outi | outi | outi | outi | outi | outi
 
 ;  xor   a                 ;set s#0
 ;  out   ($99),a
 ;  ld    a,15+128
 ;  out   ($99),a
-
-  ld    a,(YLineintOn)      ;set y lineint on
-  ld    (YCurrentLineint),a  
-  out   ($99),a
-  ld    a,19+128            ;set lineinterrupt height
-  out   ($99),a 
 
   pop   hl
   pop   bc
@@ -1412,68 +1451,68 @@ Backdrop:
   out   ($99),a	
   ret
 
+WaitVblank:
+  xor   a
+  ld    hl,vblankintflag
+  .checkflag:
+  cp    (hl)
+  jr    z,.checkflag
+  ld    (hl),a
+  ret
 
-
-SetText:                                ;in: b=dx, c=dy, hl->text
-  ld    a,212
-  ld    (PutLetter+sy),a                ;set dx of text
-  
-  ld    a,6
-  ld    (PutLetter+ny),a                ;set dx of text
-
-  ld    a,b
-  ld    (PutLetter+dx),a                ;set dx of text
-  ld    (TextDX),a
-  ld    a,c
+SetText:                                ;in: ix->text
+  ld    a,dxText                        ;dx text
+  ld    (PutLetter+dx),a                ;set dx of next letter
+  ld    a,(YLineintOn)
+  add   a,7
   ld    (PutLetter+dy),a                ;set dy of text
-  ld    (TextAddresspointer),hl  
-;  ld    a,6
-;  ld    (PutLetter+ny),a                ;set ny of text
-;  call  SetTextBuildingWhenClicked.SetText
-;  ld    a,5
-;  ld    (PutLetter+ny),a                ;set ny of text
-;  ret
-	ld		a,(activepage)                  ;we will copy to the page which was active the previous frame
-.SelfModifyingCodeSetTextInCurrentPage: equ $+1
-	xor		1                               ;now we switch and set our page
+
+	ld    a,(PageOnLineInt)
+  cp    1*32 + 31
+  ld    a,1
+  jr    z,.SetdPage
+  xor   a
+  .SetdPage:
   ld    (PutLetter+dPage),a             ;set page where to put text
 
-  ld    de,-1
-  ld    (TextPointer),de                ;increase text pointer
   .NextLetter:
-  ld    de,(TextPointer)
-  inc   de
-  ld    (TextPointer),de                ;increase text pointer
+  call  WaitVblank                      ;put 1 letter per interrupt
+  ld    a,212
+  ld    (PutLetter+sy),a                ;set sy of letter
 
-  ld    hl,(TextAddresspointer)
-
-;  ld    d,0
-;  ld    e,a
-  add   hl,de
-
-  ld    a,(hl)                          ;letter
-  cp    255                             ;end
+  ld    a,(ix)                          ;letter
+  cp    EndConversation                 ;end
   ret   z
-  cp    254                             ;next line
-  jp    z,.NextLine
+  cp    SwitchCharacter                 ;end
+  jp    z,GoSwitchCharacter
 
+  sub   $20
 
+  .FindRow:
+  sub   32                              ;32 symbols per row
+  jr    c,.RowFound
+  push  af
+  ld    a,(PutLetter+sy)                ;set sy of letter
+  add   a,13                            ;height of each symbol/row
+  ld    (PutLetter+sy),a                ;set sy of letter
+  pop   af
+  jr    .FindRow
+  .RowFound:
 
-
-  sub   $41
-  ld    hl,.TextCoordinateTable  
   add   a,a                             ;*2
+  add   a,a                             ;*4
+  add   a,a                             ;*8
+  ld    (PutLetter+sx),a                ;set sx of letter
+
+  ;set nx
+  ld    a,(ix)                          ;letter
+  sub   $20
+  ld    hl,NXPerSymbol
   ld    d,0
   ld    e,a
-
   add   hl,de
-  
-  .GoPutLetter:
-  ld    a,(hl)                          ;sx
-  ld    (PutLetter+sx),a                ;set sx of letter
-  inc   hl
-  ld    a,(hl)                          ;nx
-  ld    (PutLetter+nx),a                ;set nx of letter
+  ld    a,(hl)
+  ld    (PutLetter+nx),a
 
   ld    hl,PutLetter
   call  DoCopy
@@ -1481,100 +1520,126 @@ SetText:                                ;in: b=dx, c=dy, hl->text
   ld    hl,PutLetter+nx                 ;nx of letter
   ld    a,(PutLetter+dx)                ;dx of letter we just put
   add   a,(hl)                          ;add lenght
-  inc   a                               ;+1
   ld    (PutLetter+dx),a                ;set dx of next letter
-  
-  jp    .NextLetter
 
-  .Number:
-;  sub   TextNumber0                     ;hex value of number "0"
-  add   a,a                             ;*2
-  ld    d,0
-  ld    e,a  
+  inc   ix                              ;next letter
+  ld    a,(ix)
+  cp    $20                             ;is the next letter a space ? in other words, are we going to our next word ?
+  jp    nz,.NextLetter
 
-  ld    hl,.TextNumberSymbolsSXNX
-  add   hl,de
-  jr    .GoPutLetter
-  
-  .TextPercentageSymbol:
-  ld    hl,.TextPercentageSymbolSXNX  
-  jr    .GoPutLetter
+  ;the next letter is a space, we now need to calculate if the next word is gonna fit in the screen, if not put the next word on the next line
+  call  CalculateLenghtNextWord         ;out: b=total lenght next word
 
-  .TextPlusSymbol:
-  ld    hl,.TextPlusSymbolSXNX  
-  jr    .GoPutLetter
-
-  .TextMinusSymbol:
-  ld    hl,.TextMinusSymbolSXNX  
-  jr    .GoPutLetter
-
-  .TextApostrofeSymbol:
-  ld    hl,.TextApostrofeSymbolSXNX  
-  jr    .GoPutLetter
-
-  .TextColonSymbol:
-  ld    hl,.TextColonSymbolSXNX  
-  jr    .GoPutLetter
-
-  .TextSlashSymbol:
-  ld    hl,.TextSlashSymbolSXNX  
-  jr    .GoPutLetter
-
-  .TextQuestionMarkSymbol:
-  ld    hl,.TextQuestionMarkSymbolSXNX  
-  jr    .GoPutLetter
-
-  .TextCommaSymbol:
-  ld    hl,.TextCommaSymbolSXNX  
-  jr    .GoPutLetter
-
-  .TextDotSymbol:
-  ld    hl,.TextDotSymbolSXNX  
-  jr    .GoPutLetter
-
-  .TextOpeningParenthesisSymbol:
-  ld    hl,.TextOpeningParenthesisSymbolSXNX  
-  jr    .GoPutLetter
-
-  .TextClosingParenthesisSymbol:
-  ld    hl,.TextClosingParenthesisSymbolSXNX  
-  jr    .GoPutLetter
-
-  .Space:
   ld    a,(PutLetter+dx)                ;set dx of next letter
-  add   a,5
-  ld    (PutLetter+dx),a                ;set dx of next letter
-  jp    .NextLetter
+  add   a,b
+  jr    nc,.NextLetter                  ;put next word if it fits the line
 
-  .NextLine:
-  ld    a,(PutLetter+dy)                ;set dy of next letter
+  inc   ix                              ;skip the space, since we are going to the next row
+  ld    a,dxText                        ;dx text
+  ld    (PutLetter+dx),a                ;set dx of next letter
+
+  ld    a,(YLineintOff)
+  sub   a,6
+  ld    b,a
+  ld    a,(PutLetter+dy)                ;dy
+  add   a,12                            ;next row
+  ld    (PutLetter+dy),a                ;dy
+  cp    b
+  jp    c,.NextLetter
+
+  ;at this point the total text doesn't fit the box anymore, put character portrait in mirror page, clear text mirror page, wait for trig-a, swap page, and continue
+  call  ClearTextInMirrorPage
+  call  PutPortraitInMirrorPage
+  ;put conversation data back in block 1234
+  ld    a,(slot.page12rom)              ;all RAM except page 1+2
+  out   ($a8),a      
+  ld    a,(NPCConvBlock)
+  call  block1234                       ;CARE!!! we can only switch block34 if page 1 is in rom  
+  call  WaitTrigA                       ;wait until user presses trig-a  
+
+	ld    a,(PageOnLineInt)
+  xor   32
+	ld    (PageOnLineInt),a  
+  jp    SetText
+
+GoSwitchCharacter:
+  ret
+
+ClearTextInMirrorPage:
+  ld    a,(YLineintOn)
   add   a,7
-  ld    (PutLetter+dy),a                ;set dy of next letter
-  ld    a,(TextDX)
-  ld    (PutLetter+dx),a                ;set dx of next letter
-  jp    .NextLetter
+  ld    (ClearText+dy),a                ;set dy of text
 
-;                          0       1       2       3       4       5       6       7       8       9
-.TextNumberSymbolsSXNX: db 171,4,  175,2,  177,4,  181,3,  184,3,  187,3,  191,3,  195,4,  199,3,  203,3,  158,4  
-.TextSlashSymbolSXNX: db  158+49,4  ;"/"
-.TextPercentageSymbolSXNX: db  162+49,4 ;"%"
-.TextPlusSymbolSXNX: db  166+49,5 ;"+"
-.TextMinusSymbolSXNX: db  169+49,5 ;"-"
-.TextApostrofeSymbolSXNX: db  053,1  ;"'"
-.TextColonSymbolSXNX: db  008,1  ;":"
-.TextQuestionMarkSymbolSXNX:  db  223,3 ;"?"
-.TextCommaSymbolSXNX:  db  226,2 ;","
-.TextDotSymbolSXNX:  db  207,1 ;","
-.TextOpeningParenthesisSymbolSXNX:  db  133,2 ;"("
-.TextClosingParenthesisSymbolSXNX:  db  134,2 ;")"
+  ld    a,(PageOnLineInt)
+  cp    0*32 + 31
+  ld    a,1
+  jr    z,.PageFound
+  xor   a
+  .PageFound:
+  ld    (ClearText+dPage),a                ;set dy of text
 
-;                               A      B      C      D      E      F      G      H      I      J      K      L      M      N      O      P      Q      R      S      T      U      V      W      X      Y      Z
-.TextCoordinateTable:       db  084,3, 087,3, 090,3, 093,3, 096,3, 099,3, 102,4, 107,3, 110,3, 113,3, 116,4, 120,3, 123,5, 129,4, 133,3, 136,3, 139,3, 142,3, 145,3, 148,3, 151,3, 154,3, 157,5, 162,3, 165,3, 168,3
-;                               a      b      c      d      e      f      g      h      i      j      k      l      m      n      o      p      q      r      s      t      u      v      w      x      y      z     
-ds 12
-.TextCoordinateTableSmall:  db  000,4, 004,3, 007,3, 010,3, 013,3, 016,2, 019,3, 022,3, 025,1, 026,2, 028,3, 032,1, 033,5, 038,3, 042,3, 046,3, 050,3, 054,2, 057,3, 060,2, 062,3, 065,3, 068,5, 073,3, 076,3, 080,4
+  ld    hl,ClearText
+  call  DoCopy
+  ret
 
+ClearText:
+	db		0,0,0,0
+	db		dxText,0,0,0
+	db		146,0,97,0
+	db		%1111 1111,0,%1100 0000	
+
+WaitTrigA:
+  call  PopulateControls  
+;
+; bit	7	  6	  5		    4		    3		    2		  1		  0
+;		  0	  0	  trig-b	trig-a	right	  left	down	up	(joystick)
+;		  F5	F1	'M'		  space	  right	  left	down	up	(keyboard)
+;
+	ld		a,(NewPrContr)
+	bit		4,a           ;trig a pressed ?
+  jr    z,WaitTrigA
+  ret
+
+CalculateLenghtNextWord:                ;out: b=total lenght next word
+  ld    b,8                             ;total lenght next word (lenght space=8 pixels)
+  push  ix
+  pop   iy
+  .NextLetter:
+  inc   iy                              ;next letter
+  ld    a,(iy)
+  cp    SwitchCharacter
+  ret   z                               ;end when last word is found and we need to switch character
+  cp    EndConversation
+  ret   z                               ;end when last word is found
+  sub   $20
+  ret   z                               ;end when next space is found
+  ld    hl,NXPerSymbol
+  ld    d,0
+  ld    e,a
+  add   hl,de
+  ld    a,(hl)                          ;lenght letter
+  add   a,b                             ;add lenght current letter to total lenght word
+  ld    b,a                             ;new total lenght word
+  jr    .NextLetter
+
+NXPerSymbol:
+;   space   !   "   #   $   %   &   '   (   )   *   +   ,   -   .   /   0   1   2   3   4   5   6   7   8   9   :   ;   <   =   >   ?
+;  db  008,002,005,004,004,004,004,003,004,004,004,004,003,004,002,004,006,006,006,006,006,006,006,006,006,006,002,003,004,004,004,006
+;           A   B   C   D   E   F   G   H   I   J   K   L   M   N   O   P   Q   R   S   T   U   V   W   X   Y   Z   [   \   ]   ^
+;  db  004,006,006,006,006,006,006,006,006,002,006,006,006,006,006,006,006,006,006,006,006,006,006,006,006,006,006,004,004,004,004,004
+;           a   b   c   d   e   f   g   h   i   j   k   l   m   n   o   p   q   r   s   t   u   v   w   x   y   z   {   |   }   ~
+;  db  004,006,006,006,006,006,006,006,006,002,005,006,002,006,006,006,006,006,006,006,006,006,006,006,006,006,006,004,004,004,004,004
+
+;   space   !   "   #   $   %   &   '   (   )   *   +   ,   -   .   /   0   1   2   3   4   5   6   7   8   9   :   ;   <   =   >   ?
+  db  006+2,002+2,005+2,004+2,004+2,006+2,004+2,003+2,004+2,004+2,004+2,004+2,003+2,004+2,002+2,004+2,006+2,006+2,006+2,006+2,006+2,006+2,006+2,006+2,006+2,006+2,002+2,003+2,004+2,004+2,004+2,006+2
+;           A   B   C   D   E   F   G   H   I   J   K   L   M   N   O   P   Q   R   S   T   U   V   W   X   Y   Z   [   \   ]   ^
+  db  004+2,006+2,006+2,006+2,006+2,006+2,006+2,006+2,006+2,002+2,006+2,006+2,006+2,006+2,006+2,006+2,006+2,006+2,006+2,006+2,006+2,006+2,006+2,006+2,006+2,006+2,006+2,004+2,004+2,004+2,004+2,004+2
+;           a   b   c   d   e   f   g   h   i   j   k   l   m   n   o   p   q   r   s   t   u   v   w   x   y   z   {   |   }   ~
+  db  004+2,006+2,006+2,006+2,006+2,006+2,006+2,006+2,006+2,002+2,005+2,006+2,002+2,006+2,006+2,006+2,006+2,006+2,006+2,006+2,006+2,006+2,006+2,006+2,006+2,006+2,006+2,004+2,004+2,004+2,004+2,004+2
  
+;Text8bitNumberStored: ds  1
+TextNumber: ;ds  10
+db  "31456",255
 SetNumber16BitCastleSkipIfAmountIs0:
   ld    a,h
   cp    l

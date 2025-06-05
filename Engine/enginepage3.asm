@@ -64,6 +64,13 @@ SetArcadeGfxPage1:
   ld    a,ArcadeHallGfxBlock            ;block to copy graphics from
   jp    CopyRomToVram                   ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
 
+SetFontPage1Y212:                       ;set font at (0,212) page 0
+  ld    hl,$4000 + (000*128) + (000/2) - 128
+  ld    de,$8000 + (212*128) + (000/2) - 128
+  ld    bc,$0000 + (039*256) + (256/2)
+  ld    a,FontBlock         ;font graphics block
+  jp    CopyRomToVram          ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
+
 CopyRomToVram:
   ex    af,af'                          ;store rom block
 
@@ -210,12 +217,6 @@ CopyPageToPage212High:
 	db		0,0,0,0
 	db		0,1,212,0
 	db		0,0,$d0	
-
-;copyfont:
-;	db		0,0,155,0
-;	db		0,0,212,0
-;	db		0,1,5,0
-;	db		0,0,$90	
 CopyPage0To1:
 	db		0,0,0,0
 	db		0,0,0,1
@@ -226,25 +227,11 @@ CopyPage1To0:
 	db		0,0,0,0
 	db		0,1,212,0
 	db		0,0,$d0	
-
-
-
-;Text8bitNumberStored: ds  1
-TextNumber: ;ds  10
-db  "31456",255
-
-
-BCStored: ds 2
-TextAddresspointer: ds 2
-TextPointer:  ds 2
-TextDX:  ds 1
-
 PutLetter:
-  db    000,000,212,000                 ;sx,--,sy,spage
-  db    010,000,010,001                 ;dx,--,dy,dpage
-  db    005,000,005,000                 ;nx,--,ny,--
-  db    000,000,$98              ;fast copy -> Copy from right to left     
-
+  db    000,000,000,001                 ;sx,--,sy,spage
+  db    000,000,000,000                 ;dx,--,dy,dpage
+  db    008,000,013,000                 ;nx,--,ny,--
+  db    000,000,$98              				;transparant copy
 
 ChangeSong?:  db 0
 
