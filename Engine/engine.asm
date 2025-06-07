@@ -27,8 +27,8 @@ PageOnLineInt:                ds  1
 FadeStep:                     ds  1
 FadeIn?:                      ds  1
 CurrentPortraitPaletteFaded:  ds 32,0
-CurrentPortraitPalette:       incbin "..\grapx\characters\girl\portraittotal.SC5",$7680+7,32
-PortraitBlock:                db  GirlPortraitGfxBlock
+CurrentPortraitPalette:       ds  32  ;incbin "..\grapx\characters\girl\portraittotal.SC5",$7680+7,32
+PortraitBlock:                ds  1 ;db  GirlPortraitGfxBlock
 NPCConvBlock:                 db  NPCConv1Block
 NPCConvAddress:               dw  NPCConv1
 
@@ -48,10 +48,6 @@ HandleConversations:
   call  SetFontPage1Y212                ;set font at (0,212) page 0
   call  OpenBlackWindow                 ;open up black window 2 lines per int (page 0 and page 1)
   call  EnablePaletteSplit              ;set ei1 and setup palette split
-;  call  PutPortraitInMirrorPage         ;put portrait in mirror page
-;  call  SwapPageConversation            ;swap page conversation window
-;  call  EnableFadeInPortrait            ;enable fade in portrait
-;  call  FadeInPortrait                  ;fade in portrait
   call  StartConversation               ;handles the entire text engine (puts letters, swaps characters, clears textwindow etc etc)
   call  WaitTrigA                       ;wait for user to press trigger a
   call  EnableFadeOutPortrait           ;enable fade out portrait
@@ -202,7 +198,8 @@ FadeOutPortrait:                        ;fade out portrait (CurrentPortraitPalet
 
 SetPaletteFadeStep:                     ;in d=palette step (0=normal map palette, 7=completely black)
   call  WaitVblank
-  ld    ix,CurrentPortraitPaletteFaded  ;faded palette
+  call  WaitVblank
+  ld    iy,CurrentPortraitPaletteFaded  ;faded palette
   ld    b,16                            ;16 colors
   ld    hl,CurrentPortraitPalette       ;actual palette
   .loop2:                               ;in d=palette step, b=amount of colors
@@ -230,7 +227,7 @@ SetPaletteFadeStep:                     ;in d=palette step (0=normal map palette
   add   a,a                             ;shift all bits 1 step left
   add   a,a                             ;shift all bits 1 step left
   or    a,c                             ;add blue to red
-  ld    (ix),a                          ;store new blue and red in CurrentPortraitPaletteFaded
+  ld    (iy),a                          ;store new blue and red in CurrentPortraitPaletteFaded
   ;green
   inc   hl
   ld    a,(hl)                          ;0 0 0 0 0 G2 G1 G0
@@ -238,11 +235,11 @@ SetPaletteFadeStep:                     ;in d=palette step (0=normal map palette
   jr    nc,.EndCheckOverFlowGreen       ;overflow ?
   xor   a                               ;no green
   .EndCheckOverFlowGreen:
-  inc   ix
-  ld    (ix),a                          ;store new green in CurrentPortraitPaletteFaded
+  inc   iy
+  ld    (iy),a                          ;store new green in CurrentPortraitPaletteFaded
 
   inc   hl  
-  inc   ix  
+  inc   iy
   djnz  .loop2
   ret
 
@@ -1575,8 +1572,14 @@ SetText:                                ;in: ix->text
 
 GoSwitchCharacter:
   inc   ix                              ;which character ?
+  ld    hl,(NPCConvAddress)
   push  ix
-
+  pop   de
+  dec   de
+  call  CompareHLwithDE
+  call  nz,WaitTrigA                    ;wait until user presses trig-a  
+  call  EnableFadeOutPortrait           ;enable fade out portrait
+  call  FadeOutPortrait                 ;fade out portrait
   call  SetCharacter                    ;sets palette and gfx block and address
   call  ClearTextInMirrorPage
   call  PutPortraitInMirrorPage
@@ -1585,24 +1588,10 @@ GoSwitchCharacter:
   out   ($a8),a      
   ld    a,(NPCConvBlock)
   call  block1234                       ;CARE!!! we can only switch block34 if page 1 is in rom  
-
-  ;wait for trigger press when switching character, except when it's the start of the conversation
-  ld    hl,(NPCConvAddress)
-  push  ix
-  pop   de
-  dec   de
-  call  CompareHLwithDE
-  call  nz,WaitTrigA                    ;wait until user presses trig-a  
-
-  call  EnableFadeOutPortrait           ;enable fade out portrait
-  call  FadeOutPortrait                 ;fade out portrait
   call  SwapPageConversation            ;swap page conversation window
   call  EnableFadeInPortrait            ;enable fade in portrait
   call  FadeInPortrait                  ;fade in portrait
-
-  pop   ix
   inc   ix                              ;next letter
-  ld    a,(ix)                          ;letter
   jp    SetText
 
 ;CharacterPortraitVessel:  equ 1

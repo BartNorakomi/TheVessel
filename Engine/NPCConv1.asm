@@ -7,8 +7,8 @@ CharacterPortraitSoldier:       equ 5
 SwitchCharacter:  equ 254
 EndConversation:  equ 255
 NPCConv1:
-  db    SwitchCharacter,CharacterPortraitSoldier,"Yoo"
   db    SwitchCharacter,CharacterPortraitHost,"Yoo"
+  db    SwitchCharacter,CharacterPortraitSoldier,"Yoo"
   db    SwitchCharacter,CharacterPortraitCapGirl,"Yoo"
   db    SwitchCharacter,CharacterPortraitRedheadboy,"Yoo"
   db    SwitchCharacter,CharacterPortraitGirl,"Well, well, look who's back! Haven't seen your gears spinning in ages, mate!"
