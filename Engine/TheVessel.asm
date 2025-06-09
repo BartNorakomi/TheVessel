@@ -450,9 +450,12 @@ dephase
 enlength:	Equ	$-engine
 	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
 
-ArcadeHallGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
+ArcadeHall1GfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
   incbin "..\grapx\arcadehall\arcade1.SC5",7,212 * 128      ;212 lines
-;  incbin "..\grapx\arcadehall\arcade2.SC5",7,212 * 128      ;212 lines
+	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
+
+ArcadeHall2GfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
+  incbin "..\grapx\arcadehall\arcade2.SC5",7,212 * 128      ;212 lines
 	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
 
 GirlPortraitGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize

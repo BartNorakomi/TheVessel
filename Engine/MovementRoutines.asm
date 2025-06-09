@@ -1,6 +1,8 @@
 ;AnimatePlayerRunning
 ;CheckCollisionNPCs
 ;MovePlayer
+;CheckStartConversation
+;CheckPlayerNear
 
 ;VesselMovementRoutine
 ;HostMovementRoutine
@@ -296,17 +298,114 @@ Host_13:        db    Hostframelistblock, Hostspritedatablock | dw    host_13_0
 Host_14:        db    Hostframelistblock, Hostspritedatablock | dw    host_14_0
 Host_15:        db    Hostframelistblock, Hostspritedatablock | dw    host_15_0
 HostMovementRoutine:
-  ld    a,(framecounter)                    ;at max 4 objects can be put in screen divided over 4 frames
-  and   3
-  ret   nz
-ret
-  ld    a,(iy+2)                            ;x
-  add   a,1
-  ld    (iy+2),a                            ;x
+  ld    hl,Host_0
+  call  PutSpritePose                       ;in hl=spritepose, out writes spritepose to objecttable
+
+  call  CheckStartConversation              ;out: nz=converstaion starts
+  ret   z
+
+  ld    a,NPCConv1Block
+  ld    (NPCConvBlock),a
+  ld    hl,NPCConv007
+  ld    (NPCConvAddress),hl
   ret
 
 Girlidle_0:        db    npcsframelistblock, npcsspritedatablock | dw    npcs_0_0
 GirlMovementRoutine:
+  ld    hl,Girlidle_0
+  call  PutSpritePose                       ;in hl=spritepose, out writes spritepose to objecttable
+
+  call  CheckStartConversation              ;out: nz=converstaion starts
+  ret   z
+
+  ld    a,NPCConv1Block
+  ld    (NPCConvBlock),a
+
+  ld    hl,ConvGirl
+  bit   0,(hl)
+  jr    z,.NPCConv001
+
+  .NPCConv002:                              ;execute if ConvGirl bit 0 is set 
+  ld    hl,NPCConv002
+  ld    (NPCConvAddress),hl
+  ret
+
+  .NPCConv001:                              ;execute if ConvGirl bit 0 is not set. sets ConvGirl bit 0 
+  set   0,(hl)
+  ld    hl,NPCConv001
+  ld    (NPCConvAddress),hl
+  ret
+
+CapGirlidle_0:        db    npcsframelistblock, npcsspritedatablock | dw    npcs_5_0
+CapGirlMovementRoutine:
+  ld    a,(GamesPlayed)                     ;The Capgirl appears if games played > 3
+  cp    4
+  jr    nc,.CapGirlAppears
+  ld    (iy+0),0                            ;on ?
+  ret
+  .CapGirlAppears:
+
+  ld    hl,CapGirlidle_0
+  call  PutSpritePose                       ;in hl=spritepose, out writes spritepose to objecttable
+
+  call  CheckStartConversation              ;out: nz=converstaion starts
+  ret   z
+
+  ld    a,NPCConv1Block
+  ld    (NPCConvBlock),a
+
+  ld    hl,ConvCapGirl
+  bit   0,(hl)
+  jr    z,.NPCConv003
+  ld    a,(GamesPlayed)                     ;check if games played > 6
+  cp    7
+  jr    c,.NPCConv003
+  bit   1,(hl)
+  jr    z,.NPCConv004
+
+  .NPCConv005:                              ;execute if ConvCapGirl bit 1 is set (and games played > 6)
+  ld    hl,NPCConv005
+  ld    (NPCConvAddress),hl
+  ret
+
+  .NPCConv004:                              ;execute if ConvCapGirl bit 0 is set and games played > 6. sets ConvGirl bit 1
+  set   1,(hl)
+  ld    hl,NPCConv004
+  ld    (NPCConvAddress),hl
+  ret
+
+  .NPCConv003:                              ;execute if ConvCapGirl bit 0 is not set. sets ConvGirl bit 0
+  set   0,(hl)
+  ld    hl,NPCConv003
+  ld    (NPCConvAddress),hl
+  ret
+
+RedHeadBoyidle_0:        db    npcsframelistblock, npcsspritedatablock | dw    npcs_3_0
+RedHeadBoyMovementRoutine:
+  ld    a,(GamesPlayed)                     ;The red head boy appears if games played > 8
+  cp    9
+  jr    nc,.RedHeadBoyAppears
+  ld    (iy+0),0                            ;on ?
+  ret
+  .RedHeadBoyAppears:
+
+  ld    hl,RedHeadBoyidle_0
+  call  PutSpritePose                       ;in hl=spritepose, out writes spritepose to objecttable
+
+  call  CheckStartConversation              ;out: nz=converstaion starts
+  ret   z
+
+  ld    a,NPCConv1Block
+  ld    (NPCConvBlock),a
+  ld    hl,NPCConv006
+  ld    (NPCConvAddress),hl
+  ret
+
+CheckStartConversation:
+  call  CheckPlayerNear                     ;check if player is standing near NPC. out ;d=0(no collision), d=1(collision)
+  bit   0,d                                 ;d=0(no collision), d=1(collision)
+  ret   z
+
 ;
 ; bit	7	  6	  5		    4		    3		    2		  1		  0
 ;		  0	  0	  trig-b	trig-a	right	  left	down	up	(joystick)
@@ -314,49 +413,38 @@ GirlMovementRoutine:
 ;
 	ld		a,(NewPrContr)
 	bit		4,a           ;trig a pressed ?
-  jr    z,.EndCheckTrigAPressed
+  ret   z
   ld    a,1
   ld    (StartConversation?),a
-  .EndCheckTrigAPressed:
-
-  ld    hl,Girlidle_0
-  call  PutSpritePose                       ;in hl=spritepose, out writes spritepose to objecttable
-
-  ld    a,(framecounter)                    ;at max 4 objects can be put in screen divided over 4 frames
-  and   3
-  ret   nz
-ret
-  ld    a,(iy+2)                            ;x
-  add   a,3
-  ld    (iy+2),a                            ;x
   ret
 
-CapGirlidle_0:        db    npcsframelistblock, npcsspritedatablock | dw    npcs_5_0
-CapGirlMovementRoutine:
-  ld    hl,CapGirlidle_0
-  call  PutSpritePose                       ;in hl=spritepose, out writes spritepose to objecttable
+CheckPlayerNear:                            ;out ;d=0(no collision), d=1(collision)
+  ld    d,0                                 ;0=no collision, 1=collision
+  ld    hl,Object1                          ;player
 
-  ld    a,(framecounter)                    ;at max 4 objects can be put in screen divided over 4 frames
-  and   3
-  ret   nz
-ret
-  ld    a,(iy+2)                            ;x
-  add   a,4
-  ld    (iy+2),a                            ;x
-  ret
+  inc   hl                                  ;y player
+  .CheckBottomSide:                         ;check collision bottom side
+  ld    a,(hl)
+  add   a,12
+  cp    (iy+1)                              ;y npc
+  ret   c
+  .CheckTopSide:                            ;check collision top  side
+  sub   a,21
+  cp    (iy+1)                              ;y npc
+  ret   nc
 
-RedHeadBoyidle_0:        db    npcsframelistblock, npcsspritedatablock | dw    npcs_3_0
-RedHeadBoyMovementRoutine:
-  ld    hl,RedHeadBoyidle_0
-  call  PutSpritePose                       ;in hl=spritepose, out writes spritepose to objecttable
+  inc   hl                                  ;x player
+  .CheckRightSide:                          ;check collision right side
+  ld    a,(hl)
+  add   a,42
+  cp    (iy+2)                              ;x npc
+  ret   c
+  .CheckLeftSide:                           ;check collision left side
+  sub   a,84
+  cp    (iy+2)                              ;x npc
+  ret   nc
 
-  ld    a,(framecounter)                    ;at max 4 objects can be put in screen divided over 4 frames
-  and   3
-  ret   nz
-ret
-  ld    a,(iy+2)                            ;x
-  add   a,4
-  ld    (iy+2),a                            ;x
+  ld    d,1                                 ;d=0(no collision), d=1(collision)
   ret
 
 dephase

@@ -9,21 +9,72 @@ InitiateGame:
 ;  call  TitleScreen
 ;  endif
 ;  StartGame:
-
-  call  LoadArcadeGfx                 ;loads the initial starting arcade room in all 4 pages, and sets palette
-
+	call	LoadArcadeHall
   ld    a,SongSolitude
   ld    (ChangeSong?),a
-  call  SetInterruptHandler           ;sets Vblank
+  call  SetInterruptHandler           	;sets Vblank
   jp    LevelEngine
 
 INCLUDE "RePlayer.asm"
 
-ArcadeHall1Palette:                    ;palette file
+LoadArcadeHall:
+	ld		a,(CurrentArcadeHall)						;1=arcadehall1, 2=arcadehall2
+	dec		a
+	jr		z,.ArcadeHall1
+	dec		a
+	jr		z,.ArcadeHall2
+	ret
+
+	.ArcadeHall1:
+  call  LoadArcadeHall1Gfx             	;loads the initial starting arcade room in all 4 pages, and sets palette
+	ld		hl,ObjectsArcadeHall1
+	ld		de,ObjectTable
+	ld		bc,LenghtObjectTable
+	ldir
+	ret
+
+	.ArcadeHall2:
+  call  LoadArcadeHall2Gfx             	;loads the 2nd arcade room in all 4 pages, and sets palette
+	ld		hl,ObjectsArcadeHall2
+	ld		de,ObjectTable
+	ld		bc,LenghtObjectTable
+	ldir
+	ret
+
+ObjectsArcadeHall1:
+;            on?,  y,  x,  sprite restore table                                ,sprite data,put on frame ,movement routine block,  movement routine 
+.Object1:  db  1,110,130 | dw Object1RestoreBackgroundTable,Object1RestoreTable,000        | db 255      ,MovementRoutinesBlock | dw VesselMovementRoutine
+.Object2:  db  1,098,040 | dw Object3RestoreBackgroundTable,Object3RestoreTable,000        | db 255      ,MovementRoutinesBlock | dw GirlMovementRoutine
+.Object3:  db  1,095,200 | dw Object4RestoreBackgroundTable,Object4RestoreTable,000        | db 255      ,MovementRoutinesBlock | dw CapGirlMovementRoutine
+.Object4:  db  1,105,150 | dw Object2RestoreBackgroundTable,Object2RestoreTable,000        | db 255      ,MovementRoutinesBlock | dw RedHeadBoyMovementRoutine
+LenghtObjectTable:	equ	$-ObjectsArcadeHall1
+
+ObjectsArcadeHall2:
+;            on?,  y,  x,  sprite restore table                                ,sprite data,put on frame ,movement routine block,  movement routine 
+.Object1:  db  1,110,130 | dw Object1RestoreBackgroundTable,Object1RestoreTable,000        | db 255      ,MovementRoutinesBlock | dw VesselMovementRoutine
+.Object2:  db  1,098,040 | dw Object3RestoreBackgroundTable,Object3RestoreTable,000        | db 255      ,MovementRoutinesBlock | dw HostMovementRoutine
+.Object3:  db  0,095,200 | dw Object4RestoreBackgroundTable,Object4RestoreTable,000        | db 255      ,MovementRoutinesBlock | dw CapGirlMovementRoutine
+.Object4:  db  0,105,150 | dw Object2RestoreBackgroundTable,Object2RestoreTable,000        | db 255      ,MovementRoutinesBlock | dw RedHeadBoyMovementRoutine
+
+
+ArcadeHall1Palette:                    	;palette file
   incbin "..\grapx\arcadehall\arcade1.SC5",$7680+7,32
-ArcadeHall2Palette:                    ;palette file
+ArcadeHall2Palette:                    	;palette file
   incbin "..\grapx\arcadehall\arcade2.SC5",$7680+7,32
-LoadArcadeGfx:
+
+LoadArcadeHall1Gfx:
+  ld    hl,ArcadeHall1Palette
+  ld    a,ArcadeHall1GfxBlock         	;block to copy graphics from
+	jp		LoadArcadeHallGfx
+
+LoadArcadeHall2Gfx:
+  ld    hl,ArcadeHall2Palette
+  ld    a,ArcadeHall2GfxBlock         	;block to copy graphics from
+	jp		LoadArcadeHallGfx
+
+LoadArcadeHallGfx:
+	push	hl															;current palette
+	push	af															;block to copy graphics from
   call  SetArcadeGfxPage0
   ;copy from page 0 to page 2
   ld    a,0
@@ -32,6 +83,7 @@ LoadArcadeGfx:
   ld    (CopyPageToPage212High+dPage),a
   ld    hl,CopyPageToPage212High
   call  DoCopy
+	pop		af															;block to copy graphics from
   call  SetArcadeGfxPage1
   ;copy from page 1 to page 3
   ld    a,1
@@ -40,7 +92,7 @@ LoadArcadeGfx:
   ld    (CopyPageToPage212High+dPage),a
   ld    hl,CopyPageToPage212High
   call  DoCopy
-  ld    hl,ArcadeHall1Palette
+	pop		hl															;current palette
 	ld		de,CurrentPalette
 	ld		bc,16*2
 	ldir
@@ -54,14 +106,12 @@ SetArcadeGfxPage0:
   ld    hl,$4000 + (000*128) + (000/2) - 128
   ld    de,$0000 + (000*128) + (000/2) - 128
   ld    bc,$0000 + (212*256) + (256/2)
-  ld    a,ArcadeHallGfxBlock            ;block to copy graphics from
   jp    CopyRomToVram                   ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
 
 SetArcadeGfxPage1:
   ld    hl,$4000 + (000*128) + (000/2) - 128
   ld    de,$8000 + (000*128) + (000/2) - 128
   ld    bc,$0000 + (212*256) + (256/2)
-  ld    a,ArcadeHallGfxBlock            ;block to copy graphics from
   jp    CopyRomToVram                   ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
 
 SetFontPage1Y212:                       ;set font at (0,212) page 0
