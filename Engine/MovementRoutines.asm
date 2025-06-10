@@ -83,8 +83,8 @@ Lrunning:
 
   call  MovePlayer                          ;move player and check for obstacles/screen edges
   ld    hl,TheVesselleftrunning_0           ;starting pose
-  call  AnimatePlayerRunning
-  ret
+  ld    b,11                                ;animation steps
+  jp    AnimateObject
 
 Rrunning:
   call  GetMovementInBC                     ;reads our controls and sets total xy movement in bc 
@@ -96,17 +96,17 @@ Rrunning:
 
   call  MovePlayer                          ;move player and check for obstacles/screen edges
   ld    hl,TheVesselrightrunning_0          ;starting pose
-  call  AnimatePlayerRunning
-  ret
+  ld    b,11                                ;animation steps
+  jp    AnimateObject
 
-AnimatePlayerRunning:                       ;in hl=starting pose
-	ld		a,(PlayerAniCount)
+AnimateObject:                              ;in hl=starting pose, b=animation steps
+	ld		a,(iy+var1)
   inc   a
-  cp    11
+  cp    b                                   ;animation steps
   jr    nz,.endchecklastframe
   xor   a
   .endchecklastframe:
-	ld		(PlayerAniCount),a
+	ld		(iy+var1),a
   add   a,a                                 ;*2
   add   a,a                                 ;*4 ;each spritepose has 4 bytes
   ld    e,a
@@ -230,28 +230,28 @@ Set_L_stand:
 	ld		hl,LStanding
 	ld		(PlayerSpriteStand),hl
   xor   a
-	ld		(PlayerAniCount),a
+	ld		(iy+var1),a
   ret
 
 Set_R_stand:
 	ld		hl,RStanding
 	ld		(PlayerSpriteStand),hl
   xor   a
-	ld		(PlayerAniCount),a
+	ld		(iy+var1),a
   ret
 
 Set_L_run:
 	ld		hl,Lrunning
 	ld		(PlayerSpriteStand),hl
   xor   a
-	ld		(PlayerAniCount),a
+	ld		(iy+var1),a
   ret
 
 Set_R_run:
 	ld		hl,Rrunning
 	ld		(PlayerSpriteStand),hl
   xor   a
-	ld		(PlayerAniCount),a
+	ld		(iy+var1),a
   ret
 
 PutSpritePose:
@@ -302,10 +302,67 @@ Host_13:        db    Hostframelistblock, Hostspritedatablock | dw    host_10_0
 Host_14:        db    Hostframelistblock, Hostspritedatablock | dw    host_9_0
 Host_15:        db    Hostframelistblock, Hostspritedatablock | dw    host_8_0
 HostMovementRoutine:
-  ld    l,(iy+7)
-  ld    h,(iy+8)
-  call  PutSpritePose                       ;in hl=spritepose, out writes spritepose to objecttable
+  .HandlePhase:
+  ld    a,(iy+ObjectPhase)
+  or    a
+  jp    z,.Phase0                           ;standing still in arcade hall2, ready for conversation
+  dec   a
+  jp    z,.Phase1                           ;host walks towards the vessel (30 pixels to the left)
+  dec   a
+  jp    z,.Phase2                           ;host walks towards the vessel (diagonally straight to player)
+  ret
 
+  .Phase2:                                  ;host walks towards the vessel
+  ld    a,(framecounter)                    ;at max 4 objects can be put in screen divided over 4 frames
+  and   3
+  ret   nz
+
+  ld    hl,Host_9                           ;starting pose
+  ld    b,07                                ;animation steps
+  call  AnimateObject
+
+  ld    a,(iy+2)                            ;x
+  sub   a,1
+  ld    (iy+2),a
+
+  ld    a,(iy+1)                            ;y
+  add   a,3
+  ld    (iy+1),a
+
+  cp    102
+  ret   c
+  ld    (iy+ObjectPhase),3
+
+  ld    a,1
+  ld    (StartConversation?),a
+  ld    a,NPCConv1Block
+  ld    (NPCConvBlock),a
+  ld    hl,NPCConv007
+  ld    (NPCConvAddress),hl
+  xor   a
+  ld    (freezecontrols?),a
+
+  ld    hl,Host_8
+  jp    PutSpritePose                       ;in hl=spritepose, out writes spritepose to objecttable
+
+  .Phase1:                                  ;host walks towards the vessel
+  ld    a,(framecounter)                    ;at max 4 objects can be put in screen divided over 4 frames
+  and   3
+  ret   nz
+
+  ld    hl,Host_9                           ;starting pose
+  ld    b,07                                ;animation steps
+  call  AnimateObject
+
+  ld    a,(iy+2)                            ;x
+  sub   a,4
+  ld    (iy+2),a
+  cp    136
+  ret   nc
+  ld    (iy+ObjectPhase),2
+  ret
+
+  .Phase0:                                  ;standing still in arcade hall2, ready for conversation
   call  CheckStartConversation              ;out: nz=converstaion starts
   ret   z
 
@@ -315,46 +372,11 @@ HostMovementRoutine:
   ld    (NPCConvAddress),hl
   ret
 
-AnimateHostRunning:                           ;in hl=starting pose
-  ld    ix,Object2
-
-	ld		a,(NPCAniCount)
-  inc   a
-  cp    7
-  jr    nz,.endchecklastframe
-  xor   a
-  .endchecklastframe:
-	ld		(NPCAniCount),a
-  add   a,a                                 ;*2
-  add   a,a                                 ;*4 ;each spritepose has 4 bytes
-  ld    e,a
-  ld    d,0
-  add   hl,de
-
-  ld    (ix+7),l
-  ld    (ix+8),h
-  ret
-
-
 ArcadeHall1redlightPalette:                 ;palette file
   incbin "..\grapx\arcadehall\arcade1redlight.SC5",$7680+7,32
 SirensRoutine:
   ld    a,1
-;  ld    (freezecontrols?),a
-
-  call  .HandlePhase
-  ret
-
-  .AlternatePalette:
-  ld    a,(PageOnNextVblank)                ;set page
-  cp    2*32 + 31
-  jr    c,.SetPalettePage0and1
-  .SetPalettePage2and3:
-  ld    hl,CurrentPalette
-  jp    SetPalette
-  .SetPalettePage0and1:
-  ld    hl,ArcadeHall1redlightPalette
-  jp    SetPalette
+  ld    (freezecontrols?),a
 
   .HandlePhase:
   ld    a,(iy+ObjectPhase)
@@ -365,15 +387,9 @@ SirensRoutine:
   ret
 
   .Phase1:                                  ;host walks towards the vessel
-  ld    a,(framecounter)                    ;at max 4 objects can be put in screen divided over 4 frames
-  and   3
-  ret   nz
-
-  ld    a,(Object2+2)                       ;x
-  sub   a,4
-  ld    (Object2+2),a
-  ld    hl,Host_9                           ;starting pose
-  call  AnimateHostRunning
+  ld    a,1
+  ld    (Object2+ObjectPhase),a
+  ld    (iy+0),0                            ;object off
   ret
 
   .Phase0:                                  ;flicker screenpalette between normal and red, open door, remove red light
@@ -437,6 +453,17 @@ SirensRoutine:
   ld    de,$0000 + (066*128) + (100/2) - 128
   ld    bc,$0000 + (097*256) + (056/2)
   jp    CopyRomToVram                       ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
+
+  .AlternatePalette:
+  ld    a,(PageOnNextVblank)                ;set page
+  cp    2*32 + 31
+  jr    c,.SetPalettePage0and1
+  .SetPalettePage2and3:
+  ld    hl,CurrentPalette
+  jp    SetPalette
+  .SetPalettePage0and1:
+  ld    hl,ArcadeHall1redlightPalette
+  jp    SetPalette
 
   .EndPhase0:                               ;remove red light, go next phase
   ld    (iy+ObjectPhase),1

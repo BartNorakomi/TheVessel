@@ -35,13 +35,13 @@ CheckPutEvents:
 	ret
 
 EventRecruiterAppears:
-;            on?,  y,  x,  sprite restore table                                ,sprite data,put on frame ,movement routine block,  movement routine 
-.Object1:  db  1,102,074 | dw Object1RestoreBackgroundTable,Object1RestoreTable,000        | db 255      ,MovementRoutinesBlock | dw VesselMovementRoutine
-.Object2:  db  1,061,176 | dw Object3RestoreBackgroundTable,Object3RestoreTable,Host_0     | db 255      ,MovementRoutinesBlock | dw HostMovementRoutine
-.Object3:  db  1,062,178 | dw Object4RestoreBackgroundTable,Object4RestoreTable,000        | db 255      ,MovementRoutinesBlock | dw WallMovementRoutine
-.Object4:  db  0,105,150 | dw Object2RestoreBackgroundTable,Object2RestoreTable,000        | db 255      ,MovementRoutinesBlock | dw RedHeadBoyMovementRoutine
-;														phase,var1,var2,var3,var4,var5
-.ObjEvent1: db 1,0,0     | db 001,000 ,000 ,000 ,000 ,000                                  | db 255      ,MovementRoutinesBlock | dw SirensRoutine
+;            on?,  y,  x,  sprite restore table                                ,sprite data,put on frame ,movement routine block,  movement routine,							 phase,var1,var2
+.Object1:  db  1,102,074 | dw Object1RestoreBackgroundTable,Object1RestoreTable,000        | db 255      ,MovementRoutinesBlock | dw VesselMovementRoutine			| db 000,000 ,000
+.Object2:  db  1,061,176 | dw Object3RestoreBackgroundTable,Object3RestoreTable,Host_0     | db 255      ,MovementRoutinesBlock | dw HostMovementRoutine				| db 000,000 ,000
+.Object3:  db  1,062,178 | dw Object4RestoreBackgroundTable,Object4RestoreTable,000        | db 255      ,MovementRoutinesBlock | dw WallMovementRoutine				| db 000,000 ,000
+.Object4:  db  0,105,150 | dw Object2RestoreBackgroundTable,Object2RestoreTable,000        | db 255      ,MovementRoutinesBlock | dw RedHeadBoyMovementRoutine	| db 000,000 ,000
+;														
+.ObjEvent1: db 1,0,0     | dw Object2RestoreBackgroundTable,Object2RestoreTable,000        | db 255      ,MovementRoutinesBlock | dw SirensRoutine							| db 000,000 ,000
 
 LoadArcadeHall:
 	ld		a,(CurrentArcadeHall)						;1=arcadehall1, 2=arcadehall2
@@ -68,19 +68,19 @@ LoadArcadeHall:
 	ret
 
 ObjectsArcadeHall1:
-;            on?,  y,  x,  sprite restore table                                ,sprite data,put on frame ,movement routine block,  movement routine 
-.Object1:  db  1,110,130 | dw Object1RestoreBackgroundTable,Object1RestoreTable,000        | db 255      ,MovementRoutinesBlock | dw VesselMovementRoutine
-.Object2:  db  1,098,040 | dw Object3RestoreBackgroundTable,Object3RestoreTable,000        | db 255      ,MovementRoutinesBlock | dw GirlMovementRoutine
-.Object3:  db  1,095,200 | dw Object4RestoreBackgroundTable,Object4RestoreTable,000        | db 255      ,MovementRoutinesBlock | dw CapGirlMovementRoutine
-.Object4:  db  1,105,150 | dw Object2RestoreBackgroundTable,Object2RestoreTable,000        | db 255      ,MovementRoutinesBlock | dw RedHeadBoyMovementRoutine
+;            on?,  y,  x,  sprite restore table                                ,sprite data,put on frame ,movement routine block,  movement routine,							 phase,var1,var2
+.Object1:  db  1,110,130 | dw Object1RestoreBackgroundTable,Object1RestoreTable,000        | db 255      ,MovementRoutinesBlock | dw VesselMovementRoutine			| db 000,000 ,000
+.Object2:  db  1,098,040 | dw Object3RestoreBackgroundTable,Object3RestoreTable,000        | db 255      ,MovementRoutinesBlock | dw GirlMovementRoutine				| db 000,000 ,000
+.Object3:  db  1,095,200 | dw Object4RestoreBackgroundTable,Object4RestoreTable,000        | db 255      ,MovementRoutinesBlock | dw CapGirlMovementRoutine			| db 000,000 ,000
+.Object4:  db  1,105,150 | dw Object2RestoreBackgroundTable,Object2RestoreTable,000        | db 255      ,MovementRoutinesBlock | dw RedHeadBoyMovementRoutine	| db 000,000 ,000
 LenghtObjectTable:	equ	$-ObjectsArcadeHall1
 
 ObjectsArcadeHall2:
-;            on?,  y,  x,  sprite restore table                                ,sprite data,put on frame ,movement routine block,  movement routine 
-.Object1:  db  1,110,130 | dw Object1RestoreBackgroundTable,Object1RestoreTable,000        | db 255      ,MovementRoutinesBlock | dw VesselMovementRoutine
-.Object2:  db  1,098,040 | dw Object3RestoreBackgroundTable,Object3RestoreTable,000        | db 255      ,MovementRoutinesBlock | dw HostMovementRoutine
-.Object3:  db  0,095,200 | dw Object4RestoreBackgroundTable,Object4RestoreTable,000        | db 255      ,MovementRoutinesBlock | dw CapGirlMovementRoutine
-.Object4:  db  0,105,150 | dw Object2RestoreBackgroundTable,Object2RestoreTable,000        | db 255      ,MovementRoutinesBlock | dw RedHeadBoyMovementRoutine
+;            on?,  y,  x,  sprite restore table                                ,sprite data,put on frame ,movement routine block,  movement routine,							 phase,var1,var2
+.Object1:  db  1,110,130 | dw Object1RestoreBackgroundTable,Object1RestoreTable,000        | db 255      ,MovementRoutinesBlock | dw VesselMovementRoutine			| db 000,000 ,000
+.Object2:  db  1,098,040 | dw Object3RestoreBackgroundTable,Object3RestoreTable,000        | db 255      ,MovementRoutinesBlock | dw HostMovementRoutine				| db 000,000 ,000
+.Object3:  db  0,095,200 | dw Object4RestoreBackgroundTable,Object4RestoreTable,000        | db 255      ,MovementRoutinesBlock | dw CapGirlMovementRoutine			| db 000,000 ,000
+.Object4:  db  0,105,150 | dw Object2RestoreBackgroundTable,Object2RestoreTable,000        | db 255      ,MovementRoutinesBlock | dw RedHeadBoyMovementRoutine	| db 000,000 ,000
 
 
 ArcadeHall1Palette:                    	;palette file
@@ -878,7 +878,6 @@ outix8:
 NPCAniCount:     		db  0,0
 
 PlayerSpriteStand: 	dw  Rstanding
-PlayerAniCount:     db  0,0
 StartConversation?:	db	0
 
 

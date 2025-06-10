@@ -226,17 +226,20 @@ LineInt:
 PutOnFrame:             equ 9
 MovementRoutineBlock:   equ 10
 MovementRoutine:        equ 11
+ObjectPhase:            equ 13
+Var1:                   equ 14
+Var2:                   equ 15
+
 ObjectTable:
-;           on?,  y,  x,  sprite restore table                                ,sprite data,put on frame ,movement routine block,  movement routine 
-Object1:  db  1,110,130 | dw Object1RestoreBackgroundTable,Object1RestoreTable,000        | db 255      ,MovementRoutinesBlock | dw VesselMovementRoutine
-Object2:  db  1,098,040 | dw Object3RestoreBackgroundTable,Object3RestoreTable,000        | db 255      ,MovementRoutinesBlock | dw GirlMovementRoutine
-Object3:  db  1,095,200 | dw Object4RestoreBackgroundTable,Object4RestoreTable,000        | db 255      ,MovementRoutinesBlock | dw CapGirlMovementRoutine
-Object4:  db  1,105,150 | dw Object2RestoreBackgroundTable,Object2RestoreTable,000        | db 255      ,MovementRoutinesBlock | dw RedHeadBoyMovementRoutine
+;           on?,  y,  x,  sprite restore table                                ,sprite data,put on frame ,movement routine block,  movement routine,							 phase,var1,var2
+Object1:  db  1,110,130 | dw Object1RestoreBackgroundTable,Object1RestoreTable,000        | db 255      ,MovementRoutinesBlock | dw VesselMovementRoutine			| db 000,000 ,000
+Object2:  db  1,098,040 | dw Object3RestoreBackgroundTable,Object3RestoreTable,000        | db 255      ,MovementRoutinesBlock | dw GirlMovementRoutine       | db 000,000 ,000
+Object3:  db  1,095,200 | dw Object4RestoreBackgroundTable,Object4RestoreTable,000        | db 255      ,MovementRoutinesBlock | dw CapGirlMovementRoutine    | db 000,000 ,000
+Object4:  db  1,105,150 | dw Object2RestoreBackgroundTable,Object2RestoreTable,000        | db 255      ,MovementRoutinesBlock | dw RedHeadBoyMovementRoutine | db 000,000 ,000
 LenghtObject: equ Object2-Object1
-ObjectPhase: equ 3 | Var1: equ 4 | Var2: equ 5 | Var3: equ 6 | Var4: equ 7 | Var5: equ 8 
-ObjEvent1: db  0,0,0    | dw 0,0,0                                                        | db 255      ,MovementRoutinesBlock | dw SirensRoutine
-ObjEvent2: db  0,0,0    | dw 0,0,0                                                        | db 255      ,MovementRoutinesBlock | dw SirensRoutine
-ObjEvent3: db  0,0,0    | dw 0,0,0                                                        | db 255      ,MovementRoutinesBlock | dw SirensRoutine
+ObjEvent1: db  0,0,0    | dw 0,0,0                                                        | db 255      ,MovementRoutinesBlock | dw SirensRoutine             | db 000,000 ,000
+ObjEvent2: db  0,0,0    | dw 0,0,0                                                        | db 255      ,MovementRoutinesBlock | dw SirensRoutine             | db 000,000 ,000
+ObjEvent3: db  0,0,0    | dw 0,0,0                                                        | db 255      ,MovementRoutinesBlock | dw SirensRoutine             | db 000,000 ,000
 
 HandleObjects:
   ld    iy,Object1
