@@ -9,13 +9,39 @@ InitiateGame:
 ;  call  TitleScreen
 ;  endif
 ;  StartGame:
-	call	LoadArcadeHall
+	call	LoadArcadeHall									;sets gfx and objects
+	call	CheckPutEvents									;check if an event is due (recruiter appearing in arcade1,.....)
   ld    a,SongSolitude
   ld    (ChangeSong?),a
   call  SetInterruptHandler           	;sets Vblank
   jp    LevelEngine
 
 INCLUDE "RePlayer.asm"
+
+CheckPutEvents:
+	call	.RecruiterAppear
+	ret
+
+	.RecruiterAppear:
+	ld		a,(HighScoreTotalAverage)
+	cp		80
+	ret		c
+	ld		hl,EventRecruiterAppears
+	ld		de,ObjectTable
+	ld		bc,LenghtObjectTable + (1*LenghtObject)	;object table + 1 event
+	ldir
+
+	call  LoadArcadeHall1redlightsGfx 		;loads the red lights in page and
+	ret
+
+EventRecruiterAppears:
+;            on?,  y,  x,  sprite restore table                                ,sprite data,put on frame ,movement routine block,  movement routine 
+.Object1:  db  1,102,074 | dw Object1RestoreBackgroundTable,Object1RestoreTable,000        | db 255      ,MovementRoutinesBlock | dw VesselMovementRoutine
+.Object2:  db  1,061,176 | dw Object3RestoreBackgroundTable,Object3RestoreTable,Host_0     | db 255      ,MovementRoutinesBlock | dw HostMovementRoutine
+.Object3:  db  1,062,178 | dw Object4RestoreBackgroundTable,Object4RestoreTable,000        | db 255      ,MovementRoutinesBlock | dw WallMovementRoutine
+.Object4:  db  0,105,150 | dw Object2RestoreBackgroundTable,Object2RestoreTable,000        | db 255      ,MovementRoutinesBlock | dw RedHeadBoyMovementRoutine
+;														phase,var1,var2,var3,var4,var5
+.ObjEvent1: db 1,0,0     | db 001,000 ,000 ,000 ,000 ,000                                  | db 255      ,MovementRoutinesBlock | dw SirensRoutine
 
 LoadArcadeHall:
 	ld		a,(CurrentArcadeHall)						;1=arcadehall1, 2=arcadehall2
@@ -26,7 +52,7 @@ LoadArcadeHall:
 	ret
 
 	.ArcadeHall1:
-  call  LoadArcadeHall1Gfx             	;loads the initial starting arcade room in all 4 pages, and sets palette
+	call  LoadArcadeHall1Gfx             	;loads the initial starting arcade room in all 4 pages, and sets palette
 	ld		hl,ObjectsArcadeHall1
 	ld		de,ObjectTable
 	ld		bc,LenghtObjectTable
@@ -66,6 +92,12 @@ LoadArcadeHall1Gfx:
   ld    hl,ArcadeHall1Palette
   ld    a,ArcadeHall1GfxBlock         	;block to copy graphics from
 	jp		LoadArcadeHallGfx
+
+LoadArcadeHall1redlightsGfx:
+  ld    a,ArcadeHall1redlightsGfxBlock         	;block to copy graphics from
+  call  SetArcadeRedLightsGfxPage0
+  ld    a,ArcadeHall1redlightsGfxBlock         	;block to copy graphics from
+  jp		SetArcadeRedLightsGfxPage1
 
 LoadArcadeHall2Gfx:
   ld    hl,ArcadeHall2Palette
@@ -114,6 +146,18 @@ SetArcadeGfxPage1:
   ld    bc,$0000 + (212*256) + (256/2)
   jp    CopyRomToVram                   ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
 
+SetArcadeRedLightsGfxPage0:
+  ld    hl,$4000 + (000*128) + (000/2) - 128
+  ld    de,$0000 + (005*128) + (000/2) - 128
+  ld    bc,$0000 + (030*256) + (256/2)
+  jp    CopyRomToVram                   ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
+
+SetArcadeRedLightsGfxPage1:
+  ld    hl,$4000 + (000*128) + (000/2) - 128
+  ld    de,$8000 + (005*128) + (000/2) - 128
+  ld    bc,$0000 + (030*256) + (256/2)
+  jp    CopyRomToVram                   ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
+
 SetFontPage1Y212:                       ;set font at (0,212) page 0
   ld    hl,$4000 + (000*128) + (000/2) - 128
   ld    de,$8000 + (212*128) + (000/2) - 128
@@ -121,15 +165,16 @@ SetFontPage1Y212:                       ;set font at (0,212) page 0
   ld    a,FontBlock         ;font graphics block
   jp    CopyRomToVram          ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
 
+Vdp_Write_HighPage?:	db	0							;page 0/1 for low page, 2/3 for high page
 CopyRomToVram:
   ex    af,af'                          ;store rom block
 
-;  in    a,($a8)                         ;store current rom/ram settings of page 1+2
-;  push  af
-;  ld		a,(memblocks.1)
-;  push  af
-;  ld		a,(memblocks.2)
-;  push  af
+  in    a,($a8)                         ;store current rom/ram settings of page 1+2
+  push  af
+  ld		a,(memblocks.1)
+  push  af
+  ld		a,(memblocks.2)
+  push  af
 
   ld    a,(slot.page12rom)              ;all RAM except page 1+2
   out   ($a8),a      
@@ -141,12 +186,12 @@ CopyRomToVram:
   ld    (NXAndNY),bc
   call  .AddressesSet
 
-;  pop   af
-;  call  block34
-;  pop   af
-;  call  block12
-;  pop   af
-;  out   ($a8),a                         ;reset rom/ram settings of page 1+2
+  pop   af
+  call  block34
+  pop   af
+  call  block12
+  pop   af
+  out   ($a8),a                         ;reset rom/ram settings of page 1+2
   ret
 
   .AddressesSet:
@@ -169,7 +214,7 @@ CopyRomToVram:
   ;  ld    a,1
   ;  ld    (AreWeWritingToVram?),a
 
-  xor   a                               ;page 0/1
+	ld		a,(Vdp_Write_HighPage?)					;page 0/1 for low page, 2/3 for high page
   call	SetVdp_Write                    ;start writing to address bhl
 
   ld    hl,(AddressToWriteFrom)         ;set next line to start writing from
@@ -829,6 +874,8 @@ outix16:
 outix8:	
 	outi	outi	outi	outi	outi	outi	outi	outi	
 	ret	
+
+NPCAniCount:     		db  0,0
 
 PlayerSpriteStand: 	dw  Rstanding
 PlayerAniCount:     db  0,0

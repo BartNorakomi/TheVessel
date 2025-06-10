@@ -10,6 +10,8 @@
 ;CapGirlMovementRoutine
 ;RedHeadBoyMovementRoutine
 
+;SirensRoutine
+
 MovementRoutinesAddress:  equ $4000
 Phase MovementRoutinesAddress
 
@@ -197,6 +199,7 @@ MoveUp:
   ld    a,(iy+1)                            ;y
   sub   a,3
   cp    83
+  cp    30
   ret   c
   ld    (iy+1),a                            ;y
 
@@ -281,24 +284,26 @@ GetMovementInBC:                            ;out bc=xy movement
   inc   b
   ret
 
-Host_0:        db    Hostframelistblock, Hostspritedatablock | dw    host_0_0
-Host_1:        db    Hostframelistblock, Hostspritedatablock | dw    host_1_0
+Host_0:        db    Hostframelistblock, Hostspritedatablock | dw    host_0_0 ;idle right
+Host_1:        db    Hostframelistblock, Hostspritedatablock | dw    host_1_0 ;run right
 Host_2:        db    Hostframelistblock, Hostspritedatablock | dw    host_2_0
 Host_3:        db    Hostframelistblock, Hostspritedatablock | dw    host_3_0
 Host_4:        db    Hostframelistblock, Hostspritedatablock | dw    host_4_0
 Host_5:        db    Hostframelistblock, Hostspritedatablock | dw    host_5_0
 Host_6:        db    Hostframelistblock, Hostspritedatablock | dw    host_6_0
 Host_7:        db    Hostframelistblock, Hostspritedatablock | dw    host_7_0
-Host_8:        db    Hostframelistblock, Hostspritedatablock | dw    host_8_0
-Host_9:        db    Hostframelistblock, Hostspritedatablock | dw    host_9_0
-Host_10:        db    Hostframelistblock, Hostspritedatablock | dw    host_10_0
-Host_11:        db    Hostframelistblock, Hostspritedatablock | dw    host_11_0
-Host_12:        db    Hostframelistblock, Hostspritedatablock | dw    host_12_0
-Host_13:        db    Hostframelistblock, Hostspritedatablock | dw    host_13_0
-Host_14:        db    Hostframelistblock, Hostspritedatablock | dw    host_14_0
-Host_15:        db    Hostframelistblock, Hostspritedatablock | dw    host_15_0
+
+Host_8:        db    Hostframelistblock, Hostspritedatablock | dw    host_15_0 ;idle left
+Host_9:        db    Hostframelistblock, Hostspritedatablock | dw    host_14_0 ;run left
+Host_10:        db    Hostframelistblock, Hostspritedatablock | dw    host_13_0
+Host_11:        db    Hostframelistblock, Hostspritedatablock | dw    host_12_0
+Host_12:        db    Hostframelistblock, Hostspritedatablock | dw    host_11_0
+Host_13:        db    Hostframelistblock, Hostspritedatablock | dw    host_10_0
+Host_14:        db    Hostframelistblock, Hostspritedatablock | dw    host_9_0
+Host_15:        db    Hostframelistblock, Hostspritedatablock | dw    host_8_0
 HostMovementRoutine:
-  ld    hl,Host_0
+  ld    l,(iy+7)
+  ld    h,(iy+8)
   call  PutSpritePose                       ;in hl=spritepose, out writes spritepose to objecttable
 
   call  CheckStartConversation              ;out: nz=converstaion starts
@@ -309,6 +314,154 @@ HostMovementRoutine:
   ld    hl,NPCConv007
   ld    (NPCConvAddress),hl
   ret
+
+AnimateHostRunning:                           ;in hl=starting pose
+  ld    ix,Object2
+
+	ld		a,(NPCAniCount)
+  inc   a
+  cp    7
+  jr    nz,.endchecklastframe
+  xor   a
+  .endchecklastframe:
+	ld		(NPCAniCount),a
+  add   a,a                                 ;*2
+  add   a,a                                 ;*4 ;each spritepose has 4 bytes
+  ld    e,a
+  ld    d,0
+  add   hl,de
+
+  ld    (ix+7),l
+  ld    (ix+8),h
+  ret
+
+
+ArcadeHall1redlightPalette:                 ;palette file
+  incbin "..\grapx\arcadehall\arcade1redlight.SC5",$7680+7,32
+SirensRoutine:
+  ld    a,1
+;  ld    (freezecontrols?),a
+
+  call  .HandlePhase
+  ret
+
+  .AlternatePalette:
+  ld    a,(PageOnNextVblank)                ;set page
+  cp    2*32 + 31
+  jr    c,.SetPalettePage0and1
+  .SetPalettePage2and3:
+  ld    hl,CurrentPalette
+  jp    SetPalette
+  .SetPalettePage0and1:
+  ld    hl,ArcadeHall1redlightPalette
+  jp    SetPalette
+
+  .HandlePhase:
+  ld    a,(iy+ObjectPhase)
+  or    a
+  jp    z,.Phase0                           ;flicker screenpalette between normal and red, open door, remove red light
+  dec   a
+  jp    z,.Phase1                           ;host walks towards the vessel
+  ret
+
+  .Phase1:                                  ;host walks towards the vessel
+  ld    a,(framecounter)                    ;at max 4 objects can be put in screen divided over 4 frames
+  and   3
+  ret   nz
+
+  ld    a,(Object2+2)                       ;x
+  sub   a,4
+  ld    (Object2+2),a
+  ld    hl,Host_9                           ;starting pose
+  call  AnimateHostRunning
+  ret
+
+  .Phase0:                                  ;flicker screenpalette between normal and red, open door, remove red light
+  halt                                      ;make sure we switch palette on vblank (and not halfway the screen, since the OpenDoor routine takes more than 1 int)
+  call  .AlternatePalette
+
+  ld    a,(iy+Var1)
+  inc   a
+  ld    (iy+Var1),a
+  cp    50+32
+  jr    c,.CloseDoor
+  cp    82+64
+  jr    z,.EndPhase0
+
+  .OpenDoor:
+  ld    hl,$4000 + (000*128) + (000/2) - 128
+  ld    bc,$0000 + (097*256) + (056/2)
+  ld    a,(PageOnNextVblank)                ;set page
+  cp    0*32 + 31
+  jr    z,.SetOpenDoorPage2
+  cp    1*32 + 31
+  jr    z,.SetOpenDoorPage3
+  cp    2*32 + 31
+  jr    z,.SetOpenDoorPage0
+  cp    3*32 + 31
+  jr    z,.SetOpenDoorPage1
+
+  .SetOpenDoorPage0:
+  ld    a,OpenDoorGfxBlock         	        ;block to copy graphics from
+  ld    de,$0000 + (066*128) + (100/2) - 128
+  jp    CopyRomToVram                       ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
+
+  .SetOpenDoorPage1:
+  ld    a,OpenDoorGfxBlock         	        ;block to copy graphics from
+  ld    de,$8000 + (066*128) + (100/2) - 128
+  jp    CopyRomToVram                       ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
+
+  .SetOpenDoorPage2:
+  ld    a,1
+  ld    (Vdp_Write_HighPage?),a
+  ld    a,OpenDoorGfxBlock         	        ;block to copy graphics from
+  ld    de,$0000 + (066*128) + (100/2) - 128
+  call  CopyRomToVram                       ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
+  xor   a
+  ld    (Vdp_Write_HighPage?),a
+  ret
+
+  .SetOpenDoorPage3:
+  ld    a,1
+  ld    (Vdp_Write_HighPage?),a
+  ld    a,OpenDoorGfxBlock         	        ;block to copy graphics from
+  ld    de,$8000 + (066*128) + (100/2) - 128
+  call  CopyRomToVram                       ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
+  xor   a
+  ld    (Vdp_Write_HighPage?),a
+  ret
+
+  .CloseDoor:
+  ld    a,ArcadeHall1GfxBlock     	        ;block to copy graphics from
+  ld    hl,$4000 + (066*128) + (100/2) - 128
+  ld    de,$0000 + (066*128) + (100/2) - 128
+  ld    bc,$0000 + (097*256) + (056/2)
+  jp    CopyRomToVram                       ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
+
+  .EndPhase0:                               ;remove red light, go next phase
+  ld    (iy+ObjectPhase),1
+
+  ld    a,ArcadeHall1GfxBlock         	    ;block to copy graphics from
+  call  RemoveArcadeRedLightsGfxPage0
+  ld    a,ArcadeHall1GfxBlock         	    ;block to copy graphics from
+  jp		RemoveArcadeRedLightsGfxPage1
+
+RemoveArcadeRedLightsGfxPage0:
+  ld    hl,$4000 + (005*128) + (000/2) - 128
+  ld    de,$0000 + (005*128) + (000/2) - 128
+  ld    bc,$0000 + (030*256) + (256/2)
+  jp    CopyRomToVram                       ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
+
+RemoveArcadeRedLightsGfxPage1:
+  ld    hl,$4000 + (005*128) + (000/2) - 128
+  ld    de,$8000 + (005*128) + (000/2) - 128
+  ld    bc,$0000 + (030*256) + (256/2)
+  jp    CopyRomToVram                       ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
+
+Wall_0:        db    npcsframelistblock, npcsspritedatablock | dw    npcs_7_0
+WallMovementRoutine:
+  ld    hl,Wall_0
+  jp    PutSpritePose                       ;in hl=spritepose, out writes spritepose to objecttable
 
 Girlidle_0:        db    npcsframelistblock, npcsspritedatablock | dw    npcs_0_0
 GirlMovementRoutine:

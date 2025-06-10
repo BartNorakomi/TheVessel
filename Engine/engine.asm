@@ -229,10 +229,14 @@ MovementRoutine:        equ 11
 ObjectTable:
 ;           on?,  y,  x,  sprite restore table                                ,sprite data,put on frame ,movement routine block,  movement routine 
 Object1:  db  1,110,130 | dw Object1RestoreBackgroundTable,Object1RestoreTable,000        | db 255      ,MovementRoutinesBlock | dw VesselMovementRoutine
-Object2:  db  1,098,040 | dw Object3RestoreBackgroundTable,Object3RestoreTable,000        | db 255      ,MovementRoutinesBlock | dw HostMovementRoutine
+Object2:  db  1,098,040 | dw Object3RestoreBackgroundTable,Object3RestoreTable,000        | db 255      ,MovementRoutinesBlock | dw GirlMovementRoutine
 Object3:  db  1,095,200 | dw Object4RestoreBackgroundTable,Object4RestoreTable,000        | db 255      ,MovementRoutinesBlock | dw CapGirlMovementRoutine
 Object4:  db  1,105,150 | dw Object2RestoreBackgroundTable,Object2RestoreTable,000        | db 255      ,MovementRoutinesBlock | dw RedHeadBoyMovementRoutine
 LenghtObject: equ Object2-Object1
+ObjectPhase: equ 3 | Var1: equ 4 | Var2: equ 5 | Var3: equ 6 | Var4: equ 7 | Var5: equ 8 
+ObjEvent1: db  0,0,0    | dw 0,0,0                                                        | db 255      ,MovementRoutinesBlock | dw SirensRoutine
+ObjEvent2: db  0,0,0    | dw 0,0,0                                                        | db 255      ,MovementRoutinesBlock | dw SirensRoutine
+ObjEvent3: db  0,0,0    | dw 0,0,0                                                        | db 255      ,MovementRoutinesBlock | dw SirensRoutine
 
 HandleObjects:
   ld    iy,Object1
@@ -244,6 +248,9 @@ HandleObjects:
   ld    iy,Object4
   call  HandleObjectRoutine
 
+  ld    iy,ObjEvent1
+  call  HandleEventRoutine
+
   ld    a,(framecounter)
   and   3
   cp    3
@@ -251,6 +258,11 @@ HandleObjects:
 
   call  AssignOrderByY                      ;sort the put on frame value from lowest (y) to highest (y) object
 	jp    switchpageSF2Engine
+
+HandleEventRoutine:
+  bit   0,(iy+0)                            ;on?
+  ret   z
+  jr    HandleObjectRoutine.HandleMovementRoutine
 
 HandleObjectRoutine:
   bit   0,(iy+0)                            ;on?
@@ -2095,11 +2107,12 @@ CompareHLwithDE:
   ret
 
 StartSaveGameData:
-CurrentArcadeHall:  db  2               ;1=arcadehall1, 2=arcadehall2
+CurrentArcadeHall:  db  1               ;1=arcadehall1, 2=arcadehall2
 GamesPlayed:  db 9                      ;increases after leaving a game. max=255
 DateCurrentLogin: ds 6
 DatePreviousLogin: ds 6
 DailyContinuesUsed: db 0                ;bit 0=roadfighter,bit 1=basketball,bit 2=blox,bit 4=bikerace
+HighScoreTotalAverage: db 80            ;recruiter appears when 80 (%) is reached
 HighScoreRoadFighter: db 0
 HighScoreBasketball: db 0
 HighScoreBlox: db 0
