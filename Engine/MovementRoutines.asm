@@ -13,6 +13,8 @@
 ;SirensRoutine
 ;ArcadeHall1EventRoutine
 ;ArcadeHall2EventRoutine
+;BackRoomGameRoutine
+;EntityRoutine
 
 MovementRoutinesAddress:  equ $4000
 Phase MovementRoutinesAddress
@@ -587,6 +589,12 @@ RemoveArcadeRedLightsGfxPage1:
 
 BRGame_0:        db    npcsframelistblock, npcsspritedatablock | dw    npcs_8_0
 BackRoomGameRoutine:
+  ret
+
+Entity_0:        db    entityframelistblock, entityspritedatablock | dw    Entity_0_0
+Entity_1:        db    entityframelistblock, entityspritedatablock | dw    Entity_1_0
+Entity_2:        db    entityframelistblock, entityspritedatablock | dw    Entity_2_0
+EntityRoutine:
   ret
 
 Wall_0:        db    npcsframelistblock, npcsspritedatablock | dw    npcs_7_0

@@ -2134,6 +2134,7 @@ HighScoreRoadFighter: db 0
 HighScoreBasketball: db 0
 HighScoreBlox: db 0
 HighScoreBikeRace: db 0
+HighScoreBackroomGame:  db  100
 ConvGirl: db %0000 0000                 ;conversations handled
 ConvCapGirl: db %0000 0000              ;conversations handled
 ConvGingerBoy: db %0000 0000            ;conversations handled

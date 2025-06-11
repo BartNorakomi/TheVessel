@@ -19,6 +19,7 @@ InitiateGame:
   jp    LevelEngine
 
 INCLUDE "RePlayer.asm"
+;														on?,  y,  x,  sprite restore table                                ,sprite data,put on frame ,movement routine block,  movement routine,							 phase,var1,var2
 
 ObjectGirl:  							db  1,098,040 | dw Object3RestoreBackgroundTable,Object3RestoreTable,000        | db 255      ,MovementRoutinesBlock | dw GirlMovementRoutine				| db 000,000 ,000
 ObjectCapGirl:  					db  1,095,200 | dw Object4RestoreBackgroundTable,Object4RestoreTable,000        | db 255      ,MovementRoutinesBlock | dw CapGirlMovementRoutine		| db 000,000 ,000
@@ -27,6 +28,8 @@ ObjectHost:  							db  1,081,100 | dw Object3RestoreBackgroundTable,Object3Rest
 ObjectWall:  							db  1,062,178 | dw Object4RestoreBackgroundTable,Object4RestoreTable,Wall_0     | db 255      ,MovementRoutinesBlock | dw WallMovementRoutine				| db 000,000 ,000
 
 ObjectBackRoomGame:  			db  1,092,128 | dw Object4RestoreBackgroundTable,Object4RestoreTable,BRGame_0   | db 255			,MovementRoutinesBlock | dw BackRoomGameRoutine				| db 000,000 ,000
+ObjectEntity:  						db  1,013,128 | dw Object2RestoreBackgroundTable,Object2RestoreTable,Entity_0   | db 255			,MovementRoutinesBlock | dw EntityRoutine							| db 000,000 ,000
+
 
 EventArcadeHall1:					db	1,0,0     | dw Object2RestoreBackgroundTable,Object2RestoreTable,000   			| db 255      ,MovementRoutinesBlock | dw ArcadeHall1EventRoutine		| db 000,000 ,000
 EventArcadeHall2: 				db	1,0,0     | dw Object2RestoreBackgroundTable,Object2RestoreTable,000        | db 255      ,MovementRoutinesBlock | dw ArcadeHall2EventRoutine		| db 000,000 ,000
@@ -56,6 +59,29 @@ PutObjects:															;put objects and events
 	ret
 
 PutObjectsArcadeHall2:
+	;set starting coordinates player
+	ld		a,114														;y
+	ld		(Object1+y),a
+	ld		a,194														;x
+	ld		(Object1+x),a
+
+	ld		hl,LStanding
+  ld    (PlayerSpriteStand),hl
+
+	ld		a,(HighScoreBackroomGame)
+	cp		100
+	jr		c,.BackRoomGameNotYetFinished
+
+	ld		hl,ObjectEntity									;put entity
+	call	PutSingleObject 
+
+	ld		de,ObjEvent1										;now put events
+
+	ld		hl,EventArcadeHall2							;put arcade hall 2 event
+	call	PutSingleObject
+	ret
+
+	.BackRoomGameNotYetFinished:
 	ld		hl,ObjectHost										;put host
 	call	PutSingleObject 
 	ld		hl,ObjectBackRoomGame						;put backroom game
@@ -65,15 +91,6 @@ PutObjectsArcadeHall2:
 
 	ld		hl,EventArcadeHall2							;put arcade hall 2 event
 	call	PutSingleObject
-
-	;set starting coordinates player
-	ld		a,114														;y
-	ld		(Object1+y),a
-	ld		a,194														;x
-	ld		(Object1+x),a
-
-	ld		hl,LStanding
-  ld    (PlayerSpriteStand),hl
 	ret
 
 PutObjectsArcadeHall1:

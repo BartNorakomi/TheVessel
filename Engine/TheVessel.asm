@@ -541,9 +541,20 @@ npcsspritedatablock:			equ ($-RomStartAddress) and (romsize-1) /RomBlockSize
 									incbin "..\tools\npcs.dat"
 									DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
 
+;entity
+entityframelistblock:			equ ($-RomStartAddress) and (romsize-1) /RomBlockSize
+									phase	$8000
+									include "..\tools\entity.asm" 
+									DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
+									dephase
+entityspritedatablock:			equ ($-RomStartAddress) and (romsize-1) /RomBlockSize
+									incbin "..\tools\entity.dat"
+									DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
+
 MovementRoutinesBlock:	equ ($-RomStartAddress) and (romsize-1) /RomBlockSize ;$04
 								include "MovementRoutines.asm"  
 								DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
+
 
 TheVesselrepBlock:				equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
 	incbin "msxlegends.rep"
