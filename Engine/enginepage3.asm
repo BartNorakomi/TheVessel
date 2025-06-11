@@ -9,43 +9,144 @@ InitiateGame:
 ;  call  TitleScreen
 ;  endif
 ;  StartGame:
-	call	LoadArcadeHall									;sets gfx and objects
-	call	CheckPutEvents									;check if an event is due (recruiter appearing in arcade1,.....)
-  ld    a,SongSolitude
+	call	LoadRoom												;sets gfx and objects
+	call	PutObjects											;put objects and events
+  ld    a,r
+	and		7
+	inc		a
   ld    (ChangeSong?),a
   call  SetInterruptHandler           	;sets Vblank
   jp    LevelEngine
 
 INCLUDE "RePlayer.asm"
 
-CheckPutEvents:
-	call	.RecruiterAppear
+ObjectGirl:  							db  1,098,040 | dw Object3RestoreBackgroundTable,Object3RestoreTable,000        | db 255      ,MovementRoutinesBlock | dw GirlMovementRoutine				| db 000,000 ,000
+ObjectCapGirl:  					db  1,095,200 | dw Object4RestoreBackgroundTable,Object4RestoreTable,000        | db 255      ,MovementRoutinesBlock | dw CapGirlMovementRoutine		| db 000,000 ,000
+ObjectRedHeadBoy:  				db  1,105,150 | dw Object2RestoreBackgroundTable,Object2RestoreTable,000        | db 255      ,MovementRoutinesBlock | dw RedHeadBoyMovementRoutine	| db 000,000 ,000
+ObjectHost:  							db  1,081,100 | dw Object3RestoreBackgroundTable,Object3RestoreTable,Host_0     | db 255      ,MovementRoutinesBlock | dw HostMovementRoutine				| db 000,000 ,000
+ObjectWall:  							db  1,062,178 | dw Object4RestoreBackgroundTable,Object4RestoreTable,Wall_0     | db 255      ,MovementRoutinesBlock | dw WallMovementRoutine				| db 000,000 ,000
+
+ObjectBackRoomGame:  			db  1,092,128 | dw Object4RestoreBackgroundTable,Object4RestoreTable,BRGame_0   | db 255			,MovementRoutinesBlock | dw BackRoomGameRoutine				| db 000,000 ,000
+
+EventArcadeHall1:					db	1,0,0     | dw Object2RestoreBackgroundTable,Object2RestoreTable,000   			| db 255      ,MovementRoutinesBlock | dw ArcadeHall1EventRoutine		| db 000,000 ,000
+EventArcadeHall2: 				db	1,0,0     | dw Object2RestoreBackgroundTable,Object2RestoreTable,000        | db 255      ,MovementRoutinesBlock | dw ArcadeHall2EventRoutine		| db 000,000 ,000
+EventSirens: 							db	1,0,0     | dw Object2RestoreBackgroundTable,Object2RestoreTable,000        | db 255      ,MovementRoutinesBlock | dw SirensRoutine							| db 000,000 ,000
+
+PutSingleObject:
+	ld		bc,LenghtObject
+	ldir
 	ret
 
-	.RecruiterAppear:
+PutObjects:															;put objects and events
+	xor		a																;turn off all objects and events
+	ld		(Object2+on?),a
+	ld		(Object3+on?),a
+	ld		(Object4+on?),a
+	ld		(ObjEvent1+on?),a
+	ld		(ObjEvent2+on?),a
+	ld		(ObjEvent3+on?),a
+
+	ld		de,Object2											;start with object2
+
+	ld		a,(CurrentRoom)									;1=arcadehall1, 2=arcadehall2
+	or		a
+	jr		z,PutObjectsArcadeHall1
+	dec		a
+	jr		z,PutObjectsArcadeHall2
+	ret
+
+PutObjectsArcadeHall2:
+	ld		hl,ObjectHost										;put host
+	call	PutSingleObject 
+	ld		hl,ObjectBackRoomGame						;put backroom game
+	call	PutSingleObject 
+
+	ld		de,ObjEvent1										;now put events
+
+	ld		hl,EventArcadeHall2							;put arcade hall 2 event
+	call	PutSingleObject
+
+	;set starting coordinates player
+	ld		a,114														;y
+	ld		(Object1+y),a
+	ld		a,194														;x
+	ld		(Object1+x),a
+
+	ld		hl,LStanding
+  ld    (PlayerSpriteStand),hl
+	ret
+
+PutObjectsArcadeHall1:
 	ld		a,(HighScoreTotalAverage)
 	cp		80
-	ret		c
-	ld		hl,EventRecruiterAppears
-	ld		de,ObjectTable
-	ld		bc,LenghtObjectTable + (1*LenghtObject)	;object table + 1 event
-	ldir
+	jp		c,.HighScoreNot80Yet
 
-	call  LoadArcadeHall1redlightsGfx 		;loads the red lights in page and
+	ld		a,(ConvHost)										;check if we have met the host already
+	bit		0,a
+	jr		z,.HostAppears
+
+	.HostHasAlreadyAppeared:
+	ld		hl,ObjectWall										;put wall
+	call	PutSingleObject
+
+	ld		de,ObjEvent1										;now put events
+
+	ld		hl,EventArcadeHall1							;put arcade hall 1 event
+	call	PutSingleObject
+	call  LoadOpenDoorGfx 								;opens the door in all pages
+
+	;set starting coordinates player (entering through the door)
+	ld		a,070														;y
+	ld		(Object1+y),a
+	ld		a,128														;x
+	ld		(Object1+x),a
 	ret
 
-EventRecruiterAppears:
-;            on?,  y,  x,  sprite restore table                                ,sprite data,put on frame ,movement routine block,  movement routine,							 phase,var1,var2
-.Object1:  db  1,102,074 | dw Object1RestoreBackgroundTable,Object1RestoreTable,000        | db 255      ,MovementRoutinesBlock | dw VesselMovementRoutine			| db 000,000 ,000
-.Object2:  db  1,061,176 | dw Object3RestoreBackgroundTable,Object3RestoreTable,Host_0     | db 255      ,MovementRoutinesBlock | dw HostMovementRoutine				| db 000,000 ,000
-.Object3:  db  1,062,178 | dw Object4RestoreBackgroundTable,Object4RestoreTable,000        | db 255      ,MovementRoutinesBlock | dw WallMovementRoutine				| db 000,000 ,000
-.Object4:  db  0,105,150 | dw Object2RestoreBackgroundTable,Object2RestoreTable,000        | db 255      ,MovementRoutinesBlock | dw RedHeadBoyMovementRoutine	| db 000,000 ,000
-;														
-.ObjEvent1: db 1,0,0     | dw Object2RestoreBackgroundTable,Object2RestoreTable,000        | db 255      ,MovementRoutinesBlock | dw SirensRoutine							| db 000,000 ,000
+	.HostAppears:
+	ld		hl,ObjectHost										;put host
+	call	PutSingleObject 
 
-LoadArcadeHall:
-	ld		a,(CurrentArcadeHall)						;1=arcadehall1, 2=arcadehall2
-	dec		a
+	ld		hl,ObjectWall										;put wall
+	call	PutSingleObject 
+
+	ld		de,ObjEvent1										;now put events
+
+	ld		hl,EventSirens									;put sirens event
+	call	PutSingleObject 
+	ld		hl,EventArcadeHall1							;put arcade hall 1 event
+	call	PutSingleObject 
+	call  LoadArcadeHall1redlightsGfx 		;loads the red lights in page and
+
+	;set starting coordinates player
+	ld		a,102														;y
+	ld		(Object1+y),a
+	ld		a,074														;x
+	ld		(Object1+x),a
+
+	ld		hl,RStanding
+  ld    (PlayerSpriteStand),hl
+
+	;set starting coordinates host
+	ld		a,061														;y
+	ld		(Object2+y),a
+	ld		a,176														;x
+	ld		(Object2+x),a
+	ret
+
+	.HighScoreNot80Yet:
+	ld		hl,ObjectGirl										;put girl
+	call	PutSingleObject 
+	ld		hl,ObjectCapGirl								;put capgirl
+	call	PutSingleObject 
+	ld		hl,ObjectRedHeadBoy							;put redheadboy
+	call	PutSingleObject 
+	ret
+
+LoadRoom:
+  xor   a
+  ld    (ChangeRoom?),a
+	ld		a,(CurrentRoom)									;0=arcadehall1, 1=arcadehall2
+	or		a
 	jr		z,.ArcadeHall1
 	dec		a
 	jr		z,.ArcadeHall2
@@ -53,35 +154,11 @@ LoadArcadeHall:
 
 	.ArcadeHall1:
 	call  LoadArcadeHall1Gfx             	;loads the initial starting arcade room in all 4 pages, and sets palette
-	ld		hl,ObjectsArcadeHall1
-	ld		de,ObjectTable
-	ld		bc,LenghtObjectTable
-	ldir
 	ret
 
 	.ArcadeHall2:
   call  LoadArcadeHall2Gfx             	;loads the 2nd arcade room in all 4 pages, and sets palette
-	ld		hl,ObjectsArcadeHall2
-	ld		de,ObjectTable
-	ld		bc,LenghtObjectTable
-	ldir
 	ret
-
-ObjectsArcadeHall1:
-;            on?,  y,  x,  sprite restore table                                ,sprite data,put on frame ,movement routine block,  movement routine,							 phase,var1,var2
-.Object1:  db  1,110,130 | dw Object1RestoreBackgroundTable,Object1RestoreTable,000        | db 255      ,MovementRoutinesBlock | dw VesselMovementRoutine			| db 000,000 ,000
-.Object2:  db  1,098,040 | dw Object3RestoreBackgroundTable,Object3RestoreTable,000        | db 255      ,MovementRoutinesBlock | dw GirlMovementRoutine				| db 000,000 ,000
-.Object3:  db  1,095,200 | dw Object4RestoreBackgroundTable,Object4RestoreTable,000        | db 255      ,MovementRoutinesBlock | dw CapGirlMovementRoutine			| db 000,000 ,000
-.Object4:  db  1,105,150 | dw Object2RestoreBackgroundTable,Object2RestoreTable,000        | db 255      ,MovementRoutinesBlock | dw RedHeadBoyMovementRoutine	| db 000,000 ,000
-LenghtObjectTable:	equ	$-ObjectsArcadeHall1
-
-ObjectsArcadeHall2:
-;            on?,  y,  x,  sprite restore table                                ,sprite data,put on frame ,movement routine block,  movement routine,							 phase,var1,var2
-.Object1:  db  1,110,130 | dw Object1RestoreBackgroundTable,Object1RestoreTable,000        | db 255      ,MovementRoutinesBlock | dw VesselMovementRoutine			| db 000,000 ,000
-.Object2:  db  1,098,040 | dw Object3RestoreBackgroundTable,Object3RestoreTable,000        | db 255      ,MovementRoutinesBlock | dw HostMovementRoutine				| db 000,000 ,000
-.Object3:  db  0,095,200 | dw Object4RestoreBackgroundTable,Object4RestoreTable,000        | db 255      ,MovementRoutinesBlock | dw CapGirlMovementRoutine			| db 000,000 ,000
-.Object4:  db  0,105,150 | dw Object2RestoreBackgroundTable,Object2RestoreTable,000        | db 255      ,MovementRoutinesBlock | dw RedHeadBoyMovementRoutine	| db 000,000 ,000
-
 
 ArcadeHall1Palette:                    	;palette file
   incbin "..\grapx\arcadehall\arcade1.SC5",$7680+7,32
@@ -164,6 +241,36 @@ SetFontPage1Y212:                       ;set font at (0,212) page 0
   ld    bc,$0000 + (039*256) + (256/2)
   ld    a,FontBlock         ;font graphics block
   jp    CopyRomToVram          ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
+
+LoadOpenDoorGfx:
+  ld    hl,$4000 + (000*128) + (000/2) - 128
+  ld    de,$0000 + (066*128) + (100/2) - 128
+  ld    bc,$0000 + (097*256) + (056/2)
+  ld    a,OpenDoorGfxBlock         	        ;block to copy graphics from
+  call  CopyRomToVram                       ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
+
+  ld    hl,$4000 + (000*128) + (000/2) - 128
+  ld    de,$8000 + (066*128) + (100/2) - 128
+  ld    bc,$0000 + (097*256) + (056/2)
+  ld    a,OpenDoorGfxBlock         	        ;block to copy graphics from
+  call  CopyRomToVram                       ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
+
+  ld    hl,$4000 + (000*128) + (000/2) - 128
+  ld    de,$0000 + (066*128) + (100/2) - 128
+  ld    bc,$0000 + (097*256) + (056/2)
+  ld    a,1
+  ld    (Vdp_Write_HighPage?),a
+  ld    a,OpenDoorGfxBlock         	        ;block to copy graphics from
+  call  CopyRomToVram                       ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
+
+  ld    hl,$4000 + (000*128) + (000/2) - 128
+  ld    de,$8000 + (066*128) + (100/2) - 128
+  ld    bc,$0000 + (097*256) + (056/2)
+  ld    a,OpenDoorGfxBlock         	        ;block to copy graphics from
+  call  CopyRomToVram                       ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
+  xor   a
+  ld    (Vdp_Write_HighPage?),a
+  ret
 
 Vdp_Write_HighPage?:	db	0							;page 0/1 for low page, 2/3 for high page
 CopyRomToVram:
@@ -952,6 +1059,7 @@ oldControls: 				        rb    1
 base: 											equ $4000
 spatpointer:                rb		2
 PageOnNextVblank:           rb    1
+ChangeRoom?:         				rb    1
 
 endenginepage3variables:  equ $+enginepage3length
 org variables

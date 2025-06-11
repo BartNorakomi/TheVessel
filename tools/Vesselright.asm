@@ -92,7 +92,7 @@ DW	0x0778,base+0x04BE
 DW	0x0508,base+0x04C5
 DW	0x0700,base+0x04CA
 Vesselright_1_0:	; Frame 1, Slice 0
-DB	50,74,96,28,124 ;w,h,x,y,o
+DB	50,74,96,25,124 ;w,h,x,y,o
 DW	0x0102,base+0x0007
 DW	0x017C,base+0x0007
 DW	0x077F,base+0x04D1
@@ -193,7 +193,7 @@ DW	0x0210,base+0x099B
 DW	0x0380,base+0x099D
 DW	0x0100,base+0x002A
 Vesselright_2_0:	; Frame 2, Slice 0
-DB	48,79,96,29,122 ;w,h,x,y,o
+DB	48,79,96,26,122 ;w,h,x,y,o
 DW	0x057F,base+0x09A0
 DW	0x087F,base+0x09A5
 DW	0x097F,base+0x09AD
@@ -287,7 +287,7 @@ DW	0x0581,base+0x0E55
 DW	0x0380,base+0x0E5A
 DW	0x0100,base+0x002A
 Vesselright_3_0:	; Frame 3, Slice 0
-DB	48,78,96,31,120 ;w,h,x,y,o
+DB	48,78,96,28,120 ;w,h,x,y,o
 DW	0x077F,base+0x0E5D
 DW	0x097F,base+0x0E64
 DW	0x0A80,base+0x0E6D
@@ -375,7 +375,7 @@ DW	0x0780,base+0x129F
 DW	0x0782,base+0x12A6
 DW	0x0300,base+0x12AD
 Vesselright_4_0:	; Frame 4, Slice 0
-DB	48,77,96,31,122 ;w,h,x,y,o
+DB	48,77,96,28,122 ;w,h,x,y,o
 DW	0x057F,base+0x12B0
 DW	0x077F,base+0x12B5
 DW	0x097F,base+0x12BC
@@ -460,7 +460,7 @@ DW	0x0680,base+0x16AF
 DW	0x0681,base+0x16B5
 DW	0x0300,base+0x16BB
 Vesselright_5_0:	; Frame 5, Slice 0
-DB	48,76,96,29,120 ;w,h,x,y,o
+DB	48,76,96,26,120 ;w,h,x,y,o
 DW	0x0680,base+0x16BE
 DW	0x087E,base+0x16C4
 DW	0x0A80,base+0x16CC
@@ -548,7 +548,7 @@ DW	0x0680,base+0x1AB5
 DW	0x0581,base+0x1ABB
 DW	0x0400,base+0x1AC0
 Vesselright_6_0:	; Frame 6, Slice 0
-DB	48,77,96,27,122 ;w,h,x,y,o
+DB	48,77,96,24,122 ;w,h,x,y,o
 DW	0x0203,base+0x00AC
 DW	0x027C,base+0x00AC
 DW	0x077F,base+0x1AC4
@@ -648,7 +648,7 @@ DW	0x0480,base+0x1EEF
 DW	0x0481,base+0x1EF3
 DW	0x0200,base+0x1EF7
 Vesselright_7_0:	; Frame 7, Slice 0
-DB	50,72,94,28,120 ;w,h,x,y,o
+DB	50,72,94,25,120 ;w,h,x,y,o
 DW	0x077F,base+0x1EF9
 DW	0x097F,base+0x1F00
 DW	0x0B80,base+0x1F09
@@ -743,7 +743,7 @@ DW	0x0572,base+0x2333
 DW	0x030E,base+0x2338
 DW	0x0500,base+0x233B
 Vesselright_8_0:	; Frame 8, Slice 0
-DB	48,75,96,31,120 ;w,h,x,y,o
+DB	48,75,96,28,120 ;w,h,x,y,o
 DW	0x087F,base+0x2340
 DW	0x0980,base+0x2348
 DW	0x0A7F,base+0x2351
@@ -831,7 +831,7 @@ DW	0x0781,base+0x2757
 DW	0x0581,base+0x275E
 DW	0x0300,base+0x2763
 Vesselright_9_0:	; Frame 9, Slice 0
-DB	46,76,98,31,122 ;w,h,x,y,o
+DB	46,76,98,28,122 ;w,h,x,y,o
 DW	0x067F,base+0x2766
 DW	0x087F,base+0x276C
 DW	0x0A7F,base+0x2774
@@ -917,7 +917,7 @@ DW	0x0781,base+0x2B70
 DW	0x0582,base+0x2B77
 DW	0x0200,base+0x04C5
 Vesselright_10_0:	; Frame 10, Slice 0
-DB	46,75,98,30,122 ;w,h,x,y,o
+DB	46,75,98,27,122 ;w,h,x,y,o
 DW	0x077E,base+0x2B7C
 DW	0x0980,base+0x2B83
 DW	0x0A7F,base+0x2B8C
@@ -1000,7 +1000,7 @@ DW	0x0780,base+0x2FA7
 DW	0x0102,base+0x0912
 DW	0x0500,base+0x2FAE
 Vesselright_11_0:	; Frame 11, Slice 0
-DB	48,77,98,28,122 ;w,h,x,y,o
+DB	48,77,98,25,122 ;w,h,x,y,o
 DW	0x067F,base+0x2FB3
 DW	0x087F,base+0x2FB9
 DW	0x0A7F,base+0x2FC1

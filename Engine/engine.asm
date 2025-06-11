@@ -8,6 +8,7 @@ LevelEngine:
   call  HandleObjects
 ;  call  BackdropBlack
   call  HandleConversations             ;handles NPC conversations
+  call  CheckLeaveRoom
 
   xor   a
   ld    hl,vblankintflag
@@ -16,6 +17,13 @@ LevelEngine:
   jr    z,.checkflag
   ld    (hl),a
   jp    LevelEngine
+
+CheckLeaveRoom:
+  ld    a,(ChangeRoom?)
+  or    a
+  ret   z
+  pop   af
+  jp    InitiateGame
 
 
 vblankintflag:  db  0
@@ -222,7 +230,9 @@ LineInt:
   ei
   ret  
 
-
+on?:                    equ 0
+y:                      equ 1
+x:                      equ 2
 PutOnFrame:             equ 9
 MovementRoutineBlock:   equ 10
 MovementRoutine:        equ 11
@@ -252,6 +262,10 @@ HandleObjects:
   call  HandleObjectRoutine
 
   ld    iy,ObjEvent1
+  call  HandleEventRoutine
+  ld    iy,ObjEvent2
+  call  HandleEventRoutine
+  ld    iy,ObjEvent3
   call  HandleEventRoutine
 
   ld    a,(framecounter)
@@ -2110,7 +2124,7 @@ CompareHLwithDE:
   ret
 
 StartSaveGameData:
-CurrentArcadeHall:  db  1               ;1=arcadehall1, 2=arcadehall2
+CurrentRoom:  db  1                     ;0=arcadehall1, 1=arcadehall2
 GamesPlayed:  db 9                      ;increases after leaving a game. max=255
 DateCurrentLogin: ds 6
 DatePreviousLogin: ds 6
@@ -2123,6 +2137,7 @@ HighScoreBikeRace: db 0
 ConvGirl: db %0000 0000                 ;conversations handled
 ConvCapGirl: db %0000 0000              ;conversations handled
 ConvGingerBoy: db %0000 0000            ;conversations handled
+ConvHost: db %0000 0001                 ;conversations handled
 
 
 EndSaveGameData:

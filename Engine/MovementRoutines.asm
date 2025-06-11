@@ -11,6 +11,8 @@
 ;RedHeadBoyMovementRoutine
 
 ;SirensRoutine
+;ArcadeHall1EventRoutine
+;ArcadeHall2EventRoutine
 
 MovementRoutinesAddress:  equ $4000
 Phase MovementRoutinesAddress
@@ -309,10 +311,65 @@ HostMovementRoutine:
   dec   a
   jp    z,.Phase1                           ;host walks towards the vessel (30 pixels to the left)
   dec   a
-  jp    z,.Phase2                           ;host walks towards the vessel (diagonally straight to player)
+  jp    z,.Phase2                           ;host walks towards the vessel (diagonally straight to player), StartConversation
+  dec   a
+  jp    z,.Phase3                           ;wait 10 frames
+  dec   a
+  jp    z,.Phase4                           ;host walks back to the door (diagonally straight to door)
+  dec   a
+  jp    z,.Phase5                           ;host walks back to the door (30 pixels to the right)
   ret
 
-  .Phase2:                                  ;host walks towards the vessel
+  .Phase5:                                  ;host walks back to the door (30 pixels to the right)
+  ld    a,(framecounter)                    ;at max 4 objects can be put in screen divided over 4 frames
+  and   3
+  ret   nz
+
+  ld    hl,Host_1                           ;starting pose
+  ld    b,07                                ;animation steps
+  call  AnimateObject
+
+  ld    a,(iy+2)                            ;x
+  add   a,4
+  ld    (iy+2),a
+  cp    176
+  ret   c
+  ld    (iy+ObjectPhase),6
+  ret
+
+  .Phase4:                                  ;host walks back to the door (diagonally straight to door)
+  ld    a,(framecounter)                    ;at max 4 objects can be put in screen divided over 4 frames
+  and   3
+  ret   nz
+
+  ld    hl,Host_1                           ;starting pose
+  ld    b,07                                ;animation steps
+  call  AnimateObject
+
+  ld    a,(iy+2)                            ;x
+  add   a,1
+  ld    (iy+2),a
+
+  ld    a,(iy+1)                            ;y
+  sub   a,3
+  ld    (iy+1),a
+
+  cp    064
+  ret   nc
+  ld    (iy+ObjectPhase),5
+  ret
+
+  .Phase3:                                  ;wait 10 frames
+  ld    a,(iy+var1)
+  inc   a
+  ld    (iy+var1),a
+  cp    10*4
+  ret   c
+  ld    (iy+var1),0
+  ld    (iy+ObjectPhase),4
+  ret
+
+  .Phase2:                                  ;host walks towards the vessel, StartConversation
   ld    a,(framecounter)                    ;at max 4 objects can be put in screen divided over 4 frames
   and   3
   ret   nz
@@ -333,6 +390,8 @@ HostMovementRoutine:
   ret   c
   ld    (iy+ObjectPhase),3
 
+  ld    hl,ConvHost
+  set   0,(hl)
   ld    a,1
   ld    (StartConversation?),a
   ld    a,NPCConv1Block
@@ -368,8 +427,49 @@ HostMovementRoutine:
 
   ld    a,NPCConv1Block
   ld    (NPCConvBlock),a
-  ld    hl,NPCConv007
+
+  ld    hl,ConvHost
+  bit   1,(hl)
+  jr    z,.NPCConv001
+
+  .NPCConv002:                              ;execute if ConvGirl bit 0 is set 
+  ld    hl,NPCConv009
   ld    (NPCConvAddress),hl
+  ret
+
+  .NPCConv001:                              ;execute if ConvGirl bit 0 is not set. sets ConvGirl bit 0 
+  set   1,(hl)
+  ld    hl,NPCConv008
+  ld    (NPCConvAddress),hl
+  ret
+
+ArcadeHall1EventRoutine:
+  call  .CheckPlayerLeavingRoom             ;when y>116 player enters arcadehall1 
+  ret
+
+  .CheckPlayerLeavingRoom:
+  ld    a,(Object1+y)
+  cp    60
+  ret   nc
+  
+  ld    a,1
+  ld    (ChangeRoom?),a
+  ld    (CurrentRoom),a
+  ret
+
+ArcadeHall2EventRoutine:
+  call  .CheckPlayerLeavingRoom             ;when y>116 player enters arcadehall1 
+  ret
+
+  .CheckPlayerLeavingRoom:
+  ld    a,(Object1+y)
+  cp    116
+  ret   c
+  
+  xor   a
+  ld    (CurrentRoom),a
+  ld    a,1
+  ld    (ChangeRoom?),a
   ret
 
 ArcadeHall1redlightPalette:                 ;palette file
@@ -389,7 +489,7 @@ SirensRoutine:
   .Phase1:                                  ;host walks towards the vessel
   ld    a,1
   ld    (Object2+ObjectPhase),a
-  ld    (iy+0),0                            ;object off
+  ld    (iy+on?),0                          ;object off
   ret
 
   .Phase0:                                  ;flicker screenpalette between normal and red, open door, remove red light
@@ -485,10 +585,13 @@ RemoveArcadeRedLightsGfxPage1:
   ld    bc,$0000 + (030*256) + (256/2)
   jp    CopyRomToVram                       ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
 
+BRGame_0:        db    npcsframelistblock, npcsspritedatablock | dw    npcs_8_0
+BackRoomGameRoutine:
+  ret
+
 Wall_0:        db    npcsframelistblock, npcsspritedatablock | dw    npcs_7_0
 WallMovementRoutine:
-  ld    hl,Wall_0
-  jp    PutSpritePose                       ;in hl=spritepose, out writes spritepose to objecttable
+  ret
 
 Girlidle_0:        db    npcsframelistblock, npcsspritedatablock | dw    npcs_0_0
 GirlMovementRoutine:
