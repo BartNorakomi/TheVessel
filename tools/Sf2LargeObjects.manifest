@@ -9,7 +9,37 @@ entity=@{
 		canvasX=0;canvasY=0;canvasWidth=3*156;canvasHeight=(1*163);
 		frameWidth=156;frameHeight=163;
 		subjectX=0;subjectWidth=156;subjectY=-1;subjectHeight=-1;
-		slices=1;
+		slices=3;
+	};
+};
+
+entitypart1=@{
+		all=`
+	@{	name="entitypart1";
+		imagePath="Entity156x183part1.bmp";
+		palettePath="..\grapx\arcadehall\arcadehall2.PL";
+		destinationPath="";
+		pixelFilePath="entitypart1.dat";
+		transparentColor=-1;fillcolor=15;
+		canvasX=0;canvasY=0;canvasWidth=2*156;canvasHeight=(1*183);
+		frameWidth=156;frameHeight=183;
+		subjectX=0;subjectWidth=156;subjectY=-1;subjectHeight=-1;
+		slices=3;
+	};
+};
+
+entitypart2=@{
+		all=`
+	@{	name="entitypart2";
+		imagePath="Entity156x183part2.bmp";
+		palettePath="..\grapx\arcadehall\arcadehall2.PL";
+		destinationPath="";
+		pixelFilePath="entitypart2.dat";
+		transparentColor=-1;fillcolor=15;
+		canvasX=0;canvasY=0;canvasWidth=1*156;canvasHeight=(1*183);
+		frameWidth=156;frameHeight=183;
+		subjectX=0;subjectWidth=156;subjectY=-1;subjectHeight=-1;
+		slices=3;
 	};
 };
 

@@ -490,6 +490,9 @@ soldierPortraitGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlock
   incbin "..\grapx\characters\soldier\portraittotal.SC5",7,102 * 128      ;212 lines
 	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
 
+AIPortraitGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
+  incbin "..\grapx\characters\AI\portraittotal.SC5",7,102 * 128      ;212 lines
+	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
 
 NPCConv1Block:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
 	phase	$4000

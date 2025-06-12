@@ -233,23 +233,26 @@ LineInt:
 on?:                    equ 0
 y:                      equ 1
 x:                      equ 2
+ObjectRestoreBackgroundTable: equ 3
+ObjectRestoreTable:     equ 5
 PutOnFrame:             equ 9
 MovementRoutineBlock:   equ 10
 MovementRoutine:        equ 11
 ObjectPhase:            equ 13
 Var1:                   equ 14
 Var2:                   equ 15
+Var3:                   equ 16
 
 ObjectTable:
-;           on?,  y,  x,  sprite restore table                                ,sprite data,put on frame ,movement routine block,  movement routine,							 phase,var1,var2
-Object1:  db  1,110,130 | dw Object1RestoreBackgroundTable,Object1RestoreTable,000        | db 255      ,MovementRoutinesBlock | dw VesselMovementRoutine			| db 000,000 ,000
-Object2:  db  1,098,040 | dw Object3RestoreBackgroundTable,Object3RestoreTable,000        | db 255      ,MovementRoutinesBlock | dw GirlMovementRoutine       | db 000,000 ,000
-Object3:  db  1,095,200 | dw Object4RestoreBackgroundTable,Object4RestoreTable,000        | db 255      ,MovementRoutinesBlock | dw CapGirlMovementRoutine    | db 000,000 ,000
-Object4:  db  1,105,150 | dw Object2RestoreBackgroundTable,Object2RestoreTable,000        | db 255      ,MovementRoutinesBlock | dw RedHeadBoyMovementRoutine | db 000,000 ,000
+;           on?,  y,  x,  sprite restore table                                ,sprite data,put on frame ,movement routine block,  movement routine,							 phase,var1,var2,var3
+Object1:  db  1,110,130 | dw Object1RestoreBackgroundTable,Object1RestoreTable,000        | db 000      ,MovementRoutinesBlock | dw VesselMovementRoutine			| db 000,000 ,000, 000
+Object2:  db  1,098,040 | dw Object3RestoreBackgroundTable,Object3RestoreTable,000        | db 001      ,MovementRoutinesBlock | dw GirlMovementRoutine       | db 000,000 ,000, 000
+Object3:  db  1,095,200 | dw Object4RestoreBackgroundTable,Object4RestoreTable,000        | db 002      ,MovementRoutinesBlock | dw CapGirlMovementRoutine    | db 000,000 ,000, 000
+Object4:  db  1,105,150 | dw Object2RestoreBackgroundTable,Object2RestoreTable,000        | db 003      ,MovementRoutinesBlock | dw RedHeadBoyMovementRoutine | db 000,000 ,000, 000
 LenghtObject: equ Object2-Object1
-ObjEvent1: db  0,0,0    | dw 0,0,0                                                        | db 255      ,MovementRoutinesBlock | dw SirensRoutine             | db 000,000 ,000
-ObjEvent2: db  0,0,0    | dw 0,0,0                                                        | db 255      ,MovementRoutinesBlock | dw SirensRoutine             | db 000,000 ,000
-ObjEvent3: db  0,0,0    | dw 0,0,0                                                        | db 255      ,MovementRoutinesBlock | dw SirensRoutine             | db 000,000 ,000
+ObjEvent1: db  0,0,0    | dw 0,0,0                                                        | db 255      ,MovementRoutinesBlock | dw SirensRoutine             | db 000,000 ,000, 000
+ObjEvent2: db  0,0,0    | dw 0,0,0                                                        | db 255      ,MovementRoutinesBlock | dw SirensRoutine             | db 000,000 ,000, 000
+ObjEvent3: db  0,0,0    | dw 0,0,0                                                        | db 255      ,MovementRoutinesBlock | dw SirensRoutine             | db 000,000 ,000, 000
 
 HandleObjects:
   ld    iy,Object1
@@ -277,12 +280,12 @@ HandleObjects:
 	jp    switchpageSF2Engine
 
 HandleEventRoutine:
-  bit   0,(iy+0)                            ;on?
+  bit   0,(iy+on?)                          ;on?
   ret   z
   jr    HandleObjectRoutine.HandleMovementRoutine
 
 HandleObjectRoutine:
-  bit   0,(iy+0)                            ;on?
+  bit   0,(iy+on?)                          ;on?
   ret   z
 
   call  .HandleMovementRoutine
@@ -332,7 +335,7 @@ PutObject:
 ;if we are in page 2 we prepare to restore page 3 in the next frame
 ;if we are in page 3 we prepare to restore page 0 in the next frame
 GoRestoreObject:
-  ld    l,(iy+3)
+  ld    l,(iy+3)                            ;Object Restore Background Table
   ld    h,(iy+4)
 
   ld    a,(screenpage)
@@ -469,7 +472,7 @@ moveplayerleftinscreen:			equ 128
 ;if we are in page 2 we prepare to restore page 3 in the next frame
 ;if we are in page 3 we prepare to restore page 0 in the next frame
 PutSF2ObjectSlice:
-  ld    l,(iy+5)
+  ld    l,(iy+5)                      ;Object Restore Table
   ld    h,(iy+6)
 
 	ld    a,(screenpage)
@@ -545,6 +548,9 @@ GoPutSF2Object:
 	inc   hl
 	add   a,(hl)		;(sliceY)
 	dec   hl
+
+;sub (ix+ny)  ;include this if you want it's y to start at the feet instead of the head
+
 	ld    d,a
 	ld    (ix+sy),a
 	ld    (ix+dy),a
@@ -952,12 +958,15 @@ SetSF2DisplayPage:
 ; Sorts objects by Y and assigns put_on_frame = 0..3 accordingly
 ; Constants
 OBJECT_COUNT:  equ 4
-Y_OFFSET:      equ 1
 UNASSIGNED:    equ 255
 
 ; Routine: AssignOrderByY
 ; Sorts objects by Y and assigns put_on_frame = 0..3 accordingly
 AssignOrderByY:
+  ld    a,(SkipAssignOrder?)						;In same cases we don't want to assign order
+  or    a
+  ret   nz
+
     ; Initialize all put_on_frame fields to UNASSIGNED (255)
     ld a, UNASSIGNED
     ld (Object1 + PutOnFrame), a
@@ -980,7 +989,9 @@ AssignOrderByY:
     cp UNASSIGNED
     jr nz,.SkipObj     ; Skip if already assigned
 
-    ld a, (iy + Y_OFFSET)
+    ld a, (iy + y)
+;    add a, (iy + Height)
+
     cp e
     jr z,.SkipObj      ; Skip if Y equals current min (to handle duplicates consistently)
     jr nc,.SkipObj     ; Skip if Y >= current min
@@ -1842,6 +1853,15 @@ soldierPortraitBlock:             db  soldierPortraitGfxBlock
 .Mouth: dw  $0000 + (014*256) + (028/2) ;nx,ny
         dw  $0000 + (050*128) + ((048+2)/2) - 128 ;dx,dy
         dw  $4000 + (048*128) + (102/2) - 128 | dw  $4000 + (063*128) + (102/2) - 128 | dw  $4000 + (078*128) + (102/2) - 128 ;sx,sy
+AIPortraitPalette:                incbin "..\grapx\characters\AI\portraittotal.SC5",$7680+7,32
+AIPortraitBlock:                  db  AIPortraitGfxBlock
+.Eyes:  dw  $0000 + (017*256) + (034/2) ;nx,ny
+        dw  $0000 + (046*128) + ((034+2)/2) - 128 ;dx,dy
+        dw  $4000 + (000*128) + (102/2) - 128 | dw  $4000 + (018*128) + (102/2) - 128 | dw  $4000 + (036*128) + (102/2) - 128 ;sx,sy
+.Mouth: dw  $0000 + (002*256) + (002/2) ;nx,ny
+        dw  $0000 + (046*128) + ((034+2)/2) - 128 ;dx,dy
+        dw  $4000 + (000*128) + (102/2) - 128 | dw  $4000 + (018*128) + (102/2) - 128 | dw  $4000 + (036*128) + (102/2) - 128 ;sx,sy
+
 
 ClearTextInMirrorPage:
   ld    a,(YLineintOn)
@@ -2129,7 +2149,7 @@ GamesPlayed:  db 9                      ;increases after leaving a game. max=255
 DateCurrentLogin: ds 6
 DatePreviousLogin: ds 6
 DailyContinuesUsed: db 0                ;bit 0=roadfighter,bit 1=basketball,bit 2=blox,bit 4=bikerace
-HighScoreTotalAverage: db 80            ;recruiter appears when 80 (%) is reached
+HighScoreTotalAverage: db 00            ;recruiter appears when 80 (%) is reached
 HighScoreRoadFighter: db 0
 HighScoreBasketball: db 0
 HighScoreBlox: db 0

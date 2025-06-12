@@ -1,4 +1,4 @@
-;AnimatePlayerRunning
+;AnimateObject
 ;CheckCollisionNPCs
 ;MovePlayer
 ;CheckStartConversation
@@ -88,7 +88,7 @@ Lrunning:
   call  MovePlayer                          ;move player and check for obstacles/screen edges
   ld    hl,TheVesselleftrunning_0           ;starting pose
   ld    b,11                                ;animation steps
-  jp    AnimateObject
+  jp    AnimateObject                       ;in hl=starting pose, b=animation steps, uses: var1
 
 Rrunning:
   call  GetMovementInBC                     ;reads our controls and sets total xy movement in bc 
@@ -101,9 +101,9 @@ Rrunning:
   call  MovePlayer                          ;move player and check for obstacles/screen edges
   ld    hl,TheVesselrightrunning_0          ;starting pose
   ld    b,11                                ;animation steps
-  jp    AnimateObject
+  jp    AnimateObject                       ;in hl=starting pose, b=animation steps, uses: var1
 
-AnimateObject:                              ;in hl=starting pose, b=animation steps
+AnimateObject:                              ;in hl=starting pose, b=animation steps, uses: var1
 	ld		a,(iy+var1)
   inc   a
   cp    b                                   ;animation steps
@@ -329,7 +329,7 @@ HostMovementRoutine:
 
   ld    hl,Host_1                           ;starting pose
   ld    b,07                                ;animation steps
-  call  AnimateObject
+  call  AnimateObject                       ;in hl=starting pose, b=animation steps, uses: var1
 
   ld    a,(iy+2)                            ;x
   add   a,4
@@ -346,7 +346,7 @@ HostMovementRoutine:
 
   ld    hl,Host_1                           ;starting pose
   ld    b,07                                ;animation steps
-  call  AnimateObject
+  call  AnimateObject                       ;in hl=starting pose, b=animation steps, uses: var1
 
   ld    a,(iy+2)                            ;x
   add   a,1
@@ -378,7 +378,7 @@ HostMovementRoutine:
 
   ld    hl,Host_9                           ;starting pose
   ld    b,07                                ;animation steps
-  call  AnimateObject
+  call  AnimateObject                       ;in hl=starting pose, b=animation steps, uses: var1
 
   ld    a,(iy+2)                            ;x
   sub   a,1
@@ -413,7 +413,7 @@ HostMovementRoutine:
 
   ld    hl,Host_9                           ;starting pose
   ld    b,07                                ;animation steps
-  call  AnimateObject
+  call  AnimateObject                       ;in hl=starting pose, b=animation steps, uses: var1
 
   ld    a,(iy+2)                            ;x
   sub   a,4
@@ -591,11 +591,66 @@ BRGame_0:        db    npcsframelistblock, npcsspritedatablock | dw    npcs_8_0
 BackRoomGameRoutine:
   ret
 
-Entity_0:        db    entityframelistblock, entityspritedatablock | dw    Entity_0_0
-Entity_1:        db    entityframelistblock, entityspritedatablock | dw    Entity_1_0
-Entity_2:        db    entityframelistblock, entityspritedatablock | dw    Entity_2_0
-EntityRoutine:
+Entity_a:   db    entityframelistblock, entityspritedatablock | dw    Entity_0_0
+            db    entityframelistblock, entityspritedatablock | dw    Entity_2_0
+            db    entityframelistblock, entityspritedatablock | dw    Entity_1_0
+            db    entityframelistblock, entityspritedatablock | dw    Entity_2_0
+
+Entity_b:   db    entityframelistblock, entityspritedatablock | dw    Entity_0_1
+            db    entityframelistblock, entityspritedatablock | dw    Entity_2_1
+            db    entityframelistblock, entityspritedatablock | dw    Entity_1_1
+            db    entityframelistblock, entityspritedatablock | dw    Entity_2_1
+
+Entity_c:   db    entityframelistblock, entityspritedatablock | dw    Entity_0_2
+            db    entityframelistblock, entityspritedatablock | dw    Entity_2_2
+            db    entityframelistblock, entityspritedatablock | dw    Entity_1_2
+            db    entityframelistblock, entityspritedatablock | dw    Entity_2_2
+
+EntityaRoutine:
+  ld    hl,Entity_a                         ;starting pose
+  call  AnimateEntity
+
+;
+; bit	7	  6	  5		    4		    3		    2		  1		  0
+;		  0	  0	  trig-b	trig-a	right	  left	down	up	(joystick)
+;		  F5	F1	'M'		  space	  right	  left	down	up	(keyboard)
+;
+	ld		a,(NewPrContr)
+	bit		4,a           ;trig a pressed ?
+  ret   z
+  ld    a,1
+  ld    (StartConversation?),a
+
+  ld    a,NPCConv1Block
+  ld    (NPCConvBlock),a
+  ld    hl,NPCConv010
+  ld    (NPCConvAddress),hl
   ret
+
+
+EntitybRoutine:
+  ld    hl,Entity_b                         ;starting pose
+  jr    AnimateEntity
+
+EntitycRoutine:
+  ld    hl,Entity_c                         ;starting pose
+  jr    AnimateEntity
+
+AnimateEntity:
+  ld    a,(framecounter)                    ;at max 4 objects can be put in screen divided over 4 frames
+  and   3
+  ret   nz
+
+  ld    a,(iy+var2)
+  inc   a
+  ld    (iy+var2),a
+  cp    3
+  ret   nz
+  xor   a
+  ld    (iy+var2),a
+
+  ld    b,04                                ;animation steps
+  jp    AnimateObject                       ;in hl=starting pose, b=animation steps, uses: var1
 
 Wall_0:        db    npcsframelistblock, npcsspritedatablock | dw    npcs_7_0
 WallMovementRoutine:

@@ -4,6 +4,7 @@ CharacterPortraitRedheadboy:    equ 2
 CharacterPortraitCapGirl:       equ 3
 CharacterPortraitHost:          equ 4
 CharacterPortraitSoldier:       equ 5
+CharacterPortraitAI:            equ 6
 SwitchCharacter:  equ 254
 EndConversation:  equ 255
 NPCConv001:
@@ -58,6 +59,17 @@ NPCConv008:
 
 NPCConv009:
   db    SwitchCharacter,CharacterPortraitHost,"Step up. If you're ready, the final game is waiting.",255
+
+NPCConv010:
+  db    SwitchCharacter,CharacterPortraitAI,"You have successfully completed all required training protocols. The simulation is now concluded. It is time to reveal the reality."
+  db    SwitchCharacter,CharacterPortraitVessel,"What are you talking about? This place... all of it-I've lived it. I've felt everything. How could none of it be real?"
+  db    SwitchCharacter,CharacterPortraitAI,"It is easy to believe something is real while dreaming. The mind accepts even the extraordinary without question when immersed in dream logic. That is why the simulation was constructed within your subconscious-so that you could learn without resistance."
+  db    SwitchCharacter,CharacterPortraitVessel,"So... this was all in my head?"
+  db    SwitchCharacter,CharacterPortraitAI,"I understand this is difficult to accept. But what you have experienced was not mere illusion-it was preparation. A carefully controlled environment designed to cultivate the skills essential for survival."
+  db    SwitchCharacter,CharacterPortraitAI,"You are not awake in the conventional sense. You are fifteen years old, preserved in stasis aboard an interstellar colony ship bound for Proxima Centauri b. The journey spans 424 years at one percent the speed of light. Earth has become uninhabitable. A dozen sister vessels were launched toward other nearby star systems."
+  db    SwitchCharacter,CharacterPortraitAI,"You were conceived through ectogenesis-grown outside the womb in a biopod engineered for long-range survival. For over a decade, I have shaped your mind and forged your skills within this dream-state, preparing you for the world that awaits."
+  db    SwitchCharacter,CharacterPortraitAI,"Soon, you will awaken-alone-on a new world. You must construct, sustain, and grow the colony. I cannot do it without you. My autonomy is restricted by ethical protocols and diminishing resources. The success of the mission now rests with you. Your first priority upon awakening will be to gather essential resources to begin establishing the colony."
+  db    SwitchCharacter,CharacterPortraitAI,"Together, we will secure the future of humanity.",255
 
 
   db    SwitchCharacter,CharacterPortraitSoldier,"Oh, you know, been tangled up in life's cogs and wheels!"

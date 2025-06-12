@@ -11,6 +11,7 @@ InitiateGame:
 ;  StartGame:
 	call	LoadRoom												;sets gfx and objects
 	call	PutObjects											;put objects and events
+	call	ResetRestoreTables							;all 4 objects have their own restore tables
   ld    a,r
 	and		7
 	inc		a
@@ -19,21 +20,38 @@ InitiateGame:
   jp    LevelEngine
 
 INCLUDE "RePlayer.asm"
-;														on?,  y,  x,  sprite restore table                                ,sprite data,put on frame ,movement routine block,  movement routine,							 phase,var1,var2
+;														on?,  y,  x,  sprite restore table,sprite data,put on frame ,movement routine block,  movement routine,							 phase,var1,var2,var3
 
-ObjectGirl:  							db  1,098,040 | dw Object3RestoreBackgroundTable,Object3RestoreTable,000        | db 255      ,MovementRoutinesBlock | dw GirlMovementRoutine				| db 000,000 ,000
-ObjectCapGirl:  					db  1,095,200 | dw Object4RestoreBackgroundTable,Object4RestoreTable,000        | db 255      ,MovementRoutinesBlock | dw CapGirlMovementRoutine		| db 000,000 ,000
-ObjectRedHeadBoy:  				db  1,105,150 | dw Object2RestoreBackgroundTable,Object2RestoreTable,000        | db 255      ,MovementRoutinesBlock | dw RedHeadBoyMovementRoutine	| db 000,000 ,000
-ObjectHost:  							db  1,081,100 | dw Object3RestoreBackgroundTable,Object3RestoreTable,Host_0     | db 255      ,MovementRoutinesBlock | dw HostMovementRoutine				| db 000,000 ,000
-ObjectWall:  							db  1,062,178 | dw Object4RestoreBackgroundTable,Object4RestoreTable,Wall_0     | db 255      ,MovementRoutinesBlock | dw WallMovementRoutine				| db 000,000 ,000
+ObjectGirl:  							db  1,098,040 | dw 000,000					,000        | db 255      ,MovementRoutinesBlock | dw GirlMovementRoutine				| db 000,000 ,000, 000
+ObjectCapGirl:  					db  1,095,200 | dw 000,000					,000        | db 255      ,MovementRoutinesBlock | dw CapGirlMovementRoutine		| db 000,000 ,000, 000
+ObjectRedHeadBoy:  				db  1,105,150 | dw 000,000					,000        | db 255      ,MovementRoutinesBlock | dw RedHeadBoyMovementRoutine	| db 000,000 ,000, 000
+ObjectHost:  							db  1,081,100 | dw 000,000					,Host_0     | db 255      ,MovementRoutinesBlock | dw HostMovementRoutine				| db 000,000 ,000, 000
+ObjectWall:  							db  1,062,178 | dw 000,000					,Wall_0     | db 255      ,MovementRoutinesBlock | dw WallMovementRoutine				| db 000,000 ,000, 000
 
-ObjectBackRoomGame:  			db  1,092,128 | dw Object4RestoreBackgroundTable,Object4RestoreTable,BRGame_0   | db 255			,MovementRoutinesBlock | dw BackRoomGameRoutine				| db 000,000 ,000
-ObjectEntity:  						db  1,013,128 | dw Object2RestoreBackgroundTable,Object2RestoreTable,Entity_0   | db 255			,MovementRoutinesBlock | dw EntityRoutine							| db 000,000 ,000
+ObjectBackRoomGame:  			db  1,092,128 | dw 000,000					,BRGame_0   | db 255			,MovementRoutinesBlock | dw BackRoomGameRoutine				| db 000,000 ,000, 000
+ObjectEntitya: 						db  1,013,128 | dw 000,000					,Entity_a  	| db 001			,MovementRoutinesBlock | dw EntityaRoutine						| db 000,000 ,000, 000
+ObjectEntityb: 						db  1,013,128 | dw 000,000					,Entity_b  	| db 002			,MovementRoutinesBlock | dw EntitybRoutine						| db 000,000 ,000, 000
+ObjectEntityc: 						db  1,013,128 | dw 000,000					,Entity_c  	| db 003			,MovementRoutinesBlock | dw EntitycRoutine						| db 000,000 ,000, 000
 
+EventArcadeHall1:					db	1,0,0     | dw 000,000					,000   			| db 255      ,MovementRoutinesBlock | dw ArcadeHall1EventRoutine		| db 000,000 ,000, 000
+EventArcadeHall2: 				db	1,0,0     | dw 000,000					,000        | db 255      ,MovementRoutinesBlock | dw ArcadeHall2EventRoutine		| db 000,000 ,000, 000
+EventSirens: 							db	1,0,0     | dw 000,000					,000        | db 255      ,MovementRoutinesBlock | dw SirensRoutine							| db 000,000 ,000, 000
 
-EventArcadeHall1:					db	1,0,0     | dw Object2RestoreBackgroundTable,Object2RestoreTable,000   			| db 255      ,MovementRoutinesBlock | dw ArcadeHall1EventRoutine		| db 000,000 ,000
-EventArcadeHall2: 				db	1,0,0     | dw Object2RestoreBackgroundTable,Object2RestoreTable,000        | db 255      ,MovementRoutinesBlock | dw ArcadeHall2EventRoutine		| db 000,000 ,000
-EventSirens: 							db	1,0,0     | dw Object2RestoreBackgroundTable,Object2RestoreTable,000        | db 255      ,MovementRoutinesBlock | dw SirensRoutine							| db 000,000 ,000
+ResetRestoreTables:											;all 4 objects have their own restore tables
+	ld		hl,Object2RestoreBackgroundTable
+	ld		(Object2+ObjectRestoreBackgroundTable),hl
+	ld		hl,Object3RestoreBackgroundTable
+	ld		(Object3+ObjectRestoreBackgroundTable),hl
+	ld		hl,Object4RestoreBackgroundTable
+	ld		(Object4+ObjectRestoreBackgroundTable),hl
+
+	ld		hl,Object2RestoreTable
+	ld		(Object2+ObjectRestoreTable),hl
+	ld		hl,Object3RestoreTable
+	ld		(Object3+ObjectRestoreTable),hl
+	ld		hl,Object4RestoreTable
+	ld		(Object4+ObjectRestoreTable),hl
+	ret
 
 PutSingleObject:
 	ld		bc,LenghtObject
@@ -48,6 +66,7 @@ PutObjects:															;put objects and events
 	ld		(ObjEvent1+on?),a
 	ld		(ObjEvent2+on?),a
 	ld		(ObjEvent3+on?),a
+	ld		(SkipAssignOrder?),a						;reset hackjob. (In same cases we don't want to assign order)
 
 	ld		de,Object2											;start with object2
 
@@ -72,7 +91,16 @@ PutObjectsArcadeHall2:
 	cp		100
 	jr		c,.BackRoomGameNotYetFinished
 
-	ld		hl,ObjectEntity									;put entity
+	ld		a,1
+	ld		(SkipAssignOrder?),a						;we implement a hackjob here. In same cases we don't want to assign order
+	xor		a
+	ld		(Object1+PutOnFrame),a
+
+	ld		hl,ObjectEntitya								;put entity
+	call	PutSingleObject 
+	ld		hl,ObjectEntityb								;put entity
+	call	PutSingleObject 
+	ld		hl,ObjectEntityc								;put entity
 	call	PutSingleObject 
 
 	ld		de,ObjEvent1										;now put events
@@ -1077,6 +1105,7 @@ base: 											equ $4000
 spatpointer:                rb		2
 PageOnNextVblank:           rb    1
 ChangeRoom?:         				rb    1
+SkipAssignOrder?:    				rb    1
 
 endenginepage3variables:  equ $+enginepage3length
 org variables
