@@ -81,9 +81,12 @@ vblank:
   push  de
   push  hl
 
+  in	  a,($a8)
+  push	af					      ;store current RAM/ROM state
   call  RePlayer_Tick                 ;initialise, load samples
+  pop   af
+  out   ($a8),a                         ;restore ram/rom page settings     
 
-;  ld    a,(slot.page1rom)              ;all RAM except page 1 and 2
 ;  out   ($a8),a
 
 ;  ld		a,1                             ;set worldmap in bank 1 at $8000
@@ -95,8 +98,6 @@ vblank:
 ;  ld    a,(page1bank)                   ;put the bank back in page 1 which was there before we ran setspritecharacter
 ;  out   ($fe),a          	              ;$ff = page 0 ($c000-$ffff) | $fe = page 1 ($8000-$bfff) | $fd = page 2 ($4000-$7fff) | $fc = page 3 ($0000-$3fff) 
 
-;  pop   af
-;  out   ($a8),a                         ;restore ram/rom page settings     
 ;  pop   af
 ;	ld		($7000),a                       ;recall block 2 setting
  ; pop   af
@@ -185,33 +186,31 @@ LineInt:
 
   .LineIntOn:
   ld    hl,CurrentPortraitPaletteFaded
-  ld    hl,CurrentPortraitPaletteFaded
-  ld    hl,CurrentPortraitPaletteFaded
-  ld    hl,CurrentPortraitPaletteFaded
   ld    c,$9a
 	xor		a                 ;start writing to palette value 0
 	out		($99),a
 	ld		a,16+128
 	out		($99),a
-  outi | outi | outi | outi | outi | outi | outi | outi
-  outi | outi | outi | outi | outi | outi | outi | outi
-  outi | outi | outi | outi | outi | outi | outi | outi
-  outi | outi | outi | outi | outi | outi | outi | outi
 
-;  ld    a,2               ;Set Status register #2
-;  out   ($99),a
-;  ld    a,15+128          ;we are about to check for HR
-;  out   ($99),a
+  ld    a,2               ;Set Status register #2
+  out   ($99),a
+  ld    a,15+128          ;we are about to check for HR
+  out   ($99),a
  
-;  .Waitline2:                ;wait until end of HBLANK
-;  in    a,($99)           ;Read Status register #2
-;  and   %0010 0000        ;bit to check for HBlank detection
-;  jr    z,.Waitline2
+  .Waitline2:                ;wait until end of HBLANK
+  in    a,($99)           ;Read Status register #2
+  and   %0010 0000        ;bit to check for HBlank detection
+  jr    z,.Waitline2
 
   ld    a,(PageOnLineInt)
   out   ($99),a
   ld    a,2+128
   out   ($99),a
+
+  outi | outi | outi | outi | outi | outi | outi | outi
+  outi | outi | outi | outi | outi | outi | outi | outi
+  outi | outi | outi | outi | outi | outi | outi | outi
+  outi | outi | outi | outi | outi | outi | outi | outi
 
 ;  xor   a                 ;set s#0
 ;  out   ($99),a
@@ -245,7 +244,8 @@ Var3:                   equ 16
 
 ObjectTable:
 ;           on?,  y,  x,  sprite restore table                                ,sprite data,put on frame ,movement routine block,  movement routine,							 phase,var1,var2,var3
-Object1:  db  1,110,130 | dw Object1RestoreBackgroundTable,Object1RestoreTable,000        | db 000      ,MovementRoutinesBlock | dw VesselMovementRoutine			| db 000,000 ,000, 000
+Object1:  db  1,060,130 | dw Object1RestoreBackgroundTable,Object1RestoreTable,000        | db 000      ,MovementRoutinesBlock | dw VesselMovementRoutine			| db 000,000 ,000, 000
+;Object1:  db  1,110,130 | dw Object1RestoreBackgroundTable,Object1RestoreTable,000        | db 000      ,MovementRoutinesBlock | dw VesselMovementRoutine			| db 000,000 ,000, 000
 Object2:  db  1,098,040 | dw Object3RestoreBackgroundTable,Object3RestoreTable,000        | db 001      ,MovementRoutinesBlock | dw GirlMovementRoutine       | db 000,000 ,000, 000
 Object3:  db  1,095,200 | dw Object4RestoreBackgroundTable,Object4RestoreTable,000        | db 002      ,MovementRoutinesBlock | dw CapGirlMovementRoutine    | db 000,000 ,000, 000
 Object4:  db  1,105,150 | dw Object2RestoreBackgroundTable,Object2RestoreTable,000        | db 003      ,MovementRoutinesBlock | dw RedHeadBoyMovementRoutine | db 000,000 ,000, 000
@@ -1075,6 +1075,7 @@ HandleConversations:
   ld    a,0*32 + 31                     ;start with page 0 at lineint
   ld    (PageOnLineInt),a
   call  SetFontPage1Y212                ;set font at (0,212) page 0
+  call  BackupBackgroundInRam           ;make a copy of the background we are going to 'corrupt' to ram
   call  OpenBlackWindow                 ;open up black window 2 lines per int (page 0 and page 1)
   call  EnablePaletteSplit              ;set ei1 and setup palette split
   call  StartConversation               ;handles the entire text engine (puts letters, swaps characters, clears textwindow etc etc)
@@ -1086,40 +1087,175 @@ HandleConversations:
   call  CloseBlackWindow                ;close  black window 2 lines per int (page 0 and page 1)
   ret
 
-CloseBlackWindow:                       ;close  black window 2 lines per int (page 0 and page 1)
-  call  WaitVblank          ;wait for vblank flag to be set
-  xor   a
-  ld    (Restore2BlackLinesGoingUp+dPage),a
-  ld    hl,Restore2BlackLinesGoingUp
-  call  DoCopy
-  xor   a
-  ld    (Restore2BlackLinesGoingDown+dPage),a
-  ld    hl,Restore2BlackLinesGoingDown
-  call  DoCopy
+BackupBackgroundInRam:                  ;store Vram data of page 0+1 in ram
+  ld		a,(slot.ram)	                  ;back to full RAM
+  out		($a8),a	
 
-  ld    a,1
-  ld    (Restore2BlackLinesGoingUp+dPage),a
-  ld    hl,Restore2BlackLinesGoingUp
-  call  DoCopy
-  ld    a,1
-  ld    (Restore2BlackLinesGoingDown+dPage),a
-  ld    hl,Restore2BlackLinesGoingDown
-  call  DoCopy
-
-  ld    a,(Restore2BlackLinesGoingUp+dy)
-  add   a,2
-  ld    (Restore2BlackLinesGoingUp+dy),a
-  ld    (Restore2BlackLinesGoingUp+sy),a
-  ld    a,(Restore2BlackLinesGoingDown+dy)
-  sub   a,2
-  ld    (Restore2BlackLinesGoingDown+dy),a
-  ld    (Restore2BlackLinesGoingDown+sy),a
-
-  ld    b,a
   ld    a,(YConversationWindowCentre)
-  sub   a,2
-  cp    b
-  jr    nz,CloseBlackWindow  ;next 2 lines, repeat until entire window is made
+  sub   a,52                            ;top of the conversation window
+  ld    l,a
+  ld    h,0
+  add   hl,hl                           ;*2
+  add   hl,hl                           ;*4
+  add   hl,hl                           ;*8
+  add   hl,hl                           ;*16
+  add   hl,hl                           ;*32
+  add   hl,hl                           ;*64
+  add   hl,hl                           ;*128
+  push  hl                              ;start reading at y=... (page 0)
+	xor   a
+	call	SetVdp_Read	
+  ld    hl,$4000                        ;start writing to this address in ram
+  ld    c,$98
+  ld    a,106/2                         ;backup 106 lines
+  ld    b,0
+  .loop:
+  inir
+  dec   a
+  jp    nz,.loop
+
+  pop   hl
+  ld    de,$8000
+  add   hl,de                           ;start reading at y=... (page 1)
+	xor   a
+	call	SetVdp_Read	
+  ld    hl,$4000 + (106/2*256)          ;start writing to this address in ram
+  ld    c,$98
+  ld    a,106/2                         ;backup 106 lines
+  ld    b,0
+  .loop2:
+  inir
+  dec   a
+  jp    nz,.loop2
+
+  ld    a,(slot.page12rom)              ;all RAM except page 1+2
+  out   ($a8),a
+  ret
+
+TopWindowAddressPage0Vram:  dw  $0000 + (128*008)
+TopWindowAddressPage1Vram:  dw  $8000 + (128*008)
+TopWindowAddressPage0Ram:   dw  $4000
+TopWindowAddressPage1Ram:   dw  $4000 + (106/2*256)
+
+BottomWindowAddressPage0Vram:  dw  $0000 + (128*112)
+BottomWindowAddressPage1Vram:  dw  $8000 + (128*112)
+BottomWindowAddressPage0Ram:   dw  $4000 + (104/2*256)
+BottomWindowAddressPage1Ram:   dw  $4000 + (104/2*256) + (106/2*256)
+
+SetupWindowAddresses:
+  ld    a,(YConversationWindowCentre)
+  sub   a,52                            ;top of the conversation window
+  ld    l,a
+  ld    h,0
+  add   hl,hl                           ;*2
+  add   hl,hl                           ;*4
+  add   hl,hl                           ;*8
+  add   hl,hl                           ;*16
+  add   hl,hl                           ;*32
+  add   hl,hl                           ;*64
+  add   hl,hl                           ;*128
+  ld    (TopWindowAddressPage0Vram),hl
+  ld    de,104*128
+  add   hl,de
+  ld    (BottomWindowAddressPage0Vram),hl
+
+  ld    hl,(TopWindowAddressPage0Vram)
+  ld    de,$8000
+  add   hl,de
+  ld    (TopWindowAddressPage1Vram),hl
+
+  ld    hl,(BottomWindowAddressPage0Vram)
+  ld    de,$8000
+  add   hl,de
+  ld    (BottomWindowAddressPage1Vram),hl
+
+  ld    hl,$4000
+  ld    (TopWindowAddressPage0Ram),hl
+  ld    hl,$4000 + (106/2*256)
+  ld    (TopWindowAddressPage1Ram),hl
+  ld    hl,$4000 + (104/2*256)
+  ld    (BottomWindowAddressPage0Ram),hl
+  ld    hl,$4000 + (104/2*256) + (106/2*256)
+  ld    (BottomWindowAddressPage1Ram),hl
+  ret
+
+CloseBlackWindow:
+  ld		a,(slot.ram)	                  ;back to full RAM
+  out		($a8),a	
+
+  call  SetupWindowAddresses
+
+  ld    d,27
+  .RestoreLoop:
+  halt
+  call  .Restore2Lines
+  dec   d
+  jr    nz,.RestoreLoop
+
+  ld    a,(slot.page12rom)              ;all RAM except page 1+2
+  out   ($a8),a
+  ret
+
+  .Restore2Lines:
+  ;restore 2 lines top window page 0
+  ld    hl,(TopWindowAddressPage0Vram)  ;start writing to this address in vram
+	xor   a
+	call	SetVdp_Write	
+	ld		hl,(TopWindowAddressPage0Ram)   ;start writing from this address in ram
+  ld    c,$98
+  ld    b,0
+  otir                                  ;write 2 lines
+  ;restore 2 lines top window page 1
+  ld    hl,(TopWindowAddressPage1Vram)  ;start writing to this address in vram
+	xor   a
+	call	SetVdp_Write	
+	ld		hl,(TopWindowAddressPage1Ram)   ;start writing from this address in ram
+;  ld    c,$98
+;  ld    b,0
+  otir                                  ;write 2 lines
+  ;restore 2 lines bottom window page 0
+  ld    hl,(BottomWindowAddressPage0Vram)  ;start writing to this address in vram
+	xor   a
+	call	SetVdp_Write	
+	ld		hl,(BottomWindowAddressPage0Ram)   ;start writing from this address in ram
+;  ld    c,$98
+;  ld    b,0
+  otir                                  ;write 2 lines
+  ;restore 2 lines bottom window page 1
+  ld    hl,(BottomWindowAddressPage1Vram)  ;start writing to this address in vram
+	xor   a
+	call	SetVdp_Write	
+	ld		hl,(BottomWindowAddressPage1Ram)   ;start writing from this address in ram
+;  ld    c,$98
+;  ld    b,0
+  otir                                  ;write 2 lines
+
+  ld    bc,256                          ;prepare addresses for next 2 lines
+  ld    hl,(TopWindowAddressPage0Vram)  ;start writing to this address in vram
+  add   hl,bc
+  ld    (TopWindowAddressPage0Vram),hl  ;start writing to this address in vram
+	ld		hl,(TopWindowAddressPage0Ram)   ;start writing from this address in ram
+  add   hl,bc
+	ld    (TopWindowAddressPage0Ram),hl   ;start writing from this address in ram
+  ld    hl,(TopWindowAddressPage1Vram)  ;start writing to this address in vram
+  add   hl,bc
+  ld    (TopWindowAddressPage1Vram),hl  ;start writing to this address in vram
+	ld		hl,(TopWindowAddressPage1Ram)   ;start writing from this address in ram
+  add   hl,bc
+	ld		(TopWindowAddressPage1Ram),hl   ;start writing from this address in ram
+
+  ld    hl,(BottomWindowAddressPage0Vram)  ;start writing to this address in vram
+  sbc   hl,bc
+  ld    (BottomWindowAddressPage0Vram),hl  ;start writing to this address in vram
+	ld		hl,(BottomWindowAddressPage0Ram)   ;start writing from this address in ram
+  sbc   hl,bc
+	ld    (BottomWindowAddressPage0Ram),hl   ;start writing from this address in ram
+  ld    hl,(BottomWindowAddressPage1Vram)  ;start writing to this address in vram
+  sbc   hl,bc
+  ld    (BottomWindowAddressPage1Vram),hl  ;start writing to this address in vram
+	ld		hl,(BottomWindowAddressPage1Ram)   ;start writing from this address in ram
+  sbc   hl,bc
+	ld		(BottomWindowAddressPage1Ram),hl   ;start writing from this address in ram
   ret
 
 DisablePaletteSplit:                    ;turn off lineint and set top and bot y for restore black lines
@@ -1413,9 +1549,9 @@ EnablePaletteSplit:                     ;enable palette split
   add   a,104
   ld    (YLineintOff),a
 
-  ld    a,(VDP_0)           ;set ei1
-  or    16                  ;ei1 checks for lineint and vblankint
-  ld    (VDP_0),a           ;ei0 (which is default at boot) only checks vblankint
+  ld    a,(VDP_0)                       ;set ei1
+  or    16                              ;ei1 checks for lineint and vblankint
+  ld    (VDP_0),a                       ;ei0 (which is default at boot) only checks vblankint
   di
   out   ($99),a
   ld    a,128
@@ -1424,7 +1560,7 @@ EnablePaletteSplit:                     ;enable palette split
   ld    a,(YLineintOn)
   ld    (YCurrentLineint),a
   out   ($99),a
-  ld    a,19+128            ;set lineinterrupt height
+  ld    a,19+128                        ;set lineinterrupt height
   ei
   out   ($99),a 
   ret
@@ -2144,22 +2280,23 @@ CompareHLwithDE:
   ret
 
 StartSaveGameData:
-CurrentRoom:  db  1                     ;0=arcadehall1, 1=arcadehall2
-GamesPlayed:  db 9                      ;increases after leaving a game. max=255
-DateCurrentLogin: ds 6
-DatePreviousLogin: ds 6
-DailyContinuesUsed: db 0                ;bit 0=roadfighter,bit 1=basketball,bit 2=blox,bit 4=bikerace
+CurrentRoom:  db  0                     ;0=arcadehall1, 1=arcadehall2
+GamesPlayed:  db 0                      ;increases after leaving a game. max=255
 HighScoreTotalAverage: db 00            ;recruiter appears when 80 (%) is reached
+HighScoreBackroomGame:  db  000
+
 HighScoreRoadFighter: db 0
 HighScoreBasketball: db 0
 HighScoreBlox: db 0
 HighScoreBikeRace: db 0
-HighScoreBackroomGame:  db  100
 ConvGirl: db %0000 0000                 ;conversations handled
 ConvCapGirl: db %0000 0000              ;conversations handled
 ConvGingerBoy: db %0000 0000            ;conversations handled
-ConvHost: db %0000 0001                 ;conversations handled
+ConvHost: db %0000 0000                 ;conversations handled
 
+DateCurrentLogin: ds 6
+DatePreviousLogin: ds 6
+DailyContinuesUsed: db 0                ;bit 0=roadfighter,bit 1=basketball,bit 2=blox,bit 4=bikerace
 
 EndSaveGameData:
 SaveGameDataLenght: equ EndSaveGameData-StartSaveGameData

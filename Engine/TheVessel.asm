@@ -450,6 +450,10 @@ dephase
 enlength:	Equ	$-engine
 	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
 
+ArcadeHall1ForegroundTileMapBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
+  incbin "..\tools\tilemap.bin"
+	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
+
 ArcadeHall1GfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
   incbin "..\grapx\arcadehall\arcade1.SC5",7,212 * 128      ;212 lines
 	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block

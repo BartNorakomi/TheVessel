@@ -62,6 +62,10 @@ NPCConv009:
 
 NPCConv010:
   db    SwitchCharacter,CharacterPortraitAI,"You have successfully completed all required training protocols. The simulation is now concluded. It is time to reveal the reality."
+  db    SwitchCharacter,CharacterPortraitVessel,"Who... who are you?"
+  db    SwitchCharacter,CharacterPortraitAI,"A guide. A caretaker. The one who's walked beside you through every challenge-though you did not know it."
+  db    SwitchCharacter,CharacterPortraitVessel,"Wait... what do you mean, 'reveal the reality'?"
+  db    SwitchCharacter,CharacterPortraitAI,"I know this may be disorienting. But you're ready to understand now."
   db    SwitchCharacter,CharacterPortraitVessel,"What are you talking about? This place... all of it-I've lived it. I've felt everything. How could none of it be real?"
   db    SwitchCharacter,CharacterPortraitAI,"It is easy to believe something is real while dreaming. The mind accepts even the extraordinary without question when immersed in dream logic. That is why the simulation was constructed within your subconscious-so that you could learn without resistance."
   db    SwitchCharacter,CharacterPortraitVessel,"So... this was all in my head?"

@@ -12,6 +12,7 @@ InitiateGame:
 	call	LoadRoom												;sets gfx and objects
 	call	PutObjects											;put objects and events
 	call	ResetRestoreTables							;all 4 objects have their own restore tables
+	call	ResetRestoreBackgroundTables		;reset all restore background tables
   ld    a,r
 	and		7
 	inc		a
@@ -22,7 +23,7 @@ InitiateGame:
 INCLUDE "RePlayer.asm"
 ;														on?,  y,  x,  sprite restore table,sprite data,put on frame ,movement routine block,  movement routine,							 phase,var1,var2,var3
 
-ObjectGirl:  							db  1,098,040 | dw 000,000					,000        | db 255      ,MovementRoutinesBlock | dw GirlMovementRoutine				| db 000,000 ,000, 000
+ObjectGirl:  							db  0,098,040 | dw 000,000					,000        | db 255      ,MovementRoutinesBlock | dw GirlMovementRoutine				| db 000,000 ,000, 000
 ObjectCapGirl:  					db  1,095,200 | dw 000,000					,000        | db 255      ,MovementRoutinesBlock | dw CapGirlMovementRoutine		| db 000,000 ,000, 000
 ObjectRedHeadBoy:  				db  1,105,150 | dw 000,000					,000        | db 255      ,MovementRoutinesBlock | dw RedHeadBoyMovementRoutine	| db 000,000 ,000, 000
 ObjectHost:  							db  1,081,100 | dw 000,000					,Host_0     | db 255      ,MovementRoutinesBlock | dw HostMovementRoutine				| db 000,000 ,000, 000
@@ -36,6 +37,24 @@ ObjectEntityc: 						db  1,013,128 | dw 000,000					,Entity_c  	| db 003			,Move
 EventArcadeHall1:					db	1,0,0     | dw 000,000					,000   			| db 255      ,MovementRoutinesBlock | dw ArcadeHall1EventRoutine		| db 000,000 ,000, 000
 EventArcadeHall2: 				db	1,0,0     | dw 000,000					,000        | db 255      ,MovementRoutinesBlock | dw ArcadeHall2EventRoutine		| db 000,000 ,000, 000
 EventSirens: 							db	1,0,0     | dw 000,000					,000        | db 255      ,MovementRoutinesBlock | dw SirensRoutine							| db 000,000 ,000, 000
+
+LenghtDoCopyTable:  equ	RestoreBackgroundObject1Page1-RestoreBackgroundObject1Page0
+ResetRestoreBackgroundTables:
+  ld    ix,RestoreBackgroundObject1Page0
+  ld    de,LenghtDoCopyTable
+  ld    b,16                                ;amount of tables
+
+  .loop:
+  xor   a
+  ld    (ix+sx),a
+  ld    (ix+sy),a
+  ld    (ix+dx),a
+  ld    (ix+dy),a
+  ld    (ix+nx),2
+  ld    (ix+ny),1
+  add   ix,de                               ;next table
+  djnz  .loop
+  ret
 
 ResetRestoreTables:											;all 4 objects have their own restore tables
 	ld		hl,Object2RestoreBackgroundTable
@@ -656,12 +675,6 @@ block1234:
 	ld		($7000),a
 	ei
 	ret
-
-TinyCopyWhichFunctionsAsWaitVDPReady:
-	db		0,0,0,0
-	db		0,0,0,0
-	db		1,0,1,0
-	db		0,%0000 0000,$98
 
 DoCopy:
   ld    a,32

@@ -118,6 +118,95 @@ AnimateObject:                              ;in hl=starting pose, b=animation st
   add   hl,de
   jp    PutSpritePose                       ;in hl=spritepose, out writes spritepose to objecttable
 
+
+Tilemap:  equ $8000
+PlayerHeight: equ 73
+;our tilemap is in page 2, starts at $8000
+;each bit represents a 4x4 tile in our screen
+;our tilemap is 32 bits wide x 54 bytes high
+CheckCollisionWall:
+  ld    a,ArcadeHall1ForegroundTileMapBlock
+  call  block34                           ;CARE!!! we can only switch block34 if page 1 is in rom  
+
+;  push  bc
+  ld    c,(iy+2)                            ;x
+  ld    e,(iy+1)                            ;y
+
+;  sub   40
+;  ld    c,a
+
+  call  CHECK_COLLISION
+;  pop   bc
+  ret
+
+; Collision detection routine for MSX tilemap
+; Input:  C = x (0-255), E = y (0-215)
+; Output: C = 1 if collision (1 bit), C = 0 if no collision (0 bit)
+; Destroys: A, B, D, HL
+
+CHECK_COLLISION:
+    ; Convert to tile coordinates (divide by 4)
+    LD A, C             ; A = x
+		rrca		;/2
+		rrca		;/2
+    LD B, A             ; B = tileX (0-63)
+
+    LD A, E             ; A = y
+    SRL A               ; A = y / 2
+    SRL A               ; A = y / 4 (tileY)
+    LD D, A             ; D = tileY (0-53)
+
+    ; Calculate byte index and bit position
+    LD A, B             ; A = tileX
+    AND 7               ; A = tileX mod 8 (bit position, 0-7)
+    LD C, A             ; C = bitPosition (temporarily)
+
+    LD A, B             ; A = tileX
+    RRCA                ; Rotate right to divide by 8 (floor(tileX / 8))
+    RRCA                ; Each RRCA divides by 2, so 3 shifts = /8
+    RRCA
+    AND 7               ; Ensure 0-7 (byte index in row)
+    LD B, A             ; B = byteIndex (0-7)
+
+    ; Calculate row offset
+    LD A, D             ; A = tileY
+    ADD A, A            ; A = tileY * 2
+    ADD A, D            ; A = tileY * 3
+    ADD A, D            ; A = tileY * 4
+    ADD A, D            ; A = tileY * 5
+    ADD A, D            ; A = tileY * 6
+    ADD A, D            ; A = tileY * 7
+    ADD A, D            ; A = tileY * 8 (each row is 8 bytes)
+    LD H, 0             ; HL = row offset
+    LD L, A
+
+    ; Add byte index to get final offset
+    ADD HL, BC          ; HL = byteOffset (row * 8 + byteIndex)
+    LD DE, TILEMAP      ; DE points to start of tilemap
+    ADD HL, DE          ; HL points to the byte in tilemap
+
+    ; Get the byte and check the bit
+    LD A, (HL)          ; A = byte value from tilemap
+    LD B, C             ; B = bitPosition
+    LD C, 7             ; C = 7 (for shifting)
+    SUB B               ; A = 7 - bitPosition
+    LD B, A             ; B = shift amount
+    RRCA                ; Rotate A right B times (equivalent to >> (7 - bitPosition))
+SHIFT_LOOP:
+    DEC B
+    JR Z, CHECK_BIT
+    RRCA
+    JR SHIFT_LOOP
+CHECK_BIT:
+    AND 1               ; Isolate the bit (0 or 1)
+    LD C, A             ; C = collision result (0 or 1)
+    RET
+
+
+
+
+
+
 CheckCollisionNPCs:                         ;out ;d=0(no collision), d=1(collision)
   ld    d,0                                 ;0=no collision, 1=collision
   ld    hl,Object2
@@ -159,27 +248,39 @@ CheckCollisionNPCs:                         ;out ;d=0(no collision), d=1(collisi
   ret
 
 MovePlayer:
-  ld    a,b
-  cp    -1
-  call  z,MoveLeft
-  cp    1
-  call  z,MoveRight
+;  call  .MoveHorizontally
+;  call  .MoveVertically
+
+  .MoveVertically:
   ld    a,c
   cp    -1
-  call  z,MoveUp
+  jp    z,MoveUp
   cp    1
-  call  z,MoveDown
+  jp    z,MoveDown
   ret
+
+  .MoveHorizontally:  
+  ld    a,b
+  cp    -1
+  jp    z,MoveLeft
+  cp    1
+  jp    z,MoveRight
+  ret
+
 
 MoveLeft:
   ld    a,(iy+2)                            ;x
   sub   a,6
-  ret   c
+;  ret   c
   ld    (iy+2),a                            ;x
 
+  call  CheckCollisionWall                  ;out: c=collision
+  jr    c,.Collision
+ret
   call  CheckCollisionNPCs                  ;check if player collides with npcs. out ;d=0(no collision), d=1(collision)
   bit   0,d                                 ;d=0(no collision), d=1(collision)
   ret   z
+  .Collision:
   ld    a,(iy+2)                            ;x
   add   a,6
   ld    (iy+2),a                            ;x
@@ -191,25 +292,35 @@ MoveRight:
   ret   c
   ld    (iy+2),a                            ;x
 
+  call  CheckCollisionWall                  ;out: c=collision
+  jr    c,.Collision
+ret
   call  CheckCollisionNPCs                  ;check if player collides with npcs. out ;d=0(no collision), d=1(collision)
   bit   0,d                                 ;d=0(no collision), d=1(collision)
   ret   z
+  .Collision:
   ld    a,(iy+2)                            ;x
   sub   a,6
   ld    (iy+2),a                            ;x
   ret
+
+
 
 MoveUp:
   ld    a,(iy+1)                            ;y
   sub   a,3
   cp    83
   cp    30
-  ret   c
+;  ret   c
   ld    (iy+1),a                            ;y
 
+  call  CheckCollisionWall                  ;out: c=collision
+  jr    c,.Collision
+ret
   call  CheckCollisionNPCs                  ;check if player collides with npcs. out ;d=0(no collision), d=1(collision)
   bit   0,d                                 ;d=0(no collision), d=1(collision)
   ret   z
+  .Collision:
   ld    a,(iy+1)                            ;y
   add   a,3
   ld    (iy+1),a                            ;y
@@ -219,12 +330,16 @@ MoveDown:
   ld    a,(iy+1)                            ;y
   add   a,3
   cp    120
-  ret   nc
+;  ret   nc
   ld    (iy+1),a                            ;y
 
+  call  CheckCollisionWall                  ;out: c=collision
+  jr    c,.Collision
+ret
   call  CheckCollisionNPCs                  ;check if player collides with npcs. out ;d=0(no collision), d=1(collision)
   bit   0,d                                 ;d=0(no collision), d=1(collision)
   ret   z
+  .Collision:
   ld    a,(iy+1)                            ;y
   sub   a,3
   ld    (iy+1),a                            ;y
