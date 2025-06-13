@@ -26,7 +26,7 @@ INCLUDE "RePlayer.asm"
 ObjectGirl:  							db  0,098,040 | dw 000,000					,000        | db 255      ,MovementRoutinesBlock | dw GirlMovementRoutine				| db 000,000 ,000, 000
 ObjectCapGirl:  					db  1,095,200 | dw 000,000					,000        | db 255      ,MovementRoutinesBlock | dw CapGirlMovementRoutine		| db 000,000 ,000, 000
 ObjectRedHeadBoy:  				db  1,105,150 | dw 000,000					,000        | db 255      ,MovementRoutinesBlock | dw RedHeadBoyMovementRoutine	| db 000,000 ,000, 000
-ObjectHost:  							db  1,081,100 | dw 000,000					,Host_0     | db 255      ,MovementRoutinesBlock | dw HostMovementRoutine				| db 000,000 ,000, 000
+ObjectHost:  							db  1,076,094 | dw 000,000					,Host_0     | db 255      ,MovementRoutinesBlock | dw HostMovementRoutine				| db 000,000 ,000, 000
 ObjectWall:  							db  1,062,178 | dw 000,000					,Wall_0     | db 255      ,MovementRoutinesBlock | dw WallMovementRoutine				| db 000,000 ,000, 000
 
 ObjectBackRoomGame:  			db  1,092,128 | dw 000,000					,BRGame_0   | db 255			,MovementRoutinesBlock | dw BackRoomGameRoutine				| db 000,000 ,000, 000
@@ -218,10 +218,14 @@ LoadRoom:
 
 	.ArcadeHall1:
 	call  LoadArcadeHall1Gfx             	;loads the initial starting arcade room in all 4 pages, and sets palette
+	ld		hl,ArcadeHall1TileMap
+	ld		(TileMap),hl
 	ret
 
 	.ArcadeHall2:
   call  LoadArcadeHall2Gfx             	;loads the 2nd arcade room in all 4 pages, and sets palette
+	ld		hl,ArcadeHall2TileMap
+	ld		(TileMap),hl
 	ret
 
 ArcadeHall1Palette:                    	;palette file
@@ -1119,6 +1123,8 @@ spatpointer:                rb		2
 PageOnNextVblank:           rb    1
 ChangeRoom?:         				rb    1
 SkipAssignOrder?:    				rb    1
+TileMap:  									rb		2
+
 
 endenginepage3variables:  equ $+enginepage3length
 org variables

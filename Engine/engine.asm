@@ -244,7 +244,7 @@ Var3:                   equ 16
 
 ObjectTable:
 ;           on?,  y,  x,  sprite restore table                                ,sprite data,put on frame ,movement routine block,  movement routine,							 phase,var1,var2,var3
-Object1:  db  1,060,130 | dw Object1RestoreBackgroundTable,Object1RestoreTable,000        | db 000      ,MovementRoutinesBlock | dw VesselMovementRoutine			| db 000,000 ,000, 000
+Object1:  db  1,100,130 | dw Object1RestoreBackgroundTable,Object1RestoreTable,000        | db 000      ,MovementRoutinesBlock | dw VesselMovementRoutine			| db 000,000 ,000, 000
 ;Object1:  db  1,110,130 | dw Object1RestoreBackgroundTable,Object1RestoreTable,000        | db 000      ,MovementRoutinesBlock | dw VesselMovementRoutine			| db 000,000 ,000, 000
 Object2:  db  1,098,040 | dw Object3RestoreBackgroundTable,Object3RestoreTable,000        | db 001      ,MovementRoutinesBlock | dw GirlMovementRoutine       | db 000,000 ,000, 000
 Object3:  db  1,095,200 | dw Object4RestoreBackgroundTable,Object4RestoreTable,000        | db 002      ,MovementRoutinesBlock | dw CapGirlMovementRoutine    | db 000,000 ,000, 000
@@ -2280,7 +2280,7 @@ CompareHLwithDE:
   ret
 
 StartSaveGameData:
-CurrentRoom:  db  0                     ;0=arcadehall1, 1=arcadehall2
+CurrentRoom:  db  1                     ;0=arcadehall1, 1=arcadehall2
 GamesPlayed:  db 0                      ;increases after leaving a game. max=255
 HighScoreTotalAverage: db 00            ;recruiter appears when 80 (%) is reached
 HighScoreBackroomGame:  db  000
