@@ -11,10 +11,13 @@
 ;RedHeadBoyMovementRoutine
 
 ;SirensRoutine
+;WallMovementRoutine
 ;ArcadeHall1EventRoutine
 ;ArcadeHall2EventRoutine
 ;BackRoomGameRoutine
-;EntityRoutine
+;EntityaRoutine
+;EntitybRoutine
+;EntitycRoutine
 
 MovementRoutinesAddress:  equ $4000
 Phase MovementRoutinesAddress
@@ -52,6 +55,23 @@ VesselMovementRoutine:
   ret   nz
   ld    hl,(PlayerSpriteStand)
   jp    (hl)
+
+REnterDoor:
+  ld    a,(iy+2)                            ;x
+  add   a,HorizontalSpeedPlayer
+  ld    (iy+2),a                            ;x
+  cp    $90+28
+  jr    nc,.ChangeRoom
+
+  ld    hl,TheVesselrightrunning_0          ;starting pose
+  ld    b,11                                ;animation steps
+  jp    AnimateObject                       ;in hl=starting pose, b=animation steps, uses: var1
+
+  .ChangeRoom:
+  ld    a,1
+  ld    (ChangeRoom?),a
+  ld    (CurrentRoom),a
+  ret
 
 LStanding:
   ld    hl,TheVesselleftidle_0
@@ -229,10 +249,10 @@ MovePlayer:
   jp    z,MoveRight
   ret
 
-
+HorizontalSpeedPlayer:  equ 4
 MoveLeft:
   ld    a,(iy+2)                            ;x
-  sub   a,4
+  sub   a,HorizontalSpeedPlayer
   ret   c
   ld    (iy+2),a                            ;x
 
@@ -243,13 +263,13 @@ MoveLeft:
   ret   z
   .Collision:
   ld    a,(iy+2)                            ;x
-  add   a,4
+  add   a,HorizontalSpeedPlayer
   ld    (iy+2),a                            ;x
   ret
 
 MoveRight:
   ld    a,(iy+2)                            ;x
-  add   a,4
+  add   a,HorizontalSpeedPlayer
   ret   c
   ld    (iy+2),a                            ;x
 
@@ -260,7 +280,7 @@ MoveRight:
   ret   z
   .Collision:
   ld    a,(iy+2)                            ;x
-  sub   a,4
+  sub   a,HorizontalSpeedPlayer
   ld    (iy+2),a                            ;x
   ret
 
@@ -512,17 +532,32 @@ HostMovementRoutine:
   ret
 
 ArcadeHall1EventRoutine:
+  ld    a,(framecounter)                    ;at max 4 objects can be put in screen divided over 4 frames
+  and   3
+  ret   nz
+
   call  .CheckPlayerLeavingRoom             ;when y>116 player enters arcadehall1 
   ret
 
   .CheckPlayerLeavingRoom:
+	ld		a,(HighScoreTotalAverage)
+	cp		80
+  ret   c
+
   ld    a,(Object1+y)
-  cp    60
-  ret   nc
-  
-  ld    a,1
-  ld    (ChangeRoom?),a
-  ld    (CurrentRoom),a
+  cp    $3e
+  ret   nz
+
+  ld    a,(Object1+x)
+  cp    $90
+  ret   c
+
+;Set_R_EnterDoor:
+	ld		hl,REnterDoor
+	ld		(PlayerSpriteStand),hl
+  xor   a
+	ld		(object1+var1),a
+	ld		(iy+on?),a
   ret
 
 ArcadeHall2EventRoutine:
@@ -569,7 +604,7 @@ SirensRoutine:
   ld    (iy+Var1),a
   cp    50+32
   jr    c,.CloseDoor
-  cp    82+64
+  cp    82+64+8
   jr    z,.EndPhase0
 
   .OpenDoor:

@@ -451,13 +451,6 @@ RestoreBackgroundObject4Page3:
 	db    $02,0,$02,0
 	db    0,0,$d0  
 
-;SF2 global properties for current object and frame
-blitpage:			db  0
-screenpage:			db  2
-ObjectFrame:		dw  0
-Objecty:			db  100
-Objectx:			db  100
-
 ;Frameinfo looks like this:
 ;width, height, offset x, offset y
 ;x offset for first line
@@ -2280,9 +2273,9 @@ CompareHLwithDE:
   ret
 
 StartSaveGameData:
-CurrentRoom:  db  1                     ;0=arcadehall1, 1=arcadehall2
+CurrentRoom:  db  0                     ;0=arcadehall1, 1=arcadehall2
 GamesPlayed:  db 0                      ;increases after leaving a game. max=255
-HighScoreTotalAverage: db 00            ;recruiter appears when 80 (%) is reached
+HighScoreTotalAverage: db 80            ;recruiter appears when 80 (%) is reached
 HighScoreBackroomGame:  db  000
 
 HighScoreRoadFighter: db 0
@@ -2292,7 +2285,7 @@ HighScoreBikeRace: db 0
 ConvGirl: db %0000 0000                 ;conversations handled
 ConvCapGirl: db %0000 0000              ;conversations handled
 ConvGingerBoy: db %0000 0000            ;conversations handled
-ConvHost: db %0000 0000                 ;conversations handled
+ConvHost: db %0000 0001                 ;conversations handled
 
 DateCurrentLogin: ds 6
 DatePreviousLogin: ds 6

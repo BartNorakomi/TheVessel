@@ -453,6 +453,7 @@ enlength:	Equ	$-engine
 ForegroundTileMapsBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
 ArcadeHall1TileMap:  incbin "..\tools\tilemapArcade1.bin"
 ArcadeHall2TileMap:  incbin "..\tools\tilemapArcade2.bin"
+ArcadeHall2EntityTileMap:  incbin "..\tools\tilemapArcade2Entity.bin"
 	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
 
 ;ArcadeHall2ForegroundTileMapBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize

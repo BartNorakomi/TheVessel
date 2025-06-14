@@ -9,16 +9,24 @@ InitiateGame:
 ;  call  TitleScreen
 ;  endif
 ;  StartGame:
-	call	LoadRoom												;sets gfx and objects
+	call	ResetVariables
+	call	LoadRoomGfx											;sets room gfx and sets palette
 	call	PutObjects											;put objects and events
 	call	ResetRestoreTables							;all 4 objects have their own restore tables
 	call	ResetRestoreBackgroundTables		;reset all restore background tables
+	call	LoadTileMap											;sets tilemap (what is foreground and what is background) 
   ld    a,r
 	and		7
 	inc		a
   ld    (ChangeSong?),a
   call  SetInterruptHandler           	;sets Vblank
   jp    LevelEngine
+
+ResetVariables:
+	xor		a
+  ld    (ChangeRoom?),a
+	ld		(screenpage),a
+	ret
 
 INCLUDE "RePlayer.asm"
 ;														on?,  y,  x,  sprite restore table,sprite data,put on frame ,movement routine block,  movement routine,							 phase,var1,var2,var3
@@ -70,6 +78,31 @@ ResetRestoreTables:											;all 4 objects have their own restore tables
 	ld		(Object3+ObjectRestoreTable),hl
 	ld		hl,Object4RestoreTable
 	ld		(Object4+ObjectRestoreTable),hl
+	ret
+
+LoadTileMap:
+	ld		a,(CurrentRoom)									;0=arcadehall1, 1=arcadehall2
+	or		a
+	jr		z,.ArcadeHall1
+	dec		a
+	jr		z,.ArcadeHall2
+	ret
+
+	.ArcadeHall1:
+	ld		hl,ArcadeHall1TileMap
+	ld		(TileMap),hl
+	ret
+
+	.ArcadeHall2:
+	ld		hl,ArcadeHall2TileMap
+	ld		(TileMap),hl
+
+	ld		a,(HighScoreBackroomGame)
+	cp		100
+	ret		c
+
+	ld		hl,ArcadeHall2EntityTileMap
+	ld		(TileMap),hl
 	ret
 
 PutSingleObject:
@@ -206,32 +239,18 @@ PutObjectsArcadeHall1:
 	call	PutSingleObject 
 	ret
 
-LoadRoom:
-  xor   a
-  ld    (ChangeRoom?),a
-	ld		a,(CurrentRoom)									;0=arcadehall1, 1=arcadehall2
-	or		a
-	jr		z,.ArcadeHall1
-	dec		a
-	jr		z,.ArcadeHall2
-	ret
-
-	.ArcadeHall1:
-	call  LoadArcadeHall1Gfx             	;loads the initial starting arcade room in all 4 pages, and sets palette
-	ld		hl,ArcadeHall1TileMap
-	ld		(TileMap),hl
-	ret
-
-	.ArcadeHall2:
-  call  LoadArcadeHall2Gfx             	;loads the 2nd arcade room in all 4 pages, and sets palette
-	ld		hl,ArcadeHall2TileMap
-	ld		(TileMap),hl
-	ret
-
 ArcadeHall1Palette:                    	;palette file
   incbin "..\grapx\arcadehall\arcade1.SC5",$7680+7,32
 ArcadeHall2Palette:                    	;palette file
   incbin "..\grapx\arcadehall\arcade2.SC5",$7680+7,32
+
+LoadRoomGfx:
+	ld		a,(CurrentRoom)									;0=arcadehall1, 1=arcadehall2
+	or		a
+	jr		z,LoadArcadeHall1Gfx            ;loads the initial starting arcade room in all 4 pages, and sets palette
+	dec		a
+	jr		z,LoadArcadeHall2Gfx            ;loads the 2nd arcade room in all 4 pages, and sets palette
+	ret
 
 LoadArcadeHall1Gfx:
   ld    hl,ArcadeHall1Palette
@@ -274,8 +293,7 @@ LoadArcadeHallGfx:
 	ld		bc,16*2
 	ldir
   ld    hl,CurrentPalette
-  call  SetPalette
-  ret
+  jp		SetPalette
 
 CurrentPalette:	ds	16*2
 
@@ -1124,6 +1142,13 @@ PageOnNextVblank:           rb    1
 ChangeRoom?:         				rb    1
 SkipAssignOrder?:    				rb    1
 TileMap:  									rb		2
+
+;SF2 global properties for current object and frame
+screenpage:									rb		1
+blitpage:										rb		1
+ObjectFrame:								rb		2
+Objecty:										rb		1
+Objectx:										rb		1
 
 
 endenginepage3variables:  equ $+enginepage3length
