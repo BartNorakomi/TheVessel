@@ -9,7 +9,9 @@ InitiateGame:
 ;  call  TitleScreen
 ;  endif
 ;  StartGame:
+	call	SpriteInitialize
 	call	ResetVariables
+	call	SetScreenOff
 	call	LoadRoomGfx											;sets room gfx and sets palette
 	call	PutObjects											;put objects and events
 	call	ResetRestoreTables							;all 4 objects have their own restore tables
@@ -26,15 +28,17 @@ ResetVariables:
 	xor		a
   ld    (ChangeRoom?),a
 	ld		(screenpage),a
+	ld		a,8
+	ld		(ScreenOnDelay),a								;amount of frames until screen turns on (we need some frames to first put all objects in screen)
 	ret
 
 INCLUDE "RePlayer.asm"
 ;														on?,  y,  x,  sprite restore table,sprite data,put on frame ,movement routine block,  movement routine,							 phase,var1,var2,var3
 
-ObjectGirl:  							db  0,098,040 | dw 000,000					,000        | db 255      ,MovementRoutinesBlock | dw GirlMovementRoutine				| db 000,000 ,000, 000
-ObjectCapGirl:  					db  1,095,200 | dw 000,000					,000        | db 255      ,MovementRoutinesBlock | dw CapGirlMovementRoutine		| db 000,000 ,000, 000
-ObjectRedHeadBoy:  				db  1,105,150 | dw 000,000					,000        | db 255      ,MovementRoutinesBlock | dw RedHeadBoyMovementRoutine	| db 000,000 ,000, 000
-ObjectHost:  							db  1,076,094 | dw 000,000					,Host_0     | db 255      ,MovementRoutinesBlock | dw HostMovementRoutine				| db 000,000 ,000, 000
+ObjectGirl:  							db  1,110,050 | dw 000,000					,000        | db 255      ,MovementRoutinesBlock | dw GirlMovementRoutine				| db 000,000 ,000, 000
+ObjectCapGirl:  					db  1,071,100 | dw 000,000					,000        | db 255      ,MovementRoutinesBlock | dw CapGirlMovementRoutine		| db 000,000 ,000, 000
+ObjectRedHeadBoy:  				db  1,085,170 | dw 000,000					,000        | db 255      ,MovementRoutinesBlock | dw RedHeadBoyMovementRoutine	| db 000,000 ,000, 000
+ObjectHost:  							db  1,074,102 | dw 000,000					,Host_0     | db 255      ,MovementRoutinesBlock | dw HostMovementRoutine				| db 000,000 ,000, 000
 ObjectWall:  							db  1,062,178 | dw 000,000					,Wall_0     | db 255      ,MovementRoutinesBlock | dw WallMovementRoutine				| db 000,000 ,000, 000
 
 ObjectBackRoomGame:  			db  1,092,128 | dw 000,000					,BRGame_0   | db 255			,MovementRoutinesBlock | dw BackRoomGameRoutine				| db 000,000 ,000, 000
@@ -131,7 +135,7 @@ PutObjects:															;put objects and events
 
 PutObjectsArcadeHall2:
 	;set starting coordinates player
-	ld		a,114														;y
+	ld		a,120														;y
 	ld		(Object1+y),a
 	ld		a,194														;x
 	ld		(Object1+x),a
@@ -193,9 +197,9 @@ PutObjectsArcadeHall1:
 	call  LoadOpenDoorGfx 								;opens the door in all pages
 
 	;set starting coordinates player (entering through the door)
-	ld		a,070														;y
+	ld		a,061														;y
 	ld		(Object1+y),a
-	ld		a,128														;x
+	ld		a,172														;x
 	ld		(Object1+x),a
 	ret
 
@@ -593,7 +597,39 @@ SpriteInitialize:
 	ld		a,6+128
 	ei
 	out		($99),a
+
+;load sprites data
+	xor		a				;page 0/1
+	ld		hl,sprcharaddr	;sprite 0 character table in VRAM
+	call	SetVdp_Write
+
+  ld    hl,SpriteCharacters
+	ld		c,$98
+;	call	outix64			;write sprite character to vram
+;	call	outix64			;write sprite character to vram
+;	call	outix64			;write sprite character to vram
+;	call	outix64			;write sprite character to vram
+	call	outix256		;write sprite character to vram
+
+	xor		a				;page 0/1
+	ld		hl,sprcoladdr	;sprite 0 color table in VRAM
+	call	SetVdp_Write
+
+	ld		hl,SpriteColors
+	ld		c,$98
+;	call	outix32			;write sprite color of pointer and hand to vram
+;	call	outix32			;write sprite color of pointer and hand to vram
+;	call	outix32			;write sprite color of pointer and hand to vram
+;	call	outix32			;write sprite color of pointer and hand to vram
+	call	outix128		;write sprite color of pointer and hand to vram
+
+	call	putsprite
 	ret
+
+SpriteCharacters:	
+include "..\sprites\sprites.tgs.gen"
+SpriteColors:	
+include "..\sprites\sprites.tcs.gen"
 
 SetPage:                                ;in a->x*32+31 (x=page)
   di
@@ -1149,7 +1185,10 @@ blitpage:										rb		1
 ObjectFrame:								rb		2
 Objecty:										rb		1
 Objectx:										rb		1
-
+ScreenOnDelay:							rb		1				;amount of frames until screen turns on (we need some frames to first put all objects in screen)
+ShowConversationCloud?:			rb		1
+Cloudy:											rb		1
+Cloudx:											rb		1
 
 endenginepage3variables:  equ $+enginepage3length
 org variables

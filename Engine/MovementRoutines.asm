@@ -56,6 +56,22 @@ VesselMovementRoutine:
   ld    hl,(PlayerSpriteStand)
   jp    (hl)
 
+LEnterDoor:
+  ld    a,(iy+2)                            ;x
+  sub   a,HorizontalSpeedPlayer
+  ld    (iy+2),a                            ;x
+  cp    130
+  jr    c,.EnterDoor
+
+  ld    hl,TheVesselleftrunning_0          ;starting pose
+  ld    b,11                                ;animation steps
+  jp    AnimateObject                       ;in hl=starting pose, b=animation steps, uses: var1
+
+  .EnterDoor:
+	ld		a,062														;y
+	ld		(Object1+y),a
+  jp    Set_L_stand
+
 REnterDoor:
   ld    a,(iy+2)                            ;x
   add   a,HorizontalSpeedPlayer
@@ -531,12 +547,26 @@ HostMovementRoutine:
   ld    (NPCConvAddress),hl
   ret
 
+PutConversationCloud:
+  ld    a,(ShowConversationCloud?)
+  or    a
+  ret   z
+  xor   a
+  ld    (ShowConversationCloud?),a
+
+  ld    a,(iy+y)
+  ld    (Cloudy),a
+  ld    a,(iy+x)
+  ld    (Cloudx),a
+  ret
+
 ArcadeHall1EventRoutine:
-  ld    a,(framecounter)                    ;at max 4 objects can be put in screen divided over 4 frames
-  and   3
-  ret   nz
+;  ld    a,(framecounter)                    ;at max 4 objects can be put in screen divided over 4 frames
+;  and   3
+;  ret   nz
 
   call  .CheckPlayerLeavingRoom             ;when y>116 player enters arcadehall1 
+  call  PutConversationCloud
   ret
 
   .CheckPlayerLeavingRoom:
@@ -552,6 +582,11 @@ ArcadeHall1EventRoutine:
   cp    $90
   ret   c
 
+	ld		hl,(PlayerSpriteStand)
+  ld    de,LEnterDoor
+  call  CompareHLwithDE
+  ret   z
+
 ;Set_R_EnterDoor:
 	ld		hl,REnterDoor
 	ld		(PlayerSpriteStand),hl
@@ -566,8 +601,13 @@ ArcadeHall2EventRoutine:
 
   .CheckPlayerLeavingRoom:
   ld    a,(Object1+y)
-  cp    116
+  cp    124
   ret   c
+
+	ld		hl,LEnterDoor
+	ld		(PlayerSpriteStand),hl
+  ld    a,8
+	ld		(object1+var1),a
   
   xor   a
   ld    (CurrentRoom),a
@@ -852,6 +892,13 @@ CheckStartConversation:
   call  CheckPlayerNear                     ;check if player is standing near NPC. out ;d=0(no collision), d=1(collision)
   bit   0,d                                 ;d=0(no collision), d=1(collision)
   ret   z
+
+  ld    a,1
+  ld    (ShowConversationCloud?),a
+  ld    a,(iy+y)
+  ld    (Cloudy),a
+  ld    a,(iy+x)
+  ld    (Cloudx),a
 
 ;
 ; bit	7	  6	  5		    4		    3		    2		  1		  0

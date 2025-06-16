@@ -3,6 +3,7 @@ LevelEngine:
   inc   a
   ld    (framecounter),a
 
+  call  SetScreenonWithDelay
   call  PopulateControls
 ;  call  BackdropGreen
   call  HandleObjects
@@ -17,6 +18,14 @@ LevelEngine:
   jr    z,.checkflag
   ld    (hl),a
   jp    LevelEngine
+
+SetScreenonWithDelay:
+	ld		a,(ScreenOnDelay)								;amount of frames until screen turns on (we need some frames to first put all objects in screen)
+  dec   a
+  ret   m
+	ld		(ScreenOnDelay),a								;amount of frames until screen turns on (we need some frames to first put all objects in screen)
+  jp    z,SetScreenon
+  ret
 
 CheckLeaveRoom:
   ld    a,(ChangeRoom?)
@@ -2203,10 +2212,10 @@ putsprite:
 	ret
 
 spat:						;sprite attribute table (y,x)
-	db		100,100,00,0	,100,100,04,0	,100,100,08,0	,004,006,12,0
-	db		004,006,16,0	,004,182,20,0	,004,182,24,0	,180,006,28,0
-	db		180,006,32,0	,180,182,36,0	,180,182,40,0	,046,182,44,0
-	db		046,182,48,0	,119,182,52,0	,119,182,56,0	,025,230,60,0
+	db		230,230,00,0	,230,230,04,0	,230,230,08,0	,230,230,12,0
+	db		230,230,16,0	,230,230,20,0	,230,230,24,0	,230,230,28,0
+	db		230,230,32,0	,230,230,36,0	,230,230,40,0	,230,230,44,0
+	db		230,230,48,0	,230,230,52,0	,230,230,56,0	,230,230,60,0
 
 	db		230,230,64,0	,230,230,68,0	,230,230,72,0	,230,230,76,0
 	db		230,230,80,0	,230,230,84,0	,230,230,88,0	,230,230,92,0
@@ -2274,8 +2283,8 @@ CompareHLwithDE:
 
 StartSaveGameData:
 CurrentRoom:  db  0                     ;0=arcadehall1, 1=arcadehall2
-GamesPlayed:  db 0                      ;increases after leaving a game. max=255
-HighScoreTotalAverage: db 80            ;recruiter appears when 80 (%) is reached
+GamesPlayed:  db 9                      ;increases after leaving a game. max=255
+HighScoreTotalAverage: db 00            ;recruiter appears when 80 (%) is reached
 HighScoreBackroomGame:  db  000
 
 HighScoreRoadFighter: db 0
@@ -2285,7 +2294,7 @@ HighScoreBikeRace: db 0
 ConvGirl: db %0000 0000                 ;conversations handled
 ConvCapGirl: db %0000 0000              ;conversations handled
 ConvGingerBoy: db %0000 0000            ;conversations handled
-ConvHost: db %0000 0001                 ;conversations handled
+ConvHost: db %0000 0000                 ;conversations handled
 
 DateCurrentLogin: ds 6
 DatePreviousLogin: ds 6
