@@ -550,14 +550,29 @@ HostMovementRoutine:
 PutConversationCloud:
   ld    a,(ShowConversationCloud?)
   or    a
-  ret   z
+  jr    z,.RemoveCloud
   xor   a
   ld    (ShowConversationCloud?),a
 
-  ld    a,(iy+y)
-  ld    (Cloudy),a
-  ld    a,(iy+x)
-  ld    (Cloudx),a
+  ld    a,(Cloudy)
+  ld    (spat+(4*002)+0),a
+  ld    (spat+(4*003)+0),a
+  ld    (spat+(4*004)+0),a
+  ld    (spat+(4*005)+0),a
+  ld    a,(Cloudx)
+  ld    (spat+(4*002)+1),a
+  ld    (spat+(4*003)+1),a
+  add   a,16
+  ld    (spat+(4*004)+1),a
+  ld    (spat+(4*005)+1),a
+  ret
+
+.RemoveCloud:
+  ld    a,230
+  ld    (spat+(4*002)+0),a
+  ld    (spat+(4*003)+0),a
+  ld    (spat+(4*004)+0),a
+  ld    (spat+(4*005)+0),a
   ret
 
 ArcadeHall1EventRoutine:

@@ -10,6 +10,7 @@ LevelEngine:
 ;  call  BackdropBlack
   call  HandleConversations             ;handles NPC conversations
   call  CheckLeaveRoom
+  call  putsprite
 
   xor   a
   ld    hl,vblankintflag
@@ -1076,6 +1077,7 @@ HandleConversations:
   ld    (Fill2BlackLinesGoingDown+dy),a
   ld    a,0*32 + 31                     ;start with page 0 at lineint
   ld    (PageOnLineInt),a
+  call  SpritesOff
   call  SetFontPage1Y212                ;set font at (0,212) page 0
   call  BackupBackgroundInRam           ;make a copy of the background we are going to 'corrupt' to ram
   call  OpenBlackWindow                 ;open up black window 2 lines per int (page 0 and page 1)
@@ -1087,6 +1089,7 @@ HandleConversations:
   call  ClearNPCConversationWindow      ;clear window, swap page and clear window again
   call  DisablePaletteSplit             ;turn off lineint and set top and bot y for restore black lines
   call  CloseBlackWindow                ;close  black window 2 lines per int (page 0 and page 1)
+  call  SpritesOn
   ret
 
 BackupBackgroundInRam:                  ;store Vram data of page 0+1 in ram
@@ -2212,8 +2215,8 @@ putsprite:
 	ret
 
 spat:						;sprite attribute table (y,x)
-	db		230,230,00,0	,230,230,04,0	,230,230,08,0	,230,230,12,0
-	db		230,230,16,0	,230,230,20,0	,230,230,24,0	,230,230,28,0
+	db		230,230,00,0	,230,230,04,0	,100,100,08,0	,100,100,12,0
+	db		100,116,16,0	,100,116,20,0	,230,230,24,0	,230,230,28,0
 	db		230,230,32,0	,230,230,36,0	,230,230,40,0	,230,230,44,0
 	db		230,230,48,0	,230,230,52,0	,230,230,56,0	,230,230,60,0
 
@@ -2250,6 +2253,28 @@ ScreenOn:
   di
   out   ($99),a
   ld    a,1+128
+  ei
+  out   ($99),a
+  ret
+
+SpritesOn:
+  ld    a,(VDP_8)             ;sprites on
+  and   %11111101
+  ld    (VDP_8),a
+  di
+  out   ($99),a
+  ld    a,8+128
+  ei
+  out   ($99),a
+  ret
+
+SpritesOff:
+  ld    a,(VDP_8)         ;sprites off
+  or    %00000010
+  ld    (VDP_8),a
+  di
+  out   ($99),a
+  ld    a,8+128
   ei
   out   ($99),a
   ret

@@ -28,6 +28,7 @@ ResetVariables:
 	xor		a
   ld    (ChangeRoom?),a
 	ld		(screenpage),a
+  ld    (ShowConversationCloud?),a
 	ld		a,8
 	ld		(ScreenOnDelay),a								;amount of frames until screen turns on (we need some frames to first put all objects in screen)
 	ret
@@ -240,6 +241,10 @@ PutObjectsArcadeHall1:
 	ld		hl,ObjectCapGirl								;put capgirl
 	call	PutSingleObject 
 	ld		hl,ObjectRedHeadBoy							;put redheadboy
+	call	PutSingleObject 
+
+	ld		de,ObjEvent1										;now put events
+	ld		hl,EventArcadeHall1							;put arcade hall 1 event
 	call	PutSingleObject 
 	ret
 
