@@ -119,6 +119,24 @@ vblank:
   out   ($99),a
   ld    (vblankintflag),a               ;set vblank flag (to any value but 0)
 
+
+  ld    hl,ConvEntity
+  bit   1,(hl)
+  jp    z,.EndCheckCountdownDays
+
+  ld    a,(TotalMinutesUntilLandCounter)
+  dec   a
+  ld    (TotalMinutesUntilLandCounter),a
+  jp    nz,.EndCheckCountdownDays
+
+  ld    hl,(TotalMinutesUntilLand)
+  ld    de,1
+  xor   a
+  sbc   hl,de
+  jr    c,.EndCheckCountdownDays
+  ld    (TotalMinutesUntilLand),hl
+  .EndCheckCountdownDays:
+
   pop   hl 
   pop   de 
   pop   bc 
@@ -254,8 +272,7 @@ Var3:                   equ 16
 
 ObjectTable:
 ;           on?,  y,  x,  sprite restore table                                ,sprite data,put on frame ,movement routine block,  movement routine,							 phase,var1,var2,var3
-Object1:  db  1,100,130 | dw Object1RestoreBackgroundTable,Object1RestoreTable,000        | db 000      ,MovementRoutinesBlock | dw VesselMovementRoutine			| db 000,000 ,000, 000
-;Object1:  db  1,110,130 | dw Object1RestoreBackgroundTable,Object1RestoreTable,000        | db 000      ,MovementRoutinesBlock | dw VesselMovementRoutine			| db 000,000 ,000, 000
+Object1:  db  1,102,130 | dw Object1RestoreBackgroundTable,Object1RestoreTable,000        | db 000      ,MovementRoutinesBlock | dw VesselMovementRoutine			| db 000,000 ,000, 000
 Object2:  db  1,098,040 | dw Object3RestoreBackgroundTable,Object3RestoreTable,000        | db 001      ,MovementRoutinesBlock | dw GirlMovementRoutine       | db 000,000 ,000, 000
 Object3:  db  1,095,200 | dw Object4RestoreBackgroundTable,Object4RestoreTable,000        | db 002      ,MovementRoutinesBlock | dw CapGirlMovementRoutine    | db 000,000 ,000, 000
 Object4:  db  1,105,150 | dw Object2RestoreBackgroundTable,Object2RestoreTable,000        | db 003      ,MovementRoutinesBlock | dw RedHeadBoyMovementRoutine | db 000,000 ,000, 000
@@ -1090,6 +1107,7 @@ HandleConversations:
   call  DisablePaletteSplit             ;turn off lineint and set top and bot y for restore black lines
   call  CloseBlackWindow                ;close  black window 2 lines per int (page 0 and page 1)
   call  SpritesOn
+  halt                                  ;cleanly end of this routine at vblank (because at vblank a pageswap will occur)
   ret
 
 BackupBackgroundInRam:                  ;store Vram data of page 0+1 in ram
@@ -1678,7 +1696,7 @@ Restore2BlackLinesGoingDown:
 
 
 
-DivideBCbyDE:
+DivideBCbyDE:         ; Out: BC = result, HL = rest
 ;
 ; Divide 16-bit values (with 16-bit result)
 ; In: Divide BC by divider DE
@@ -2064,147 +2082,6 @@ NXPerSymbol:
 ;           a   b   c   d   e   f   g   h   i   j   k   l   m   n   o   p   q   r   s   t   u   v   w   x   y   z   {   |   }   ~
   db  004+2,006+2,006+2,006+2,006+2,006+2,006+2,006+2,006+2,002+2,005+2,006+2,002+2,006+2,006+2,006+2,006+2,006+2,006+2,006+2,006+2,006+2,006+2,006+2,006+2,006+2,006+2,004+2,004+2,004+2,004+2,004+2
  
-;Text8bitNumberStored: ds  1
-TextNumber: ;ds  10
-db  "31456",255
-SetNumber16BitCastleSkipIfAmountIs0:
-  ld    a,h
-  cp    l
-  ret   z
-
-SetNumber16BitCastle:                   ;in hl=number (16bit)
-  push  bc
-  push  iy
-  call  .ConvertToDecimal16bit
-  pop   iy
-  pop   bc
-
-  ld    hl,TextNumber
-  jp    SetText
-
-  .ConvertToDecimal16bit:
-  ld    iy,TextNumber
-  ld    e,0                             ;e=has an xfold already been set prior ?
-
-  .Check10000Folds:
-  ld    d,$30                           ;10000folds in d ($30 = 0)
-
-  .Loop10000Fold:
-  or    a
-  ld    bc,10000
-  sbc   hl,bc                           ;check for 10000 folds
-  jr    c,.Set10000Fold
-  inc   d
-  jr  .Loop10000Fold
-
-  .Set10000Fold:
-  ld    a,d
-  cp    $30
-  jr    z,.EndSet10000Fold  
-  ld    e,1                             ;e=has an xfold already been set prior ?
-  ld    (iy),d                          ;set 1000fold
-  inc   iy
-  .EndSet10000Fold:
-
-  add   hl,bc
-
-  .Check1000Folds:
-  ld    d,$30                           ;1000folds in d ($30 = 0)
-
-  .Loop1000Fold:
-  or    a
-  ld    bc,1000
-  sbc   hl,bc                           ;check for 1000 folds
-  jr    c,.Set1000Fold
-  inc   d
-  jr  .Loop1000Fold
-
-  .Set1000Fold:
-  bit   0,e
-  jr    nz,.DoSet1000Fold    
-  ld    a,d
-  cp    $30
-  jr    z,.EndSet1000Fold  
-  ld    e,1                             ;e=has an xfold already been set prior ?
-  .DoSet1000Fold:
-  ld    (iy),d                          ;set 100fold
-  inc   iy
-  .EndSet1000Fold:
-
-  add   hl,bc
-
-  .Check100Folds:
-  ld    d,$30                           ;100folds in d ($30 = 0)
-
-  .Loop100Fold:
-  or    a
-  ld    bc,100
-  sbc   hl,bc                           ;check for 100 folds
-  jr    c,.Set100Fold
-  inc   d
-  jr  .Loop100Fold
-
-  .Set100Fold:
-  bit   0,e
-  jr    nz,.DoSet100Fold  
-  ld    a,d
-  cp    $30
-  jr    nz,.DoSet100Fold  
-
-  ld    a,(PutLetter+dx)                ;set dx of text
-  add   a,4
-  ld    (PutLetter+dx),a                ;set dx of text
-
-
-  jr    .EndSet100Fold  
-
-  .DoSet100Fold:
-  ld    e,1                             ;e=has an xfold already been set prior ?
-  ld    (iy),d                          ;set 100fold
-  inc   iy
-  .EndSet100Fold:
-
-  add   hl,bc
-
-  .Check10Folds:
-  ld    d,$30                           ;10folds in d ($30 = 0)
-
-  .Loop10Fold:
-  or    a
-  ld    bc,10
-  sbc   hl,bc                           ;check for 10 folds
-  jr    c,.Set10Fold
-  inc   d
-  jr  .Loop10Fold
-
-  .Set10Fold:
-  bit   0,e
-  jr    nz,.DoSet10Fold
-  ld    a,d
-  cp    $30
-  jr    nz,.DoSet10Fold  
-
-  ld    a,(PutLetter+dx)                ;set dx of text
-  add   a,3
-  ld    (PutLetter+dx),a                ;set dx of text
-
-  jr    .EndSet10Fold  
-
-  .DoSet10Fold:
-  ld    e,1                             ;e=has an xfold already been set prior ?
-  ld    (iy),d                          ;set 10fold
-  inc   iy
-  .EndSet10Fold:
-
-  .Check1Fold:
-  ld    bc,10 + $30
-  add   hl,bc
-  
-;  add   a,10 + $30
-  ld    (iy),l                          ;set 1 fold
-  ld    (iy+1),255                      ;end text
-  ret
-
 putsprite:
 	xor		a				;page 0/1
 	ld		hl,sprattaddr	;sprite attribute table in VRAM ($17600)
@@ -2307,10 +2184,10 @@ CompareHLwithDE:
   ret
 
 StartSaveGameData:
-CurrentRoom:  db  0                     ;0=arcadehall1, 1=arcadehall2
+CurrentRoom:  db  1                     ;0=arcadehall1, 1=arcadehall2
 GamesPlayed:  db 9                      ;increases after leaving a game. max=255
-HighScoreTotalAverage: db 00            ;recruiter appears when 80 (%) is reached
-HighScoreBackroomGame:  db  000
+HighScoreTotalAverage: db 80            ;recruiter appears when 80 (%) is reached
+HighScoreBackroomGame:  db  100
 
 HighScoreRoadFighter: db 0
 HighScoreBasketball: db 0
@@ -2319,11 +2196,14 @@ HighScoreBikeRace: db 0
 ConvGirl: db %0000 0000                 ;conversations handled
 ConvCapGirl: db %0000 0000              ;conversations handled
 ConvGingerBoy: db %0000 0000            ;conversations handled
-ConvHost: db %0000 0000                 ;conversations handled
+ConvHost: db %0000 0001                 ;conversations handled
+ConvEntity: db %0000 0011               ;conversations handled
 
 DateCurrentLogin: ds 6
 DatePreviousLogin: ds 6
 DailyContinuesUsed: db 0                ;bit 0=roadfighter,bit 1=basketball,bit 2=blox,bit 4=bikerace
+
+TotalMinutesUntilLand:  dw  1 ;4320
 
 EndSaveGameData:
 SaveGameDataLenght: equ EndSaveGameData-StartSaveGameData

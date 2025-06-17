@@ -292,35 +292,83 @@ init:
 EXTROM:	equ	0015fh
 REDCLK:	equ	001f5h
 
-	ld	c,$7		; C = block number (bits 5-4) and register (bits 3-0).
-	ld	ix,REDCLK
-	call	EXTROM  ;block 0, register 7 (eenheden day of month)
-	ld    (DayOfMonthEenheden),a
+; Read units of seconds (Block 0, register 0)
+;ld  c, 00H
+;ld  ix, REDCLK
+;call EXTROM
+;ld  (SecondsEenheden), a
 
-	ld	c,$8		; C = block number (bits 5-4) and register (bits 3-0).
-	ld	ix,REDCLK
-	call	EXTROM  ;block 0, register 8 (tientallen day of month)
-	ld    (DayOfMonthTientallen),a
+; Read tens of seconds (Block 0, register 1)
+;ld  c, 01H
+;ld  ix, REDCLK
+;call EXTROM
+;ld  (SecondsTientallen), a
 
-	ld	c,$9		; C = block number (bits 5-4) and register (bits 3-0).
-	ld	ix,REDCLK
-	call	EXTROM  ;block 0, register 9 (eenheden month)
-	ld    (MonthEenheden),a
+; Read units of minutes (Block 0, register 2)
+;ld  c, 02H
+;ld  ix, REDCLK
+;call EXTROM
+;ld  (MinutesEenheden), a
 
-	ld	c,$a		; C = block number (bits 5-4) and register (bits 3-0).
-	ld	ix,REDCLK
-	call	EXTROM  ;block 0, register 10 (tientallen month)
-	ld    (MonthTientallen),a
+; Read tens of minutes (Block 0, register 3)
+;ld  c, 03H
+;ld  ix, REDCLK
+;call EXTROM
+;ld  (MinutesTientallen), a
 
-	ld	c,$b		; C = block number (bits 5-4) and register (bits 3-0).
-	ld	ix,REDCLK
-	call	EXTROM  ;block 0, register 11 (eenheden jaar)
-	ld    (YearEenheden),a
+; Read units of hours (Block 0, register 4)
+;ld  c, 04H
+;ld  ix, REDCLK
+;call EXTROM
+;ld  (HoursEenheden), a
 
-	ld	c,$c		; C = block number (bits 5-4) and register (bits 3-0).
-	ld	ix,REDCLK
-	call	EXTROM  ;block 0, register 12 (tientallen jaar)
-	ld    (YearTientallen),a
+; Read tens of hours (Block 0, register 5)
+;ld  c, 05H
+;ld  ix, REDCLK
+;call EXTROM
+;ld  (HoursTientallen), a
+
+; Read units of day of the month (Block 0, register 7)
+ld  c, 07H
+ld  ix, REDCLK
+call EXTROM
+ld  (DayOfMonthEenheden), a
+
+; Read tens of day of the month (Block 0, register 8)
+ld  c, 08H
+ld  ix, REDCLK
+call EXTROM
+ld  (DayOfMonthTientallen), a
+
+; Read units of month (Block 0, register 9)
+ld  c, 09H
+ld  ix, REDCLK
+call EXTROM
+ld  (MonthEenheden), a
+
+; Read tens of month (Block 0, register 10)
+ld  c, 0AH
+ld  ix, REDCLK
+call EXTROM
+ld  (MonthTientallen), a
+
+; Read units of year (Block 0, register 11)
+ld  c, 0BH
+ld  ix, REDCLK
+call EXTROM
+ld  (YearEenheden), a
+
+; Read tens of year (Block 0, register 12)
+ld  c, 0CH
+ld  ix, REDCLK
+call EXTROM
+ld  (YearTientallen), a
+
+
+
+
+
+
 
 ;  ld    a,%1000 0001
 ;  ld		ix,$180     ;CHGCPU: A = LED 0 0 0 0 0 x x | ;%000 0000 = Z80 (ROM) mode, %0000 0001 = R800 ROM  mode, %0000 0010 = R800 DRAM mode

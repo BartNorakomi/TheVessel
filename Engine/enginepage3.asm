@@ -29,6 +29,7 @@ ResetVariables:
   ld    (ChangeRoom?),a
 	ld		(screenpage),a
   ld    (ShowConversationCloud?),a
+  ld    (ShowPressTriggerAIcon?),a
 	ld		a,8
 	ld		(ScreenOnDelay),a								;amount of frames until screen turns on (we need some frames to first put all objects in screen)
 	ret
@@ -38,9 +39,10 @@ INCLUDE "RePlayer.asm"
 
 ObjectGirl:  							db  1,110,050 | dw 000,000					,000        | db 255      ,MovementRoutinesBlock | dw GirlMovementRoutine				| db 000,000 ,000, 000
 ObjectCapGirl:  					db  1,071,100 | dw 000,000					,000        | db 255      ,MovementRoutinesBlock | dw CapGirlMovementRoutine		| db 000,000 ,000, 000
-ObjectRedHeadBoy:  				db  1,085,170 | dw 000,000					,000        | db 255      ,MovementRoutinesBlock | dw RedHeadBoyMovementRoutine	| db 000,000 ,000, 000
-ObjectHost:  							db  1,074,102 | dw 000,000					,Host_0     | db 255      ,MovementRoutinesBlock | dw HostMovementRoutine				| db 000,000 ,000, 000
+ObjectRedHeadBoy:  				db  1,102,220 | dw 000,000					,000        | db 255      ,MovementRoutinesBlock | dw RedHeadBoyMovementRoutine	| db 000,000 ,000, 000
+ObjectHost:  							db  1,068,108 | dw 000,000					,Host_0     | db 255      ,MovementRoutinesBlock | dw HostMovementRoutine				| db 000,000 ,000, 000
 ObjectWall:  							db  1,062,178 | dw 000,000					,Wall_0     | db 255      ,MovementRoutinesBlock | dw WallMovementRoutine				| db 000,000 ,000, 000
+;ObjectWall:  							db  1,105,048 | dw 000,000					,Wall_0     | db 255      ,MovementRoutinesBlock | dw WallMovementRoutine				| db 000,000 ,000, 000
 
 ObjectBackRoomGame:  			db  1,092,128 | dw 000,000					,BRGame_0   | db 255			,MovementRoutinesBlock | dw BackRoomGameRoutine				| db 000,000 ,000, 000
 ObjectEntitya: 						db  1,013,128 | dw 000,000					,Entity_a  	| db 001			,MovementRoutinesBlock | dw EntityaRoutine						| db 000,000 ,000, 000
@@ -136,7 +138,7 @@ PutObjects:															;put objects and events
 
 PutObjectsArcadeHall2:
 	;set starting coordinates player
-	ld		a,120														;y
+	ld		a,116														;y
 	ld		(Object1+y),a
 	ld		a,194														;x
 	ld		(Object1+x),a
@@ -197,6 +199,11 @@ PutObjectsArcadeHall1:
 	call	PutSingleObject
 	call  LoadOpenDoorGfx 								;opens the door in all pages
 
+	ld		hl,(PlayerSpriteStand)
+  ld    de,LEnterDoor
+  call  CompareHLwithDE
+  ret   nz
+
 	;set starting coordinates player (entering through the door)
 	ld		a,061														;y
 	ld		(Object1+y),a
@@ -210,7 +217,8 @@ PutObjectsArcadeHall1:
 
 	ld		hl,ObjectWall										;put wall
 	call	PutSingleObject 
-
+	xor		a
+  ld    (Object3+on?),a                 ;wall on (wall gets turned on at the end of the sirens routine)
 	ld		de,ObjEvent1										;now put events
 
 	ld		hl,EventSirens									;put sirens event
@@ -1104,10 +1112,52 @@ outix8:
 	ret	
 
 NPCAniCount:     		db  0,0
-
 PlayerSpriteStand: 	dw  Rstanding
 StartConversation?:	db	0
 
+NPCConv012:
+  db    SwitchCharacter,CharacterPortraitVessel,"Still here. Anything new?"
+  db    SwitchCharacter,CharacterPortraitAI,"No changes. Continue training. We will land in "
+	TextLandinDays: 		db 	"x days "
+	TextLandinHours:		db	"xx hours and "
+	TextLandinMinutes:	db	"xx minutes.",255
+
+AsciiOutput:    ds 2          ; Output: 2-byte ASCII (tens, units)
+; Subroutine: Convert value <100 to 2-byte ASCII
+; Input: A = value (0-99)
+; Output: (AsciiOutput) = tens ASCII, (AsciiOutput+1) = units ASCII
+ConvertToAscii:
+    ; Save registers
+    push bc
+    push de
+
+    ; Divide by 10 to get tens and units
+    ld  b, 10             ; Divisor = 10
+    ld  c, 0              ; Quotient (tens)
+    ld  d, a              ; Save original value
+DIV_LOOP:
+    sub b                 ; A -= 10
+    jr  c, DIV_DONE       ; If negative, done
+    inc c                 ; Increment quotient
+    jr  DIV_LOOP
+DIV_DONE:
+    add a, b              ; Restore remainder (units)
+    ld  e, a              ; E = units
+    ld  a, c              ; A = tens
+
+    ; Convert tens to ASCII
+    add a, 0x30           ; A = tens + '0'
+    ld  (AsciiOutput), a  ; Store tens ASCII
+
+    ; Convert units to ASCII
+    ld  a, e              ; A = units
+    add a, 0x30           ; A = units + '0'
+    ld  (AsciiOutput+1), a ; Store units ASCII
+
+    ; Restore registers
+    pop de
+    pop bc
+    ret
 
 endenginepage3:
 dephase
@@ -1145,12 +1195,19 @@ Replayer_Currentbank: equ $-1
 VDP_0:		                  rb    8
 VDP_8:		                  rb    30
 
-DayOfMonthEenheden:         rb    1
-DayOfMonthTientallen:       rb    1
-MonthEenheden:              rb    1
-MonthTientallen:            rb    1
-YearEenheden:               rb    1       ;you still need to add +1980 to the year
-YearTientallen:             rb    1       ;
+;SecondsEenheden:   					rb		1  ; Units of day (0-9)
+;SecondsTientallen: 					rb		1  ; Tens of day (0-3)
+;MinutesEenheden:        		rb		1  ; Units of month (0-9)
+;MinutesTientallen:      		rb		1  ; Tens of month (0-1)
+;HoursEenheden:         			rb		1  ; Units of year (0-9) (you still need to add +1980 to the year)
+;HoursTientallen:       			rb		1  ; Tens of year (0-9)
+DayOfMonthEenheden:   			rb		1  ; Units of day (0-9)
+DayOfMonthTientallen: 			rb		1  ; Tens of day (0-3)
+MonthEenheden:        			rb		1  ; Units of month (0-9)
+MonthTientallen:      			rb		1  ; Tens of month (0-1)
+YearEenheden:         			rb		1  ; Units of year (0-9) (you still need to add +1980 to the year)
+YearTientallen:       			rb		1  ; Tens of year (0-9)
+
 ComputerID:                 rb    1       ;3=turbo r, 2=msx2+, 1=msx2, 0=msx1
 ;CPUMode:                    rb    1       ;%000 0000 = Z80 (ROM) mode, %0000 0001 = R800 ROM  mode, %0000 0010 = R800 DRAM mode
 TurboOn?:                   rb    1       ;0=no, $c3=yes
@@ -1194,6 +1251,11 @@ ScreenOnDelay:							rb		1				;amount of frames until screen turns on (we need s
 ShowConversationCloud?:			rb		1
 Cloudy:											rb		1
 Cloudx:											rb		1
+ShowPressTriggerAIcon?:			rb		1
+TriggerAy:									rb		1
+TriggerAx:									rb		1
+TotalMinutesUntilLandCounter: rb	1
+
 
 endenginepage3variables:  equ $+enginepage3length
 org variables

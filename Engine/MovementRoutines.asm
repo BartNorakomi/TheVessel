@@ -547,6 +547,110 @@ HostMovementRoutine:
   ld    (NPCConvAddress),hl
   ret
 
+ArcadeMachine1y:  db $54 - 4
+ArcadeMachine1x:  db $16 - 10 
+
+ArcadeMachine2y:  db $50 - 4
+ArcadeMachine2x:  db $42 - 10 
+
+ArcadeMachine3y:  db $54 - 4
+ArcadeMachine3x:  db $c6 - 10 
+
+ArcadeMachine4y:  db $54 - 4
+ArcadeMachine4x:  db $f6 - 10 
+
+CheckShowPressTrigAIconArcadeHall1:
+  ld    hl,ArcadeMachine1y
+  call  CheckPlayerNearArcadeMachine
+  jr    nz,.PlayerIsNear
+
+  ld    hl,ArcadeMachine2y
+  call  CheckPlayerNearArcadeMachine
+  jr    nz,.PlayerIsNear
+
+  ld    hl,ArcadeMachine3y
+  call  CheckPlayerNearArcadeMachine
+  jr    nz,.PlayerIsNear
+
+  ld    hl,ArcadeMachine4y
+  call  CheckPlayerNearArcadeMachine
+  ret   z
+
+  .PlayerIsNear:
+  ld    a,1
+  ld    (ShowPressTriggerAIcon?),a
+  ld    a,(iy+y)
+  ld    (TriggerAy),a
+  ld    a,(iy+x)
+  ld    (TriggerAx),a
+  ret
+
+BackroomGamey:  db 92
+BackroomGamex:  db 124
+
+CheckShowPressTrigAIconArcadeHall2:
+  ld    hl,ConvHost
+  bit   1,(hl)
+  ret   z  
+
+  ld    hl,BackroomGamey
+  call  CheckPlayerNearArcadeMachine
+  ret   z
+
+  .PlayerIsNear:
+  ld    a,1
+  ld    (ShowPressTriggerAIcon?),a
+  ld    a,(iy+y)
+  ld    (TriggerAy),a
+  ld    a,(iy+x)
+  ld    (TriggerAx),a
+  ret
+
+CheckPlayerNearArcadeMachine:
+  ld    a,(hl)                              ;y arcade machine
+  ld    (iy+y),a
+  inc   hl
+  ld    a,(hl)                              ;x arcade machine
+  ld    (iy+x),a
+
+  call  .CheckPlayerNear                    ;check if player is standing near NPC. out ;d=0(no collision), d=1(collision)
+  bit   0,d                                 ;d=0(no collision), d=1(collision)
+  ret
+
+.CheckPlayerNear:                           ;out ;d=0(no collision), d=1(collision)
+  ld    d,0                                 ;0=no collision, 1=collision
+  ld    hl,Object1                          ;player
+
+  inc   hl                                  ;y player
+  .CheckBottomSide:                         ;check collision bottom side
+  ld    a,(hl)
+  add   a,12
+  cp    (iy+1)                              ;y npc
+  ret   c
+  .CheckTopSide:                            ;check collision top  side
+  sub   a,21
+  cp    (iy+1)                              ;y npc
+  ret   nc
+
+  inc   hl                                  ;x player
+  .CheckRightSide:                          ;check collision right side
+  ld    a,(hl)
+  add   a,42-22
+  jr    c,.CheckLeftSide
+  cp    (iy+2)                              ;x npc
+  ret   c
+  .CheckLeftSide:                           ;check collision left side
+
+  ld    a,(hl)
+  sub   a,42-8
+  jr    c,.collision
+  cp    (iy+2)                              ;x npc
+  ret   nc
+
+  .collision:
+  ld    d,1                                 ;d=0(no collision), d=1(collision)
+  ret
+
 PutConversationCloud:
   ld    a,(ShowConversationCloud?)
   or    a
@@ -575,13 +679,55 @@ PutConversationCloud:
   ld    (spat+(4*005)+0),a
   ret
 
-ArcadeHall1EventRoutine:
-;  ld    a,(framecounter)                    ;at max 4 objects can be put in screen divided over 4 frames
-;  and   3
-;  ret   nz
+PutPressTrigAIcon:
+  ld    a,(ShowPressTriggerAIcon?)
+  or    a
+  jr    z,.RemoveTriggerAIcon
+  xor   a
+  ld    (ShowPressTriggerAIcon?),a
 
+  ;hand y
+  ld    a,(framecounter)
+  and   31
+  cp    16
+  ld    b,1
+  jr    c,.go
+  ld    b,-1
+  .go:
+  ld    a,(TriggerAy)
+  add   a,b
+  sub   a,29
+  ld    (spat+(4*000)+0),a
+  ld    (spat+(4*001)+0),a
+
+  ld    a,(TriggerAy)
+  sub   a,14
+  ;button y
+  ld    (spat+(4*006)+0),a
+  ld    (spat+(4*007)+0),a
+  ;button x
+  ld    a,(TriggerAx)
+  ld    (spat+(4*006)+1),a
+  ld    (spat+(4*007)+1),a
+  ;hand x
+  sub   a,2
+  ld    (spat+(4*000)+1),a
+  ld    (spat+(4*001)+1),a
+  ret
+
+.RemoveTriggerAIcon:
+  ld    a,230
+  ld    (spat+(4*000)+0),a
+  ld    (spat+(4*001)+0),a
+  ld    (spat+(4*006)+0),a
+  ld    (spat+(4*007)+0),a
+  ret
+
+ArcadeHall1EventRoutine:
   call  .CheckPlayerLeavingRoom             ;when y>116 player enters arcadehall1 
   call  PutConversationCloud
+  call  CheckShowPressTrigAIconArcadeHall1
+  call  PutPressTrigAIcon
   ret
 
   .CheckPlayerLeavingRoom:
@@ -612,11 +758,14 @@ ArcadeHall1EventRoutine:
 
 ArcadeHall2EventRoutine:
   call  .CheckPlayerLeavingRoom             ;when y>116 player enters arcadehall1 
+  call  PutConversationCloud
+  call  CheckShowPressTrigAIconArcadeHall2
+  call  PutPressTrigAIcon
   ret
 
   .CheckPlayerLeavingRoom:
   ld    a,(Object1+y)
-  cp    124
+  cp    120
   ret   c
 
 	ld		hl,LEnterDoor
@@ -646,11 +795,15 @@ SirensRoutine:
 
   .Phase1:                                  ;host walks towards the vessel
   ld    a,1
-  ld    (Object2+ObjectPhase),a
+  ld    (Object2+ObjectPhase),a             ;host phase 1
+  ld    (Object2+on?),a                     ;host on
+  ld    (Object3+on?),a                     ;wall on
   ld    (iy+on?),0                          ;object off
   ret
 
   .Phase0:                                  ;flicker screenpalette between normal and red, open door, remove red light
+  xor   a
+  ld    (Object2+on?),a                     ;host off
   halt                                      ;make sure we switch palette on vblank (and not halfway the screen, since the OpenDoor routine takes more than 1 int)
   call  .AlternatePalette
 
@@ -774,14 +927,90 @@ EntityaRoutine:
 	ld		a,(NewPrContr)
 	bit		4,a           ;trig a pressed ?
   ret   z
+
   ld    a,1
   ld    (StartConversation?),a
 
   ld    a,NPCConv1Block
   ld    (NPCConvBlock),a
+
+  ld    hl,(TotalMinutesUntilLand)
+  ld    a,l
+  or    h
+  jr    z,.NPCConv013
+  ld    hl,ConvEntity
+  bit   1,(hl)
+  jr    nz,.NPCConv012
+  bit   0,(hl)
+  jr    nz,.NPCConv011
+
+  .NPCConv010:
+  set   0,(hl)
   ld    hl,NPCConv010
   ld    (NPCConvAddress),hl
   ret
+
+  .NPCConv011:                              ;execute if ConvEntity bit 0 is set
+  set   1,(hl)
+  ld    hl,NPCConv011
+  ld    (NPCConvAddress),hl
+  ret
+
+  .NPCConv012:                              ;execute if ConvEntity bit 1 is set
+; Code to convert total minutes to days, hours, minutes
+    ; Load total minutes into HL
+  ld    bc,(TotalMinutesUntilLand)            ;4320
+
+  ; Step 1: Calculate days (HL / 1440)
+  ld    de,1440 ; DE = 1440 (minutes per day)
+  call  DivideBCbyDE                        ; Out: BC = result, HL = rest
+  ld    a,c
+  add   a,"0"
+  ld    (TextLandInDays),a
+
+  push  hl
+  pop   bc                 ; bc = rest
+
+  ; Step 2: Calculate hours (remainder / 60)
+  ld    de, 60; DE = 60 (minutes per hour)
+  call  DivideBCbyDE                        ; Out: BC = result, HL = rest
+  ld    a,c
+  call  ConvertToAscii                      ;Input: A = value (0-99), ; Output: (AsciiOutput) = tens ASCII, (AsciiOutput+1) = units ASCII
+  ld    a,(AsciiOutput+0)
+  ld    (TextLandinHours+0),a
+  ld    a,(AsciiOutput+1)
+  ld    (TextLandinHours+1),a
+
+  ld    a,l
+  call  ConvertToAscii                      ;Input: A = value (0-99), ; Output: (AsciiOutput) = tens ASCII, (AsciiOutput+1) = units ASCII
+  ld    a,(AsciiOutput+0)
+  ld    (TextLandinMinutes+0),a
+  ld    a,(AsciiOutput+1)
+  ld    (TextLandinMinutes+1),a
+
+  ld    hl,NPCConv012
+  ld    (NPCConvAddress),hl
+  ret
+
+  .NPCConv013:                              ;execute if ship has landed
+  ld    hl,NPCConv013
+  ld    (NPCConvAddress),hl
+  ret
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 EntitybRoutine:
@@ -814,6 +1043,13 @@ WallMovementRoutine:
 
 Girlidle_0:        db    npcsframelistblock, npcsspritedatablock | dw    npcs_0_0
 GirlMovementRoutine:
+  ld    a,(GamesPlayed)                     ;The Capgirl appears if games played > 3
+  cp    2
+  jr    nc,.GirlAppears
+  ld    (iy+0),0                            ;on ?
+  ret
+  .GirlAppears:
+
   ld    hl,Girlidle_0
   call  PutSpritePose                       ;in hl=spritepose, out writes spritepose to objecttable
 
@@ -946,13 +1182,18 @@ CheckPlayerNear:                            ;out ;d=0(no collision), d=1(collisi
   .CheckRightSide:                          ;check collision right side
   ld    a,(hl)
   add   a,42
+  jr    c,.CheckLeftSide
   cp    (iy+2)                              ;x npc
   ret   c
   .CheckLeftSide:                           ;check collision left side
-  sub   a,84
+
+  ld    a,(hl)
+  sub   a,42
+  jr    c,.collision
   cp    (iy+2)                              ;x npc
   ret   nc
 
+  .collision:
   ld    d,1                                 ;d=0(no collision), d=1(collision)
   ret
 

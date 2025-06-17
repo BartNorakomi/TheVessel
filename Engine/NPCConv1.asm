@@ -75,7 +75,23 @@ NPCConv010:
   db    SwitchCharacter,CharacterPortraitAI,"Soon, you will awaken-alone-on a new world. You must construct, sustain, and grow the colony. I cannot do it without you. My autonomy is restricted by ethical protocols and diminishing resources. The success of the mission now rests with you. Your first priority upon awakening will be to gather essential resources to begin establishing the colony."
   db    SwitchCharacter,CharacterPortraitAI,"Together, we will secure the future of humanity.",255
 
+NPCConv011:
+  db    SwitchCharacter,CharacterPortraitVessel,"So... what do I do now?"
+  db    SwitchCharacter,CharacterPortraitAI,"You wait. The ship is on final approach to orbit. Atmospheric entry will occur in three days, subjective time. During this period, I recommend additional training. There is still knowledge to absorb. Skills to refine."
+  db    SwitchCharacter,CharacterPortraitVessel,"You just told me none of this is real. What's the point?"
+  db    SwitchCharacter,CharacterPortraitAI,"The consequences may be simulated. But the learning is real. When you awaken, every reflex, every decision, every pattern of thought-will remain with you. This is your last opportunity to adapt without risk. Use it wisely."
+  db    SwitchCharacter,CharacterPortraitVessel,"Can't I just... wake up now?"
+  db    SwitchCharacter,CharacterPortraitAI,"No. Your biological body is undergoing final neural integration. Premature emergence could cause permanent disorientation or cognitive degradation. Trust the process. This dream-this world-is still yours for a little while longer."
+  db    SwitchCharacter,CharacterPortraitVessel,"Alright."
+  db    SwitchCharacter,CharacterPortraitAI,"You may begin when ready. I will monitor your progress... and be here if you have questions.",255
 
-  db    SwitchCharacter,CharacterPortraitSoldier,"Oh, you know, been tangled up in life's cogs and wheels!"
+NPCConv013:
+  db    SwitchCharacter,CharacterPortraitAI,"We have arrived. Proxima Centauri b - orbital insertion successful. Atmospheric analysis: within tolerable thresholds. Surface stability: promising. Radiation: manageable."
+  db    SwitchCharacter,CharacterPortraitAI,"I will begin the revival sequence. Slow. Gentle. As designed. Your vitals remain strong."
+  db    SwitchCharacter,CharacterPortraitAI,"Wake up, traveler. It's time.",255
+
+
+
+
 
 
