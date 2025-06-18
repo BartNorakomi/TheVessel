@@ -49,12 +49,66 @@ TheVesselleftrunning_8:        db    TheVesselleftframelistblock, TheVessellefts
 TheVesselleftrunning_9:        db    TheVesselleftframelistblock, TheVesselleftspritedatablock | dw    Vesselleft_2_0
 TheVesselleftrunning_10:        db    TheVesselleftframelistblock, TheVesselleftspritedatablock | dw    Vesselleft_1_0
 TheVesselleftsitting_0:        db    TheVesselleftframelistblock, TheVesselleftspritedatablock | dw    Vesselleft_0_0
+
+TheVesselgettingup_0:        db    TheVesselgettingupframelistblock, TheVesselgettingupspritedatablock | dw    Vesselgettingup_0_0
+TheVesselgettingup_1:        db    TheVesselgettingupframelistblock, TheVesselgettingupspritedatablock | dw    Vesselgettingup_1_0
+TheVesselgettingup_2:        db    TheVesselgettingupframelistblock, TheVesselgettingupspritedatablock | dw    Vesselgettingup_2_0
+TheVesselgettingup_3:        db    TheVesselgettingupframelistblock, TheVesselgettingupspritedatablock | dw    Vesselgettingup_3_0
+TheVesselgettingup_4:        db    TheVesselgettingupframelistblock, TheVesselgettingupspritedatablock | dw    Vesselgettingup_4_0
+
+
 VesselMovementRoutine:
   ld    a,(framecounter)                    ;at max 4 objects can be put in screen divided over 4 frames
   and   3
   ret   nz
   ld    hl,(PlayerSpriteStand)
   jp    (hl)
+
+RGettingUp:
+  .HandlePhase:
+  ld    a,(iy+ObjectPhase)
+  or    a
+  jp    z,.Phase0                           ;wait until wake up
+  dec   a
+  jp    z,.Phase1                           ;animate waking up
+  dec   a
+  jp    z,.Phase2                           ;
+  ret
+
+  .Phase2:                                  ;
+  ld    a,(iy+y)
+  add   a,5
+  ld    (iy+y),a
+  cp    100
+  ret   c
+  jp    Set_R_stand
+
+  .Phase1:                                  ;animate waking up
+  ld    a,(framecounter)                    ;wait timer
+  and   63
+  ret   nz
+
+  ld    hl,TheVesselgettingup_0             ;starting pose
+  ld    b,05                                ;animation steps
+  call  AnimateObject                       ;in hl=starting pose, b=animation steps, uses: var1
+	ld		a,(iy+var1)
+  or    a
+  ret   nz
+  ld    (iy+ObjectPhase),2
+  ld    hl,TheVesselrightidle_0
+  jp    PutSpritePose                       ;in hl=spritepose, out writes spritepose to objecttable
+
+  .Phase0:                                  ;wait until wake up
+  ld    hl,TheVesselgettingup_0
+  call  PutSpritePose                       ;in hl=spritepose, out writes spritepose to objecttable
+
+  ld    a,(iy+var1)                         ;wait timer
+  inc   a
+  and   127
+  ld    (iy+var1),a                         ;wait timer
+  ret   nz
+  ld    (iy+ObjectPhase),1
+  ret
 
 LEnterDoor:
   ld    a,(iy+2)                            ;x

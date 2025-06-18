@@ -148,6 +148,19 @@ PutObjects:															;put objects and events
 	ret
 
 PutObjectsBiopod:
+	;set starting coordinates player
+	ld		a,064														;y
+	ld		(Object1+y),a
+	ld		a,058														;x
+	ld		(Object1+x),a
+
+	ld		hl,RGettingUp
+  ld    (PlayerSpriteStand),hl
+
+	xor		a
+	ld		(Object1+var1),a
+	ld		(Object1+ObjectPhase),a
+
 	ld		de,ObjEvent1										;now put events
 
 	ld		hl,EventBiopod									;putbiopod event

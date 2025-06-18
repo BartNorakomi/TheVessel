@@ -587,6 +587,16 @@ TheVesselleftspritedatablock:			equ ($-RomStartAddress) and (romsize-1) /RomBloc
 									incbin "..\tools\Vesselleft.dat"
 									DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
 
+;the vessel gettingup
+TheVesselgettingupframelistblock:			equ ($-RomStartAddress) and (romsize-1) /RomBlockSize
+									phase	$8000
+									include "..\tools\Vesselgettingup.asm" 
+									DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
+									dephase
+TheVesselgettingupspritedatablock:			equ ($-RomStartAddress) and (romsize-1) /RomBlockSize
+									incbin "..\tools\Vesselgettingup.dat"
+									DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
+
 ;host
 Hostframelistblock:			equ ($-RomStartAddress) and (romsize-1) /RomBlockSize
 									phase	$8000
