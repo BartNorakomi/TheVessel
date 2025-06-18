@@ -764,6 +764,10 @@ ArcadeHall2EventRoutine:
   ret
 
   .CheckPlayerLeavingRoom:
+  ld    a,(InitiateWakeUp?)
+  or    a
+  jr    nz,.InitiateWakeUp
+
   ld    a,(Object1+y)
   cp    120
   ret   c
@@ -777,6 +781,20 @@ ArcadeHall2EventRoutine:
   ld    (CurrentRoom),a
   ld    a,1
   ld    (ChangeRoom?),a
+  ret
+
+  .InitiateWakeUp:
+  ld    a,2
+  ld    (CurrentRoom),a
+  ld    a,1
+  ld    (ChangeRoom?),a
+  ret
+
+BiopodEventRoutine:
+;  call  .CheckPlayerLeavingRoom             ;when y>116 player enters arcadehall1 
+  call  PutConversationCloud
+;  call  CheckShowPressTrigAIconArcadeHall1
+;  call  PutPressTrigAIcon
   ret
 
 ArcadeHall1redlightPalette:                 ;palette file
@@ -995,6 +1013,8 @@ EntityaRoutine:
   .NPCConv013:                              ;execute if ship has landed
   ld    hl,NPCConv013
   ld    (NPCConvAddress),hl
+  ld    a,1
+  ld    (InitiateWakeUp?),a
   ret
 
 

@@ -501,8 +501,8 @@ enlength:	Equ	$-engine
 ForegroundTileMapsBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
 ArcadeHall1TileMap:  incbin "..\tools\tilemapArcade1.bin"
 ArcadeHall2TileMap:  incbin "..\tools\tilemapArcade2.bin"
-ArcadeHall2EntityTileMap:  ;incbin "..\tools\tilemapArcade2Entity.bin"
-  incbin "..\tools\tilemap.bin"
+ArcadeHall2EntityTileMap:  incbin "..\tools\tilemapArcade2Entity.bin"
+BiopodTileMap:  incbin "..\tools\tilemap.bin"
 	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
 
 ;ArcadeHall2ForegroundTileMapBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
@@ -519,6 +519,10 @@ ArcadeHall1redlightsGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /Rom
 
 ArcadeHall2GfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
   incbin "..\grapx\arcadehall\arcade2.SC5",7,212 * 128      ;212 lines
+	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
+
+BiopodGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
+  incbin "..\grapx\ship\biopod\Biopod.SC5",7,212 * 128      ;212 lines
 	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
 
 OpenDoorGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize

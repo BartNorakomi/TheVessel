@@ -29,6 +29,7 @@ ResetVariables:
   ld    (ChangeRoom?),a
 	ld		(screenpage),a
   ld    (ShowConversationCloud?),a
+  ld    (InitiateWakeUp?),a
   ld    (ShowPressTriggerAIcon?),a
 	ld		a,8
 	ld		(ScreenOnDelay),a								;amount of frames until screen turns on (we need some frames to first put all objects in screen)
@@ -51,6 +52,7 @@ ObjectEntityc: 						db  1,013,128 | dw 000,000					,Entity_c  	| db 003			,Move
 
 EventArcadeHall1:					db	1,0,0     | dw 000,000					,000   			| db 255      ,MovementRoutinesBlock | dw ArcadeHall1EventRoutine		| db 000,000 ,000, 000
 EventArcadeHall2: 				db	1,0,0     | dw 000,000					,000        | db 255      ,MovementRoutinesBlock | dw ArcadeHall2EventRoutine		| db 000,000 ,000, 000
+EventBiopod: 							db	1,0,0     | dw 000,000					,000        | db 255      ,MovementRoutinesBlock | dw BiopodEventRoutine				| db 000,000 ,000, 000
 EventSirens: 							db	1,0,0     | dw 000,000					,000        | db 255      ,MovementRoutinesBlock | dw SirensRoutine							| db 000,000 ,000, 000
 
 LenghtDoCopyTable:  equ	RestoreBackgroundObject1Page1-RestoreBackgroundObject1Page0
@@ -93,6 +95,13 @@ LoadTileMap:
 	jr		z,.ArcadeHall1
 	dec		a
 	jr		z,.ArcadeHall2
+	dec		a
+	jr		z,.Biopod
+	ret
+
+	.Biopod:
+	ld		hl,BiopodTileMap
+	ld		(TileMap),hl
 	ret
 
 	.ArcadeHall1:
@@ -134,6 +143,15 @@ PutObjects:															;put objects and events
 	jr		z,PutObjectsArcadeHall1
 	dec		a
 	jr		z,PutObjectsArcadeHall2
+	dec		a
+	jr		z,PutObjectsBiopod
+	ret
+
+PutObjectsBiopod:
+	ld		de,ObjEvent1										;now put events
+
+	ld		hl,EventBiopod									;putbiopod event
+	call	PutSingleObject
 	ret
 
 PutObjectsArcadeHall2:
@@ -260,6 +278,8 @@ ArcadeHall1Palette:                    	;palette file
   incbin "..\grapx\arcadehall\arcade1.SC5",$7680+7,32
 ArcadeHall2Palette:                    	;palette file
   incbin "..\grapx\arcadehall\arcade2.SC5",$7680+7,32
+BiopodPalette:                    			;palette file
+  incbin "..\grapx\ship\biopod\biopod.SC5",$7680+7,32
 
 LoadRoomGfx:
 	ld		a,(CurrentRoom)									;0=arcadehall1, 1=arcadehall2
@@ -267,7 +287,14 @@ LoadRoomGfx:
 	jr		z,LoadArcadeHall1Gfx            ;loads the initial starting arcade room in all 4 pages, and sets palette
 	dec		a
 	jr		z,LoadArcadeHall2Gfx            ;loads the 2nd arcade room in all 4 pages, and sets palette
+	dec		a
+	jr		z,LoadBiopodGfx            			;loads the biopod room in all 4 pages, and sets palette
 	ret
+
+LoadBiopodGfx:
+  ld    hl,BiopodPalette
+  ld    a,BiopodGfxBlock         	;block to copy graphics from
+	jp		LoadArcadeHallGfx
 
 LoadArcadeHall1Gfx:
   ld    hl,ArcadeHall1Palette
@@ -1255,6 +1282,7 @@ ShowPressTriggerAIcon?:			rb		1
 TriggerAy:									rb		1
 TriggerAx:									rb		1
 TotalMinutesUntilLandCounter: rb	1
+InitiateWakeUp?: 						rb	1
 
 
 endenginepage3variables:  equ $+enginepage3length
