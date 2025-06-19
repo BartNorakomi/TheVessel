@@ -92,6 +92,11 @@ NPCConv013:
   db    SwitchCharacter,CharacterPortraitAI,"I will begin the revival sequence. Slow. Gentle. As designed. Your vitals remain strong."
   db    SwitchCharacter,CharacterPortraitAI,"Wake up, traveler. It's time.",255
 
+NPCConv014:
+  db    SwitchCharacter,CharacterPortraitAI,"Welcome to your new world, traveler. This vessel is now your home. The seed of something greater. A beginning. You are the first colonist of Proxima Centauri b. Your task: awaken the future. Shape the colony. Make it endure."
+  db    SwitchCharacter,CharacterPortraitVessel,"A new beginning... Okay. What's first?"
+  db    SwitchCharacter,CharacterPortraitAI,"Begin by exploring the ship. Familiarize yourself with its systems, quarters, and decks. I am integrated into every corridor, every console. I will speak through the intercom - always watching, always listening. When you need guidance, ask. When you're lost, I will find you."
+  db    SwitchCharacter,CharacterPortraitVessel,"Okay. That's... reassuring, I think.",255
 
 
 

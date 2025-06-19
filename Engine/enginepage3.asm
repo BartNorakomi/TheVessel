@@ -52,8 +52,12 @@ ObjectEntityc: 						db  1,013,128 | dw 000,000					,Entity_c  	| db 003			,Move
 
 EventArcadeHall1:					db	1,0,0     | dw 000,000					,000   			| db 255      ,MovementRoutinesBlock | dw ArcadeHall1EventRoutine		| db 000,000 ,000, 000
 EventArcadeHall2: 				db	1,0,0     | dw 000,000					,000        | db 255      ,MovementRoutinesBlock | dw ArcadeHall2EventRoutine		| db 000,000 ,000, 000
-EventBiopod: 							db	1,0,0     | dw 000,000					,000        | db 255      ,MovementRoutinesBlock | dw BiopodEventRoutine				| db 000,000 ,000, 000
 EventSirens: 							db	1,0,0     | dw 000,000					,000        | db 255      ,MovementRoutinesBlock | dw SirensRoutine							| db 000,000 ,000, 000
+
+EventBiopod: 							db	1,$28,$7e | dw 000,000					,000        | db 255      ,MovementRoutinesBlock | dw BiopodEventRoutine				| db 000,000 ,000, 000
+EventHydroponicsbay: 			db	1,$28,$7e | dw 000,000					,000        | db 255      ,MovementRoutinesBlock | dw HydroponicsbayEventRoutine| db 000,000 ,000, 000
+EventHangarbay: 					db	1,$28,$7e | dw 000,000					,000        | db 255      ,MovementRoutinesBlock | dw HangarbayEventRoutine			| db 000,000 ,000, 000
+
 
 LenghtDoCopyTable:  equ	RestoreBackgroundObject1Page1-RestoreBackgroundObject1Page0
 ResetRestoreBackgroundTables:
@@ -97,6 +101,20 @@ LoadTileMap:
 	jr		z,.ArcadeHall2
 	dec		a
 	jr		z,.Biopod
+	dec		a
+	jr		z,.Hydroponicsbay
+	dec		a
+	jr		z,.Hangarbay
+	ret
+
+	.Hangarbay:
+	ld		hl,BiopodTileMap
+	ld		(TileMap),hl
+	ret
+
+	.Hydroponicsbay:
+	ld		hl,BiopodTileMap
+	ld		(TileMap),hl
 	ret
 
 	.Biopod:
@@ -140,22 +158,48 @@ PutObjects:															;put objects and events
 
 	ld		a,(CurrentRoom)									;1=arcadehall1, 2=arcadehall2
 	or		a
-	jr		z,PutObjectsArcadeHall1
+	jp		z,PutObjectsArcadeHall1
 	dec		a
-	jr		z,PutObjectsArcadeHall2
+	jp		z,PutObjectsArcadeHall2
 	dec		a
-	jr		z,PutObjectsBiopod
+	jp		z,PutObjectsBiopod
+	dec		a
+	jp		z,PutObjectsHydroponicsbay
+	dec		a
+	jp		z,PutObjectsHangarbay
+	ret
+
+PutObjectsHydroponicsbay:
+	ld		de,ObjEvent1										;now put events
+
+	ld		hl,EventHydroponicsbay					;put hydroponicsbay event
+	call	PutSingleObject
+	ret
+
+PutObjectsHangarbay:
+	ld		de,ObjEvent1										;now put events
+
+	ld		hl,EventHangarbay								;put hangarbay event
+	call	PutSingleObject
 	ret
 
 PutObjectsBiopod:
 	;set starting coordinates player
-	ld		a,064														;y
+	ld		a,050														;y
 	ld		(Object1+y),a
-	ld		a,058														;x
+	ld		a,222														;x
 	ld		(Object1+x),a
 
 	ld		hl,RGettingUp
-  ld    (PlayerSpriteStand),hl
+;  ld    (PlayerSpriteStand),hl
+
+
+
+
+	ld		a,080														;y
+	ld		(Object1+y),a
+
+
 
 	xor		a
 	ld		(Object1+var1),a
@@ -163,7 +207,7 @@ PutObjectsBiopod:
 
 	ld		de,ObjEvent1										;now put events
 
-	ld		hl,EventBiopod									;putbiopod event
+	ld		hl,EventBiopod									;put biopod event
 	call	PutSingleObject
 	ret
 
@@ -293,6 +337,10 @@ ArcadeHall2Palette:                    	;palette file
   incbin "..\grapx\arcadehall\arcade2.SC5",$7680+7,32
 BiopodPalette:                    			;palette file
   incbin "..\grapx\ship\biopod\biopod.SC5",$7680+7,32
+HydroponicsbayPalette:                    			;palette file
+  incbin "..\grapx\ship\hydroponicsbay\hydroponicsbay.SC5",$7680+7,32
+HangarbayPalette:                    			;palette file
+  incbin "..\grapx\ship\hangarbay\hangarbay.SC5",$7680+7,32
 
 LoadRoomGfx:
 	ld		a,(CurrentRoom)									;0=arcadehall1, 1=arcadehall2
@@ -302,11 +350,25 @@ LoadRoomGfx:
 	jr		z,LoadArcadeHall2Gfx            ;loads the 2nd arcade room in all 4 pages, and sets palette
 	dec		a
 	jr		z,LoadBiopodGfx            			;loads the biopod room in all 4 pages, and sets palette
+	dec		a
+	jr		z,LoadHydroponicsbayGfx      		;loads the hydroponicsbay room in all 4 pages, and sets palette
+	dec		a
+	jr		z,LoadHangarbayGfx      				;loads the hangarbay room in all 4 pages, and sets palette
 	ret
+
+LoadHangarbayGfx:
+  ld    hl,HangarbayPalette
+  ld    a,HangarbayGfxBlock       	;block to copy graphics from
+	jp		LoadArcadeHallGfx
+
+LoadHydroponicsbayGfx:
+  ld    hl,HydroponicsbayPalette
+  ld    a,HydroponicsbayGfxBlock       	;block to copy graphics from
+	jp		LoadArcadeHallGfx
 
 LoadBiopodGfx:
   ld    hl,BiopodPalette
-  ld    a,BiopodGfxBlock         	;block to copy graphics from
+  ld    a,BiopodGfxBlock         				;block to copy graphics from
 	jp		LoadArcadeHallGfx
 
 LoadArcadeHall1Gfx:

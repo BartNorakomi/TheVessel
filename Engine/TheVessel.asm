@@ -525,6 +525,14 @@ BiopodGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
   incbin "..\grapx\ship\biopod\Biopod.SC5",7,212 * 128      ;212 lines
 	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
 
+HydroponicsbayGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
+  incbin "..\grapx\ship\hydroponicsbay\hydroponicsbay.SC5",7,212 * 128      ;212 lines
+	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
+
+HangarbayGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
+  incbin "..\grapx\ship\hangarbay\hangarbay.SC5",7,212 * 128      ;212 lines
+	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
+
 OpenDoorGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
   incbin "..\grapx\arcadehall\opendoor.SC5",7,097 * 128      ;097 lines
 	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block

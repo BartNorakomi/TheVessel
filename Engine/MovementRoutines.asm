@@ -19,6 +19,10 @@
 ;EntitybRoutine
 ;EntitycRoutine
 
+;BiopodEventRoutine
+;HydroponicsbayEventRoutine
+;HangarbayEventRoutine
+
 MovementRoutinesAddress:  equ $4000
 Phase MovementRoutinesAddress
 
@@ -55,7 +59,6 @@ TheVesselgettingup_1:        db    TheVesselgettingupframelistblock, TheVesselge
 TheVesselgettingup_2:        db    TheVesselgettingupframelistblock, TheVesselgettingupspritedatablock | dw    Vesselgettingup_2_0
 TheVesselgettingup_3:        db    TheVesselgettingupframelistblock, TheVesselgettingupspritedatablock | dw    Vesselgettingup_3_0
 TheVesselgettingup_4:        db    TheVesselgettingupframelistblock, TheVesselgettingupspritedatablock | dw    Vesselgettingup_4_0
-
 
 VesselMovementRoutine:
   ld    a,(framecounter)                    ;at max 4 objects can be put in screen divided over 4 frames
@@ -844,12 +847,136 @@ ArcadeHall2EventRoutine:
   ld    (ChangeRoom?),a
   ret
 
+HydroponicsbayEventRoutine:
+  call  .CheckPlayerLeavingRoom             ;when y>116 player enters arcadehall1 
+;  call  PutConversationCloud
+;  call  CheckShowPressTrigAIconArcadeHall1
+;  call  PutPressTrigAIcon
+ret
+  ld    a,NPCConv1Block
+  ld    (NPCConvBlock),a
+
+  ld    hl,ConvEntity
+  bit   2,(hl)
+;  jr    z,.NPCConv015
+
+  .NPCConv014:                              ;execute if ConvGirl bit 0 is set 
+  ld    hl,NPCConv014
+  ld    (NPCConvAddress),hl
+  ret
+
+  .CheckPlayerLeavingRoom:
+  ld    a,(Object1+x)
+  cp    255-10
+  jr    nc,.right
+  cp    10
+  jr    c,.left
+  ret
+
+  .left:
+  ld    a,255-20
+  ld    (Object1+x),a
+
+  ld    a,4
+  ld    (CurrentRoom),a
+  ld    a,1
+  ld    (ChangeRoom?),a
+  ret
+
+  .right:
+  ld    a,20
+  ld    (Object1+x),a
+
+  ld    a,2
+  ld    (CurrentRoom),a
+  ld    a,1
+  ld    (ChangeRoom?),a
+  ret
+
+HangarbayEventRoutine:
+  call  .CheckPlayerLeavingRoom             ;when y>116 player enters arcadehall1 
+;  call  PutConversationCloud
+;  call  CheckShowPressTrigAIconArcadeHall1
+;  call  PutPressTrigAIcon
+ret
+  ld    a,NPCConv1Block
+  ld    (NPCConvBlock),a
+
+  ld    hl,ConvEntity
+  bit   2,(hl)
+;  jr    z,.NPCConv015
+
+  .NPCConv014:                              ;execute if ConvGirl bit 0 is set 
+  ld    hl,NPCConv014
+  ld    (NPCConvAddress),hl
+  ret
+
+  .CheckPlayerLeavingRoom:
+  ld    a,(Object1+x)
+  cp    255-10
+  jr    nc,.right
+
+  ret
+
+  .right:
+  ld    a,20
+  ld    (Object1+x),a
+
+  ld    a,3
+  ld    (CurrentRoom),a
+  ld    a,1
+  ld    (ChangeRoom?),a
+  ret
+
 BiopodEventRoutine:
-;  call  .CheckPlayerLeavingRoom             ;when y>116 player enters arcadehall1 
+  call  .CheckPlayerLeavingRoom             ;when y>116 player enters arcadehall1 
   call  PutConversationCloud
 ;  call  CheckShowPressTrigAIconArcadeHall1
 ;  call  PutPressTrigAIcon
+
+  call  CheckStartConversation              ;out: nz=converstaion starts
+  ret   z
+
+  ld    a,NPCConv1Block
+  ld    (NPCConvBlock),a
+
+  ld    hl,ConvEntity
+  bit   2,(hl)
+;  jr    z,.NPCConv015
+
+  .NPCConv014:                              ;execute if ConvGirl bit 0 is set 
+  ld    hl,NPCConv014
+  ld    (NPCConvAddress),hl
   ret
+
+  .CheckPlayerLeavingRoom:
+  ld    a,(Object1+x)
+  cp    10
+  jr    c,.left
+
+  ret
+
+  .left:
+  ld    a,255-20
+  ld    (Object1+x),a
+
+  ld    a,3
+  ld    (CurrentRoom),a
+  ld    a,1
+  ld    (ChangeRoom?),a
+  ret
+
+
+
+
+
+
+
+
+
+
+
+
 
 ArcadeHall1redlightPalette:                 ;palette file
   incbin "..\grapx\arcadehall\arcade1redlight.SC5",$7680+7,32
