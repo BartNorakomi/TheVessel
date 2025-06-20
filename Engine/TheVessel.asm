@@ -498,16 +498,28 @@ dephase
 enlength:	Equ	$-engine
 	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
 
-ForegroundTileMapsBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
-ArcadeHall1TileMap:  incbin "..\tools\tilemapArcade1.bin"
-ArcadeHall2TileMap:  incbin "..\tools\tilemapArcade2.bin"
-ArcadeHall2EntityTileMap:  incbin "..\tools\tilemapArcade2Entity.bin"
-BiopodTileMap:  incbin "..\tools\tilemap.bin"
+ArcadeHall1TileMapBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
+ArcadeHall2TileMapBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
+ArcadeHall2EntityTileMapBlock: 	equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
+BiopodTileMapBlock:  						equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
+	phase	$8000
+ArcadeHall1TileMap:  						incbin "..\tools\tilemapArcade1.bin"
+ArcadeHall2TileMap:  						incbin "..\tools\tilemapArcade2.bin"
+ArcadeHall2EntityTileMap:  			incbin "..\tools\tilemapArcade2Entity.bin"
+BiopodTileMap:  								incbin "..\tools\tilemapBiopod.bin"
+	dephase
 	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
 
-;ArcadeHall2ForegroundTileMapBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
-;  incbin "..\tools\tilemap.bin"
-;	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
+hydroponicsbayTileMapBlock:  		equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
+hangarbayTileMapBlock:  				equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
+	phase	$8000
+hydroponicsbayTileMap:  				incbin "..\tools\tilemaphydroponicsbay.bin"
+hangarbayTileMap:  							incbin "..\tools\tilemap.bin"
+	dephase
+	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
+
+;BiopodTileMap:  incbin "..\tools\tilemap.bin"
+
 
 ArcadeHall1GfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
   incbin "..\grapx\arcadehall\arcade1.SC5",7,212 * 128      ;212 lines
@@ -633,6 +645,26 @@ entityframelistblock:			equ ($-RomStartAddress) and (romsize-1) /RomBlockSize
 									dephase
 entityspritedatablock:			equ ($-RomStartAddress) and (romsize-1) /RomBlockSize
 									incbin "..\tools\entity.dat"
+									DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
+
+;biopod
+biopodframelistblock:			equ ($-RomStartAddress) and (romsize-1) /RomBlockSize
+									phase	$8000
+									include "..\tools\biopod.asm" 
+									DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
+									dephase
+biopodspritedatablock:			equ ($-RomStartAddress) and (romsize-1) /RomBlockSize
+									incbin "..\tools\biopod.dat"
+									DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
+
+;hydroponicsbay
+hydroponicsbayframelistblock:			equ ($-RomStartAddress) and (romsize-1) /RomBlockSize
+									phase	$8000
+									include "..\tools\hydroponicsbay.asm" 
+									DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
+									dephase
+hydroponicsbayspritedatablock:			equ ($-RomStartAddress) and (romsize-1) /RomBlockSize
+									incbin "..\tools\hydroponicsbay.dat"
 									DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
 
 MovementRoutinesBlock:	equ ($-RomStartAddress) and (romsize-1) /RomBlockSize ;$04

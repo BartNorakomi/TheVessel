@@ -19,8 +19,15 @@
 ;EntitybRoutine
 ;EntitycRoutine
 
+;BioPod1Routine
+;BioPod2Routine
+;BioPodBlinkingLightRoutine
 ;BiopodEventRoutine
+
 ;HydroponicsbayEventRoutine
+;hydroponicsbay1Routine
+;hydroponicsbay2Routine
+
 ;HangarbayEventRoutine
 
 MovementRoutinesAddress:  equ $4000
@@ -79,12 +86,22 @@ RGettingUp:
   ret
 
   .Phase2:                                  ;
+  ld    a,1
+  ld    (Object2+on?),a                     ;here we can turn ObjectBiopod1 on
+
   ld    a,(iy+y)
   add   a,5
   ld    (iy+y),a
   cp    100
-  ret   c
-  jp    Set_R_stand
+  jp    nc,Set_R_stand
+
+  ld    a,(framecounter)                    ;at max 4 objects can be put in screen divided over 4 frames
+  and   15
+  ret   nz
+
+  ld    hl,TheVesselrightrunning_5          ;starting pose
+  ld    b,11                                ;animation steps
+  call  AnimateObject                       ;in hl=starting pose, b=animation steps, uses: var1
 
   .Phase1:                                  ;animate waking up
   ld    a,(framecounter)                    ;wait timer
@@ -98,10 +115,18 @@ RGettingUp:
   or    a
   ret   nz
   ld    (iy+ObjectPhase),2
-  ld    hl,TheVesselrightidle_0
+
+  ld    a,(iy+y)
+  add   a,15
+  ld    (iy+y),a
+
+  ld    hl,TheVesselrightrunning_5
   jp    PutSpritePose                       ;in hl=spritepose, out writes spritepose to objecttable
 
   .Phase0:                                  ;wait until wake up
+  xor   a
+  ld    (Object2+on?),a                     ;we have to turn ObjectBiopod1 off, so it doesn't block our player's software sprite
+
   ld    hl,TheVesselgettingup_0
   call  PutSpritePose                       ;in hl=spritepose, out writes spritepose to objecttable
 
@@ -217,7 +242,7 @@ PlayerHeight: equ 73
 ;each bit represents a 4x4 tile in our screen
 ;our tilemap is 32 bits wide x 54 bytes high
 CheckCollisionWall:
-  ld    a,ForegroundTileMapsBlock
+  ld    a,(TileMapBlock)
   call  block34                           ;CARE!!! we can only switch block34 if page 1 is in rom  
 
   ld    a,(iy+2)                            ;x
@@ -264,6 +289,11 @@ Check_Collision:
 
 CheckCollisionNPCs:                         ;out ;d=0(no collision), d=1(collision)
   ld    d,0                                 ;0=no collision, 1=collision
+
+  ld    a,(SkipNPCCollision?)
+  or    a
+  ret   nz
+
   ld    hl,Object2
   call  .check
   ld    hl,Object3
@@ -848,8 +878,11 @@ ArcadeHall2EventRoutine:
   ret
 
 HydroponicsbayEventRoutine:
+  ld    a,1
+  ld    (SkipNPCCollision?),a
+
   call  .CheckPlayerLeavingRoom             ;when y>116 player enters arcadehall1 
-;  call  PutConversationCloud
+  call  PutConversationCloud
 ;  call  CheckShowPressTrigAIconArcadeHall1
 ;  call  PutPressTrigAIcon
 ret
@@ -868,7 +901,7 @@ ret
   .CheckPlayerLeavingRoom:
   ld    a,(Object1+x)
   cp    255-10
-  jr    nc,.right
+  jr    nc,.biopod
   cp    10
   jr    c,.left
   ret
@@ -883,7 +916,7 @@ ret
   ld    (ChangeRoom?),a
   ret
 
-  .right:
+  .biopod:
   ld    a,20
   ld    (Object1+x),a
 
@@ -895,32 +928,23 @@ ret
 
 HangarbayEventRoutine:
   call  .CheckPlayerLeavingRoom             ;when y>116 player enters arcadehall1 
-;  call  PutConversationCloud
-;  call  CheckShowPressTrigAIconArcadeHall1
-;  call  PutPressTrigAIcon
-ret
-  ld    a,NPCConv1Block
-  ld    (NPCConvBlock),a
 
-  ld    hl,ConvEntity
-  bit   2,(hl)
-;  jr    z,.NPCConv015
-
-  .NPCConv014:                              ;execute if ConvGirl bit 0 is set 
-  ld    hl,NPCConv014
-  ld    (NPCConvAddress),hl
+  call  PutConversationCloud
+  call  CheckShowPressTrigAIconHangarBay
+  call  PutPressTrigAIcon
   ret
 
   .CheckPlayerLeavingRoom:
   ld    a,(Object1+x)
   cp    255-10
-  jr    nc,.right
-
+  jr    nc,.hydronponicsbay
   ret
 
-  .right:
+  .hydronponicsbay:
   ld    a,20
   ld    (Object1+x),a
+  ld    a,$5a
+  ld    (Object1+y),a
 
   ld    a,3
   ld    (CurrentRoom),a
@@ -928,11 +952,33 @@ ret
   ld    (ChangeRoom?),a
   ret
 
+
+
+HangarBayDrillMachiney:   db $54 + 4
+HangarBayDrillMachinex:   db 128 
+
+CheckShowPressTrigAIconHangarBay:
+  ld    hl,HangarBayDrillMachiney
+  call  CheckPlayerNearArcadeMachine
+  ret   z
+
+  .PlayerIsNear:
+  ld    a,1
+  ld    (ShowPressTriggerAIcon?),a
+  ld    a,(iy+y)
+  ld    (TriggerAy),a
+  ld    a,(iy+x)
+  ld    (TriggerAx),a
+  ret
+
+
+
 BiopodEventRoutine:
   call  .CheckPlayerLeavingRoom             ;when y>116 player enters arcadehall1 
   call  PutConversationCloud
 ;  call  CheckShowPressTrigAIconArcadeHall1
 ;  call  PutPressTrigAIcon
+  call  .CheckStartWakeUpEvent
 
   call  CheckStartConversation              ;out: nz=converstaion starts
   ret   z
@@ -952,18 +998,39 @@ BiopodEventRoutine:
   .CheckPlayerLeavingRoom:
   ld    a,(Object1+x)
   cp    10
-  jr    c,.left
-
+  jr    c,.hydroponicsbay
   ret
 
-  .left:
+  .hydroponicsbay:
   ld    a,255-20
   ld    (Object1+x),a
+  ld    a,$5a
+  ld    (Object1+y),a
 
   ld    a,3
   ld    (CurrentRoom),a
   ld    a,1
   ld    (ChangeRoom?),a
+  ret
+
+  .CheckStartWakeUpEvent:
+  ld    a,(StartWakeUpEvent?)
+  dec   a
+  ret   m
+  ld    (StartWakeUpEvent?),a
+
+	;set starting coordinates player
+	ld		a,050														;y
+	ld		(Object1+y),a
+	ld		a,224														;x
+	ld		(Object1+x),a
+
+	ld		hl,RGettingUp
+  ld    (PlayerSpriteStand),hl
+
+	xor		a
+	ld		(Object1+var1),a
+	ld		(Object1+ObjectPhase),a
   ret
 
 
@@ -1241,6 +1308,39 @@ AnimateEntity:
 Wall_0:        db    npcsframelistblock, npcsspritedatablock | dw    npcs_7_0
 WallMovementRoutine:
   ret
+
+hydroponicsbay_0:        db    hydroponicsbayframelistblock, hydroponicsbayspritedatablock | dw    hydroponicsbay_0_0
+hydroponicsbay1Routine:
+  ret
+
+hydroponicsbay_1:        db    hydroponicsbayframelistblock, hydroponicsbayspritedatablock | dw    hydroponicsbay_1_0
+hydroponicsbay2Routine:
+  ret
+
+Biopod_0:        db    biopodframelistblock, biopodspritedatablock | dw    biopod_0_0
+BioPod1Routine:
+  ret
+
+Biopod_1:        db    biopodframelistblock, biopodspritedatablock | dw    biopod_1_0
+BioPod2Routine:
+  ret
+
+Biopod_2:        db    biopodframelistblock, biopodspritedatablock | dw    biopod_2_0
+Biopod_3:        db    biopodframelistblock, biopodspritedatablock | dw    biopod_3_0
+Biopod_4:        db    biopodframelistblock, biopodspritedatablock | dw    biopod_2_0
+Biopod_5:        db    biopodframelistblock, biopodspritedatablock | dw    biopod_4_0
+Biopod_6:        db    biopodframelistblock, biopodspritedatablock | dw    biopod_4_0
+Biopod_7:        db    biopodframelistblock, biopodspritedatablock | dw    biopod_4_0
+Biopod_8:        db    biopodframelistblock, biopodspritedatablock | dw    biopod_4_0
+Biopod_9:        db    biopodframelistblock, biopodspritedatablock | dw    biopod_4_0
+BioPodBlinkingLightRoutine:
+  ld    a,(framecounter)                    ;at max 4 objects can be put in screen divided over 4 frames
+  and   7
+  ret   nz
+
+  ld    hl,Biopod_2                         ;starting pose
+  ld    b,08                                ;animation steps
+  jp    AnimateObject                       ;in hl=starting pose, b=animation steps, uses: var1
 
 Girlidle_0:        db    npcsframelistblock, npcsspritedatablock | dw    npcs_0_0
 GirlMovementRoutine:

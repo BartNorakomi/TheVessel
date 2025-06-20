@@ -31,6 +31,7 @@ ResetVariables:
   ld    (ShowConversationCloud?),a
   ld    (InitiateWakeUp?),a
   ld    (ShowPressTriggerAIcon?),a
+  ld    (SkipNPCCollision?),a
 	ld		a,8
 	ld		(ScreenOnDelay),a								;amount of frames until screen turns on (we need some frames to first put all objects in screen)
 	ret
@@ -54,8 +55,17 @@ EventArcadeHall1:					db	1,0,0     | dw 000,000					,000   			| db 255      ,Mov
 EventArcadeHall2: 				db	1,0,0     | dw 000,000					,000        | db 255      ,MovementRoutinesBlock | dw ArcadeHall2EventRoutine		| db 000,000 ,000, 000
 EventSirens: 							db	1,0,0     | dw 000,000					,000        | db 255      ,MovementRoutinesBlock | dw SirensRoutine							| db 000,000 ,000, 000
 
+ObjectBiopod1: 						db  1,050,198 | dw 000,000					,Biopod_0  	| db 001			,MovementRoutinesBlock | dw BioPod1Routine						| db 000,000 ,000, 000
+ObjectBiopod2: 						db  1,050,064 | dw 000,000					,Biopod_1  	| db 001			,MovementRoutinesBlock | dw BioPod2Routine						| db 000,000 ,000, 000
+ObjectBiopod3: 						db  1,022,134 | dw 000,000					,Biopod_2  	| db 001			,MovementRoutinesBlock | dw BioPodBlinkingLightRoutine| db 000,000 ,000, 000
 EventBiopod: 							db	1,$28,$7e | dw 000,000					,000        | db 255      ,MovementRoutinesBlock | dw BiopodEventRoutine				| db 000,000 ,000, 000
+
+
+
 EventHydroponicsbay: 			db	1,$28,$7e | dw 000,000					,000        | db 255      ,MovementRoutinesBlock | dw HydroponicsbayEventRoutine| db 000,000 ,000, 000
+Objecthydroponicsbay1: 		db  1,050+44,198-156 | dw 000,000	,hydroponicsbay_0  	| db 001			,MovementRoutinesBlock | dw hydroponicsbay1Routine		| db 000,000 ,000, 000
+Objecthydroponicsbay2: 		db  1,050+44,064+114 | dw 000,000	,hydroponicsbay_1  	| db 001			,MovementRoutinesBlock | dw hydroponicsbay2Routine		| db 000,000 ,000, 000
+
 EventHangarbay: 					db	1,$28,$7e | dw 000,000					,000        | db 255      ,MovementRoutinesBlock | dw HangarbayEventRoutine			| db 000,000 ,000, 000
 
 
@@ -108,26 +118,36 @@ LoadTileMap:
 	ret
 
 	.Hangarbay:
-	ld		hl,BiopodTileMap
+	ld		a,hangarbayTileMapBlock
+	ld		(TileMapBlock),a
+	ld		hl,hangarbayTileMap
 	ld		(TileMap),hl
 	ret
 
 	.Hydroponicsbay:
-	ld		hl,BiopodTileMap
+	ld		a,hydroponicsbayTileMapBlock
+	ld		(TileMapBlock),a
+	ld		hl,hydroponicsbayTileMap
 	ld		(TileMap),hl
 	ret
 
 	.Biopod:
+	ld		a,BiopodTileMapBlock
+	ld		(TileMapBlock),a
 	ld		hl,BiopodTileMap
 	ld		(TileMap),hl
 	ret
 
 	.ArcadeHall1:
+	ld		a,ArcadeHall1TileMapBlock
+	ld		(TileMapBlock),a
 	ld		hl,ArcadeHall1TileMap
 	ld		(TileMap),hl
 	ret
 
 	.ArcadeHall2:
+	ld		a,ArcadeHall2TileMapBlock
+	ld		(TileMapBlock),a
 	ld		hl,ArcadeHall2TileMap
 	ld		(TileMap),hl
 
@@ -135,6 +155,8 @@ LoadTileMap:
 	cp		100
 	ret		c
 
+	ld		a,ArcadeHall2EntityTileMapBlock
+	ld		(TileMapBlock),a
 	ld		hl,ArcadeHall2EntityTileMap
 	ld		(TileMap),hl
 	ret
@@ -170,6 +192,11 @@ PutObjects:															;put objects and events
 	ret
 
 PutObjectsHydroponicsbay:
+	ld		hl,Objecthydroponicsbay1				;put hydroponicsbay 1 (left)
+	call	PutSingleObject 
+	ld		hl,Objecthydroponicsbay2				;put hydroponicsbay 2 (right)
+	call	PutSingleObject 
+
 	ld		de,ObjEvent1										;now put events
 
 	ld		hl,EventHydroponicsbay					;put hydroponicsbay event
@@ -184,26 +211,12 @@ PutObjectsHangarbay:
 	ret
 
 PutObjectsBiopod:
-	;set starting coordinates player
-	ld		a,050														;y
-	ld		(Object1+y),a
-	ld		a,222														;x
-	ld		(Object1+x),a
-
-	ld		hl,RGettingUp
-;  ld    (PlayerSpriteStand),hl
-
-
-
-
-	ld		a,080														;y
-	ld		(Object1+y),a
-
-
-
-	xor		a
-	ld		(Object1+var1),a
-	ld		(Object1+ObjectPhase),a
+	ld		hl,ObjectBiopod1								;put biopod 1 (left)
+	call	PutSingleObject 
+	ld		hl,ObjectBiopod2								;put biopod 2 (right)
+	call	PutSingleObject 
+	ld		hl,ObjectBiopod3								;put blinking light
+	call	PutSingleObject 
 
 	ld		de,ObjEvent1										;now put events
 
@@ -1213,10 +1226,6 @@ outix8:
 	outi	outi	outi	outi	outi	outi	outi	outi	
 	ret	
 
-NPCAniCount:     		db  0,0
-PlayerSpriteStand: 	dw  Rstanding
-StartConversation?:	db	0
-
 NPCConv012:
   db    SwitchCharacter,CharacterPortraitVessel,"Still here. Anything new?"
   db    SwitchCharacter,CharacterPortraitAI,"No changes. Continue training. We will land in "
@@ -1260,6 +1269,11 @@ DIV_DONE:
     pop de
     pop bc
     ret
+
+NPCAniCount:     		db  0,0
+PlayerSpriteStand: 	dw  Rstanding
+StartConversation?:	db	0
+StartWakeUpEvent?:	db	1
 
 endenginepage3:
 dephase
@@ -1341,6 +1355,7 @@ spatpointer:                rb		2
 PageOnNextVblank:           rb    1
 ChangeRoom?:         				rb    1
 SkipAssignOrder?:    				rb    1
+TileMapBlock:								rb		1
 TileMap:  									rb		2
 
 ;SF2 global properties for current object and frame
@@ -1358,6 +1373,7 @@ TriggerAy:									rb		1
 TriggerAx:									rb		1
 TotalMinutesUntilLandCounter: rb	1
 InitiateWakeUp?: 						rb	1
+SkipNPCCollision?: 					rb	1
 
 
 endenginepage3variables:  equ $+enginepage3length
