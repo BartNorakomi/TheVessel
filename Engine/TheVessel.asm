@@ -512,9 +512,11 @@ BiopodTileMap:  								incbin "..\tools\tilemapBiopod.bin"
 
 hydroponicsbayTileMapBlock:  		equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
 hangarbayTileMapBlock:  				equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
+trainingdeckTileMapBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
 	phase	$8000
 hydroponicsbayTileMap:  				incbin "..\tools\tilemaphydroponicsbay.bin"
-hangarbayTileMap:  							incbin "..\tools\tilemap.bin"
+hangarbayTileMap:  							incbin "..\tools\tilemaphangarbay.bin"
+trainingdeckTileMap:  					incbin "..\tools\tilemap.bin"
 	dephase
 	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
 
@@ -543,6 +545,10 @@ HydroponicsbayGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockS
 
 HangarbayGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
   incbin "..\grapx\ship\hangarbay\hangarbay.SC5",7,212 * 128      ;212 lines
+	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
+
+trainingdeckGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
+  incbin "..\grapx\ship\trainingdeck\trainingdeck.SC5",7,212 * 128      ;212 lines
 	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
 
 OpenDoorGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize

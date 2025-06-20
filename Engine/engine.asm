@@ -2184,7 +2184,7 @@ CompareHLwithDE:
   ret
 
 StartSaveGameData:
-CurrentRoom:  db  2                     ;0=arcadehall1, 1=arcadehall2, 2=biopod, 3=hydroponicsbay, 4=hangarbay
+CurrentRoom:  db  5                     ;0=arcadehall1, 1=arcadehall2, 2=biopod, 3=hydroponicsbay, 4=hangarbay, 5=trainingdeck
 GamesPlayed:  db 9                      ;increases after leaving a game. max=255
 HighScoreTotalAverage: db 80            ;recruiter appears when 80 (%) is reached
 HighScoreBackroomGame:  db  100
@@ -2197,13 +2197,13 @@ ConvGirl: db %0000 0000                 ;conversations handled
 ConvCapGirl: db %0000 0000              ;conversations handled
 ConvGingerBoy: db %0000 0000            ;conversations handled
 ConvHost: db %0000 0001                 ;conversations handled
-ConvEntity: db %0000 0011               ;conversations handled
+ConvEntity: db %0000 0000               ;conversations handled
 
 DateCurrentLogin: ds 6
 DatePreviousLogin: ds 6
 DailyContinuesUsed: db 0                ;bit 0=roadfighter,bit 1=basketball,bit 2=blox,bit 4=bikerace
 
-TotalMinutesUntilLand:  dw  1 ;4320
+TotalMinutesUntilLand:  dw  4320
 
 EndSaveGameData:
 SaveGameDataLenght: equ EndSaveGameData-StartSaveGameData

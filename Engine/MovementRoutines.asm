@@ -926,6 +926,32 @@ ret
   ld    (ChangeRoom?),a
   ret
 
+TrainingdeckEventRoutine:
+  call  .CheckPlayerLeavingRoom             ;when y>116 player enters arcadehall1 
+
+  call  PutConversationCloud
+;  call  CheckShowPressTrigAIconHangarBay
+;  call  PutPressTrigAIcon
+  ret
+
+  .CheckPlayerLeavingRoom:
+  ld    a,(Object1+x)
+  cp    255-10
+  jr    nc,.hangarbay
+  ret
+
+  .hangarbay:
+  ld    a,20
+  ld    (Object1+x),a
+  ld    a,$5a
+  ld    (Object1+y),a
+
+  ld    a,4
+  ld    (CurrentRoom),a
+  ld    a,1
+  ld    (ChangeRoom?),a
+  ret
+
 HangarbayEventRoutine:
   call  .CheckPlayerLeavingRoom             ;when y>116 player enters arcadehall1 
 
@@ -938,7 +964,24 @@ HangarbayEventRoutine:
   ld    a,(Object1+x)
   cp    255-10
   jr    nc,.hydronponicsbay
+
+  ld    a,(Object1+x)
+  cp    10
+  jr    c,.trainingdeck
   ret
+
+  .trainingdeck:
+  ld    a,255-20
+  ld    (Object1+x),a
+  ld    a,$5a
+  ld    (Object1+y),a
+
+  ld    a,5
+  ld    (CurrentRoom),a
+  ld    a,1
+  ld    (ChangeRoom?),a
+  ret
+
 
   .hydronponicsbay:
   ld    a,20

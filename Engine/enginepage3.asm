@@ -68,6 +68,9 @@ Objecthydroponicsbay2: 		db  1,050+44,064+114 | dw 000,000	,hydroponicsbay_1  	|
 
 EventHangarbay: 					db	1,$28,$7e | dw 000,000					,000        | db 255      ,MovementRoutinesBlock | dw HangarbayEventRoutine			| db 000,000 ,000, 000
 
+EventTrainingdeck: 				db	1,$28,$7e | dw 000,000					,000        | db 255      ,MovementRoutinesBlock | dw TrainingdeckEventRoutine	| db 000,000 ,000, 000
+
+
 
 LenghtDoCopyTable:  equ	RestoreBackgroundObject1Page1-RestoreBackgroundObject1Page0
 ResetRestoreBackgroundTables:
@@ -115,6 +118,15 @@ LoadTileMap:
 	jr		z,.Hydroponicsbay
 	dec		a
 	jr		z,.Hangarbay
+	dec		a
+	jr		z,.Trainingdeck
+	ret
+
+	.Trainingdeck:
+	ld		a,trainingdeckTileMapBlock
+	ld		(TileMapBlock),a
+	ld		hl,trainingdeckTileMap
+	ld		(TileMap),hl
 	ret
 
 	.Hangarbay:
@@ -189,6 +201,8 @@ PutObjects:															;put objects and events
 	jp		z,PutObjectsHydroponicsbay
 	dec		a
 	jp		z,PutObjectsHangarbay
+	dec		a
+	jp		z,PutObjectsTrainingdeck
 	ret
 
 PutObjectsHydroponicsbay:
@@ -207,6 +221,13 @@ PutObjectsHangarbay:
 	ld		de,ObjEvent1										;now put events
 
 	ld		hl,EventHangarbay								;put hangarbay event
+	call	PutSingleObject
+	ret
+
+PutObjectsTrainingdeck:
+	ld		de,ObjEvent1										;now put events
+
+	ld		hl,EventTrainingdeck						;put trainingdeck event
 	call	PutSingleObject
 	ret
 
@@ -354,6 +375,9 @@ HydroponicsbayPalette:                    			;palette file
   incbin "..\grapx\ship\hydroponicsbay\hydroponicsbay.SC5",$7680+7,32
 HangarbayPalette:                    			;palette file
   incbin "..\grapx\ship\hangarbay\hangarbay.SC5",$7680+7,32
+TrainingdeckPalette:                    			;palette file
+  incbin "..\grapx\ship\trainingdeck\trainingdeck.SC5",$7680+7,32
+
 
 LoadRoomGfx:
 	ld		a,(CurrentRoom)									;0=arcadehall1, 1=arcadehall2
@@ -367,11 +391,18 @@ LoadRoomGfx:
 	jr		z,LoadHydroponicsbayGfx      		;loads the hydroponicsbay room in all 4 pages, and sets palette
 	dec		a
 	jr		z,LoadHangarbayGfx      				;loads the hangarbay room in all 4 pages, and sets palette
+	dec		a
+	jr		z,LoadTrainingdeckGfx      			;loads the training deck room in all 4 pages, and sets palette
 	ret
+
+LoadTrainingdeckGfx:
+  ld    hl,TrainingdeckPalette
+  ld    a,TrainingdeckGfxBlock       		;block to copy graphics from
+	jp		LoadArcadeHallGfx
 
 LoadHangarbayGfx:
   ld    hl,HangarbayPalette
-  ld    a,HangarbayGfxBlock       	;block to copy graphics from
+  ld    a,HangarbayGfxBlock       			;block to copy graphics from
 	jp		LoadArcadeHallGfx
 
 LoadHydroponicsbayGfx:
