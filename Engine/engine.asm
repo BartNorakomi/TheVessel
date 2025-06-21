@@ -2184,7 +2184,7 @@ CompareHLwithDE:
   ret
 
 StartSaveGameData:
-CurrentRoom:  db  5                     ;0=arcadehall1, 1=arcadehall2, 2=biopod, 3=hydroponicsbay, 4=hangarbay, 5=trainingdeck
+CurrentRoom:  db  11                    ;0=arcadehall1, 1=arcadehall2, 2=biopod, 3=hydroponicsbay, 4=hangarbay, 5=trainingdeck, 6=reactorchamber, 7=sleepingquarters, 8=armoryvault, 9=holodeck, 10=medicalbay, 11=sciencelab
 GamesPlayed:  db 9                      ;increases after leaving a game. max=255
 HighScoreTotalAverage: db 80            ;recruiter appears when 80 (%) is reached
 HighScoreBackroomGame:  db  100

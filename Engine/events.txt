@@ -8,6 +8,90 @@ HighScoreBasketball: db 0
 HighScoreBlox: db 0
 HighScoreBikeRace: db 0
 
+-------------------------------
+
+hangarbay - drilling
+
+by drilling you collect resources
+resources can be used to:
+upgrade drill (speed, strenght, oxygen capacity)
+increase oxygen reserves in the ship
+increase food reserves in the ship
+increase water reserves in the ship
+upgrade science lab (not sure yet, but more science means for instance more food generated in hydroponicsbay)
+build the same structures that are in the ship in the colony on the planet
+
+-------------------------------
+
+hydroponics bay
+
+no function, but you can visually see your food supply (it will decrease when it gets lower)
+resources collected by drilling can be allocated to increase food supply)
+
+-------------------------------
+
+sleeping quarters
+
+rest here to restore your energy
+sleeping takes x hours depending on the energy you need to restore
+
+
+-------------------------------
+
+trainingdeck
+
+train here to increase and maintain your (muscle) strenght, the more (muscle) strenght the higher your max. energy
+
+-------------------------------
+
+medicalbay
+
+maybe this can be used to treat radiation sickness (which the player gets when going outside drilling)
+
+-------------------------------
+
+biopod
+
+the player is conceived in the biopod
+the biopod room has no further function in game, but the 2 biopods will be used to conceive other humans once the city is built
+
+-------------------------------
+
+reactorchamber
+
+has no function is game, but the reactor chamber provides energy to the entire ship
+
+-------------------------------
+
+armoryvault
+
+has no function
+
+-------------------------------
+
+holodeck
+
+use this to go enter holographic simulation, which brings you back to arcade hall 1 and 2 (from act 1)
+has no function, but you can enjoy playing the games again
+
+-------------------------------
+-------------------------------
+
+time aspect:
+
+time is an aspect in act 2
+
+over time the player loses energy (when energy is depleted you have to sleep)
+over time food gets depleted (automatically), since the player uses food (although you dont see him eating)
+over time water gets depleted (automatically), since the player uses food (although you dont see him eating)
+over time the ship's oxygen gets depleted (automatically), since the player breathes air
+
+-------------------------------
+
+
+
+
+
 at start of game previous DateCurrentLogin is stored as DatePreviousLogin and current day is saved DateCurrentLogin
 each game has 1 continue per day
 when booting the rom a check is made to see if DateCurrentLogin is DatePreviousLogin,

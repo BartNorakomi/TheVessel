@@ -70,6 +70,18 @@ EventHangarbay: 					db	1,$28,$7e | dw 000,000					,000        | db 255      ,Mo
 
 EventTrainingdeck: 				db	1,$28,$7e | dw 000,000					,000        | db 255      ,MovementRoutinesBlock | dw TrainingdeckEventRoutine	| db 000,000 ,000, 000
 
+Eventreactorchamber:			db	1,$28,$7e | dw 000,000					,000        | db 255      ,MovementRoutinesBlock | dw reactorchamberEventRoutine| db 000,000 ,000, 000
+
+Eventsleepingquarters:		db	1,$28,$7e | dw 000,000					,000        | db 255      ,MovementRoutinesBlock | dw sleepingquartersEventRoutine| db 000,000 ,000, 000
+
+Eventarmoryvault:					db	1,$28,$7e | dw 000,000					,000        | db 255      ,MovementRoutinesBlock | dw armoryvaultEventRoutine| db 000,000 ,000, 000
+
+Eventholodeck:						db	1,$28,$7e | dw 000,000					,000        | db 255      ,MovementRoutinesBlock | dw holodeckEventRoutine| db 000,000 ,000, 000
+
+Eventmedicalbay:					db	1,$28,$7e | dw 000,000					,000        | db 255      ,MovementRoutinesBlock | dw medicalbayEventRoutine| db 000,000 ,000, 000
+
+Eventsciencelab:					db	1,$28,$7e | dw 000,000					,000        | db 255      ,MovementRoutinesBlock | dw sciencelabEventRoutine| db 000,000 ,000, 000
+
 
 
 LenghtDoCopyTable:  equ	RestoreBackgroundObject1Page1-RestoreBackgroundObject1Page0
@@ -109,17 +121,71 @@ ResetRestoreTables:											;all 4 objects have their own restore tables
 LoadTileMap:
 	ld		a,(CurrentRoom)									;0=arcadehall1, 1=arcadehall2
 	or		a
-	jr		z,.ArcadeHall1
+	jp		z,.ArcadeHall1
 	dec		a
-	jr		z,.ArcadeHall2
+	jp		z,.ArcadeHall2
 	dec		a
-	jr		z,.Biopod
+	jp		z,.Biopod
 	dec		a
-	jr		z,.Hydroponicsbay
+	jp		z,.Hydroponicsbay
 	dec		a
-	jr		z,.Hangarbay
+	jp		z,.Hangarbay
 	dec		a
-	jr		z,.Trainingdeck
+	jp		z,.Trainingdeck
+	dec		a
+	jp		z,.reactorchamber
+	dec		a
+	jp		z,.sleepingquarters
+	dec		a
+	jp		z,.armoryvault
+	dec		a
+	jp		z,.holodeck
+	dec		a
+	jp		z,.medicalbay
+	dec		a
+	jp		z,.sciencelab
+	ret
+
+	.sciencelab:
+	ld		a,sciencelabTileMapBlock
+	ld		(TileMapBlock),a
+	ld		hl,sciencelabTileMap
+	ld		(TileMap),hl
+	ret
+
+	.armoryvault:
+	ld		a,armoryvaultTileMapBlock
+	ld		(TileMapBlock),a
+	ld		hl,armoryvaultTileMap
+	ld		(TileMap),hl
+	ret
+
+	.holodeck:
+	ld		a,holodeckTileMapBlock
+	ld		(TileMapBlock),a
+	ld		hl,holodeckTileMap
+	ld		(TileMap),hl
+	ret
+
+	.medicalbay:
+	ld		a,medicalbayTileMapBlock
+	ld		(TileMapBlock),a
+	ld		hl,medicalbayTileMap
+	ld		(TileMap),hl
+	ret
+
+	.sleepingquarters:
+	ld		a,sleepingquartersTileMapBlock
+	ld		(TileMapBlock),a
+	ld		hl,sleepingquartersTileMap
+	ld		(TileMap),hl
+	ret
+
+	.reactorchamber:
+	ld		a,reactorchamberTileMapBlock
+	ld		(TileMapBlock),a
+	ld		hl,reactorchamberTileMap
+	ld		(TileMap),hl
 	ret
 
 	.Trainingdeck:
@@ -203,6 +269,60 @@ PutObjects:															;put objects and events
 	jp		z,PutObjectsHangarbay
 	dec		a
 	jp		z,PutObjectsTrainingdeck
+	dec		a
+	jp		z,PutObjectsreactorchamber
+	dec		a
+	jp		z,PutObjectssleepingquarters
+	dec		a
+	jp		z,PutObjectsarmoryvault
+	dec		a
+	jp		z,PutObjectsholodeck
+	dec		a
+	jp		z,PutObjectsmedicalbay
+	dec		a
+	jp		z,PutObjectssciencelab
+	ret
+
+PutObjectssciencelab:
+	ld		de,ObjEvent1										;now put events
+
+	ld		hl,Eventsciencelab							;put sciencelab event
+	call	PutSingleObject
+	ret
+
+PutObjectsarmoryvault:
+	ld		de,ObjEvent1										;now put events
+
+	ld		hl,Eventarmoryvault							;put armoryvault event
+	call	PutSingleObject
+	ret
+
+PutObjectsholodeck:
+	ld		de,ObjEvent1										;now put events
+
+	ld		hl,Eventholodeck								;put holodeck event
+	call	PutSingleObject
+	ret
+
+PutObjectsmedicalbay:
+	ld		de,ObjEvent1										;now put events
+
+	ld		hl,Eventmedicalbay							;put medicalbay event
+	call	PutSingleObject
+	ret
+
+PutObjectssleepingquarters:
+	ld		de,ObjEvent1										;now put events
+
+	ld		hl,Eventsleepingquarters				;put sleepingquarters event
+	call	PutSingleObject
+	ret
+
+PutObjectsreactorchamber:
+	ld		de,ObjEvent1										;now put events
+
+	ld		hl,Eventreactorchamber					;put reactorchamber event
+	call	PutSingleObject
 	ret
 
 PutObjectsHydroponicsbay:
@@ -377,23 +497,77 @@ HangarbayPalette:                    			;palette file
   incbin "..\grapx\ship\hangarbay\hangarbay.SC5",$7680+7,32
 TrainingdeckPalette:                    			;palette file
   incbin "..\grapx\ship\trainingdeck\trainingdeck.SC5",$7680+7,32
+reactorchamberPalette:                    			;palette file
+  incbin "..\grapx\ship\reactorchamber\reactorchamber.SC5",$7680+7,32
+sleepingquartersPalette:                    			;palette file
+  incbin "..\grapx\ship\sleepingquarters\sleepingquarters.SC5",$7680+7,32
+armoryvaultPalette:                    			;palette file
+  incbin "..\grapx\ship\armoryvault\armoryvault.SC5",$7680+7,32
+holodeckPalette:                    			;palette file
+  incbin "..\grapx\ship\holodeck\holodeck.SC5",$7680+7,32
+medicalbayPalette:                    			;palette file
+  incbin "..\grapx\ship\medicalbay\medicalbay.SC5",$7680+7,32
+sciencelabPalette:                    			;palette file
+  incbin "..\grapx\ship\sciencelab\sciencelab.SC5",$7680+7,32
 
 
 LoadRoomGfx:
 	ld		a,(CurrentRoom)									;0=arcadehall1, 1=arcadehall2
 	or		a
-	jr		z,LoadArcadeHall1Gfx            ;loads the initial starting arcade room in all 4 pages, and sets palette
+	jp		z,LoadArcadeHall1Gfx            ;loads the initial starting arcade room in all 4 pages, and sets palette
 	dec		a
-	jr		z,LoadArcadeHall2Gfx            ;loads the 2nd arcade room in all 4 pages, and sets palette
+	jp		z,LoadArcadeHall2Gfx            ;loads the 2nd arcade room in all 4 pages, and sets palette
 	dec		a
-	jr		z,LoadBiopodGfx            			;loads the biopod room in all 4 pages, and sets palette
+	jp		z,LoadBiopodGfx            			;loads the biopod room in all 4 pages, and sets palette
 	dec		a
-	jr		z,LoadHydroponicsbayGfx      		;loads the hydroponicsbay room in all 4 pages, and sets palette
+	jp		z,LoadHydroponicsbayGfx      		;loads the hydroponicsbay room in all 4 pages, and sets palette
 	dec		a
-	jr		z,LoadHangarbayGfx      				;loads the hangarbay room in all 4 pages, and sets palette
+	jp		z,LoadHangarbayGfx      				;loads the hangarbay room in all 4 pages, and sets palette
 	dec		a
-	jr		z,LoadTrainingdeckGfx      			;loads the training deck room in all 4 pages, and sets palette
+	jp		z,LoadTrainingdeckGfx      			;loads the training deck room in all 4 pages, and sets palette
+	dec		a
+	jp		z,LoadreactorchamberGfx      		;loads the reactorchamber room in all 4 pages, and sets palette
+	dec		a
+	jp		z,LoadsleepingquartersGfx      	;loads the sleepingquarters room in all 4 pages, and sets palette
+	dec		a
+	jp		z,LoadarmoryvaultGfx      			;loads the sleepingquarters room in all 4 pages, and sets palette
+	dec		a
+	jp		z,LoadholodeckGfx      					;loads the sleepingquarters room in all 4 pages, and sets palette
+	dec		a
+	jp		z,LoadmedicalbayGfx      				;loads the sleepingquarters room in all 4 pages, and sets palette
+	dec		a
+	jp		z,LoadsciencelabGfx      				;loads the sleepingquarters room in all 4 pages, and sets palette
 	ret
+
+LoadsciencelabGfx:
+  ld    hl,sciencelabPalette
+  ld    a,sciencelabGfxBlock       			;block to copy graphics from
+	jp		LoadArcadeHallGfx
+
+LoadarmoryvaultGfx:
+  ld    hl,armoryvaultPalette
+  ld    a,armoryvaultGfxBlock       		;block to copy graphics from
+	jp		LoadArcadeHallGfx
+
+LoadholodeckGfx:
+  ld    hl,holodeckPalette
+  ld    a,holodeckGfxBlock       				;block to copy graphics from
+	jp		LoadArcadeHallGfx
+
+LoadmedicalbayGfx:
+  ld    hl,medicalbayPalette
+  ld    a,medicalbayGfxBlock       			;block to copy graphics from
+	jp		LoadArcadeHallGfx
+
+LoadsleepingquartersGfx:
+  ld    hl,sleepingquartersPalette
+  ld    a,sleepingquartersGfxBlock    	;block to copy graphics from
+	jp		LoadArcadeHallGfx
+
+LoadreactorchamberGfx:
+  ld    hl,reactorchamberPalette
+  ld    a,reactorchamberGfxBlock       	;block to copy graphics from
+	jp		LoadArcadeHallGfx
 
 LoadTrainingdeckGfx:
   ld    hl,TrainingdeckPalette

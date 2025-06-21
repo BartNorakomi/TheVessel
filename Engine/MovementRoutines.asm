@@ -29,6 +29,15 @@
 ;hydroponicsbay2Routine
 
 ;HangarbayEventRoutine
+;trainingdeckEventRoutine
+;reactorchamberEventRoutine
+
+;sleepingquartersEventRoutine
+;armoryvaultEventRoutine
+;holodeckEventRoutine
+;medicalbayEventRoutine
+
+;sciencelabEventRoutine
 
 MovementRoutinesAddress:  equ $4000
 Phase MovementRoutinesAddress
@@ -926,6 +935,242 @@ ret
   ld    (ChangeRoom?),a
   ret
 
+armoryvaultEventRoutine:
+  call  .CheckPlayerLeavingRoom             ;when y>116 player enters arcadehall1 
+
+  call  PutConversationCloud
+;  call  CheckShowPressTrigAIconHangarBay
+;  call  PutPressTrigAIcon
+  ret
+
+  .CheckPlayerLeavingRoom:
+  ld    a,(Object1+x)
+  cp    255-10
+  jr    nc,.sleepingquarters
+
+  ld    a,(Object1+x)
+  cp    10
+  jr    c,.holodeck
+  ret
+
+  .holodeck:
+  ld    a,255-20
+  ld    (Object1+x),a
+  ld    a,$5a
+  ld    (Object1+y),a
+
+  ld    a,9
+  ld    (CurrentRoom),a
+  ld    a,1
+  ld    (ChangeRoom?),a
+  ret
+
+  .sleepingquarters:
+  ld    a,20
+  ld    (Object1+x),a
+  ld    a,$5a
+  ld    (Object1+y),a
+
+  ld    a,7
+  ld    (CurrentRoom),a
+  ld    a,1
+  ld    (ChangeRoom?),a
+  ret
+
+holodeckEventRoutine:
+  call  .CheckPlayerLeavingRoom             ;when y>116 player enters arcadehall1 
+
+  call  PutConversationCloud
+;  call  CheckShowPressTrigAIconHangarBay
+;  call  PutPressTrigAIcon
+  ret
+
+  .CheckPlayerLeavingRoom:
+  ld    a,(Object1+x)
+  cp    255-10
+  jr    nc,.armoryvault
+
+  ld    a,(Object1+x)
+  cp    10
+  jr    c,.medicalbay
+  ret
+
+  .medicalbay:
+  ld    a,255-20
+  ld    (Object1+x),a
+  ld    a,$5a
+  ld    (Object1+y),a
+
+  ld    a,10
+  ld    (CurrentRoom),a
+  ld    a,1
+  ld    (ChangeRoom?),a
+  ret
+
+  .armoryvault:
+  ld    a,20
+  ld    (Object1+x),a
+  ld    a,$5a
+  ld    (Object1+y),a
+
+  ld    a,8
+  ld    (CurrentRoom),a
+  ld    a,1
+  ld    (ChangeRoom?),a
+  ret
+
+sciencelabEventRoutine:
+  call  .CheckPlayerLeavingRoom             ;when y>116 player enters arcadehall1 
+
+  call  PutConversationCloud
+;  call  CheckShowPressTrigAIconHangarBay
+;  call  PutPressTrigAIcon
+  ret
+
+  .CheckPlayerLeavingRoom:
+  ld    a,(Object1+x)
+  cp    255-10
+  jr    nc,.medicalbay
+  ret
+
+  .medicalbay:
+  ld    a,20
+  ld    (Object1+x),a
+  ld    a,$5a
+  ld    (Object1+y),a
+
+  ld    a,10
+  ld    (CurrentRoom),a
+  ld    a,1
+  ld    (ChangeRoom?),a
+  ret
+
+medicalbayEventRoutine:
+  call  .CheckPlayerLeavingRoom             ;when y>116 player enters arcadehall1 
+
+  call  PutConversationCloud
+;  call  CheckShowPressTrigAIconHangarBay
+;  call  PutPressTrigAIcon
+  ret
+
+  .CheckPlayerLeavingRoom:
+  ld    a,(Object1+x)
+  cp    255-10
+  jr    nc,.holodeck
+
+  ld    a,(Object1+x)
+  cp    10
+  jr    c,.sciencelab
+  ret
+
+  .sciencelab:
+  ld    a,255-20
+  ld    (Object1+x),a
+  ld    a,$5a
+  ld    (Object1+y),a
+
+  ld    a,11
+  ld    (CurrentRoom),a
+  ld    a,1
+  ld    (ChangeRoom?),a
+  ret
+
+  .holodeck:
+  ld    a,20
+  ld    (Object1+x),a
+  ld    a,$5a
+  ld    (Object1+y),a
+
+  ld    a,9
+  ld    (CurrentRoom),a
+  ld    a,1
+  ld    (ChangeRoom?),a
+  ret
+
+sleepingquartersEventRoutine:
+  call  .CheckPlayerLeavingRoom             ;when y>116 player enters arcadehall1 
+
+  call  PutConversationCloud
+;  call  CheckShowPressTrigAIconHangarBay
+;  call  PutPressTrigAIcon
+  ret
+
+  .CheckPlayerLeavingRoom:
+  ld    a,(Object1+x)
+  cp    255-10
+  jr    nc,.reactorchamber
+
+  ld    a,(Object1+x)
+  cp    10
+  jr    c,.armoryvault
+  ret
+
+  .armoryvault:
+  ld    a,255-20     - 10 ;?????????????????/BUG ??????????
+  ld    (Object1+x),a
+  ld    a,$5a
+  ld    (Object1+y),a
+
+  ld    a,8
+  ld    (CurrentRoom),a
+  ld    a,1
+  ld    (ChangeRoom?),a
+  ret
+
+  .reactorchamber:
+  ld    a,20
+  ld    (Object1+x),a
+  ld    a,$5a
+  ld    (Object1+y),a
+
+  ld    a,6
+  ld    (CurrentRoom),a
+  ld    a,1
+  ld    (ChangeRoom?),a
+  ret
+
+reactorchamberEventRoutine:
+  call  .CheckPlayerLeavingRoom             ;when y>116 player enters arcadehall1 
+
+  call  PutConversationCloud
+;  call  CheckShowPressTrigAIconHangarBay
+;  call  PutPressTrigAIcon
+  ret
+
+  .CheckPlayerLeavingRoom:
+  ld    a,(Object1+x)
+  cp    255-10
+  jr    nc,.trainingdeck
+
+  ld    a,(Object1+x)
+  cp    10
+  jr    c,.sleepingquarters
+  ret
+
+  .sleepingquarters:
+  ld    a,255-20
+  ld    (Object1+x),a
+  ld    a,$5a
+  ld    (Object1+y),a
+
+  ld    a,7
+  ld    (CurrentRoom),a
+  ld    a,1
+  ld    (ChangeRoom?),a
+  ret
+
+  .trainingdeck:
+  ld    a,20
+  ld    (Object1+x),a
+  ld    a,$5a
+  ld    (Object1+y),a
+
+  ld    a,5
+  ld    (CurrentRoom),a
+  ld    a,1
+  ld    (ChangeRoom?),a
+  ret
+
 TrainingdeckEventRoutine:
   call  .CheckPlayerLeavingRoom             ;when y>116 player enters arcadehall1 
 
@@ -938,6 +1183,22 @@ TrainingdeckEventRoutine:
   ld    a,(Object1+x)
   cp    255-10
   jr    nc,.hangarbay
+
+  ld    a,(Object1+x)
+  cp    10
+  jr    c,.reactorchamber
+  ret
+
+  .reactorchamber:
+  ld    a,255-20
+  ld    (Object1+x),a
+  ld    a,$5a
+  ld    (Object1+y),a
+
+  ld    a,6
+  ld    (CurrentRoom),a
+  ld    a,1
+  ld    (ChangeRoom?),a
   ret
 
   .hangarbay:

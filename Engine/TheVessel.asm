@@ -513,15 +513,32 @@ BiopodTileMap:  								incbin "..\tools\tilemapBiopod.bin"
 hydroponicsbayTileMapBlock:  		equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
 hangarbayTileMapBlock:  				equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
 trainingdeckTileMapBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
+reactorchamberTileMapBlock:  		equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
 	phase	$8000
 hydroponicsbayTileMap:  				incbin "..\tools\tilemaphydroponicsbay.bin"
 hangarbayTileMap:  							incbin "..\tools\tilemaphangarbay.bin"
-trainingdeckTileMap:  					incbin "..\tools\tilemap.bin"
+trainingdeckTileMap:  					incbin "..\tools\tilemaptrainingdeck.bin"
+reactorchamberTileMap:  				incbin "..\tools\tilemapreactorchamber.bin"
 	dephase
 	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
 
-;BiopodTileMap:  incbin "..\tools\tilemap.bin"
+sleepingquartersTileMapBlock:  	equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
+armoryvaultTileMapBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
+holodeckTileMapBlock:  					equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
+medicalbayTileMapBlock:  				equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
+	phase	$8000
+sleepingquartersTileMap:  			incbin "..\tools\tilemapsleepingquarters.bin"
+armoryvaultTileMap:  						incbin "..\tools\tilemap.bin"
+holodeckTileMap:  							incbin "..\tools\tilemap.bin"
+medicalbayTileMap:  						incbin "..\tools\tilemap.bin"
 
+sciencelabTileMapBlock:  				equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
+	phase	$8000
+sciencelabTileMap:  						incbin "..\tools\tilemap.bin"
+
+
+	dephase
+	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
 
 ArcadeHall1GfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
   incbin "..\grapx\arcadehall\arcade1.SC5",7,212 * 128      ;212 lines
@@ -549,6 +566,30 @@ HangarbayGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
 
 trainingdeckGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
   incbin "..\grapx\ship\trainingdeck\trainingdeck.SC5",7,212 * 128      ;212 lines
+	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
+
+reactorchamberGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
+  incbin "..\grapx\ship\reactorchamber\reactorchamber.SC5",7,212 * 128      ;212 lines
+	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
+
+sleepingquartersGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
+  incbin "..\grapx\ship\sleepingquarters\sleepingquarters.SC5",7,212 * 128      ;212 lines
+	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
+
+armoryvaultGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
+  incbin "..\grapx\ship\armoryvault\armoryvault.SC5",7,212 * 128      ;212 lines
+	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
+
+holodeckGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
+  incbin "..\grapx\ship\holodeck\holodeck.SC5",7,212 * 128      ;212 lines
+	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
+
+medicalbayGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
+  incbin "..\grapx\ship\medicalbay\medicalbay.SC5",7,212 * 128      ;212 lines
+	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
+
+sciencelabGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
+  incbin "..\grapx\ship\sciencelab\sciencelab.SC5",7,212 * 128      ;212 lines
 	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
 
 OpenDoorGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
