@@ -32,6 +32,7 @@ ResetVariables:
   ld    (InitiateWakeUp?),a
   ld    (ShowPressTriggerAIcon?),a
   ld    (SkipNPCCollision?),a
+  ld    (WaitCenterScreenTimer),a
 	ld		a,8
 	ld		(ScreenOnDelay),a								;amount of frames until screen turns on (we need some frames to first put all objects in screen)
 	ret
@@ -1617,6 +1618,7 @@ TriggerAx:									rb		1
 TotalMinutesUntilLandCounter: rb	1
 InitiateWakeUp?: 						rb	1
 SkipNPCCollision?: 					rb	1
+WaitCenterScreenTimer:			rb	1
 
 
 endenginepage3variables:  equ $+enginepage3length

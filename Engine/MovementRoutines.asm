@@ -901,16 +901,21 @@ HydroponicsbayEventRoutine:
   call  PutConversationCloud
 ;  call  CheckShowPressTrigAIconArcadeHall1
 ;  call  PutPressTrigAIcon
-ret
+  call  .HandleExplainerConversation
+  ret
+
+  .HandleExplainerConversation:
+  ld    hl,ConvEntityShipExplanations
+  bit   0,(hl)
+  ret   nz  
+  call  WaitCenterScreen                    ;this conversation starts when player is near the center of the room
+  set   0,(hl)
+
+  ld    a,1
+  ld    (StartConversation?),a
   ld    a,NPCConv1Block
   ld    (NPCConvBlock),a
-
-  ld    hl,ConvEntity
-  bit   2,(hl)
-;  jr    z,.NPCConv015
-
-  .NPCConv014:                              ;execute if ConvGirl bit 0 is set 
-  ld    hl,NPCConv014
+  ld    hl,NPCConv015
   ld    (NPCConvAddress),hl
   ret
 
@@ -948,6 +953,22 @@ armoryvaultEventRoutine:
   call  PutConversationCloud
 ;  call  CheckShowPressTrigAIconHangarBay
 ;  call  PutPressTrigAIcon
+  call  .HandleExplainerConversation
+  ret
+
+  .HandleExplainerConversation:
+  ld    hl,ConvEntityShipExplanations
+  bit   5,(hl)
+  ret   nz  
+  call  WaitCenterScreen                    ;this conversation starts when player is near the center of the room
+  set   5,(hl)
+
+  ld    a,1
+  ld    (StartConversation?),a
+  ld    a,NPCConv1Block
+  ld    (NPCConvBlock),a
+  ld    hl,NPCConv020
+  ld    (NPCConvAddress),hl
   ret
 
   .CheckPlayerLeavingRoom:
@@ -1006,6 +1027,22 @@ holodeckEventRoutine:
   call  PutConversationCloud
   call  CheckShowPressTrigAIconholodeck
   call  PutPressTrigAIcon
+  call  .HandleExplainerConversation
+  ret
+
+  .HandleExplainerConversation:
+  ld    hl,ConvEntityShipExplanations
+  bit   6,(hl)
+  ret   nz  
+  call  WaitCenterScreen                    ;this conversation starts when player is near the center of the room
+  set   6,(hl)
+
+  ld    a,1
+  ld    (StartConversation?),a
+  ld    a,NPCConv1Block
+  ld    (NPCConvBlock),a
+  ld    hl,NPCConv021
+  ld    (NPCConvAddress),hl
   ret
 
   .CheckPlayerLeavingRoom:
@@ -1064,6 +1101,22 @@ sciencelabEventRoutine:
   call  PutConversationCloud
   call  CheckShowPressTrigAIconsciencelab
   call  PutPressTrigAIcon
+  call  .HandleExplainerConversation
+  ret
+
+  .HandleExplainerConversation:
+  ld    hl,ConvEntity
+  bit   7,(hl)
+  ret   nz  
+  call  WaitCenterScreen                    ;this conversation starts when player is near the center of the room
+  set   7,(hl)
+
+  ld    a,1
+  ld    (StartConversation?),a
+  ld    a,NPCConv1Block
+  ld    (NPCConvBlock),a
+  ld    hl,NPCConv023
+  ld    (NPCConvAddress),hl
   ret
 
   .CheckPlayerLeavingRoom:
@@ -1132,6 +1185,22 @@ medicalbayEventRoutine:
   call  PutConversationCloud
   call  CheckShowPressTrigAIconmedicalbay
   call  PutPressTrigAIcon
+  call  .HandleExplainerConversation
+  ret
+
+  .HandleExplainerConversation:
+  ld    hl,ConvEntityShipExplanations
+  bit   7,(hl)
+  ret   nz  
+  call  WaitCenterScreen                    ;this conversation starts when player is near the center of the room
+  set   7,(hl)
+
+  ld    a,1
+  ld    (StartConversation?),a
+  ld    a,NPCConv1Block
+  ld    (NPCConvBlock),a
+  ld    hl,NPCConv022
+  ld    (NPCConvAddress),hl
   ret
 
   .CheckPlayerLeavingRoom:
@@ -1190,6 +1259,22 @@ sleepingquartersEventRoutine:
   call  PutConversationCloud
   call  CheckShowPressTrigAIconsleepingquarters
   call  PutPressTrigAIcon
+  call  .HandleExplainerConversation
+  ret
+
+  .HandleExplainerConversation:
+  ld    hl,ConvEntityShipExplanations
+  bit   4,(hl)
+  ret   nz  
+  call  WaitCenterScreen                    ;this conversation starts when player is near the center of the room
+  set   4,(hl)
+
+  ld    a,1
+  ld    (StartConversation?),a
+  ld    a,NPCConv1Block
+  ld    (NPCConvBlock),a
+  ld    hl,NPCConv019
+  ld    (NPCConvAddress),hl
   ret
 
   .CheckPlayerLeavingRoom:
@@ -1226,6 +1311,27 @@ sleepingquartersEventRoutine:
   ld    (ChangeRoom?),a
   ret
 
+WaitCenterScreen:
+  ld    a,(object1+x)
+  cp    256-80
+  jp    nc,.DontPutConversation
+  cp    80
+  jp    c,.DontPutConversation
+
+  ld    a,1
+  ld    (freezecontrols?),a
+
+  ld    a,(WaitCenterScreenTimer)
+  inc   a
+  and   15
+  ld    (WaitCenterScreenTimer),a
+  jr    nz,.DontPutConversation
+  ret
+
+  .DontPutConversation:
+  pop   af
+  ret
+
 reactorchamberEventRoutine:
   ld    a,1
   ld    (SkipNPCCollision?),a
@@ -1235,6 +1341,22 @@ reactorchamberEventRoutine:
   call  PutConversationCloud
 ;  call  CheckShowPressTrigAIconHangarBay
 ;  call  PutPressTrigAIcon
+  call  .HandleExplainerConversation
+  ret
+
+  .HandleExplainerConversation:
+  ld    hl,ConvEntityShipExplanations
+  bit   3,(hl)
+  ret   nz  
+  call  WaitCenterScreen                    ;this conversation starts when player is near the center of the room
+  set   3,(hl)
+
+  ld    a,1
+  ld    (StartConversation?),a
+  ld    a,NPCConv1Block
+  ld    (NPCConvBlock),a
+  ld    hl,NPCConv018
+  ld    (NPCConvAddress),hl
   ret
 
   .CheckPlayerLeavingRoom:
@@ -1293,6 +1415,22 @@ TrainingdeckEventRoutine:
   call  PutConversationCloud
   call  CheckShowPressTrigAIcontrainingdeck
   call  PutPressTrigAIcon
+  call  .HandleExplainerConversation
+  ret
+
+  .HandleExplainerConversation:
+  ld    hl,ConvEntityShipExplanations
+  bit   2,(hl)
+  ret   nz  
+  call  WaitCenterScreen                    ;this conversation starts when player is near the center of the room
+  set   2,(hl)
+
+  ld    a,1
+  ld    (StartConversation?),a
+  ld    a,NPCConv1Block
+  ld    (NPCConvBlock),a
+  ld    hl,NPCConv017
+  ld    (NPCConvAddress),hl
   ret
 
   .CheckPlayerLeavingRoom:
@@ -1335,6 +1473,22 @@ HangarbayEventRoutine:
   call  PutConversationCloud
   call  CheckShowPressTrigAIconHangarBay
   call  PutPressTrigAIcon
+  call  .HandleExplainerConversation
+  ret
+
+  .HandleExplainerConversation:
+  ld    hl,ConvEntityShipExplanations
+  bit   1,(hl)
+  ret   nz  
+  call  WaitCenterScreen                    ;this conversation starts when player is near the center of the room
+  set   1,(hl)
+
+  ld    a,1
+  ld    (StartConversation?),a
+  ld    a,NPCConv1Block
+  ld    (NPCConvBlock),a
+  ld    hl,NPCConv016
+  ld    (NPCConvAddress),hl
   ret
 
   .CheckPlayerLeavingRoom:

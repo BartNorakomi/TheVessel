@@ -1090,6 +1090,7 @@ HandleConversations:
   dec   a
   ret   nz
   ld    (StartConversation?),a
+  ld    (freezecontrols?),a
   ld    a,(YConversationWindowCentre)
   ld    (Fill2BlackLinesGoingUp+dy),a
   ld    (Fill2BlackLinesGoingDown+dy),a
@@ -2186,7 +2187,7 @@ CompareHLwithDE:
   ret
 
 StartSaveGameData:
-CurrentRoom:  db  02                    ;0=arcadehall1, 1=arcadehall2, 2=biopod, 3=hydroponicsbay, 4=hangarbay, 5=trainingdeck, 6=reactorchamber, 7=sleepingquarters, 8=armoryvault, 9=holodeck, 10=medicalbay, 11=sciencelab
+CurrentRoom:  db  11                     ;0=arcadehall1, 1=arcadehall2, 2=biopod, 3=hydroponicsbay, 4=hangarbay, 5=trainingdeck, 6=reactorchamber, 7=sleepingquarters, 8=armoryvault, 9=holodeck, 10=medicalbay, 11=sciencelab
 GamesPlayed:  db 9                      ;increases after leaving a game. max=255
 HighScoreTotalAverage: db 80            ;recruiter appears when 80 (%) is reached
 HighScoreBackroomGame:  db  100
@@ -2199,7 +2200,8 @@ ConvGirl: db %0000 0000                 ;conversations handled
 ConvCapGirl: db %0000 0000              ;conversations handled
 ConvGingerBoy: db %0000 0000            ;conversations handled
 ConvHost: db %0000 0001                 ;conversations handled
-ConvEntity: db %0000 0000               ;conversations handled
+ConvEntity: db %0000 0011               ;conversations handled
+ConvEntityShipExplanations: db %0000 0000               ;conversations handled
 
 DateCurrentLogin: ds 6
 DatePreviousLogin: ds 6

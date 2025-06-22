@@ -26,6 +26,7 @@ increase food reserves in the ship
 increase water reserves in the ship
 upgrade science lab (not sure yet, but more science means for instance more food generated in hydroponicsbay)
 build the structures for the colony on the planet (these structures are mostly the same as the rooms on the ship)
+- create Teleporter Room/device (so you dont need to walk through all the rooms)
 
 -------------------------------
 

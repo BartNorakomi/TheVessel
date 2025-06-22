@@ -98,7 +98,82 @@ NPCConv014:
   db    SwitchCharacter,CharacterPortraitAI,"Begin by exploring the ship. Familiarize yourself with its systems, quarters, and decks. I am integrated into every corridor, every console. I will speak through the intercom - always watching, always listening. When you need guidance, ask. When you're lost, I will find you."
   db    SwitchCharacter,CharacterPortraitVessel,"Okay. That's... reassuring, I think.",255
 
+NPCConv015: ;hydroponics bay
+  db    SwitchCharacter,CharacterPortraitAI,"This is the Hydroponics Bay, where we grow the colony's food supply in controlled conditions."
+  db    SwitchCharacter,CharacterPortraitAI,"Plants are cultivated using nutrient-rich water systems, ensuring steady production regardless of external climate."
+  db    SwitchCharacter,CharacterPortraitAI,"Maintaining this bay is critical. A failure here could threaten the entire colony's sustenance."
+  db    SwitchCharacter,CharacterPortraitVessel,"So, this is basically the colony's garden, sheltered from the planet's extremes."
+  db    SwitchCharacter,CharacterPortraitAI,"Precisely. Healthy crops mean a healthy colony.",255
 
+NPCConv016: ;hangar bay
+  db    SwitchCharacter,CharacterPortraitAI,"This is the Hangar Bay. Here you'll find the drilling machine essential for extracting resources from Proxima Centauri b's surface."
+  db    SwitchCharacter,CharacterPortraitAI,"Board the drill and navigate the planet's terrain to collect materials needed for upgrades and colony construction."
+  db    SwitchCharacter,CharacterPortraitAI,"The drilling machine protects you from hazardous conditions outside, but resources vary in difficulty to extract-better equipment means deeper and richer finds."
+  db    SwitchCharacter,CharacterPortraitVessel,"So, this is where the real digging begins."
+  db    SwitchCharacter,CharacterPortraitAI,"Exactly. Master the drill to unlock the future of the colony.",255
 
+NPCConv017: ;training deck
+  db    SwitchCharacter,CharacterPortraitAI,"This is the Training Deck. After fifteen years in stasis, your body is weak and unprepared for Proxima Centauri b's gravity, which is 30% stronger than Earth's."
+  db    SwitchCharacter,CharacterPortraitAI,"Here, you will rebuild your strength, stamina, and endurance-vital for survival and extended operations outside the ship."
+  db    SwitchCharacter,CharacterPortraitAI,"Physical conditioning reduces fatigue and increases your time on the surface, allowing you to perform your tasks more efficiently."
+  db    SwitchCharacter,CharacterPortraitVessel,"Sounds tough, but necessary."
+  db    SwitchCharacter,CharacterPortraitAI,"It is. There is no shortcut. I will monitor your progress and guide you, but the effort is yours."
+  db    SwitchCharacter,CharacterPortraitVessel,"No yelling, I hope."
+  db    SwitchCharacter,CharacterPortraitAI,"Only observation. And silent support.",255
 
+NPCConv018: ;reactor chamber
+  db    SwitchCharacter,CharacterPortraitVessel,"This place feels like the ship's beating heart."
+  db    SwitchCharacter,CharacterPortraitAI,"It is. The reactor powers everything-life support, fabrication, propulsion, defense."
+  db    SwitchCharacter,CharacterPortraitAI,"A fusion core held stable by magnetic confinement. Extremely efficient, but volatile if mishandled."
+  db    SwitchCharacter,CharacterPortraitVessel,"So, one wrong move and it's game over?"
+  db    SwitchCharacter,CharacterPortraitAI,"Essentially. Your access is limited to consoles and maintenance drones. The core itself remains sealed unless emergency repairs are necessary."
+  db    SwitchCharacter,CharacterPortraitVessel,"Glad I won't have to wear a hazmat suit in there."
+  db    SwitchCharacter,CharacterPortraitAI,"Caution is constant. But so is trust-in the systems and in you.",255
 
+NPCConv019: ;sleeping quarters
+  db    SwitchCharacter,CharacterPortraitVessel,"Looks like this is where I sleep, huh?"
+  db    SwitchCharacter,CharacterPortraitAI,"Correct. These quarters are equipped with an adjustable stasis-grade sleep pod. Designed for efficiency, not comfort-but it serves its purpose."
+  db    SwitchCharacter,CharacterPortraitAI,"Sleep restores your energy reserves and accelerates cellular repair. Without it, fatigue compounds, and performance degrades rapidly."
+  db    SwitchCharacter,CharacterPortraitVessel,"So... collapse here when I feel like a dead battery?"
+  db    SwitchCharacter,CharacterPortraitAI,"Precisely. Sleep is not a weakness-it is maintenance. Deny it, and you sabotage your own endurance."
+  db    SwitchCharacter,CharacterPortraitVessel,"I'll keep that in mind. Not much use to the colony if I pass out mid-shift."
+  db    SwitchCharacter,CharacterPortraitAI,"A functioning colonist is a rested colonist.",255
+
+NPCConv020: ;armory vault
+  db    SwitchCharacter,CharacterPortraitVessel,"Okay... this place looks serious. What's all this gear for?"
+  db    SwitchCharacter,CharacterPortraitAI,"This is the Armory Vault. A secure repository of tactical equipment protective suits, energy tools, and modular weapon systems."
+  db    SwitchCharacter,CharacterPortraitAI,"While the colony's goal is peace and survival, unpredictability remains a constant. Terrain hazards, structural failures... or threats we have not yet classified."
+  db    SwitchCharacter,CharacterPortraitVessel,"You're saying I might have to fight?"
+  db    SwitchCharacter,CharacterPortraitAI,"I am saying you must be prepared. The vault's contents are restricted and unlocked based on need. Some tools are for survival. Others... for defense."
+  db    SwitchCharacter,CharacterPortraitVessel,"And here I thought this would be a farming mission."
+  db    SwitchCharacter,CharacterPortraitAI,"Farming, mining, surviving. Each requires its own kind of weaponry.",255
+
+NPCConv021: ;holo deck
+  db    SwitchCharacter,CharacterPortraitVessel,"This place looks... different. Like a game room?"
+  db    SwitchCharacter,CharacterPortraitAI,"Correct. This is the Holodeck-a simulation environment designed for training and recreation."
+  db    SwitchCharacter,CharacterPortraitAI,"Here, you can revisit the arcade games from the start of your journey. Playing them again grants additional experience and sharpens your reflexes."
+  db    SwitchCharacter,CharacterPortraitVessel,"So, it's like a virtual playground and a skill gym all in one."
+  db    SwitchCharacter,CharacterPortraitAI,"Exactly. Use it to refine your abilities without risk. The colony depends on your growth, both mental and physical."
+  db    SwitchCharacter,CharacterPortraitVessel,"Sounds like a nice break from drilling and repairs."
+  db    SwitchCharacter,CharacterPortraitAI,"Balance is key. Even in isolation, play fuels progress.",255
+
+NPCConv022: ;medical bay
+  db    SwitchCharacter,CharacterPortraitVessel,"This place looks sterile... and a little intimidating."
+  db    SwitchCharacter,CharacterPortraitAI,"This is the Medical Bay. Designed to diagnose and treat a range of conditions, including radiation exposure."
+  db    SwitchCharacter,CharacterPortraitAI,"When you leave the ship to drill on Proxima Centauri b's surface, radiation levels rise unpredictably. Prolonged exposure without treatment risks sickness or worse."
+  db    SwitchCharacter,CharacterPortraitVessel,"So this is my safe zone when things go sideways outside?"
+  db    SwitchCharacter,CharacterPortraitAI,"Correct. The Medbay stabilizes your condition, administers antidotes, and monitors your recovery."
+  db    SwitchCharacter,CharacterPortraitVessel,"Good to know there's a backup plan if the planet decides to cook me."
+  db    SwitchCharacter,CharacterPortraitAI,"Precaution is survival's best ally.",255
+
+NPCConv023: ;science lab
+  db    SwitchCharacter,CharacterPortraitVessel,"This is the Science Lab. Looks like where the real upgrades happen."
+  db    SwitchCharacter,CharacterPortraitAI,"Correct. Resources gathered during drilling missions are brought here for analysis and synthesis."
+  db    SwitchCharacter,CharacterPortraitAI,"You'll encounter various materials underground. Granite is common-always drillable. Stone requires a level 2 drill cone upgrade. Metals need level 3, and diamonds demand level 4."
+  db    SwitchCharacter,CharacterPortraitVessel,"So the better my drill, the deeper and richer the haul."
+  db    SwitchCharacter,CharacterPortraitAI,"Exactly. Resources are allocated to multiple critical systems-drill speed, drill cone strength, oxygen capacity, and ship reserves for oxygen, food, and water."
+  db    SwitchCharacter,CharacterPortraitAI,"Upgrading the Science Lab itself boosts overall efficiency, increasing food production in the Hydroponics Bay and accelerating research."
+  db    SwitchCharacter,CharacterPortraitVessel,"And eventually, I can build out the colony on the planet, using these materials?"
+  db    SwitchCharacter,CharacterPortraitAI,"Yes. Colony structures mirror ship facilities replicating vital systems for a sustainable settlement."
+  db    SwitchCharacter,CharacterPortraitVessel,"Looks like the key to survival is drilling, upgrading, and building."
+  db    SwitchCharacter,CharacterPortraitAI,"Survival is progress. Progress is survival.",255
