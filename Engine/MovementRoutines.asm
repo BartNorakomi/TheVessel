@@ -29,7 +29,14 @@
 ;hydroponicsbay2Routine
 
 ;HangarbayEventRoutine
+;hangarbay1Routine
+;hangarbay2Routine
+
 ;trainingdeckEventRoutine
+;trainingdeck1Routine
+;trainingdeck2Routine
+;trainingdeck3Routine
+
 ;reactorchamberEventRoutine
 
 ;sleepingquartersEventRoutine
@@ -968,7 +975,7 @@ armoryvaultEventRoutine:
   .sleepingquarters:
   ld    a,20
   ld    (Object1+x),a
-  ld    a,$5a
+  ld    a,$5a+16
   ld    (Object1+y),a
 
   ld    a,7
@@ -977,12 +984,28 @@ armoryvaultEventRoutine:
   ld    (ChangeRoom?),a
   ret
 
+holodecky:   db 070
+holodeckx:   db 160
+CheckShowPressTrigAIconholodeck:
+  ld    hl,holodecky
+  call  CheckPlayerNearArcadeMachine
+  ret   z
+
+  .PlayerIsNear:
+  ld    a,1
+  ld    (ShowPressTriggerAIcon?),a
+  ld    a,(iy+y)
+  ld    (TriggerAy),a
+  ld    a,(iy+x)
+  ld    (TriggerAx),a
+  ret
+
 holodeckEventRoutine:
   call  .CheckPlayerLeavingRoom             ;when y>116 player enters arcadehall1 
 
   call  PutConversationCloud
-;  call  CheckShowPressTrigAIconHangarBay
-;  call  PutPressTrigAIcon
+  call  CheckShowPressTrigAIconholodeck
+  call  PutPressTrigAIcon
   ret
 
   .CheckPlayerLeavingRoom:
@@ -1019,18 +1042,50 @@ holodeckEventRoutine:
   ld    (ChangeRoom?),a
   ret
 
+sciencelabcomputery:   db $54 + 4
+sciencelabcomputerx:   db 128 +16
+CheckShowPressTrigAIconsciencelab:
+  ld    hl,sciencelabcomputery
+  call  CheckPlayerNearArcadeMachine
+  ret   z
+
+  .PlayerIsNear:
+  ld    a,1
+  ld    (ShowPressTriggerAIcon?),a
+  ld    a,(iy+y)
+  ld    (TriggerAy),a
+  ld    a,(iy+x)
+  ld    (TriggerAx),a
+  ret
+
 sciencelabEventRoutine:
   call  .CheckPlayerLeavingRoom             ;when y>116 player enters arcadehall1 
 
   call  PutConversationCloud
-;  call  CheckShowPressTrigAIconHangarBay
-;  call  PutPressTrigAIcon
+  call  CheckShowPressTrigAIconsciencelab
+  call  PutPressTrigAIcon
   ret
 
   .CheckPlayerLeavingRoom:
   ld    a,(Object1+x)
   cp    255-10
   jr    nc,.medicalbay
+
+  ld    a,(Object1+x)
+  cp    10
+  jr    c,.biopod
+  ret
+
+  .biopod:
+  ld    a,255-20
+  ld    (Object1+x),a
+  ld    a,$5a+16
+  ld    (Object1+y),a
+
+  ld    a,2
+  ld    (CurrentRoom),a
+  ld    a,1
+  ld    (ChangeRoom?),a
   ret
 
   .medicalbay:
@@ -1045,12 +1100,38 @@ sciencelabEventRoutine:
   ld    (ChangeRoom?),a
   ret
 
+medicalbaybed1y:   db $54 + 4
+medicalbaybed1x:   db 128 - 60
+medicalbaybed2y:   db $54 - 4
+medicalbaybed2x:   db 128 - 60
+
+CheckShowPressTrigAIconmedicalbay:
+  ld    hl,medicalbaybed1y
+  call  CheckPlayerNearArcadeMachine
+  jr    nz,.PlayerIsNear
+
+  ld    hl,medicalbaybed2y
+  call  CheckPlayerNearArcadeMachine
+  ret   z
+
+  .PlayerIsNear:
+  ld    a,1
+  ld    (ShowPressTriggerAIcon?),a
+  ld    a,(iy+y)
+  ld    (TriggerAy),a
+  ld    a,(iy+x)
+  ld    (TriggerAx),a
+  ret
+
 medicalbayEventRoutine:
+  ld    a,1
+  ld    (SkipNPCCollision?),a
+
   call  .CheckPlayerLeavingRoom             ;when y>116 player enters arcadehall1 
 
   call  PutConversationCloud
-;  call  CheckShowPressTrigAIconHangarBay
-;  call  PutPressTrigAIcon
+  call  CheckShowPressTrigAIconmedicalbay
+  call  PutPressTrigAIcon
   ret
 
   .CheckPlayerLeavingRoom:
@@ -1087,12 +1168,28 @@ medicalbayEventRoutine:
   ld    (ChangeRoom?),a
   ret
 
+sleepingquartersbedy:   db 104 - 16
+sleepingquartersbedx:   db 060 -8
+CheckShowPressTrigAIconsleepingquarters:
+  ld    hl,sleepingquartersbedy
+  call  CheckPlayerNearArcadeMachine
+  ret   z
+
+  .PlayerIsNear:
+  ld    a,1
+  ld    (ShowPressTriggerAIcon?),a
+  ld    a,(iy+y)
+  ld    (TriggerAy),a
+  ld    a,(iy+x)
+  ld    (TriggerAx),a
+  ret
+
 sleepingquartersEventRoutine:
   call  .CheckPlayerLeavingRoom             ;when y>116 player enters arcadehall1 
 
   call  PutConversationCloud
-;  call  CheckShowPressTrigAIconHangarBay
-;  call  PutPressTrigAIcon
+  call  CheckShowPressTrigAIconsleepingquarters
+  call  PutPressTrigAIcon
   ret
 
   .CheckPlayerLeavingRoom:
@@ -1130,6 +1227,9 @@ sleepingquartersEventRoutine:
   ret
 
 reactorchamberEventRoutine:
+  ld    a,1
+  ld    (SkipNPCCollision?),a
+
   call  .CheckPlayerLeavingRoom             ;when y>116 player enters arcadehall1 
 
   call  PutConversationCloud
@@ -1162,7 +1262,7 @@ reactorchamberEventRoutine:
   .trainingdeck:
   ld    a,20
   ld    (Object1+x),a
-  ld    a,$5a
+  ld    a,$5a-20
   ld    (Object1+y),a
 
   ld    a,5
@@ -1171,12 +1271,28 @@ reactorchamberEventRoutine:
   ld    (ChangeRoom?),a
   ret
 
+trainingdecktreadmilly:   db 104
+trainingdecktreadmillx:   db 060 -8
+CheckShowPressTrigAIcontrainingdeck:
+  ld    hl,trainingdecktreadmilly
+  call  CheckPlayerNearArcadeMachine
+  ret   z
+
+  .PlayerIsNear:
+  ld    a,1
+  ld    (ShowPressTriggerAIcon?),a
+  ld    a,(iy+y)
+  ld    (TriggerAy),a
+  ld    a,(iy+x)
+  ld    (TriggerAx),a
+  ret
+
 TrainingdeckEventRoutine:
   call  .CheckPlayerLeavingRoom             ;when y>116 player enters arcadehall1 
 
   call  PutConversationCloud
-;  call  CheckShowPressTrigAIconHangarBay
-;  call  PutPressTrigAIcon
+  call  CheckShowPressTrigAIcontrainingdeck
+  call  PutPressTrigAIcon
   ret
 
   .CheckPlayerLeavingRoom:
@@ -1192,7 +1308,7 @@ TrainingdeckEventRoutine:
   .reactorchamber:
   ld    a,255-20
   ld    (Object1+x),a
-  ld    a,$5a
+  ld    a,$5a-20
   ld    (Object1+y),a
 
   ld    a,6
@@ -1256,11 +1372,8 @@ HangarbayEventRoutine:
   ld    (ChangeRoom?),a
   ret
 
-
-
 HangarBayDrillMachiney:   db $54 + 4
 HangarBayDrillMachinex:   db 128 
-
 CheckShowPressTrigAIconHangarBay:
   ld    hl,HangarBayDrillMachiney
   call  CheckPlayerNearArcadeMachine
@@ -1274,8 +1387,6 @@ CheckShowPressTrigAIconHangarBay:
   ld    a,(iy+x)
   ld    (TriggerAx),a
   ret
-
-
 
 BiopodEventRoutine:
   call  .CheckPlayerLeavingRoom             ;when y>116 player enters arcadehall1 
@@ -1303,6 +1414,22 @@ BiopodEventRoutine:
   ld    a,(Object1+x)
   cp    10
   jr    c,.hydroponicsbay
+
+  ld    a,(Object1+x)
+  cp    255-10
+  jr    nc,.sciencelab
+  ret
+
+  .sciencelab:
+  ld    a,20
+  ld    (Object1+x),a
+  ld    a,$5a+16
+  ld    (Object1+y),a
+
+  ld    a,11
+  ld    (CurrentRoom),a
+  ld    a,1
+  ld    (ChangeRoom?),a
   ret
 
   .hydroponicsbay:
@@ -1620,6 +1747,54 @@ hydroponicsbay1Routine:
 hydroponicsbay_1:        db    hydroponicsbayframelistblock, hydroponicsbayspritedatablock | dw    hydroponicsbay_1_0
 hydroponicsbay2Routine:
   ret
+
+hangarbay_0:        db    hangarbayframelistblock, hangarbayspritedatablock | dw    hangarbay_0_0
+hangarbay1Routine:
+  ret
+
+hangarbay_1:        db    hangarbayframelistblock, hangarbayspritedatablock | dw    hangarbay_1_0
+hangarbay2Routine:
+  ret
+
+;right wall
+trainingdeck_0:        db    trainingdeckframelistblock, trainingdeckspritedatablock | dw    trainingdeck_0_0
+trainingdeck1Routine:
+  ret
+
+;left wall
+trainingdeck_1:        db    trainingdeckframelistblock, trainingdeckspritedatablock | dw    trainingdeck_1_0
+trainingdeck2Routine:
+  ret
+
+;treadmill
+trainingdeck_2:        db    trainingdeckframelistblock, trainingdeckspritedatablock | dw    trainingdeck_2_0
+trainingdeck3Routine:
+  ret
+
+reactorchamber_0:        db    reactorchamberframelistblock, reactorchamberspritedatablock | dw    reactorchamber_0_0
+reactorchamber1Routine:
+  ret
+
+reactorchamber_1:        db    reactorchamberframelistblock, reactorchamberspritedatablock | dw    reactorchamber_1_0
+reactorchamber2Routine:
+  ret
+
+reactorchamber_2:        db    reactorchamberframelistblock, reactorchamberspritedatablock | dw    reactorchamber_2_0
+reactorchamber3Routine:
+  ret
+
+armoryvault_0:        db    armoryvaultframelistblock, armoryvaultspritedatablock | dw    armoryvault_0_0
+armoryvault1Routine:
+  ret
+
+medicalbay_0:        db    medicalbayframelistblock, medicalbayspritedatablock | dw    medicalbay_0_0
+medicalbay1Routine:
+  ret
+
+medicalbay_1:        db    medicalbayframelistblock, medicalbayspritedatablock | dw    medicalbay_1_0
+medicalbay2Routine:
+  ret
+
 
 Biopod_0:        db    biopodframelistblock, biopodspritedatablock | dw    biopod_0_0
 BioPod1Routine:

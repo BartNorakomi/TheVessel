@@ -273,6 +273,7 @@ Var3:                   equ 16
 ObjectTable:
 ;           on?,  y,  x,  sprite restore table                                ,sprite data,put on frame ,movement routine block,  movement routine,							 phase,var1,var2,var3
 Object1:  db  1,102,130 | dw Object1RestoreBackgroundTable,Object1RestoreTable,000        | db 000      ,MovementRoutinesBlock | dw VesselMovementRoutine			| db 000,000 ,000, 000
+;Object1:  db  1,102,200 | dw Object1RestoreBackgroundTable,Object1RestoreTable,000        | db 000      ,MovementRoutinesBlock | dw VesselMovementRoutine			| db 000,000 ,000, 000
 Object2:  db  1,098,040 | dw Object3RestoreBackgroundTable,Object3RestoreTable,000        | db 001      ,MovementRoutinesBlock | dw GirlMovementRoutine       | db 000,000 ,000, 000
 Object3:  db  1,095,200 | dw Object4RestoreBackgroundTable,Object4RestoreTable,000        | db 002      ,MovementRoutinesBlock | dw CapGirlMovementRoutine    | db 000,000 ,000, 000
 Object4:  db  1,105,150 | dw Object2RestoreBackgroundTable,Object2RestoreTable,000        | db 003      ,MovementRoutinesBlock | dw RedHeadBoyMovementRoutine | db 000,000 ,000, 000
@@ -2166,6 +2167,7 @@ putlettre:
 
 BackdropGreen:
   ld    a,10
+ld a,r
   jp    SetBackDrop
 BackdropBlack:
   ld    a,15
@@ -2184,7 +2186,7 @@ CompareHLwithDE:
   ret
 
 StartSaveGameData:
-CurrentRoom:  db  11                    ;0=arcadehall1, 1=arcadehall2, 2=biopod, 3=hydroponicsbay, 4=hangarbay, 5=trainingdeck, 6=reactorchamber, 7=sleepingquarters, 8=armoryvault, 9=holodeck, 10=medicalbay, 11=sciencelab
+CurrentRoom:  db  02                    ;0=arcadehall1, 1=arcadehall2, 2=biopod, 3=hydroponicsbay, 4=hangarbay, 5=trainingdeck, 6=reactorchamber, 7=sleepingquarters, 8=armoryvault, 9=holodeck, 10=medicalbay, 11=sciencelab
 GamesPlayed:  db 9                      ;increases after leaving a game. max=255
 HighScoreTotalAverage: db 80            ;recruiter appears when 80 (%) is reached
 HighScoreBackroomGame:  db  100

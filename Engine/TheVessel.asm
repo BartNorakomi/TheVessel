@@ -528,14 +528,18 @@ holodeckTileMapBlock:  					equ   ($-RomStartAddress) and (romsize-1) /RomBlockS
 medicalbayTileMapBlock:  				equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
 	phase	$8000
 sleepingquartersTileMap:  			incbin "..\tools\tilemapsleepingquarters.bin"
-armoryvaultTileMap:  						incbin "..\tools\tilemap.bin"
-holodeckTileMap:  							incbin "..\tools\tilemap.bin"
-medicalbayTileMap:  						incbin "..\tools\tilemap.bin"
+armoryvaultTileMap:  						incbin "..\tools\tilemaparmoryvault.bin"
+holodeckTileMap:  							incbin "..\tools\tilemapholodeck.bin"
+medicalbayTileMap:  						incbin "..\tools\tilemapmedicalbay.bin"
+	dephase
+	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
+
 
 sciencelabTileMapBlock:  				equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
 	phase	$8000
-sciencelabTileMap:  						incbin "..\tools\tilemap.bin"
-
+sciencelabTileMap:  						incbin "..\tools\tilemapsciencelab.bin"
+	dephase
+	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
 
 	dephase
 	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
@@ -714,6 +718,57 @@ hydroponicsbayspritedatablock:			equ ($-RomStartAddress) and (romsize-1) /RomBlo
 									incbin "..\tools\hydroponicsbay.dat"
 									DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
 
+;hangarbay
+hangarbayframelistblock:			equ ($-RomStartAddress) and (romsize-1) /RomBlockSize
+									phase	$8000
+									include "..\tools\hangarbay.asm" 
+									DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
+									dephase
+hangarbayspritedatablock:			equ ($-RomStartAddress) and (romsize-1) /RomBlockSize
+									incbin "..\tools\hangarbay.dat"
+									DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
+
+;trainingdeck
+trainingdeckframelistblock:			equ ($-RomStartAddress) and (romsize-1) /RomBlockSize
+									phase	$8000
+									include "..\tools\trainingdeck.asm" 
+									DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
+									dephase
+trainingdeckspritedatablock:			equ ($-RomStartAddress) and (romsize-1) /RomBlockSize
+									incbin "..\tools\trainingdeck.dat"
+									DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
+
+;reactorchamber
+reactorchamberframelistblock:			equ ($-RomStartAddress) and (romsize-1) /RomBlockSize
+									phase	$8000
+									include "..\tools\reactorchamber.asm" 
+									DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
+									dephase
+reactorchamberspritedatablock:			equ ($-RomStartAddress) and (romsize-1) /RomBlockSize
+									incbin "..\tools\reactorchamber.dat"
+									DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
+
+;armoryvault
+armoryvaultframelistblock:			equ ($-RomStartAddress) and (romsize-1) /RomBlockSize
+									phase	$8000
+									include "..\tools\armoryvault.asm" 
+									DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
+									dephase
+armoryvaultspritedatablock:			equ ($-RomStartAddress) and (romsize-1) /RomBlockSize
+									incbin "..\tools\armoryvault.dat"
+									DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
+
+;medicalbay
+medicalbayframelistblock:			equ ($-RomStartAddress) and (romsize-1) /RomBlockSize
+									phase	$8000
+									include "..\tools\medicalbay.asm" 
+									DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
+									dephase
+medicalbayspritedatablock:			equ ($-RomStartAddress) and (romsize-1) /RomBlockSize
+									incbin "..\tools\medicalbay.dat"
+									DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
+
+;movement routines
 MovementRoutinesBlock:	equ ($-RomStartAddress) and (romsize-1) /RomBlockSize ;$04
 								include "MovementRoutines.asm"  
 								DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block

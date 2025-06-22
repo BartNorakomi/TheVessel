@@ -60,25 +60,36 @@ ObjectBiopod2: 						db  1,050,064 | dw 000,000					,Biopod_1  	| db 001			,Move
 ObjectBiopod3: 						db  1,022,134 | dw 000,000					,Biopod_2  	| db 001			,MovementRoutinesBlock | dw BioPodBlinkingLightRoutine| db 000,000 ,000, 000
 EventBiopod: 							db	1,$28,$7e | dw 000,000					,000        | db 255      ,MovementRoutinesBlock | dw BiopodEventRoutine				| db 000,000 ,000, 000
 
-
-
 EventHydroponicsbay: 			db	1,$28,$7e | dw 000,000					,000        | db 255      ,MovementRoutinesBlock | dw HydroponicsbayEventRoutine| db 000,000 ,000, 000
-Objecthydroponicsbay1: 		db  1,050+44,198-156 | dw 000,000	,hydroponicsbay_0  	| db 001			,MovementRoutinesBlock | dw hydroponicsbay1Routine		| db 000,000 ,000, 000
-Objecthydroponicsbay2: 		db  1,050+44,064+114 | dw 000,000	,hydroponicsbay_1  	| db 001			,MovementRoutinesBlock | dw hydroponicsbay2Routine		| db 000,000 ,000, 000
+Objecthydroponicsbay1: 		db  1,094,042 | dw 000,000	,hydroponicsbay_0  	| db 001			,MovementRoutinesBlock | dw hydroponicsbay1Routine		| db 000,000 ,000, 000
+Objecthydroponicsbay2: 		db  1,094,178 | dw 000,000	,hydroponicsbay_1  	| db 001			,MovementRoutinesBlock | dw hydroponicsbay2Routine		| db 000,000 ,000, 000
 
 EventHangarbay: 					db	1,$28,$7e | dw 000,000					,000        | db 255      ,MovementRoutinesBlock | dw HangarbayEventRoutine			| db 000,000 ,000, 000
+Objecthangarbay1: 				db  1,068,114 | dw 000,000	,hangarbay_0  			| db 001			,MovementRoutinesBlock | dw hangarbay1Routine					| db 000,000 ,000, 000
+Objecthangarbay2: 				db  1,068,114 | dw 000,000	,hangarbay_1  			| db 001			,MovementRoutinesBlock | dw hangarbay2Routine					| db 000,000 ,000, 000
 
 EventTrainingdeck: 				db	1,$28,$7e | dw 000,000					,000        | db 255      ,MovementRoutinesBlock | dw TrainingdeckEventRoutine	| db 000,000 ,000, 000
+Objecttrainingdeck1: 			db  1,099,254 | dw 000,000	,trainingdeck_0  		| db 001			,MovementRoutinesBlock | dw trainingdeck1Routine			| db 000,000 ,000, 000
+Objecttrainingdeck2: 			db  1,087,000 | dw 000,000	,trainingdeck_1  		| db 001			,MovementRoutinesBlock | dw trainingdeck2Routine			| db 000,000 ,000, 000
+Objecttrainingdeck3: 			db  1,104,054 | dw 000,000	,trainingdeck_2  		| db 001			,MovementRoutinesBlock | dw trainingdeck3Routine			| db 000,000 ,000, 000
 
 Eventreactorchamber:			db	1,$28,$7e | dw 000,000					,000        | db 255      ,MovementRoutinesBlock | dw reactorchamberEventRoutine| db 000,000 ,000, 000
+Objectreactorchamber1: 		db  1,083,128 | dw 000,000	,reactorchamber_0  	| db 001			,MovementRoutinesBlock | dw reactorchamber1Routine		| db 000,000 ,000, 000
+Objectreactorchamber2: 		db  1,083,128 | dw 000,000	,reactorchamber_1  	| db 001			,MovementRoutinesBlock | dw reactorchamber2Routine		| db 000,000 ,000, 000
+Objectreactorchamber3: 		db  1,074,248 | dw 000,000	,reactorchamber_2  	| db 001			,MovementRoutinesBlock | dw reactorchamber3Routine		| db 000,000 ,000, 000
+
+Eventarmoryvault:					db	1,$28,$7e | dw 000,000					,000        | db 255      ,MovementRoutinesBlock | dw armoryvaultEventRoutine		| db 000,000 ,000, 000
+Objectarmoryvault1: 			db  1,098,250 | dw 000,000	,armoryvault_0  		| db 001			,MovementRoutinesBlock | dw armoryvault1Routine				| db 000,000 ,000, 000
+
 
 Eventsleepingquarters:		db	1,$28,$7e | dw 000,000					,000        | db 255      ,MovementRoutinesBlock | dw sleepingquartersEventRoutine| db 000,000 ,000, 000
 
-Eventarmoryvault:					db	1,$28,$7e | dw 000,000					,000        | db 255      ,MovementRoutinesBlock | dw armoryvaultEventRoutine| db 000,000 ,000, 000
+Eventholodeck:						db	1,$28,$7e | dw 000,000					,000        | db 255      ,MovementRoutinesBlock | dw holodeckEventRoutine			| db 000,000 ,000, 000
 
-Eventholodeck:						db	1,$28,$7e | dw 000,000					,000        | db 255      ,MovementRoutinesBlock | dw holodeckEventRoutine| db 000,000 ,000, 000
+Eventmedicalbay:					db	1,$28,$7e | dw 000,000					,000        | db 255      ,MovementRoutinesBlock | dw medicalbayEventRoutine		| db 000,000 ,000, 000
+Objectmedicalbay1: 				db  1,070,070 | dw 000,000	,medicalbay_0  			| db 001			,MovementRoutinesBlock | dw medicalbay1Routine				| db 000,000 ,000, 000
+Objectmedicalbay2: 				db  1,070,070 | dw 000,000	,medicalbay_1  			| db 001			,MovementRoutinesBlock | dw medicalbay2Routine				| db 000,000 ,000, 000
 
-Eventmedicalbay:					db	1,$28,$7e | dw 000,000					,000        | db 255      ,MovementRoutinesBlock | dw medicalbayEventRoutine| db 000,000 ,000, 000
 
 Eventsciencelab:					db	1,$28,$7e | dw 000,000					,000        | db 255      ,MovementRoutinesBlock | dw sciencelabEventRoutine| db 000,000 ,000, 000
 
@@ -291,6 +302,9 @@ PutObjectssciencelab:
 	ret
 
 PutObjectsarmoryvault:
+	ld		hl,Objectarmoryvault1						;put armoryvault 1
+	call	PutSingleObject 
+
 	ld		de,ObjEvent1										;now put events
 
 	ld		hl,Eventarmoryvault							;put armoryvault event
@@ -305,6 +319,11 @@ PutObjectsholodeck:
 	ret
 
 PutObjectsmedicalbay:
+	ld		hl,Objectmedicalbay1						;put medicalbay 1
+	call	PutSingleObject 
+	ld		hl,Objectmedicalbay2						;put medicalbay 2
+	call	PutSingleObject 
+
 	ld		de,ObjEvent1										;now put events
 
 	ld		hl,Eventmedicalbay							;put medicalbay event
@@ -319,6 +338,13 @@ PutObjectssleepingquarters:
 	ret
 
 PutObjectsreactorchamber:
+	ld		hl,Objectreactorchamber1				;put reactorchamber 1
+	call	PutSingleObject 
+	ld		hl,Objectreactorchamber2				;put reactorchamber 2
+	call	PutSingleObject 
+	ld		hl,Objectreactorchamber3				;put reactorchamber 3
+	call	PutSingleObject 
+
 	ld		de,ObjEvent1										;now put events
 
 	ld		hl,Eventreactorchamber					;put reactorchamber event
@@ -338,6 +364,11 @@ PutObjectsHydroponicsbay:
 	ret
 
 PutObjectsHangarbay:
+	ld		hl,Objecthangarbay1							;put hangarbay 1 (left)
+	call	PutSingleObject 
+	ld		hl,Objecthangarbay2							;put hangarbay 2 (right)
+	call	PutSingleObject 
+
 	ld		de,ObjEvent1										;now put events
 
 	ld		hl,EventHangarbay								;put hangarbay event
@@ -345,6 +376,13 @@ PutObjectsHangarbay:
 	ret
 
 PutObjectsTrainingdeck:
+	ld		hl,Objecttrainingdeck1					;put trainingdeck 1 (right wall)
+	call	PutSingleObject 
+	ld		hl,Objecttrainingdeck2					;put trainingdeck 2 (left wall)
+	call	PutSingleObject 
+	ld		hl,Objecttrainingdeck3					;put trainingdeck 3 (treadmill)
+	call	PutSingleObject 
+
 	ld		de,ObjEvent1										;now put events
 
 	ld		hl,EventTrainingdeck						;put trainingdeck event
