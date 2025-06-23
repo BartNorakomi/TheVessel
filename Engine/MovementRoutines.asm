@@ -257,7 +257,10 @@ PlayerHeight: equ 73
 ;our tilemap is in page 2, starts at $8000
 ;each bit represents a 4x4 tile in our screen
 ;our tilemap is 32 bits wide x 54 bytes high
-CheckCollisionWall:
+CheckCollisionWall:                         ;out: nz=collision
+;xor a
+;ret
+
   ld    a,(TileMapBlock)
   call  block34                           ;CARE!!! we can only switch block34 if page 1 is in rom  
 

@@ -3,6 +3,15 @@ LevelEngine:
   inc   a
   ld    (framecounter),a
 
+;ld a,100
+;di
+;  out   ($99),a
+;  ld    a,23+128
+;ei
+;  out   ($99),a
+
+
+
   call  SetScreenonWithDelay
   call  PopulateControls
 ;  call  BackdropGreen
@@ -2200,8 +2209,9 @@ ConvGirl: db %0000 0000                 ;conversations handled
 ConvCapGirl: db %0000 0000              ;conversations handled
 ConvGingerBoy: db %0000 0000            ;conversations handled
 ConvHost: db %0000 0001                 ;conversations handled
-ConvEntity: db %0000 0011               ;conversations handled
-ConvEntityShipExplanations: db %0000 0000               ;conversations handled
+ConvEntity: db %1000 0011               ;conversations handled
+ConvEntityShipExplanations: db %1111 1111               ;conversations handled
+;ConvEntityShipExplanations: db %0000 0000               ;conversations handled
 
 DateCurrentLogin: ds 6
 DatePreviousLogin: ds 6
