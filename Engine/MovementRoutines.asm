@@ -46,6 +46,8 @@
 
 ;sciencelabEventRoutine
 
+;DrillMachineEventRoutine
+
 MovementRoutinesAddress:  equ $4000
 Phase MovementRoutinesAddress
 
@@ -2133,5 +2135,50 @@ CheckPlayerNear:                            ;out ;d=0(no collision), d=1(collisi
   .collision:
   ld    d,1                                 ;d=0(no collision), d=1(collision)
   ret
+
+DrillMachineEventRoutine:
+  call  .CheckEndGame
+  call  .MoveCamera
+  ret
+
+  .CheckEndGame:
+;
+; bit	7	  6	  5		    4		    3		    2		  1		  0
+;		  0	  0	  trig-b	trig-a	right	  left	down	up	(joystick)
+;		  F5	F1	'M'		  space	  right	  left	down	up	(keyboard)
+;
+	ld		a,(Controls)
+	bit		5,a           ;trig b pressed ?
+  ret   z
+
+  ld    a,1
+  ld    (ChangeRoom?),a
+  ld    a,4
+  ld    (CurrentRoom),a
+  ret
+
+
+  .MoveCamera:  
+;
+; bit	7	  6	  5		    4		    3		    2		  1		  0
+;		  0	  0	  trig-b	trig-a	right	  left	down	up	(joystick)
+;		  F5	F1	'M'		  space	  right	  left	down	up	(keyboard)
+;
+	ld		a,(Controls)
+	bit		0,a           ;cursor up pressed ?
+  jr    z,.CheckDown
+  ld    a,(r23onVblank)
+  sub   a,4
+  ld    (r23onVblank),a
+  ret
+  .CheckDown:
+	bit		1,a           ;cursor down pressed ?
+  ret   z
+  ld    a,(r23onVblank)
+  add   a,3
+  ld    (r23onVblank),a
+  ret
+
+
 
 dephase

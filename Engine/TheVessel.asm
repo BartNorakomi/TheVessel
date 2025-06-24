@@ -596,6 +596,10 @@ sciencelabGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
   incbin "..\grapx\ship\sciencelab\sciencelab.SC5",7,212 * 128      ;212 lines
 	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
 
+DrillingGameGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
+  incbin "..\grapx\drillinggame\maps\tileset.SC5",7,212 * 128      ;212 lines
+	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
+
 OpenDoorGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
   incbin "..\grapx\arcadehall\opendoor.SC5",7,097 * 128      ;097 lines
 	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block

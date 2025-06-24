@@ -28,6 +28,10 @@ upgrade science lab (not sure yet, but more science means for instance more food
 build the structures for the colony on the planet (these structures are mostly the same as the rooms on the ship)
 - create Teleporter Room/device (so you dont need to walk through all the rooms)
 
+maybe with resources an automatic transfer system can be bought, so that when ending the drilling the resources
+get delivered to where they need to be (so you automatically get fuel/oxygen/food/upgrades etc)
+
+
 -------------------------------
 
 hydroponics bay

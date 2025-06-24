@@ -33,8 +33,11 @@ ResetVariables:
   ld    (ShowPressTriggerAIcon?),a
   ld    (SkipNPCCollision?),a
   ld    (WaitCenterScreenTimer),a
+  ld    (r23onVblank),a
 	ld		a,8
 	ld		(ScreenOnDelay),a								;amount of frames until screen turns on (we need some frames to first put all objects in screen)
+	ld		a,1															;main player on (he gets turned off when playing a game)
+	ld		(Object1+on?),a
 	ret
 
 INCLUDE "RePlayer.asm"
@@ -92,7 +95,9 @@ Objectmedicalbay1: 				db  1,070,070 | dw 000,000	,medicalbay_0  			| db 001			,
 Objectmedicalbay2: 				db  1,070,070 | dw 000,000	,medicalbay_1  			| db 001			,MovementRoutinesBlock | dw medicalbay2Routine				| db 000,000 ,000, 000
 
 
-Eventsciencelab:					db	1,$28,$7e | dw 000,000					,000        | db 255      ,MovementRoutinesBlock | dw sciencelabEventRoutine| db 000,000 ,000, 000
+Eventsciencelab:					db	1,$28,$7e | dw 000,000					,000        | db 255      ,MovementRoutinesBlock | dw sciencelabEventRoutine		| db 000,000 ,000, 000
+
+EventDrillingGame:				db	1,$28,$7e | dw 000,000					,000        | db 255      ,MovementRoutinesBlock | dw DrillMachineEventRoutine	| db 000,000 ,000, 000
 
 
 
@@ -293,6 +298,18 @@ PutObjects:															;put objects and events
 	jp		z,PutObjectsmedicalbay
 	dec		a
 	jp		z,PutObjectssciencelab
+	dec		a
+	jp		z,PutObjectsDrillingGame
+	ret
+
+PutObjectsDrillingGame:
+	xor		a																;turn off main player sprite (we don't use this at the games)
+	ld		(Object1+on?),a
+
+	ld		de,ObjEvent1										;now put events
+
+	ld		hl,EventDrillingGame						;put drilling game event
+	call	PutSingleObject
 	ret
 
 PutObjectssciencelab:
@@ -548,6 +565,8 @@ medicalbayPalette:                    			;palette file
   incbin "..\grapx\ship\medicalbay\medicalbay.SC5",$7680+7,32
 sciencelabPalette:                    			;palette file
   incbin "..\grapx\ship\sciencelab\sciencelab.SC5",$7680+7,32
+drillinggamePalette:                    			;palette file
+  incbin "..\grapx\drillinggame\maps\tileset.SC5",$7680+7,32
 
 
 LoadRoomGfx:
@@ -576,7 +595,14 @@ LoadRoomGfx:
 	jp		z,LoadmedicalbayGfx      				;loads the sleepingquarters room in all 4 pages, and sets palette
 	dec		a
 	jp		z,LoadsciencelabGfx      				;loads the sleepingquarters room in all 4 pages, and sets palette
+	dec		a
+	jp		z,LoadDrillingGameGfx      			;loads thedrilling game tiles , and sets palette
 	ret
+
+LoadDrillingGameGfx:
+  ld    hl,drillinggamePalette
+  ld    a,DrillingGameGfxBlock     			;block to copy graphics from
+	jp		LoadArcadeHallGfx
 
 LoadsciencelabGfx:
   ld    hl,sciencelabPalette
@@ -1619,6 +1645,7 @@ TotalMinutesUntilLandCounter: rb	1
 InitiateWakeUp?: 						rb	1
 SkipNPCCollision?: 					rb	1
 WaitCenterScreenTimer:			rb	1
+r23onVblank:								rb	1
 
 
 endenginepage3variables:  equ $+enginepage3length

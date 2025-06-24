@@ -128,7 +128,6 @@ vblank:
   out   ($99),a
   ld    (vblankintflag),a               ;set vblank flag (to any value but 0)
 
-
   ld    hl,ConvEntity
   bit   1,(hl)
   jp    z,.EndCheckCountdownDays
@@ -145,6 +144,11 @@ vblank:
   jr    c,.EndCheckCountdownDays
   ld    (TotalMinutesUntilLand),hl
   .EndCheckCountdownDays:
+
+  ld    a,(r23onVblank)
+  out   ($99),a
+  ld    a,23+128
+  out   ($99),a  
 
   pop   hl 
   pop   de 
@@ -2196,7 +2200,7 @@ CompareHLwithDE:
   ret
 
 StartSaveGameData:
-CurrentRoom:  db  11                     ;0=arcadehall1, 1=arcadehall2, 2=biopod, 3=hydroponicsbay, 4=hangarbay, 5=trainingdeck, 6=reactorchamber, 7=sleepingquarters, 8=armoryvault, 9=holodeck, 10=medicalbay, 11=sciencelab
+CurrentRoom:  db  12                    ;0=arcadehall1, 1=arcadehall2, 2=biopod, 3=hydroponicsbay, 4=hangarbay, 5=trainingdeck, 6=reactorchamber, 7=sleepingquarters, 8=armoryvault, 9=holodeck, 10=medicalbay, 11=sciencelab
 GamesPlayed:  db 9                      ;increases after leaving a game. max=255
 HighScoreTotalAverage: db 80            ;recruiter appears when 80 (%) is reached
 HighScoreBackroomGame:  db  100
