@@ -2198,7 +2198,6 @@ BuildUpMapDrillingGame:
   ld    (CopyTileDrillingGame+dy),a         ;next row
   ret
 
-
 DrillMachineEventRoutine:
   call  .MoveCamera
   call  .BuildUpNewRow
@@ -2270,19 +2269,18 @@ DrillMachineEventRoutine:
   ld    (CurrentRoom),a
   ret
 
-
-  .MoveCamera:  
+  .MoveCamera:
 ;
 ; bit	7	  6	  5		    4		    3		    2		  1		  0
 ;		  0	  0	  trig-b	trig-a	right	  left	down	up	(joystick)
 ;		  F5	F1	'M'		  space	  right	  left	down	up	(keyboard)
 ;
-	ld		a,(NewPrContr)
+	ld		a,(Controls)
   .CheckUp:
 	bit		0,a           ;cursor up pressed ?
   jr    z,.CheckDown
 
-  ld    de,32
+  ld    de,2
   ld    hl,(DrillingGameCameraY)
   xor   a
   sbc   hl,de
@@ -2293,21 +2291,20 @@ DrillMachineEventRoutine:
   ld    (BuildUpNewRow?),a
 
   ld    a,(r23onVblank)
-  sub   a,32
+  sub   a,2
   ld    (r23onVblank),a
-
   ret
   .CheckDown:
 	bit		1,a           ;cursor down pressed ?
   ret   z
 
-  ld    de,32
+  ld    de,2
   ld    hl,(DrillingGameCameraY)
   add   hl,de
   ld    (DrillingGameCameraY),hl
 
   ld    a,(r23onVblank)
-  add   a,32
+  add   a,2
   ld    (r23onVblank),a
 
   ld    a,2                                 ;1= camera moving up, 2=camera moving down
@@ -2329,28 +2326,34 @@ DrillMachineEventRoutine:
   jr    z,BuildUpNewRowCameraGoingUp
 
 BuildUpNewRowCameraGoingDown:
-  ld    (BuildUpNewRow?),a
-
   ld    a,(r23onVblank)
-  add   a,6*32
+  and   %1111 0000
+  add   a,7*32
   ld    (CopyTileDrillingGame+dy),a         ;dy
   xor   a
   ld    (CopyTileDrillingGame+dx),a         ;dx
 
-  ld    a,32 ;4
+  ld    a,16 ;32 ;4
   ld    (CopyTileDrillingGame+ny),a         ;4x32 pixels
 
   ;we have tilemap at $8000 in ram, and the tiles are stored in page 3 in vram
   ld    a,(slot.page1rom)              	;all RAM except page 1+2
   out   ($a8),a    
 
-
-  ld    de,6*32
+  ld    de,7*32
   ld    hl,(DrillingGameCameraY)
+
+  ld    a,l
+  and   %1110 0000
+  ld    l,a
+
   add   hl,de
   push  hl
   pop   bc
 ;  ld    bc,(DrillingGameCameraY)
+
+  jr    BuildUpNewRowCameraGoingUp.FindStartingAddressInRam
+
   ld    de,4
   call  DivideBCbyDE                        ; Out: BC = result, HL = rest
   ld    hl,$8000
@@ -2376,10 +2379,17 @@ BuildUpNewRowCameraGoingDown:
   add   a,a                                 ;*32
   ld    (CopyTileDrillingGame+sx),a
 
+  ld    a,(r23onVblank)
+  and   %0001 0000
+  ld    l,a
+
   ld    a,(de)
   and   %1111 1000
   add   a,a                                 ;*16
   add   a,a                                 ;*32
+
+  add   a,l
+
   ld    (CopyTileDrillingGame+sy),a
 
   ld    hl,CopyTileDrillingGame
@@ -2392,14 +2402,13 @@ BuildUpNewRowCameraGoingDown:
   ret
 
 BuildUpNewRowCameraGoingUp:
-  ld    (BuildUpNewRow?),a
-
   ld    a,(r23onVblank)
+  and   %1111 0000
   ld    (CopyTileDrillingGame+dy),a         ;dy
   xor   a
   ld    (CopyTileDrillingGame+dx),a         ;dx
 
-  ld    a,32 ;4
+  ld    a,16; 32 ;4
   ld    (CopyTileDrillingGame+ny),a         ;4x32 pixels
 
   ;we have tilemap at $8000 in ram, and the tiles are stored in page 3 in vram
@@ -2407,6 +2416,12 @@ BuildUpNewRowCameraGoingUp:
   out   ($a8),a    
 
   ld    bc,(DrillingGameCameraY)
+
+  ld    a,c
+  and   %1110 0000
+  ld    c,a
+
+  .FindStartingAddressInRam:
   ld    de,4
   call  DivideBCbyDE                        ; Out: BC = result, HL = rest
   ld    hl,$8000
@@ -2432,10 +2447,17 @@ BuildUpNewRowCameraGoingUp:
   add   a,a                                 ;*32
   ld    (CopyTileDrillingGame+sx),a
 
+  ld    a,(r23onVblank)
+  and   %0001 0000
+  ld    l,a
+
   ld    a,(de)
   and   %1111 1000
   add   a,a                                 ;*16
   add   a,a                                 ;*32
+
+  add   a,l
+
   ld    (CopyTileDrillingGame+sy),a
 
   ld    hl,CopyTileDrillingGame
@@ -2446,6 +2468,7 @@ BuildUpNewRowCameraGoingUp:
   add   a,32
   ld    (CopyTileDrillingGame+dx),a         ;next column
   ret
+
 
 
 

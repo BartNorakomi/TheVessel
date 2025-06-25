@@ -135,7 +135,7 @@ outix176: equ 0D437h ; last def. pass 3
 TheVesselrightrunning_9: equ 04028h ; last def. pass 3
 PortraitBlock: equ 06E5h ; last def. pass 3
 BackroomGamey: equ 04448h ; last def. pass 3
-BuildUpNewRowCameraGoingUp.PutTile: equ 04F1Fh ; last def. pass 3
+BuildUpNewRowCameraGoingUp.PutTile: equ 04F2Eh ; last def. pass 3
 ClearTextInMirrorPage.PageFound: equ 0E21h ; last def. pass 3
 NPCConv002: equ 04169h ; last def. pass 3
 GirlMovementRoutine: equ 04CBEh ; last def. pass 3
@@ -304,7 +304,7 @@ PutObjectsArcadeHall1.HighScoreNot80Yet: equ 0CBC5h ; last def. pass 3
 FormatOPL4_ID: equ 01h ; last def. pass 3
 MoonSound_WriteFM2: equ 0C0A1h ; last def. pass 3
 sprcharaddr: equ 07800h ; last def. pass 3
-BuildUpNewRowCameraGoingUp: equ 04EEFh ; last def. pass 3
+BuildUpNewRowCameraGoingUp: equ 04EFBh ; last def. pass 3
 TrainingdeckEventRoutine.reactorchamber: equ 04939h ; last def. pass 3
 SirensRoutine: equ 04A93h ; last def. pass 3
 TheVesselPortraitBlock.Eyes: equ 0CBDh ; last def. pass 3
@@ -482,10 +482,10 @@ sleepingquartersEventRoutine.reactorchamber: equ 0484Ah ; last def. pass 3
 BlinkEyes.PageFound: equ 09A7h ; last def. pass 3
 Host_5: equ 042EEh ; last def. pass 3
 LenghtDoCopyTable: equ 0Fh ; last def. pass 3
-BuildUpNewRowCameraGoingDown.PutTile: equ 04ECCh ; last def. pass 3
+BuildUpNewRowCameraGoingDown.PutTile: equ 04ED1h ; last def. pass 3
 sleepingquartersTileMap: equ 08000h ; last def. pass 3
 AnimateObject: equ 04185h ; last def. pass 3
-BuildUpNewRowCameraGoingUp.PutTileLoop: equ 04F17h ; last def. pass 3
+BuildUpNewRowCameraGoingUp.PutTileLoop: equ 04F26h ; last def. pass 3
 CheckCollisionNPCs: equ 041C4h ; last def. pass 3
 CurrentPortraitPalette: equ 06C5h ; last def. pass 3
 TheVesselrepBlock: equ 047h ; last def. pass 3
@@ -1042,6 +1042,7 @@ TheVesselleftframelistblock: equ 02Eh ; last def. pass 3
 TheVesselrightsitting_0: equ 04030h ; last def. pass 3
 hostPortraitGfxBlock: equ 027h ; last def. pass 3
 ArcadeHall1GfxBlock: equ 06h ; last def. pass 3
+BuildUpNewRowCameraGoingUp.FindStartingAddressInRam: equ 04F19h ; last def. pass 3
 RomSize: equ 0800000h ; last def. pass 3
 Vesselright_5_0: equ 08731h ; last def. pass 3
 TrainingdeckEventRoutine.HandleExplainerConversation: equ 0490Eh ; last def. pass 3
@@ -1104,7 +1105,7 @@ TurboOn?: equ 0D65Fh ; last def. pass 3
 AIPortraitBlock.Eyes: equ 0DFBh ; last def. pass 3
 medicalbayEventRoutine.CheckPlayerLeavingRoom: equ 047A6h ; last def. pass 3
 LoadTileMap.Trainingdeck: equ 0C97Eh ; last def. pass 3
-BuildUpNewRowCameraGoingDown.PutTileLoop: equ 04EC4h ; last def. pass 3
+BuildUpNewRowCameraGoingDown.PutTileLoop: equ 04EC9h ; last def. pass 3
 RGettingUp: equ 04086h ; last def. pass 3
 outix352: equ 0D385h ; last def. pass 3
 AnimateMouth: equ 08FBh ; last def. pass 3

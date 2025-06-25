@@ -20,11 +20,11 @@ metals - you need an upgraded (level 3) drill cone material to drill through thi
 diamonds - you need an upgraded (level 4) drill cone material to drill through this
 
 resources can be used to:
-upgrade drill (movementspeed, drill cone material (=strenght), oxygen capacity)
+upgrade drill (fuel tank, movementspeed, drill cone material (=strenght+drill speed), oxygen capacity???maybe this one not)
 increase oxygen reserves in the ship
 increase food reserves in the ship
 increase water reserves in the ship
-upgrade science lab (not sure yet, but more science means for instance more food generated in hydroponicsbay)
+upgrade science lab (not sure yet, but more science means for instance more food generated in hydroponicsbay, oxygen being generated from the atmosphere instead of materials, water recycler (% less water lost))
 build the structures for the colony on the planet (these structures are mostly the same as the rooms on the ship)
 - create Teleporter Room/device (so you dont need to walk through all the rooms)
 
