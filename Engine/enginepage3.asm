@@ -34,6 +34,7 @@ ResetVariables:
   ld    (SkipNPCCollision?),a
   ld    (WaitCenterScreenTimer),a
   ld    (r23onVblank),a
+  ld    (BuildUpNewRow?),a
 	ld		a,8
 	ld		(ScreenOnDelay),a								;amount of frames until screen turns on (we need some frames to first put all objects in screen)
 	ld		a,1															;main player on (he gets turned off when playing a game)
@@ -105,7 +106,7 @@ LenghtDoCopyTable:  equ	RestoreBackgroundObject1Page1-RestoreBackgroundObject1Pa
 ResetRestoreBackgroundTables:
   ld    ix,RestoreBackgroundObject1Page0
   ld    de,LenghtDoCopyTable
-  ld    b,16                                ;amount of tables
+  ld    b,16                           	;amount of tables
 
   .loop:
   xor   a
@@ -115,7 +116,7 @@ ResetRestoreBackgroundTables:
   ld    (ix+dy),a
   ld    (ix+nx),2
   ld    (ix+ny),1
-  add   ix,de                               ;next table
+  add   ix,de                         	;next table
   djnz  .loop
   ret
 
@@ -161,6 +162,24 @@ LoadTileMap:
 	jp		z,.medicalbay
 	dec		a
 	jp		z,.sciencelab
+	dec		a
+	jp		z,.drillinggame
+	ret
+
+	.drillinggame:
+  ld    a,(slot.page1rom)              	;all RAM except page 1+2
+  out   ($a8),a      
+
+  ld    a,DrillingGameMapsBlock       	;drilling game map
+  call  block12                       	;CARE!!! we can only switch block34 if page 1 is in rom  
+
+	ld		hl,$4000
+	ld		de,$8000
+	ld		bc,$4000
+	ldir																	;copy drilling game tilemap to $8000 in ram
+
+  ld    a,(slot.page12rom)              ;all RAM except page 1+2
+  out   ($a8),a      
 	ret
 
 	.sciencelab:
@@ -923,6 +942,12 @@ PutLetter:
   db    008,000,013,000                 ;nx,--,ny,--
   db    000,000,$98              				;transparant copy
 
+CopyTileDrillingGame:
+	db		192,0,032,3
+	db		000,0,000,2
+	db		032,0,032,0
+	db		0,0,$d0	
+
 ChangeSong?:  db 0
 
 
@@ -1545,6 +1570,8 @@ PlayerSpriteStand: 	dw  Rstanding
 StartConversation?:	db	0
 StartWakeUpEvent?:	db	1
 
+DrillingGameCameraY:	dw	08*32
+
 endenginepage3:
 dephase
 enginepage3length:	Equ	$-enginepage3
@@ -1646,6 +1673,7 @@ InitiateWakeUp?: 						rb	1
 SkipNPCCollision?: 					rb	1
 WaitCenterScreenTimer:			rb	1
 r23onVblank:								rb	1
+BuildUpNewRow?:							rb	1
 
 
 endenginepage3variables:  equ $+enginepage3length

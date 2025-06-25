@@ -86,8 +86,6 @@ NPCConv011:
   db    SwitchCharacter,CharacterPortraitAI,"You may begin when ready. I will monitor your progress... and be here if you have questions.",255
 
 NPCConv013:
-  db    SwitchCharacter,CharacterPortraitAI,"Wake .",255
-
   db    SwitchCharacter,CharacterPortraitAI,"We have arrived. Proxima Centauri b - orbital insertion successful. Atmospheric analysis: within tolerable thresholds. Surface stability: promising. Radiation: manageable."
   db    SwitchCharacter,CharacterPortraitAI,"I will begin the revival sequence. Slow. Gentle. As designed. Your vitals remain strong."
   db    SwitchCharacter,CharacterPortraitAI,"Wake up, traveler. It's time.",255

@@ -1474,12 +1474,31 @@ TrainingdeckEventRoutine:
 
 HangarbayEventRoutine:
   call  .CheckPlayerLeavingRoom             ;when y>116 player enters arcadehall1 
-
   call  PutConversationCloud
   call  CheckShowPressTrigAIconHangarBay
+  call  .CheckStartDrillingGame
   call  PutPressTrigAIcon
   call  .HandleExplainerConversation
   ret
+
+  .CheckStartDrillingGame:
+  ld    a,(ShowPressTriggerAIcon?)
+  or    a
+  ret   z
+;
+; bit	7	  6	  5		    4		    3		    2		  1		  0
+;		  0	  0	  trig-b	trig-a	right	  left	down	up	(joystick)
+;		  F5	F1	'M'		  space	  right	  left	down	up	(keyboard)
+;
+	ld		a,(NewPrContr)
+	bit		4,a           ;trig a pressed ?
+  ret   z
+  ld    a,12                                ;drilling game
+  ld    (CurrentRoom),a
+  ld    a,1
+  ld    (ChangeRoom?),a
+  ret    
+
 
   .HandleExplainerConversation:
   ld    hl,ConvEntityShipExplanations
@@ -2136,9 +2155,103 @@ CheckPlayerNear:                            ;out ;d=0(no collision), d=1(collisi
   ld    d,1                                 ;d=0(no collision), d=1(collision)
   ret
 
+BuildUpMapDrillingGame:
+  ;we have tilemap at $8000 in ram, and the tiles are stored in page 3 in vram
+  ld    a,(slot.page1rom)              	;all RAM except page 1+2
+  out   ($a8),a    
+
+  ld    de,$8000 + (08 * 8)
+  ld    b,64
+  .PutTileLoop:
+  push  bc
+  call  .PutTile
+  pop   bc
+  djnz  .PutTileLoop
+  ret
+
+  .PutTile:
+  ld    a,(de)
+  and   %0000 0111
+  add   a,a                                 ;*2
+  add   a,a                                 ;*4
+  add   a,a                                 ;*8
+  add   a,a                                 ;*16
+  add   a,a                                 ;*32
+  ld    (CopyTileDrillingGame+sx),a
+
+  ld    a,(de)
+  and   %1111 1000
+  add   a,a                                 ;*16
+  add   a,a                                 ;*32
+  ld    (CopyTileDrillingGame+sy),a
+
+  ld    hl,CopyTileDrillingGame
+  call  DoCopy
+
+  inc   de                                  ;next tile in ram
+  ld    a,(CopyTileDrillingGame+dx)
+  add   a,32
+  ld    (CopyTileDrillingGame+dx),a         ;next column
+  ret   nz
+  ld    a,(CopyTileDrillingGame+dy)
+  add   a,32
+  ld    (CopyTileDrillingGame+dy),a         ;next row
+  ret
+
+
 DrillMachineEventRoutine:
-  call  .CheckEndGame
   call  .MoveCamera
+  call  .BuildUpNewRow
+  call  .HandlePhase
+  call  .CheckEndGame
+  call  .CheckNPCConversation
+  ret
+
+  .HandlePhase:
+  ld    a,(iy+ObjectPhase)
+  or    a
+  jp    z,.Phase0                           ;build up map
+  dec   a
+  jp    z,.Phase1                           ;animate waking up
+  dec   a
+  jp    z,.Phase2                           ;
+  ret
+
+  .Phase2:                                  ;
+  ret
+
+  .Phase1:                                  ;animate waking up
+  ret
+
+  .Phase0:                                  ;build up map
+  call  BuildUpMapDrillingGame
+  ld    (iy+ObjectPhase),1
+  ret
+
+.CheckNPCConversation:
+  ld    a,2*32 + 31                         ;page 2 is always our active page when we are playing the drilling game
+	ld    (PageOnNextVblank),a
+  ld    a,1
+  ld    (framecounter),a                    ;we force framecounter to 1 so that the sf2 object handler doesn't swap page ever (so we always stay on page 2)
+
+;
+; bit	7	  6	  5		    4		    3		    2		  1		  0
+;		  0	  0	  trig-b	trig-a	right	  left	down	up	(joystick)
+;		  F5	F1	'M'		  space	  right	  left	down	up	(keyboard)
+;
+	ld		a,(Controls)
+	bit		4,a           ;trig a pressed ?
+  ret   z
+
+  ld    a,1
+  ld    (StartConversation?),a
+  ld    a,NPCConv1Block
+  ld    (NPCConvBlock),a
+  ld    hl,NPCConv009
+  ld    (NPCConvAddress),hl
+
+  ld    a,0*32 + 31                         ;npc conversation starts when we are in page 0 and takes place in page 0 and page 1
+	ld    (PageOnNextVblank),a
   ret
 
   .CheckEndGame:
@@ -2164,20 +2277,186 @@ DrillMachineEventRoutine:
 ;		  0	  0	  trig-b	trig-a	right	  left	down	up	(joystick)
 ;		  F5	F1	'M'		  space	  right	  left	down	up	(keyboard)
 ;
-	ld		a,(Controls)
+	ld		a,(NewPrContr)
+  .CheckUp:
 	bit		0,a           ;cursor up pressed ?
   jr    z,.CheckDown
+
+  ld    de,32
+  ld    hl,(DrillingGameCameraY)
+  xor   a
+  sbc   hl,de
+  ret   c
+  ld    (DrillingGameCameraY),hl
+
+  ld    a,1                                 ;1= camera moving up, 2=camera moving down
+  ld    (BuildUpNewRow?),a
+
   ld    a,(r23onVblank)
-  sub   a,4
+  sub   a,32
   ld    (r23onVblank),a
+
   ret
   .CheckDown:
 	bit		1,a           ;cursor down pressed ?
   ret   z
+
+  ld    de,32
+  ld    hl,(DrillingGameCameraY)
+  add   hl,de
+  ld    (DrillingGameCameraY),hl
+
   ld    a,(r23onVblank)
-  add   a,3
+  add   a,32
   ld    (r23onVblank),a
+
+  ld    a,2                                 ;1= camera moving up, 2=camera moving down
+  ld    (BuildUpNewRow?),a
   ret
+
+;DrillingGameCameraY:	dw	08*32
+
+
+;after we move the camera up we need to build up 4 lines at y=0 relative (top of the screen) 
+;after we move the camera down we need to build up 4 lines at y=208 relative (bottom of the screen) 
+  .BuildUpNewRow:
+  ld    a,(BuildUpNewRow?)
+  or    a
+  ret   z
+  dec   a
+  ld    a,0
+  ld    (BuildUpNewRow?),a
+  jr    z,BuildUpNewRowCameraGoingUp
+
+BuildUpNewRowCameraGoingDown:
+  ld    (BuildUpNewRow?),a
+
+  ld    a,(r23onVblank)
+  add   a,6*32
+  ld    (CopyTileDrillingGame+dy),a         ;dy
+  xor   a
+  ld    (CopyTileDrillingGame+dx),a         ;dx
+
+  ld    a,32 ;4
+  ld    (CopyTileDrillingGame+ny),a         ;4x32 pixels
+
+  ;we have tilemap at $8000 in ram, and the tiles are stored in page 3 in vram
+  ld    a,(slot.page1rom)              	;all RAM except page 1+2
+  out   ($a8),a    
+
+
+  ld    de,6*32
+  ld    hl,(DrillingGameCameraY)
+  add   hl,de
+  push  hl
+  pop   bc
+;  ld    bc,(DrillingGameCameraY)
+  ld    de,4
+  call  DivideBCbyDE                        ; Out: BC = result, HL = rest
+  ld    hl,$8000
+  add   hl,bc
+  ex    de,hl
+
+;  ld    de,$8000 + (08 * 8)
+  ld    b,8
+  .PutTileLoop:
+  push  bc
+  call  .PutTile
+  pop   bc
+  djnz  .PutTileLoop
+  ret
+
+  .PutTile:
+  ld    a,(de)
+  and   %0000 0111
+  add   a,a                                 ;*2
+  add   a,a                                 ;*4
+  add   a,a                                 ;*8
+  add   a,a                                 ;*16
+  add   a,a                                 ;*32
+  ld    (CopyTileDrillingGame+sx),a
+
+  ld    a,(de)
+  and   %1111 1000
+  add   a,a                                 ;*16
+  add   a,a                                 ;*32
+  ld    (CopyTileDrillingGame+sy),a
+
+  ld    hl,CopyTileDrillingGame
+  call  DoCopy
+
+  inc   de                                  ;next tile in ram
+  ld    a,(CopyTileDrillingGame+dx)
+  add   a,32
+  ld    (CopyTileDrillingGame+dx),a         ;next column
+  ret
+
+BuildUpNewRowCameraGoingUp:
+  ld    (BuildUpNewRow?),a
+
+  ld    a,(r23onVblank)
+  ld    (CopyTileDrillingGame+dy),a         ;dy
+  xor   a
+  ld    (CopyTileDrillingGame+dx),a         ;dx
+
+  ld    a,32 ;4
+  ld    (CopyTileDrillingGame+ny),a         ;4x32 pixels
+
+  ;we have tilemap at $8000 in ram, and the tiles are stored in page 3 in vram
+  ld    a,(slot.page1rom)              	;all RAM except page 1+2
+  out   ($a8),a    
+
+  ld    bc,(DrillingGameCameraY)
+  ld    de,4
+  call  DivideBCbyDE                        ; Out: BC = result, HL = rest
+  ld    hl,$8000
+  add   hl,bc
+  ex    de,hl
+
+;  ld    de,$8000 + (08 * 8)
+  ld    b,8
+  .PutTileLoop:
+  push  bc
+  call  .PutTile
+  pop   bc
+  djnz  .PutTileLoop
+  ret
+
+  .PutTile:
+  ld    a,(de)
+  and   %0000 0111
+  add   a,a                                 ;*2
+  add   a,a                                 ;*4
+  add   a,a                                 ;*8
+  add   a,a                                 ;*16
+  add   a,a                                 ;*32
+  ld    (CopyTileDrillingGame+sx),a
+
+  ld    a,(de)
+  and   %1111 1000
+  add   a,a                                 ;*16
+  add   a,a                                 ;*32
+  ld    (CopyTileDrillingGame+sy),a
+
+  ld    hl,CopyTileDrillingGame
+  call  DoCopy
+
+  inc   de                                  ;next tile in ram
+  ld    a,(CopyTileDrillingGame+dx)
+  add   a,32
+  ld    (CopyTileDrillingGame+dx),a         ;next column
+  ret
+
+
+
+
+
+
+
+
+
+
+
 
 
 

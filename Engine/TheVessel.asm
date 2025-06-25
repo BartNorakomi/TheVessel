@@ -534,7 +534,6 @@ medicalbayTileMap:  						incbin "..\tools\tilemapmedicalbay.bin"
 	dephase
 	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
 
-
 sciencelabTileMapBlock:  				equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
 	phase	$8000
 sciencelabTileMap:  						incbin "..\tools\tilemapsciencelab.bin"
@@ -598,6 +597,10 @@ sciencelabGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
 
 DrillingGameGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
   incbin "..\grapx\drillinggame\maps\tileset.SC5",7,212 * 128      ;212 lines
+	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
+
+DrillingGameMapsBlock:  				equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
+  incbin "..\grapx\drillinggame\maps\map01.map"
 	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
 
 OpenDoorGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
