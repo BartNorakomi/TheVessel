@@ -14,9 +14,9 @@ LevelEngine:
 
   call  SetScreenonWithDelay
   call  PopulateControls
-;  call  BackdropGreen
+  call  BackdropGreen
   call  HandleObjects
-;  call  BackdropBlack
+  call  BackdropBlack
   call  HandleConversations             ;handles NPC conversations
   call  CheckLeaveRoom
   call  putsprite
@@ -2107,9 +2107,13 @@ putsprite:
 	ret
 
 spat:						;sprite attribute table (y,x)
-	db		230,230,00,0	,230,230,04,0	,100,100,08,0	,100,100,12,0
-	db		100,116,16,0	,100,116,20,0	,230,230,24,0	,230,230,28,0
-	db		230,230,32,0	,230,230,36,0	,230,230,40,0	,230,230,44,0
+	db		100,100,00,0	,100,100,04,0	,100,100,08,0	,100,116,12,0
+	db		100,116,16,0	,100,116,20,0	,116,100,24,0	,116,100,28,0
+	db		116,100,32,0	,116,116,36,0	,116,116,40,0	,116,116,44,0
+
+;	db		230,230,00,0	,230,230,04,0	,100,100,08,0	,100,100,12,0
+;	db		100,116,16,0	,100,116,20,0	,230,230,24,0	,230,230,28,0
+;	db		230,230,32,0	,230,230,36,0	,230,230,40,0	,230,230,44,0
 	db		230,230,48,0	,230,230,52,0	,230,230,56,0	,230,230,60,0
 
 	db		230,230,64,0	,230,230,68,0	,230,230,72,0	,230,230,76,0
