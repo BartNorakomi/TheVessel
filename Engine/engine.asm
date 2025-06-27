@@ -12,7 +12,7 @@ LevelEngine:
 
 
 
-  call  putsprite
+  call  WriteSpatToVram
   call  SetScreenonWithDelay
   call  PopulateControls
 ;  call  BackdropGreen
@@ -2097,7 +2097,7 @@ NXPerSymbol:
 ;           a   b   c   d   e   f   g   h   i   j   k   l   m   n   o   p   q   r   s   t   u   v   w   x   y   z   {   |   }   ~
   db  004+2,006+2,006+2,006+2,006+2,006+2,006+2,006+2,006+2,002+2,005+2,006+2,002+2,006+2,006+2,006+2,006+2,006+2,006+2,006+2,006+2,006+2,006+2,006+2,006+2,006+2,006+2,004+2,004+2,004+2,004+2,004+2
  
-putsprite:
+WriteSpatToVram:
 	xor		a				;page 0/1
 	ld		hl,sprattaddr	;sprite attribute table in VRAM ($17600)
 	call	SetVdp_Write

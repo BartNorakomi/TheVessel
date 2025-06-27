@@ -998,7 +998,7 @@ SpriteInitialize:
 	ei
 	out		($99),a
 
-	ld		a,%1110 1111
+	ld		a,%1110 1111	;reduce by value 32 = 16 lines lower, so %1110 1111 = color at 232, %1100 1111 = color at 216, %1010 1111 = color at 200 etc (spat = always color table + $200)  
 	ld		(vdp_0+5),a
 	di
 ;	out		($99),a		                      ;spr att table to $17600
@@ -1013,7 +1013,7 @@ SpriteInitialize:
 	out		($99),a
 	
 ;	ld		a,%0010 1111
-	ld		a,%0000 1111
+	ld		a,%0000 1111	;every value = 16 lines, so %0000 1111 = char table at y=240, %0000 1110 = char table at y=224, %0000 1101 = char table at y=208 etc 
 	ld		(vdp_0+6),a
 ;	out		($99),a		                      ;spr chr table to $17800
 	out		($99),a		                      ;spr chr table to $7800
@@ -1046,7 +1046,7 @@ SpriteInitialize:
 ;	call	outix32			;write sprite color of pointer and hand to vram
 	call	outix128		;write sprite color of pointer and hand to vram
 
-	call	putsprite
+	call	WriteSpatToVram
 	ret
 
 SpriteCharacters:	
@@ -1573,9 +1573,9 @@ StartWakeUpEvent?:			db	1
 DrillMachineCurrentlyMovingInDirection?:	db	0	;0=not moving, 1=up, 2=right, 3=down, 4=left
 DrillMachineSpeed:  		dw  1
 DrillingGameCameraY:		dw	00*32
+DrillMachineX:					db	096
 DrillMachineY:					dw	096
 DrillMachineYRelative:	db	000
-DrillMachineX:					db	096
 DrillMachineFaceDirection:	db	3		;1=up, 2=right, 3=down, 4=left
 
 
