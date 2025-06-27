@@ -1,4 +1,4 @@
-DrillMachineEventRoutine.HandlePhase: equ 05F11h ; last def. pass 3
+DrillMachineEventRoutine.HandlePhase: equ 067F9h ; last def. pass 3
 PutObjectsmedicalbay: equ 0CA60h ; last def. pass 3
 EventSirens: equ 0C6BFh ; last def. pass 3
 PopulateControls.freezecontrols: equ 0D35Fh ; last def. pass 3
@@ -123,7 +123,6 @@ LoadTileMap.armoryvault: equ 0C942h ; last def. pass 3
 Host_4: equ 042EAh ; last def. pass 3
 reactorchamber_1: equ 04C69h ; last def. pass 3
 sleepingquartersTileMapBlock: equ 03h ; last def. pass 3
-DrillMachineUp1Characters: equ 0532Ah ; last def. pass 3
 Host_7_0: equ 0893Bh ; last def. pass 3
 armoryvaultEventRoutine.holodeck: equ 04626h ; last def. pass 3
 findRam.write: equ 0C150h ; last def. pass 3
@@ -136,7 +135,7 @@ outix176: equ 0D437h ; last def. pass 3
 TheVesselrightrunning_9: equ 04028h ; last def. pass 3
 PortraitBlock: equ 06EBh ; last def. pass 3
 BackroomGamey: equ 04448h ; last def. pass 3
-BuildUpNewRowCameraGoingUp.PutTile: equ 06045h ; last def. pass 3
+BuildUpNewRowCameraGoingUp.PutTile: equ 0692Dh ; last def. pass 3
 ClearTextInMirrorPage.PageFound: equ 0E27h ; last def. pass 3
 NPCConv002: equ 04169h ; last def. pass 3
 GirlMovementRoutine: equ 04CBEh ; last def. pass 3
@@ -153,7 +152,6 @@ y: equ 01h ; last def. pass 3
 dpage: equ 07h ; last def. pass 3
 BackRoomGameRoutine: equ 04B63h ; last def. pass 3
 MovementRoutinesBlock: equ 046h ; last def. pass 3
-test: equ 0586Ah ; last def. pass 3
 Vesselleft_7_0: equ 08A0Fh ; last def. pass 3
 sciencelabcomputery: equ 046D0h ; last def. pass 3
 ArcadeMachine3y: equ 04413h ; last def. pass 3
@@ -162,7 +160,7 @@ PutObjectssciencelab: equ 0CA3Ch ; last def. pass 3
 reactorchamberGfxBlock: equ 013h ; last def. pass 3
 sy: equ 02h ; last def. pass 3
 DoCopy.vdpready: equ 0D1FBh ; last def. pass 3
-DrillMachineEventRoutine.CheckEndGame: equ 05F51h ; last def. pass 3
+DrillMachineEventRoutine.CheckEndGame: equ 06839h ; last def. pass 3
 DisablePaletteSplit: equ 086Fh ; last def. pass 3
 UNASSIGNED: equ 0FFh ; last def. pass 3
 medicalbay2Routine: equ 04C81h ; last def. pass 3
@@ -182,8 +180,9 @@ soldierPortraitPalette: equ 0DABh ; last def. pass 3
 Host_10: equ 04302h ; last def. pass 3
 SetSF2DisplayPage: equ 0645h ; last def. pass 3
 PutObjectsArcadeHall2: equ 0CB00h ; last def. pass 3
+PutDrillMachineSprite.PutSpatSprite: equ 065BCh ; last def. pass 3
 CheckShowPressTrigAIconmedicalbay.PlayerIsNear: equ 04763h ; last def. pass 3
-DrillMachineEventRoutine.Phase2: equ 05F21h ; last def. pass 3
+DrillMachineEventRoutine.Phase2: equ 06809h ; last def. pass 3
 armoryvaultGfxBlock: equ 017h ; last def. pass 3
 SetText.RowFound: equ 0BE6h ; last def. pass 3
 LoadHydroponicsbayGfx: equ 0CE01h ; last def. pass 3
@@ -199,9 +198,8 @@ Objecttrainingdeck1: equ 0C78Bh ; last def. pass 3
 putplayer_clipleft.nopageoverflow: equ 05F5h ; last def. pass 3
 SongSquareB: equ 0Bh ; last def. pass 3
 SongWarzoneB: equ 0Dh ; last def. pass 3
-DrillMachineRight1Colors: equ 04FAAh ; last def. pass 3
 Vesselright_10_0: equ 08E3Eh ; last def. pass 3
-DrillMachineEventRoutine.Phase0: equ 05F23h ; last def. pass 3
+DrillMachineEventRoutine.Phase0: equ 0680Bh ; last def. pass 3
 ShowPressTriggerAIcon?: equ 0D679h ; last def. pass 3
 findRam.primary.next: equ 0C0FAh ; last def. pass 3
 Div16_NoAdd2: equ 0B3Dh ; last def. pass 3
@@ -222,7 +220,6 @@ CheckShowPressTrigAIconsciencelab: equ 046D2h ; last def. pass 3
 ResetRestoreBackgroundTables.loop: equ 0C8A4h ; last def. pass 3
 DayOfMonthEenheden: equ 0D65Bh ; last def. pass 3
 RedheadboyPortraitBlock.Eyes: equ 0D2Dh ; last def. pass 3
-DrillMachineLeft1Colors: equ 0524Ah ; last def. pass 3
 Cloudy: equ 0D677h ; last def. pass 3
 GetMovementInBC: equ 042C0h ; last def. pass 3
 PutPressTrigAIcon.go: equ 044F2h ; last def. pass 3
@@ -249,13 +246,12 @@ MoonSound_MuteFM2_Loop: equ 0C2C2h ; last def. pass 3
 REnterDoor: equ 04110h ; last def. pass 3
 PutObjects: equ 0C9DDh ; last def. pass 3
 outix8: equ 0D587h ; last def. pass 3
-q.PutSpatFacingLeft: equ 05CDFh ; last def. pass 3
 NPCConv010: equ 04ACFh ; last def. pass 3
 Fill2BlackLinesGoingDown: equ 0AF1h ; last def. pass 3
 Vesselright_12_0: equ 0910Ch ; last def. pass 3
 SetScreenon.go: equ 0D373h ; last def. pass 3
 HangarbayGfxBlock: equ 0Fh ; last def. pass 3
-DrillMachineEventRoutine.MoveCamera: equ 05F62h ; last def. pass 3
+DrillMachineEventRoutine.MoveCamera: equ 0684Ah ; last def. pass 3
 CopyPage0To1: equ 0CF7Ch ; last def. pass 3
 EndConversation: equ 0FFh ; last def. pass 3
 sleepingquartersEventRoutine.armoryvault: equ 04835h ; last def. pass 3
@@ -266,7 +262,6 @@ sleepingquartersEventRoutine.HandleExplainerConversation: equ 0480Ah ; last def.
 EndSaveGameData: equ 0FF2h ; last def. pass 3
 CheckShowPressTrigAIconHangarBay.PlayerIsNear: equ 049EAh ; last def. pass 3
 putplayer_clipleft.setpage: equ 05B2h ; last def. pass 3
-q.PutSpatFacingDown: equ 05D60h ; last def. pass 3
 Eventsciencelab: equ 0C879h ; last def. pass 3
 MoonSound_FM_BASE: equ 0C4h ; last def. pass 3
 WallMovementRoutine: equ 04C40h ; last def. pass 3
@@ -274,6 +269,7 @@ trainingdecktreadmilly: equ 048E3h ; last def. pass 3
 CheckPlayerNear.CheckRightSide: equ 04D97h ; last def. pass 3
 CheckShowPressTrigAIconmedicalbay: equ 04754h ; last def. pass 3
 copydirection: equ 0Dh ; last def. pass 3
+DrillColorsHorizontal: equ 062EAh ; last def. pass 3
 TopWindowAddressPage1Vram: equ 0790h ; last def. pass 3
 RestoreBackgroundObject1Page3: equ 036Dh ; last def. pass 3
 HangarbayPalette: equ 0CC61h ; last def. pass 3
@@ -282,7 +278,7 @@ CheckShowPressTrigAIcontrainingdeck.PlayerIsNear: equ 048ECh ; last def. pass 3
 reactorchamberEventRoutine: equ 0487Fh ; last def. pass 3
 MoonSound_Return: equ 0C28Ah ; last def. pass 3
 MoonSound_FM2_ADDRESS: equ 0C6h ; last def. pass 3
-DrillMachineEventRoutine.Phase1: equ 05F22h ; last def. pass 3
+DrillMachineEventRoutine.Phase1: equ 0680Ah ; last def. pass 3
 outix192: equ 0D417h ; last def. pass 3
 trainingdeckGfxBlock: equ 011h ; last def. pass 3
 WaitCenterScreen.DontPutConversation: equ 0487Dh ; last def. pass 3
@@ -306,11 +302,12 @@ BiopodEventRoutine.CheckPlayerLeavingRoom: equ 04A1Ah ; last def. pass 3
 TheVesselgettingup_3: equ 04074h ; last def. pass 3
 page2ram: equ 0C0CBh ; last def. pass 3
 Entity_b: equ 04B74h ; last def. pass 3
+PutDrillMachineSprite.PutSpatFacingRight: equ 066C9h ; last def. pass 3
 PutObjectsArcadeHall1.HighScoreNot80Yet: equ 0CBC5h ; last def. pass 3
 FormatOPL4_ID: equ 01h ; last def. pass 3
 MoonSound_WriteFM2: equ 0C0A1h ; last def. pass 3
 sprcharaddr: equ 07800h ; last def. pass 3
-BuildUpNewRowCameraGoingUp: equ 06012h ; last def. pass 3
+BuildUpNewRowCameraGoingUp: equ 068FAh ; last def. pass 3
 TrainingdeckEventRoutine.reactorchamber: equ 04939h ; last def. pass 3
 SirensRoutine: equ 04A93h ; last def. pass 3
 TheVesselPortraitBlock.Eyes: equ 0CC3h ; last def. pass 3
@@ -328,7 +325,6 @@ LoadTrainingdeckGfx: equ 0CDF1h ; last def. pass 3
 OBJECT_COUNT: equ 04h ; last def. pass 3
 Object3RestoreTable: equ 0330h ; last def. pass 3
 armoryvaultEventRoutine.CheckPlayerLeavingRoom: equ 04617h ; last def. pass 3
-DrillMachineUp1Colors: equ 054EAh ; last def. pass 3
 TheVessel: equ 04000h ; last def. pass 3
 PortraitEyesNXNY: equ 06ECh ; last def. pass 3
 Biopod_3: equ 04C90h ; last def. pass 3
@@ -348,11 +344,11 @@ Depack.get_gamma_value_size: equ 0D2D6h ; last def. pass 3
 RestoreBackgroundObject4Page0: equ 03F4h ; last def. pass 3
 BottomWindowAddressPage0Vram: equ 0796h ; last def. pass 3
 PortraitEyesSXSY: equ 06F0h ; last def. pass 3
-q.Up: equ 05CC9h ; last def. pass 3
 vblank.EndCheckCountdownDays: equ 0DFh ; last def. pass 3
 ObjectBiopod2: equ 0C6E1h ; last def. pass 3
 GoRestoreObject: equ 02EBh ; last def. pass 3
 entityframelistblock: equ 036h ; last def. pass 3
+PutDrillMachineSprite.Up: equ 065B5h ; last def. pass 3
 Vesselright_4_0: equ 085E0h ; last def. pass 3
 GirlPortraitGfxBlock: equ 023h ; last def. pass 3
 DrillMachineX: equ 0D62Dh ; last def. pass 3
@@ -377,6 +373,7 @@ reactorchamber1Routine: equ 04C68h ; last def. pass 3
 LStanding: equ 0412Dh ; last def. pass 3
 npcs_7_0: equ 08B1Fh ; last def. pass 3
 ObjectEntitya: equ 0C66Ah ; last def. pass 3
+DrillColorsFacingUp: equ 064AAh ; last def. pass 3
 npcs_4_0: equ 08678h ; last def. pass 3
 RestoreBackgroundObject3Page0: equ 03B8h ; last def. pass 3
 Host_4_0: equ 08568h ; last def. pass 3
@@ -426,7 +423,6 @@ MultiplyHlWithDE: equ 0B44h ; last def. pass 3
 putplayer_clipleft.loop: equ 05C9h ; last def. pass 3
 reactorchamberTileMapBlock: equ 02h ; last def. pass 3
 ClearConversationWindowInMirrorPage.PageFound: equ 08B5h ; last def. pass 3
-q.LoadSpriteCharacterAndColorData: equ 05EDFh ; last def. pass 3
 MovementRoutineBlock: equ 0Ah ; last def. pass 3
 Host_5_0: equ 0869Dh ; last def. pass 3
 BRGame_0: equ 04B5Fh ; last def. pass 3
@@ -481,7 +477,6 @@ MoonSound_WriteMemory: equ 0C0B8h ; last def. pass 3
 sciencelabEventRoutine.HandleExplainerConversation: equ 046FBh ; last def. pass 3
 outix48: equ 0D537h ; last def. pass 3
 CheckCollisionWall: equ 04199h ; last def. pass 3
-q.PutSpatFacingUp: equ 05E5Eh ; last def. pass 3
 blitpage: equ 0D670h ; last def. pass 3
 HighScoreBikeRace: equ 0FDCh ; last def. pass 3
 x: equ 02h ; last def. pass 3
@@ -493,10 +488,10 @@ sleepingquartersEventRoutine.reactorchamber: equ 0484Ah ; last def. pass 3
 BlinkEyes.PageFound: equ 09ADh ; last def. pass 3
 Host_5: equ 042EEh ; last def. pass 3
 LenghtDoCopyTable: equ 0Fh ; last def. pass 3
-BuildUpNewRowCameraGoingDown.PutTile: equ 05FE8h ; last def. pass 3
+BuildUpNewRowCameraGoingDown.PutTile: equ 068D0h ; last def. pass 3
 sleepingquartersTileMap: equ 08000h ; last def. pass 3
 AnimateObject: equ 04185h ; last def. pass 3
-BuildUpNewRowCameraGoingUp.PutTileLoop: equ 0603Dh ; last def. pass 3
+BuildUpNewRowCameraGoingUp.PutTileLoop: equ 06925h ; last def. pass 3
 CheckCollisionNPCs: equ 041C4h ; last def. pass 3
 CurrentPortraitPalette: equ 06CBh ; last def. pass 3
 TheVesselrepBlock: equ 047h ; last def. pass 3
@@ -516,6 +511,7 @@ NPCConvBlock: equ 06A1h ; last def. pass 3
 hostPortraitBlock.Mouth: equ 0DA1h ; last def. pass 3
 sprattaddr: equ 07600h ; last def. pass 3
 biopod_4_0: equ 081E0h ; last def. pass 3
+PutDrillMachineSprite.PutSpatFacingDown: equ 0664Ah ; last def. pass 3
 putplayer_clipleft.gosourceaddress: equ 05F7h ; last def. pass 3
 SetPalette: equ 0D262h ; last def. pass 3
 holodeckEventRoutine.CheckPlayerLeavingRoom: equ 04697h ; last def. pass 3
@@ -541,6 +537,7 @@ ObjectTable: equ 01E3h ; last def. pass 3
 endRom: equ 0208000h ; last def. pass 3
 Objecthangarbay1: equ 0C758h ; last def. pass 3
 hangarbayTileMap: equ 08E80h ; last def. pass 3
+PutDrillMachineSprite.Left: equ 065A0h ; last def. pass 3
 YConversationWindowCentre: equ 06A4h ; last def. pass 3
 sciencelabEventRoutine.CheckPlayerLeavingRoom: equ 04717h ; last def. pass 3
 sprchatableaddress: equ 0D25Ah ; last def. pass 3
@@ -583,7 +580,7 @@ CheckPlayerNear.CheckBottomSide: equ 04D89h ; last def. pass 3
 TheVesselleftrunning_1: equ 0403Ch ; last def. pass 3
 CheckStartConversation: equ 04D60h ; last def. pass 3
 CopyRomToVram.CopyOneLine: equ 0CF46h ; last def. pass 3
-PutDrillMachineSprite: equ 05B8Ah ; last def. pass 3
+PutDrillMachineSprite: equ 0658Ah ; last def. pass 3
 putplayer_clipleft.skipotir: equ 0615h ; last def. pass 3
 memblocks: equ 0D633h ; last def. pass 3
 entity_2_1: equ 086E7h ; last def. pass 3
@@ -607,6 +604,7 @@ block12: equ 0D1CDh ; last def. pass 3
 Biopod_2: equ 04C8Ch ; last def. pass 3
 putplayer_clipleft.notcarry: equ 05A2h ; last def. pass 3
 Vesselleft_0_0: equ 08000h ; last def. pass 3
+PutDrillMachineSprite.PutSpatFacingUp: equ 06748h ; last def. pass 3
 OpenBlackWindow: equ 0A6Eh ; last def. pass 3
 DIV_DONE: equ 0D613h ; last def. pass 3
 SetTempisr.tempisr: equ 0CFE3h ; last def. pass 3
@@ -638,6 +636,7 @@ Div16: equ 0B1Eh ; last def. pass 3
 CheckCollisionNPCs.CheckBottomSide: equ 041E2h ; last def. pass 3
 RestoreBackgroundObject1Page0: equ 0340h ; last def. pass 3
 sciencelabEventRoutine: equ 046EBh ; last def. pass 3
+PutDrillMachineSprite.CheckDrillingMachineDirection: equ 06594h ; last def. pass 3
 SirensRoutine.Phase0: equ 04AB4h ; last def. pass 3
 Host_8: equ 042FAh ; last def. pass 3
 medicalbayEventRoutine.sciencelab: equ 047B5h ; last def. pass 3
@@ -660,22 +659,19 @@ GetMovementInBC.CheckLeft: equ 042D0h ; last def. pass 3
 ArcadeHall2TileMapBlock: equ 01h ; last def. pass 3
 r23onVblank: equ 0D680h ; last def. pass 3
 BiopodGfxBlock: equ 0Bh ; last def. pass 3
-DrillMachineEventRoutine.CheckUp: equ 05F65h ; last def. pass 3
+DrillMachineEventRoutine.CheckUp: equ 0684Dh ; last def. pass 3
 InitiateWakeUp?: equ 0D67Dh ; last def. pass 3
 medicalbayPalette: equ 0CD21h ; last def. pass 3
 RedheadboyPortraitBlock: equ 0D2Ch ; last def. pass 3
-q: equ 05BF3h ; last def. pass 3
 SetScreenon: equ 0D36Eh ; last def. pass 3
 RestoreBackgroundObject3Page2: equ 03D6h ; last def. pass 3
 HangarbayEventRoutine.CheckPlayerLeavingRoom: equ 049A8h ; last def. pass 3
 hydroponicsbayframelistblock: equ 03Ah ; last def. pass 3
 memInit: equ 04018h ; last def. pass 3
 BiopodTileMap: equ 0AA80h ; last def. pass 3
-DrillMachineDown1Characters: equ 055CAh ; last def. pass 3
 FreeToUseFastCopy0: equ 0F50h ; last def. pass 3
 Objectmedicalbay1: equ 0C857h ; last def. pass 3
 findRam: equ 0C0E6h ; last def. pass 3
-q.Left: equ 05CB4h ; last def. pass 3
 Entity_c: equ 04B84h ; last def. pass 3
 ScreenLimitxLeft: equ 0Ah ; last def. pass 3
 Backdrop: equ 0B64h ; last def. pass 3
@@ -726,6 +722,7 @@ trainingdeck_1: equ 04C5Ah ; last def. pass 3
 putplayer_clipright.skipotir: equ 056Ch ; last def. pass 3
 putplayer_clipright: equ 0526h ; last def. pass 3
 EntityaRoutine.NPCConv010: equ 04BBCh ; last def. pass 3
+PutDrillMachineSprite.Right: equ 065AEh ; last def. pass 3
 LoadHangarbayGfx: equ 0CDF9h ; last def. pass 3
 LevelEngine: equ 03Eh ; last def. pass 3
 CheckShowPressTrigAIconholodeck: equ 04652h ; last def. pass 3
@@ -738,7 +735,6 @@ entity_1_2: equ 084F9h ; last def. pass 3
 entityspritedatablock: equ 037h ; last def. pass 3
 medicalbaybed1x: equ 04751h ; last def. pass 3
 reactorchamberspritedatablock: equ 041h ; last def. pass 3
-q.PutSpatSprite: equ 05CD0h ; last def. pass 3
 BiopodEventRoutine.NPCConv014: equ 04A13h ; last def. pass 3
 EnablePaletteSplit: equ 0A44h ; last def. pass 3
 outix224: equ 0D3D7h ; last def. pass 3
@@ -796,6 +792,7 @@ copytype: equ 0Eh ; last def. pass 3
 LetterSpeed: equ 0B78h ; last def. pass 3
 CheckPlayerNear.collision: equ 04DA9h ; last def. pass 3
 NPCConvAddress: equ 06A2h ; last def. pass 3
+PutDrillMachineSprite.PutSpatFacingLeft: equ 065CBh ; last def. pass 3
 Vesselleft_12_0: equ 09110h ; last def. pass 3
 trainingdeckspritedatablock: equ 03Fh ; last def. pass 3
 holodeckEventRoutine.medicalbay: equ 046A6h ; last def. pass 3
@@ -813,7 +810,7 @@ Object1: equ 01E3h ; last def. pass 3
 LenghtObject: equ 011h ; last def. pass 3
 endenginepage3: equ 0D62Fh ; last def. pass 3
 ConvGirl: equ 0FDDh ; last def. pass 3
-DrillMachineEventRoutine.CheckDown: equ 05F84h ; last def. pass 3
+DrillMachineEventRoutine.CheckDown: equ 0686Ch ; last def. pass 3
 LevelEngine.checkflag: equ 061h ; last def. pass 3
 NXPerSymbol: equ 0E60h ; last def. pass 3
 HydroponicsbayEventRoutine.CheckPlayerLeavingRoom: equ 045C5h ; last def. pass 3
@@ -847,19 +844,19 @@ ObjectRestoreBackgroundTable: equ 03h ; last def. pass 3
 MoonSound_Detect: equ 0C04Dh ; last def. pass 3
 FinishAnimatingMouth: equ 08F3h ; last def. pass 3
 TileMapBlock: equ 0D66Ch ; last def. pass 3
-q.Down: equ 05CBBh ; last def. pass 3
 ArcadeHall1redlightPalette: equ 04A73h ; last def. pass 3
 CopyPageToPage212High: equ 0CF6Dh ; last def. pass 3
 RePlayer_Play: equ 0C395h ; last def. pass 3
 SetFontPage1Y212: equ 0CEB3h ; last def. pass 3
 SetCharacter: equ 0C8Ah ; last def. pass 3
+PutDrillMachineSprite.LoadSpriteCharacterAndColorData: equ 067C7h ; last def. pass 3
 hangarbayTileMapBlock: equ 02h ; last def. pass 3
 capgirlPortraitBlock.Eyes: equ 0D62h ; last def. pass 3
 CheckShowPressTrigAIconArcadeHall2: equ 0444Ah ; last def. pass 3
 sciencelabEventRoutine.biopod: equ 04726h ; last def. pass 3
 Object4: equ 0216h ; last def. pass 3
 AsciiOutput: equ 0D604h ; last def. pass 3
-DrillMachineEventRoutine.CheckNPCConversation: equ 05F2Bh ; last def. pass 3
+DrillMachineEventRoutine.CheckNPCConversation: equ 06813h ; last def. pass 3
 putplayer_noclip: equ 04C6h ; last def. pass 3
 putplayer_clipleft.totallyinscreen: equ 060Bh ; last def. pass 3
 init: equ 04177h ; last def. pass 3
@@ -876,7 +873,6 @@ MoonSound_STATUS: equ 0C4h ; last def. pass 3
 SetArcadeGfxPage0: equ 0CE83h ; last def. pass 3
 CharacterPortraitCapGirl: equ 03h ; last def. pass 3
 outix112: equ 0D4B7h ; last def. pass 3
-DrillMachineRight1Characters: equ 04DEAh ; last def. pass 3
 PlayerSpriteStand: equ 0D626h ; last def. pass 3
 CapGirlMovementRoutine: equ 04CF4h ; last def. pass 3
 ObjEvent3: equ 0249h ; last def. pass 3
@@ -918,8 +914,7 @@ medicalbayframelistblock: equ 044h ; last def. pass 3
 Hostframelistblock: equ 032h ; last def. pass 3
 MoonSound_MuteWave_Loop: equ 0C2D3h ; last def. pass 3
 TheVesselleftrunning_6: equ 04050h ; last def. pass 3
-DrillMachineEventRoutine: equ 05EFEh ; last def. pass 3
-q.Right: equ 05CC2h ; last def. pass 3
+DrillMachineEventRoutine: equ 067E6h ; last def. pass 3
 SongGloomyB: equ 06h ; last def. pass 3
 ConvCapGirl: equ 0FDEh ; last def. pass 3
 PutObjectsHangarbay: equ 0CAB2h ; last def. pass 3
@@ -931,7 +926,6 @@ Vesselright_3_0: equ 0848Bh ; last def. pass 3
 EventBiopod: equ 0C703h ; last def. pass 3
 Objectreactorchamber2: equ 0C7E0h ; last def. pass 3
 ObjectEntityb: equ 0C67Bh ; last def. pass 3
-q.CheckDrillingMachineDirection: equ 05CA8h ; last def. pass 3
 CalculateLenghtNextWord: equ 0E40h ; last def. pass 3
 slot: equ 0D62Fh ; last def. pass 3
 trainingdeck_0: equ 04C55h ; last def. pass 3
@@ -1025,9 +1019,8 @@ Objectx: equ 0D674h ; last def. pass 3
 RestoreBackgroundObject2Page3: equ 03A9h ; last def. pass 3
 soldierPortraitGfxBlock: equ 028h ; last def. pass 3
 spatpointer: equ 0D667h ; last def. pass 3
-BuildUpNewRowCameraGoingDown: equ 05FACh ; last def. pass 3
+BuildUpNewRowCameraGoingDown: equ 06894h ; last def. pass 3
 hydroponicsbay_0_0: equ 08000h ; last def. pass 3
-DrillMachineDown1Colors: equ 0578Ah ; last def. pass 3
 Objectreactorchamber3: equ 0C7F1h ; last def. pass 3
 hostPortraitBlock: equ 0D96h ; last def. pass 3
 SpritesOff: equ 0F9Bh ; last def. pass 3
@@ -1053,7 +1046,6 @@ StartConversation?: equ 0D628h ; last def. pass 3
 TopWindowAddressPage0Vram: equ 078Eh ; last def. pass 3
 BottomWindowAddressPage1Ram: equ 079Ch ; last def. pass 3
 TriggerAx: equ 0D67Bh ; last def. pass 3
-DrillMachineLeft1Characters: equ 0508Ah ; last def. pass 3
 SongWarzoneC: equ 0Eh ; last def. pass 3
 reactorchamber3Routine: equ 04C72h ; last def. pass 3
 DayOfMonthTientallen: equ 0D65Ch ; last def. pass 3
@@ -1061,15 +1053,15 @@ DatePreviousLogin: equ 0FE9h ; last def. pass 3
 WaitVblank.checkflag: equ 0B73h ; last def. pass 3
 SetText.FindRow: equ 0BD6h ; last def. pass 3
 hangarbay_0_0: equ 08000h ; last def. pass 3
-coltest: equ 05ACAh ; last def. pass 3
 ClearNPCConversationWindow: equ 089Bh ; last def. pass 3
 TheVesselleftframelistblock: equ 02Eh ; last def. pass 3
 TheVesselrightsitting_0: equ 04030h ; last def. pass 3
 hostPortraitGfxBlock: equ 027h ; last def. pass 3
 ArcadeHall1GfxBlock: equ 06h ; last def. pass 3
-BuildUpNewRowCameraGoingUp.FindStartingAddressInRam: equ 06030h ; last def. pass 3
+BuildUpNewRowCameraGoingUp.FindStartingAddressInRam: equ 06918h ; last def. pass 3
 RomSize: equ 0800000h ; last def. pass 3
 Vesselright_5_0: equ 08731h ; last def. pass 3
+DrillColorsFacingDown: equ 063CAh ; last def. pass 3
 TrainingdeckEventRoutine.HandleExplainerConversation: equ 0490Eh ; last def. pass 3
 sleepingquartersGfxBlock: equ 015h ; last def. pass 3
 putplayer_clipright.loop: equ 0553h ; last def. pass 3
@@ -1086,7 +1078,7 @@ FormatOPL4_Detect: equ 0C377h ; last def. pass 3
 Depack.output_compressed: equ 0D2B9h ; last def. pass 3
 putplayer_noclip.setpage: equ 04DCh ; last def. pass 3
 outix320: equ 0D38Bh ; last def. pass 3
-DrillMachineEventRoutine.BuildUpNewRow: equ 05F9Fh ; last def. pass 3
+DrillMachineEventRoutine.BuildUpNewRow: equ 06887h ; last def. pass 3
 medicalbayTileMap: equ 0AB80h ; last def. pass 3
 medicalbayEventRoutine.HandleExplainerConversation: equ 0478Ah ; last def. pass 3
 SwapPageConversation: equ 0A3Bh ; last def. pass 3
@@ -1103,7 +1095,6 @@ GirlPortraitBlock: equ 0CF7h ; last def. pass 3
 holodeckEventRoutine.HandleExplainerConversation: equ 0467Bh ; last def. pass 3
 LoadTileMap.sleepingquarters: equ 0C966h ; last def. pass 3
 EnableFadeOutPortrait: equ 09C6h ; last def. pass 3
-q.PutSpatFacingRight: equ 05DDFh ; last def. pass 3
 slot.page2rom: equ 0D631h ; last def. pass 3
 StartSaveGameData: equ 0FD5h ; last def. pass 3
 reactorchamberTileMap: equ 0AB80h ; last def. pass 3
@@ -1131,7 +1122,7 @@ TurboOn?: equ 0D662h ; last def. pass 3
 AIPortraitBlock.Eyes: equ 0E01h ; last def. pass 3
 medicalbayEventRoutine.CheckPlayerLeavingRoom: equ 047A6h ; last def. pass 3
 LoadTileMap.Trainingdeck: equ 0C97Eh ; last def. pass 3
-BuildUpNewRowCameraGoingDown.PutTileLoop: equ 05FE0h ; last def. pass 3
+BuildUpNewRowCameraGoingDown.PutTileLoop: equ 068C8h ; last def. pass 3
 RGettingUp: equ 04086h ; last def. pass 3
 outix352: equ 0D385h ; last def. pass 3
 AnimateMouth: equ 0901h ; last def. pass 3
@@ -1155,6 +1146,7 @@ medicalbay_1: equ 04C7Dh ; last def. pass 3
 SirensRoutine.OpenDoor: equ 04ACBh ; last def. pass 3
 trainingdeck_2: equ 04C5Fh ; last def. pass 3
 NPCConv011: equ 0527Bh ; last def. pass 3
+PutDrillMachineSprite.Down: equ 065A7h ; last def. pass 3
 reactorchamberEventRoutine.trainingdeck: equ 048CEh ; last def. pass 3
 REDCLK: equ 01F5h ; last def. pass 3
 TextLandinHours: equ 0D5EBh ; last def. pass 3
@@ -1201,6 +1193,7 @@ LoadRoomGfx: equ 0CD81h ; last def. pass 3
 Depack.getbits: equ 0D2FCh ; last def. pass 3
 RGettingUp.Phase2: equ 04096h ; last def. pass 3
 TextLandinMinutes: equ 0D5F8h ; last def. pass 3
+DrillCharacterSprites: equ 04DEAh ; last def. pass 3
 sciencelabGfxBlock: equ 01Dh ; last def. pass 3
 initMem.done: equ 0C0BCh ; last def. pass 3
 page0ram: equ 0C0C9h ; last def. pass 3

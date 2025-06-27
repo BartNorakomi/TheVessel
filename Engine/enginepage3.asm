@@ -1573,7 +1573,7 @@ StartWakeUpEvent?:	db	1
 DrillingGameCameraY:	dw	08*32
 DrillMachineY:	db	100
 DrillMachineX:	db	100
-DrillMachineFaceDirection:	db	3		;1=up, 2=right, 3=down, 4=left
+DrillMachineFaceDirection:	db	1		;1=up, 2=right, 3=down, 4=left
 
 
 endenginepage3:
