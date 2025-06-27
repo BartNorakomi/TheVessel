@@ -2160,7 +2160,7 @@ BuildUpMapDrillingGame:
   ld    a,(slot.page1rom)              	;all RAM except page 1+2
   out   ($a8),a    
 
-  ld    de,$8000 + (08 * 8)
+  ld    de,$8000 + (00 * 8)
   ld    b,64
   .PutTileLoop:
   push  bc
@@ -2223,10 +2223,224 @@ ds  16,1 | ds 16,2+64 | ds  16,12+64
 ds  14,1 | ds 2,6 | ds 14,2+64 | ds 2,13+64 | ds 14,12+64 | ds  2,14
 ds  16,6 | ds 16,13+64
 
-PutDrillMachineSprite:
+PutSpatDrillMachineSprite:
+  ld    a,(DrillMachineFaceDirection)       ;1=up, 2=right, 3=down, 4=left
+  dec   a
+  jp    z,.PutSpatFacingUp
+  dec   a
+  jp    z,.PutSpatFacingRight
+  dec   a
+  jp    z,.PutSpatFacingDown
+  .PutSpatFacingLeft:
+  ld    a,(DrillMachineYRelative)
+  ld    (spat+(4*000)+0),a
+  ld    (spat+(4*001)+0),a
+  ld    (spat+(4*002)+0),a
+  ld    a,(DrillMachineX)
+  add   a,16
+  ld    (spat+(4*000)+1),a
+  ld    (spat+(4*001)+1),a
+  ld    (spat+(4*002)+1),a
+
+  ld    a,(DrillMachineYRelative)
+  ld    (spat+(4*003)+0),a
+  ld    (spat+(4*004)+0),a
+  ld    (spat+(4*005)+0),a
+  ld    a,(DrillMachineX)
+  ld    (spat+(4*003)+1),a
+  ld    (spat+(4*004)+1),a
+  ld    (spat+(4*005)+1),a
+
+  ld    a,(DrillMachineYRelative)
+  add   a,16
+  ld    (spat+(4*006)+0),a
+  ld    (spat+(4*007)+0),a
+  ld    (spat+(4*008)+0),a
+  ld    a,(DrillMachineX)
+  add   a,16
+  ld    (spat+(4*006)+1),a
+  ld    (spat+(4*007)+1),a
+  ld    (spat+(4*008)+1),a
+
+  ld    a,(DrillMachineYRelative)
+  add   a,16
+  ld    (spat+(4*009)+0),a
+  ld    (spat+(4*010)+0),a
+  ld    (spat+(4*011)+0),a
+  ld    a,(DrillMachineX)
+  ld    (spat+(4*009)+1),a
+  ld    (spat+(4*010)+1),a
+  ld    (spat+(4*011)+1),a
+
+  ld    a,(DrillMachineYRelative)
+  add   a,08
+  ld    (spat+(4*012)+0),a
+  ld    (spat+(4*013)+0),a
+  ld    a,(DrillMachineX)
+  sub   a,16
+  ld    (spat+(4*012)+1),a
+  ld    (spat+(4*013)+1),a
+	ret
+
+  .PutSpatFacingDown:
+  ld    a,(DrillMachineYRelative)
+  ld    (spat+(4*000)+0),a
+  ld    (spat+(4*001)+0),a
+  ld    (spat+(4*002)+0),a
+  ld    a,(DrillMachineX)
+  ld    (spat+(4*000)+1),a
+  ld    (spat+(4*001)+1),a
+  ld    (spat+(4*002)+1),a
+
+  ld    a,(DrillMachineYRelative)
+  ld    (spat+(4*003)+0),a
+  ld    (spat+(4*004)+0),a
+  ld    (spat+(4*005)+0),a
+  ld    a,(DrillMachineX)
+  add   a,16
+  ld    (spat+(4*003)+1),a
+  ld    (spat+(4*004)+1),a
+  ld    (spat+(4*005)+1),a
+
+  ld    a,(DrillMachineYRelative)
+  add   a,16
+  ld    (spat+(4*006)+0),a
+  ld    (spat+(4*007)+0),a
+  ld    (spat+(4*008)+0),a
+  ld    a,(DrillMachineX)
+  ld    (spat+(4*006)+1),a
+  ld    (spat+(4*007)+1),a
+  ld    (spat+(4*008)+1),a
+
+  ld    a,(DrillMachineYRelative)
+  add   a,16
+  ld    (spat+(4*009)+0),a
+  ld    (spat+(4*010)+0),a
+  ld    (spat+(4*011)+0),a
+  ld    a,(DrillMachineX)
+  add   a,16
+  ld    (spat+(4*009)+1),a
+  ld    (spat+(4*010)+1),a
+  ld    (spat+(4*011)+1),a
+
+  ld    a,(DrillMachineYRelative)
+  add   a,31
+  ld    (spat+(4*012)+0),a
+  ld    (spat+(4*013)+0),a
+  ld    a,(DrillMachineX)
+  add   a,8
+  ld    (spat+(4*012)+1),a
+  ld    (spat+(4*013)+1),a
+	ret
+
+  .PutSpatFacingRight:
+  ld    a,(DrillMachineYRelative)
+  ld    (spat+(4*000)+0),a
+  ld    (spat+(4*001)+0),a
+  ld    (spat+(4*002)+0),a
+  ld    a,(DrillMachineX)
+  ld    (spat+(4*000)+1),a
+  ld    (spat+(4*001)+1),a
+  ld    (spat+(4*002)+1),a
+
+  ld    a,(DrillMachineYRelative)
+  ld    (spat+(4*003)+0),a
+  ld    (spat+(4*004)+0),a
+  ld    (spat+(4*005)+0),a
+  ld    a,(DrillMachineX)
+  add   a,16
+  ld    (spat+(4*003)+1),a
+  ld    (spat+(4*004)+1),a
+  ld    (spat+(4*005)+1),a
+
+  ld    a,(DrillMachineYRelative)
+  add   a,16
+  ld    (spat+(4*006)+0),a
+  ld    (spat+(4*007)+0),a
+  ld    (spat+(4*008)+0),a
+  ld    a,(DrillMachineX)
+  ld    (spat+(4*006)+1),a
+  ld    (spat+(4*007)+1),a
+  ld    (spat+(4*008)+1),a
+
+  ld    a,(DrillMachineYRelative)
+  add   a,16
+  ld    (spat+(4*009)+0),a
+  ld    (spat+(4*010)+0),a
+  ld    (spat+(4*011)+0),a
+  ld    a,(DrillMachineX)
+  add   a,16
+  ld    (spat+(4*009)+1),a
+  ld    (spat+(4*010)+1),a
+  ld    (spat+(4*011)+1),a
+
+  ld    a,(DrillMachineYRelative)
+  add   a,08
+  ld    (spat+(4*012)+0),a
+  ld    (spat+(4*013)+0),a
+  ld    a,(DrillMachineX)
+  add   a,32
+  ld    (spat+(4*012)+1),a
+  ld    (spat+(4*013)+1),a
+	ret
+
+  .PutSpatFacingUp:
+  ld    a,(DrillMachineYRelative)
+  add   a,16
+  ld    (spat+(4*000)+0),a
+  ld    (spat+(4*001)+0),a
+  ld    (spat+(4*002)+0),a
+  ld    a,(DrillMachineX)
+  ld    (spat+(4*000)+1),a
+  ld    (spat+(4*001)+1),a
+  ld    (spat+(4*002)+1),a
+
+  ld    a,(DrillMachineYRelative)
+  add   a,16
+  ld    (spat+(4*003)+0),a
+  ld    (spat+(4*004)+0),a
+  ld    (spat+(4*005)+0),a
+  ld    a,(DrillMachineX)
+  add   a,16
+  ld    (spat+(4*003)+1),a
+  ld    (spat+(4*004)+1),a
+  ld    (spat+(4*005)+1),a
+
+  ld    a,(DrillMachineYRelative)
+  ld    (spat+(4*006)+0),a
+  ld    (spat+(4*007)+0),a
+  ld    (spat+(4*008)+0),a
+  ld    a,(DrillMachineX)
+  ld    (spat+(4*006)+1),a
+  ld    (spat+(4*007)+1),a
+  ld    (spat+(4*008)+1),a
+
+  ld    a,(DrillMachineYRelative)
+  ld    (spat+(4*009)+0),a
+  ld    (spat+(4*010)+0),a
+  ld    (spat+(4*011)+0),a
+  ld    a,(DrillMachineX)
+  add   a,16
+  ld    (spat+(4*009)+1),a
+  ld    (spat+(4*010)+1),a
+  ld    (spat+(4*011)+1),a
+
+  ld    a,(DrillMachineYRelative)
+  sub   a,15
+  ld    (spat+(4*012)+0),a
+  ld    (spat+(4*013)+0),a
+  ld    a,(DrillMachineX)
+  add   a,8
+  ld    (spat+(4*012)+1),a
+  ld    (spat+(4*013)+1),a
+	ret
+
+PutDrillMachineCharacterAndColorData:
+  ld    a,(framecounter2)
+  bit   0,a
+  ret   z
   call  .CheckDrillingMachineDirection
   call  .LoadSpriteCharacterAndColorData
-  call  .PutSpatSprite
   ret
 
   .CheckDrillingMachineDirection:
@@ -2254,218 +2468,6 @@ PutDrillMachineSprite:
   ld    de,DrillColorsFacingUp
   ret
 
-  .PutSpatSprite:
-  ld    a,(DrillMachineFaceDirection)       ;1=up, 2=right, 3=down, 4=left
-  dec   a
-  jp    z,.PutSpatFacingUp
-  dec   a
-  jp    z,.PutSpatFacingRight
-  dec   a
-  jp    z,.PutSpatFacingDown
-  .PutSpatFacingLeft:
-  ld    a,(DrillMachineY)
-  ld    (spat+(4*000)+0),a
-  ld    (spat+(4*001)+0),a
-  ld    (spat+(4*002)+0),a
-  ld    a,(DrillMachineX)
-  add   a,16
-  ld    (spat+(4*000)+1),a
-  ld    (spat+(4*001)+1),a
-  ld    (spat+(4*002)+1),a
-
-  ld    a,(DrillMachineY)
-  ld    (spat+(4*003)+0),a
-  ld    (spat+(4*004)+0),a
-  ld    (spat+(4*005)+0),a
-  ld    a,(DrillMachineX)
-  ld    (spat+(4*003)+1),a
-  ld    (spat+(4*004)+1),a
-  ld    (spat+(4*005)+1),a
-
-  ld    a,(DrillMachineY)
-  add   a,16
-  ld    (spat+(4*006)+0),a
-  ld    (spat+(4*007)+0),a
-  ld    (spat+(4*008)+0),a
-  ld    a,(DrillMachineX)
-  add   a,16
-  ld    (spat+(4*006)+1),a
-  ld    (spat+(4*007)+1),a
-  ld    (spat+(4*008)+1),a
-
-  ld    a,(DrillMachineY)
-  add   a,16
-  ld    (spat+(4*009)+0),a
-  ld    (spat+(4*010)+0),a
-  ld    (spat+(4*011)+0),a
-  ld    a,(DrillMachineX)
-  ld    (spat+(4*009)+1),a
-  ld    (spat+(4*010)+1),a
-  ld    (spat+(4*011)+1),a
-
-  ld    a,(DrillMachineY)
-  add   a,08
-  ld    (spat+(4*012)+0),a
-  ld    (spat+(4*013)+0),a
-  ld    a,(DrillMachineX)
-  sub   a,16
-  ld    (spat+(4*012)+1),a
-  ld    (spat+(4*013)+1),a
-	ret
-
-  .PutSpatFacingDown:
-  ld    a,(DrillMachineY)
-  ld    (spat+(4*000)+0),a
-  ld    (spat+(4*001)+0),a
-  ld    (spat+(4*002)+0),a
-  ld    a,(DrillMachineX)
-  ld    (spat+(4*000)+1),a
-  ld    (spat+(4*001)+1),a
-  ld    (spat+(4*002)+1),a
-
-  ld    a,(DrillMachineY)
-  ld    (spat+(4*003)+0),a
-  ld    (spat+(4*004)+0),a
-  ld    (spat+(4*005)+0),a
-  ld    a,(DrillMachineX)
-  add   a,16
-  ld    (spat+(4*003)+1),a
-  ld    (spat+(4*004)+1),a
-  ld    (spat+(4*005)+1),a
-
-  ld    a,(DrillMachineY)
-  add   a,16
-  ld    (spat+(4*006)+0),a
-  ld    (spat+(4*007)+0),a
-  ld    (spat+(4*008)+0),a
-  ld    a,(DrillMachineX)
-  ld    (spat+(4*006)+1),a
-  ld    (spat+(4*007)+1),a
-  ld    (spat+(4*008)+1),a
-
-  ld    a,(DrillMachineY)
-  add   a,16
-  ld    (spat+(4*009)+0),a
-  ld    (spat+(4*010)+0),a
-  ld    (spat+(4*011)+0),a
-  ld    a,(DrillMachineX)
-  add   a,16
-  ld    (spat+(4*009)+1),a
-  ld    (spat+(4*010)+1),a
-  ld    (spat+(4*011)+1),a
-
-  ld    a,(DrillMachineY)
-  add   a,31
-  ld    (spat+(4*012)+0),a
-  ld    (spat+(4*013)+0),a
-  ld    a,(DrillMachineX)
-  add   a,8
-  ld    (spat+(4*012)+1),a
-  ld    (spat+(4*013)+1),a
-	ret
-
-  .PutSpatFacingRight:
-  ld    a,(DrillMachineY)
-  ld    (spat+(4*000)+0),a
-  ld    (spat+(4*001)+0),a
-  ld    (spat+(4*002)+0),a
-  ld    a,(DrillMachineX)
-  ld    (spat+(4*000)+1),a
-  ld    (spat+(4*001)+1),a
-  ld    (spat+(4*002)+1),a
-
-  ld    a,(DrillMachineY)
-  ld    (spat+(4*003)+0),a
-  ld    (spat+(4*004)+0),a
-  ld    (spat+(4*005)+0),a
-  ld    a,(DrillMachineX)
-  add   a,16
-  ld    (spat+(4*003)+1),a
-  ld    (spat+(4*004)+1),a
-  ld    (spat+(4*005)+1),a
-
-  ld    a,(DrillMachineY)
-  add   a,16
-  ld    (spat+(4*006)+0),a
-  ld    (spat+(4*007)+0),a
-  ld    (spat+(4*008)+0),a
-  ld    a,(DrillMachineX)
-  ld    (spat+(4*006)+1),a
-  ld    (spat+(4*007)+1),a
-  ld    (spat+(4*008)+1),a
-
-  ld    a,(DrillMachineY)
-  add   a,16
-  ld    (spat+(4*009)+0),a
-  ld    (spat+(4*010)+0),a
-  ld    (spat+(4*011)+0),a
-  ld    a,(DrillMachineX)
-  add   a,16
-  ld    (spat+(4*009)+1),a
-  ld    (spat+(4*010)+1),a
-  ld    (spat+(4*011)+1),a
-
-  ld    a,(DrillMachineY)
-  add   a,08
-  ld    (spat+(4*012)+0),a
-  ld    (spat+(4*013)+0),a
-  ld    a,(DrillMachineX)
-  add   a,32
-  ld    (spat+(4*012)+1),a
-  ld    (spat+(4*013)+1),a
-	ret
-
-  .PutSpatFacingUp:
-  ld    a,(DrillMachineY)
-  add   a,16
-  ld    (spat+(4*000)+0),a
-  ld    (spat+(4*001)+0),a
-  ld    (spat+(4*002)+0),a
-  ld    a,(DrillMachineX)
-  ld    (spat+(4*000)+1),a
-  ld    (spat+(4*001)+1),a
-  ld    (spat+(4*002)+1),a
-
-  ld    a,(DrillMachineY)
-  add   a,16
-  ld    (spat+(4*003)+0),a
-  ld    (spat+(4*004)+0),a
-  ld    (spat+(4*005)+0),a
-  ld    a,(DrillMachineX)
-  add   a,16
-  ld    (spat+(4*003)+1),a
-  ld    (spat+(4*004)+1),a
-  ld    (spat+(4*005)+1),a
-
-  ld    a,(DrillMachineY)
-  ld    (spat+(4*006)+0),a
-  ld    (spat+(4*007)+0),a
-  ld    (spat+(4*008)+0),a
-  ld    a,(DrillMachineX)
-  ld    (spat+(4*006)+1),a
-  ld    (spat+(4*007)+1),a
-  ld    (spat+(4*008)+1),a
-
-  ld    a,(DrillMachineY)
-  ld    (spat+(4*009)+0),a
-  ld    (spat+(4*010)+0),a
-  ld    (spat+(4*011)+0),a
-  ld    a,(DrillMachineX)
-  add   a,16
-  ld    (spat+(4*009)+1),a
-  ld    (spat+(4*010)+1),a
-  ld    (spat+(4*011)+1),a
-
-  ld    a,(DrillMachineY)
-  sub   a,15
-  ld    (spat+(4*012)+0),a
-  ld    (spat+(4*013)+0),a
-  ld    a,(DrillMachineX)
-  add   a,8
-  ld    (spat+(4*012)+1),a
-  ld    (spat+(4*013)+1),a
-	ret
-
 .LoadSpriteCharacterAndColorData:
 ;load sprites data
   exx
@@ -2488,10 +2490,120 @@ PutDrillMachineSprite:
 	call	outix224		;write sprite color of pointer and hand to vram
   ret
 
+
+MoveDrillMachine:
+;
+; bit	7	  6	  5		    4		    3		    2		  1		  0
+;		  0	  0	  trig-b	trig-a	right	  left	down	up	(joystick)
+;		  F5	F1	'M'		  space	  right	  left	down	up	(keyboard)
+;
+  ld    bc,0                                ;b=horizontal movement, c=vertical movement
+	ld		a,(Controls)
+  .CheckUp:
+	bit		0,a           ;cursor up pressed ?
+  jr    z,.CheckDown
+  dec   c
+  .CheckDown:
+	bit		1,a           ;cursor down pressed ?
+  jr    z,.CheckLeft
+  inc   c
+  .CheckLeft:
+	bit		2,a           ;cursor left pressed ?
+  jr    z,.CheckRight
+  dec   b
+  .CheckRight:
+	bit		3,a           ;cursor right pressed ?
+  jr    z,.EndCheckRight
+  inc   b
+  .EndCheckRight:
+
+  bit   7,b
+  jr    z,.EndCheckMoveLeft
+
+  .MoveLeft:
+  ld    a,(DrillMachineSpeed)
+  ld    d,a
+  ld    a,(DrillMachineX)
+  sub   a,d
+  ld    (DrillMachineX),a
+  ld    a,4
+  ld    (DrillMachineFaceDirection),a       ;1=up, 2=right, 3=down, 4=left
+  jr    .EndCheckMoveRight
+  .EndCheckMoveLeft:
+
+  bit   0,b
+  jr    z,.EndCheckMoveRight
+
+  .MoveRight:
+  ld    a,(DrillMachineSpeed)
+  ld    d,a
+  ld    a,(DrillMachineX)
+  add   a,d
+  ld    (DrillMachineX),a
+  ld    a,2
+  ld    (DrillMachineFaceDirection),a       ;1=up, 2=right, 3=down, 4=left
+  .EndCheckMoveRight:
+
+  bit   7,c
+  jr    z,.EndCheckMoveUp
+
+  .MoveUp:
+  ld    hl,(DrillMachineY)
+  ld    de,(DrillMachineSpeed)
+  xor   a
+  sbc   hl,de
+  ld    (DrillMachineY),hl
+  ld    a,1
+  ld    (DrillMachineFaceDirection),a       ;1=up, 2=right, 3=down, 4=left
+  jr    .EndCheckMoveDown
+  .EndCheckMoveUp:
+
+  bit   0,c
+  jr    z,.EndCheckMoveDown
+
+  .MoveDown:
+  ld    hl,(DrillMachineY)
+  ld    de,(DrillMachineSpeed)
+  add   hl,de
+  ld    (DrillMachineY),hl
+  ld    a,3
+  ld    (DrillMachineFaceDirection),a       ;1=up, 2=right, 3=down, 4=left
+  .EndCheckMoveDown:
+  ret
+
+SetDrillMachineYRelative:                   ;DrillMachineYRelative = DrillingGameCameraY - DrillMachineY + r23onVblank
+  ld    a,(r23onVblank)
+  ld    b,a
+
+  ld    hl,(DrillMachineY)
+  ld    de,(DrillingGameCameraY)
+  xor   a
+  sbc   hl,de
+  ld    a,h
+  or    a
+  ld    a,l
+  jr    z,.GoPutDrillMachineYRelative
+  ld    a,213
+  .GoPutDrillMachineYRelative:
+  add   a,b
+  ld    (DrillMachineYRelative),a
+  ret
+
 DrillMachineEventRoutine:
-  call  PutDrillMachineSprite
-  call  .MoveCamera
-  call  .BuildUpNewRow
+  ld    a,(framecounter2)
+  inc   a
+  ld    (framecounter2),a
+
+  call  PutSpatDrillMachineSprite           ;sets the coordinates of drill machine in spat
+  call  .MoveCamera                         ;updates DrillingGameCameraY and r23onVblank when moving the camera
+  call  MoveDrillMachine                    ;changes DrillMachineY and DrillMachineX
+  call  SetDrillMachineYRelative            ;DrillMachineYRelative = DrillingGameCameraY - DrillMachineY + r23onVblank
+
+  call  BackdropGreen
+  call  PutDrillMachineCharacterAndColorData;every other frame outs the character and color data to vram
+  call  BackdropBlack
+
+  call  .BuildUpNewRow                      ;every other frame builds up new rows
   call  .HandlePhase
   call  .CheckEndGame
   call  .CheckNPCConversation
@@ -2561,17 +2673,42 @@ DrillMachineEventRoutine:
   ret
 
   .MoveCamera:
-;
-; bit	7	  6	  5		    4		    3		    2		  1		  0
-;		  0	  0	  trig-b	trig-a	right	  left	down	up	(joystick)
-;		  F5	F1	'M'		  space	  right	  left	down	up	(keyboard)
-;
-	ld		a,(Controls)
-  .CheckUp:
-	bit		0,a           ;cursor up pressed ?
-  jr    z,.CheckDown
+  ld    a,(DrillMachineFaceDirection)       ;1=up, 2=right, 3=down, 4=left
+  cp    1
+  jr    z,.CheckMoveCameraUp
+  cp    3
+  ret   nz
 
-  ld    de,2
+  .CheckMoveCameraDown:
+  ld    a,(r23onVblank)
+  ld    b,a
+  ld    a,(DrillMachineYRelative)           ;DrillMachineYRelative = DrillingGameCameraY - DrillMachineY + r23onVblank
+  sub   a,b
+  cp    50
+  ret   c
+
+  ld    de,1
+  ld    hl,(DrillingGameCameraY)
+  add   hl,de
+  ld    (DrillingGameCameraY),hl
+
+  ld    a,(r23onVblank)
+  add   a,1
+  ld    (r23onVblank),a
+
+  ld    a,2                                 ;1= camera moving up, 2=camera moving down
+  ld    (BuildUpNewRow?),a
+  ret
+
+  .CheckMoveCameraUp:
+  ld    a,(r23onVblank)
+  ld    b,a
+  ld    a,(DrillMachineYRelative)           ;DrillMachineYRelative = DrillingGameCameraY - DrillMachineY + r23onVblank
+  sub   a,b
+  cp    120
+  ret   nc
+
+  ld    de,1
   ld    hl,(DrillingGameCameraY)
   xor   a
   sbc   hl,de
@@ -2582,25 +2719,10 @@ DrillMachineEventRoutine:
   ld    (BuildUpNewRow?),a
 
   ld    a,(r23onVblank)
-  sub   a,2
+  sub   a,1
   ld    (r23onVblank),a
   ret
-  .CheckDown:
-	bit		1,a           ;cursor down pressed ?
-  ret   z
 
-  ld    de,2
-  ld    hl,(DrillingGameCameraY)
-  add   hl,de
-  ld    (DrillingGameCameraY),hl
-
-  ld    a,(r23onVblank)
-  add   a,2
-  ld    (r23onVblank),a
-
-  ld    a,2                                 ;1= camera moving up, 2=camera moving down
-  ld    (BuildUpNewRow?),a
-  ret
 
 ;DrillingGameCameraY:	dw	08*32
 
@@ -2608,6 +2730,10 @@ DrillMachineEventRoutine:
 ;after we move the camera up we need to build up 4 lines at y=0 relative (top of the screen) 
 ;after we move the camera down we need to build up 4 lines at y=208 relative (bottom of the screen) 
   .BuildUpNewRow:
+  ld    a,(framecounter2)
+  bit   0,a
+  ret   nz
+
   ld    a,(BuildUpNewRow?)
   or    a
   ret   z

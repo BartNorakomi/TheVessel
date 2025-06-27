@@ -1565,15 +1565,18 @@ DIV_DONE:
     pop bc
     ret
 
-NPCAniCount:     		db  0,0
-PlayerSpriteStand: 	dw  Rstanding
-StartConversation?:	db	0
-StartWakeUpEvent?:	db	1
+NPCAniCount:     				db  0,0
+PlayerSpriteStand: 			dw  Rstanding
+StartConversation?:			db	0
+StartWakeUpEvent?:			db	1
 
-DrillingGameCameraY:	dw	08*32
-DrillMachineY:	db	100
-DrillMachineX:	db	100
-DrillMachineFaceDirection:	db	1		;1=up, 2=right, 3=down, 4=left
+DrillMachineCurrentlyMovingInDirection?:	db	0	;0=not moving, 1=up, 2=right, 3=down, 4=left
+DrillMachineSpeed:  		dw  1
+DrillingGameCameraY:		dw	00*32
+DrillMachineY:					dw	096
+DrillMachineYRelative:	db	000
+DrillMachineX:					db	096
+DrillMachineFaceDirection:	db	3		;1=up, 2=right, 3=down, 4=left
 
 
 endenginepage3:
@@ -1646,6 +1649,7 @@ copydirection:              equ   13
 copytype:                   equ   14
 
 framecounter:               rb    1
+framecounter2:             	rb    1
 
 Controls:	                  rb		1
 NewPrContr:	                rb		1

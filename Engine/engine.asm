@@ -12,14 +12,14 @@ LevelEngine:
 
 
 
+  call  putsprite
   call  SetScreenonWithDelay
   call  PopulateControls
-  call  BackdropGreen
+;  call  BackdropGreen
   call  HandleObjects
-  call  BackdropBlack
+;  call  BackdropBlack
   call  HandleConversations             ;handles NPC conversations
   call  CheckLeaveRoom
-  call  putsprite
 
   xor   a
   ld    hl,vblankintflag
