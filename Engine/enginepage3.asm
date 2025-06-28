@@ -1577,6 +1577,7 @@ DrillMachineX:					db	096
 DrillMachineY:					dw	096
 DrillMachineYRelative:	db	000
 DrillMachineFaceDirection:	db	3		;1=up, 2=right, 3=down, 4=left
+DrillMachineAnimationCounter:	db	0
 
 
 endenginepage3:

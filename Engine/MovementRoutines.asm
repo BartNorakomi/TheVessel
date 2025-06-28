@@ -2443,11 +2443,32 @@ PutDrillMachineCharacterAndColorData:
   ld    a,(framecounter2)
   bit   0,a
   ret   z
+
+  call  .SetAnimationFrame
   call  .CheckDrillingMachineDirection
   call  .LoadSpriteCharacterAndColorData
   ret
 
+  .SetAnimationFrame:
+  ld    a,(DrillMachineAnimationCounter)
+  inc   a
+  ld    (DrillMachineAnimationCounter),a
+  cp    3*3
+  ret   nz
+  xor   a
+  ld    (DrillMachineAnimationCounter),a
+  ret
+
   .CheckDrillingMachineDirection:
+  ld    a,(DrillMachineAnimationCounter)
+  cp    1*3
+  ld    bc,0 * 14 * 32
+  jr    c,.AnimationFrameSet
+  cp    2*3
+  ld    bc,1 * 14 * 32
+  jr    c,.AnimationFrameSet
+  ld    bc,2 * 14 * 32
+  .AnimationFrameSet:
   ld    a,(DrillMachineFaceDirection)       ;1=up, 2=right, 3=down, 4=left
   dec   a
   jr    z,.Up
@@ -2458,18 +2479,34 @@ PutDrillMachineCharacterAndColorData:
   .Left:
   ld    hl,DrillCharacterSprites + (3 * 14 * 32)
   ld    de,DrillColorsHorizontal
+  ld    a,(DrillMachineCurrentlyMovingInDirection?) ;0=not moving, 1=up, 2=right, 3=down, 4=left
+  cp    4
+  ret   nz
+  add   hl,bc
   ret
   .Down:
   ld    hl,DrillCharacterSprites + (6 * 14 * 32)
   ld    de,DrillColorsFacingDown
+  ld    a,(DrillMachineCurrentlyMovingInDirection?) ;0=not moving, 1=up, 2=right, 3=down, 4=left
+  cp    3
+  ret   nz
+  add   hl,bc
   ret
   .Right:
   ld    hl,DrillCharacterSprites + (0 * 14 * 32)
   ld    de,DrillColorsHorizontal
+  ld    a,(DrillMachineCurrentlyMovingInDirection?) ;0=not moving, 1=up, 2=right, 3=down, 4=left
+  cp    2
+  ret   nz
+  add   hl,bc
   ret
   .Up:
   ld    hl,DrillCharacterSprites + (9 * 14 * 32)
   ld    de,DrillColorsFacingUp
+  ld    a,(DrillMachineCurrentlyMovingInDirection?) ;0=not moving, 1=up, 2=right, 3=down, 4=left
+  cp    1
+  ret   nz
+  add   hl,bc
   ret
 
 ;sprcoladdr:		equ	$7400 - $74e0 (y=232 - 234)
@@ -2524,10 +2561,25 @@ MoveDrillInItsDirection:
   ld    de,(DrillMachineSpeed)
   add   hl,de
   ld    (DrillMachineY),hl
-
-  ld    a,l
-  and   31                                  ;drill machine moves in steps of 32 pixels
+  ;we perform a check to see if the y has crossed the 32 pixels per tile boundary
+  ld    a,(DrillMachineY)
+  and   %0001 1111
+  sub   a,e
+  bit   7,a
+  ret   z
+;
+; bit	7	  6	  5		    4		    3		    2		  1		  0
+;		  0	  0	  trig-b	trig-a	right	  left	down	up	(joystick)
+;		  F5	F1	'M'		  space	  right	  left	down	up	(keyboard)
+;
+  ;no need to snap to the tile if we keep going down
+	ld		a,(Controls)
+	bit		1,a           ;cursor down pressed ?
   ret   nz
+  ;snap to the tile
+  ld    a,l
+  and   %1110 0000
+  ld    (DrillMachineY),hl
   xor   a
   ld    (DrillMachineCurrentlyMovingInDirection?),a ;0=not moving, 1=up, 2=right, 3=down, 4=left
   ret
@@ -2540,10 +2592,25 @@ MoveDrillInItsDirection:
   xor   a
   sbc   hl,de
   ld    (DrillMachineY),hl
-
-  ld    a,l
-  and   31                                  ;drill machine moves in steps of 32 pixels
+  ;we perform a check to see if the y has crossed the 32 pixels per tile boundary
+  ld    a,(DrillMachineY)
+  and   %0001 1111
+  sub   a,e
+  bit   7,a
+  ret   z
+;
+; bit	7	  6	  5		    4		    3		    2		  1		  0
+;		  0	  0	  trig-b	trig-a	right	  left	down	up	(joystick)
+;		  F5	F1	'M'		  space	  right	  left	down	up	(keyboard)
+;
+  ;no need to snap to the tile if we keep going up
+	ld		a,(Controls)
+	bit		0,a           ;cursor up pressed ?
   ret   nz
+  ;snap to the tile
+  ld    a,l
+  and   %1110 0000
+  ld    (DrillMachineY),hl
   xor   a
   ld    (DrillMachineCurrentlyMovingInDirection?),a ;0=not moving, 1=up, 2=right, 3=down, 4=left
   ret
@@ -2553,12 +2620,28 @@ MoveDrillInItsDirection:
   ld    (DrillMachineFaceDirection),a       ;1=up, 2=right, 3=down, 4=left
 
   ld    a,(DrillMachineSpeed)
-  ld    d,a
+  ld    e,a
   ld    a,(DrillMachineX)
-  add   a,d
+  add   a,e
   ld    (DrillMachineX),a
-  and   31                                  ;drill machine moves in steps of 32 pixels
+  ;we perform a check to see if the x has crossed the 32 pixels per tile boundary
+  and   %0001 1111
+  sub   a,e
+  bit   7,a
+  ret   z
+;
+; bit	7	  6	  5		    4		    3		    2		  1		  0
+;		  0	  0	  trig-b	trig-a	right	  left	down	up	(joystick)
+;		  F5	F1	'M'		  space	  right	  left	down	up	(keyboard)
+;
+  ;no need to snap to the tile if we keep going right
+	ld		a,(Controls)
+	bit		3,a           ;cursor right pressed ?
   ret   nz
+  ;snap to the tile
+  ld    a,(DrillMachineX)
+  and   %1110 0000
+  ld    (DrillMachineX),a
   xor   a
   ld    (DrillMachineCurrentlyMovingInDirection?),a ;0=not moving, 1=up, 2=right, 3=down, 4=left
   ret
@@ -2567,17 +2650,34 @@ MoveDrillInItsDirection:
   ld    a,4
   ld    (DrillMachineFaceDirection),a       ;1=up, 2=right, 3=down, 4=left
   ld    a,(DrillMachineSpeed)
-  ld    d,a
+  ld    e,a
   ld    a,(DrillMachineX)
-  sub   a,d
+  sub   a,e
   ld    (DrillMachineX),a
-  and   31                                  ;drill machine moves in steps of 32 pixels
+  ;we perform a check to see if the x has crossed the 32 pixels per tile boundary
+  and   %0001 1111
+  sub   a,e
+  bit   7,a
+  ret   z
+;
+; bit	7	  6	  5		    4		    3		    2		  1		  0
+;		  0	  0	  trig-b	trig-a	right	  left	down	up	(joystick)
+;		  F5	F1	'M'		  space	  right	  left	down	up	(keyboard)
+;
+  ;no need to snap to the tile if we keep going left
+	ld		a,(Controls)
+	bit		2,a           ;cursor left pressed ?
   ret   nz
+  ;snap to the tile
+  ld    a,(DrillMachineX)
+  and   %1110 0000
+  ld    (DrillMachineX),a
   xor   a
   ld    (DrillMachineCurrentlyMovingInDirection?),a ;0=not moving, 1=up, 2=right, 3=down, 4=left
   ret
 
 CheckChangeDrillMovementDirection:
+;this works, but its better to change sprite character and spat positioning relative to DrillMachineCurrentlyMovingInDirection every other frame instead
   ld    a,(framecounter2) ;HACKJOB to get him to move at the exact frame we change character and color data for the sprite
   bit   0,a
   ret   z
@@ -2601,7 +2701,10 @@ CheckChangeDrillMovementDirection:
   .LeftPressed:
   ld    a,(DrillMachineCurrentlyMovingInDirection?) ;0=not moving, 1=up, 2=right, 3=down, 4=left
   or    a
+  jr    z,.GoSetLeft
+  cp    2
   ret   nz
+  .GoSetLeft:
   ld    a,4
   ld    (DrillMachineCurrentlyMovingInDirection?),a ;0=not moving, 1=up, 2=right, 3=down, 4=left
   ret
@@ -2609,7 +2712,10 @@ CheckChangeDrillMovementDirection:
   .RightPressed:
   ld    a,(DrillMachineCurrentlyMovingInDirection?) ;0=not moving, 1=up, 2=right, 3=down, 4=left
   or    a
+  jr    z,.GoSetRight
+  cp    4
   ret   nz
+  .GoSetRight:
   ld    a,2
   ld    (DrillMachineCurrentlyMovingInDirection?),a ;0=not moving, 1=up, 2=right, 3=down, 4=left
   ret
@@ -2617,7 +2723,10 @@ CheckChangeDrillMovementDirection:
   .UpPressed:
   ld    a,(DrillMachineCurrentlyMovingInDirection?) ;0=not moving, 1=up, 2=right, 3=down, 4=left
   or    a
+  jr    z,.GoSetUp
+  cp    3
   ret   nz
+  .GoSetUp:
   ld    a,1
   ld    (DrillMachineCurrentlyMovingInDirection?),a ;0=not moving, 1=up, 2=right, 3=down, 4=left
   ret
@@ -2625,7 +2734,10 @@ CheckChangeDrillMovementDirection:
   .DownPressed:
   ld    a,(DrillMachineCurrentlyMovingInDirection?) ;0=not moving, 1=up, 2=right, 3=down, 4=left
   or    a
+  jr    z,.GoSetDown
+  cp    1
   ret   nz
+  .GoSetDown:
   ld    a,3
   ld    (DrillMachineCurrentlyMovingInDirection?),a ;0=not moving, 1=up, 2=right, 3=down, 4=left
   ret
@@ -2653,9 +2765,9 @@ DrillMachineEventRoutine:
   inc   a
   ld    (framecounter2),a
 
-  call  BackdropGreen
+;  call  BackdropGreen
   call  PutDrillMachineCharacterAndColorData;every other frame outs the character and color data to vram
-  call  BackdropBlack
+;  call  BackdropBlack
 
   call  PutSpatDrillMachineSprite           ;sets the coordinates of drill machine in spat
   call  .MoveCamera                         ;updates DrillingGameCameraY and r23onVblank when moving the camera
@@ -2667,23 +2779,6 @@ DrillMachineEventRoutine:
   call  .CheckEndGame
   call  .CheckNPCConversation
   ret
-
-
-
-
-;  call  PutDrillMachineCharacterAndColorData;every other frame outs the character and color data to vram
-;  call  MoveDrillMachine                    ;changes DrillMachineY and DrillMachineX
-;  call  SetDrillMachineYRelative            ;DrillMachineYRelative = DrillingGameCameraY - DrillMachineY + r23onVblank
-;  call  .MoveCamera                         ;updates DrillingGameCameraY and r23onVblank when moving the camera
-;  call  PutSpatDrillMachineSprite           ;sets the coordinates of drill machine in spat
-
-;  call  .BuildUpNewRow                      ;every other frame builds up new rows
-;  call  .HandlePhase
-;  call  .CheckEndGame
-;  call  .CheckNPCConversation
-
-
-
 
   .HandlePhase:
   ld    a,(iy+ObjectPhase)
@@ -2763,13 +2858,13 @@ DrillMachineEventRoutine:
   cp    50
   ret   c
 
-  ld    de,1
+  ld    de,(DrillMachineSpeed)
   ld    hl,(DrillingGameCameraY)
   add   hl,de
   ld    (DrillingGameCameraY),hl
 
   ld    a,(r23onVblank)
-  add   a,1
+  add   a,e
   ld    (r23onVblank),a
 
   ld    a,2                                 ;1= camera moving up, 2=camera moving down
@@ -2784,7 +2879,7 @@ DrillMachineEventRoutine:
   cp    120
   ret   nc
 
-  ld    de,1
+  ld    de,(DrillMachineSpeed)
   ld    hl,(DrillingGameCameraY)
   xor   a
   sbc   hl,de
@@ -2795,7 +2890,7 @@ DrillMachineEventRoutine:
   ld    (BuildUpNewRow?),a
 
   ld    a,(r23onVblank)
-  sub   a,1
+  sub   a,e
   ld    (r23onVblank),a
   ret
 
