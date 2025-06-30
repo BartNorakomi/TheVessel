@@ -2527,7 +2527,7 @@ PutDrillMachineCharacterAndColorData:
   .Left:
   ld    hl,DrillCharacterSprites + (3 * 14 * 32)
   ld    de,DrillColorsHorizontal
-  ld    a,(DrillMachineCurrentlyMovingInDirection?) ;0=not moving, 1=up, 2=right, 3=down, 4=left
+  ld    a,(DrillMachineCurrentlyMovingInDirection?) ;0=not moving, 1=up, 2=right, 3=down, 4=left, 5=drilling up, 6=drilling right, 7=drilling down, 8=drilling left
   cp    8
   jr    z,.GoAnimateLeft
   cp    4
@@ -2538,7 +2538,7 @@ PutDrillMachineCharacterAndColorData:
   .Down:
   ld    hl,DrillCharacterSprites + (6 * 14 * 32)
   ld    de,DrillColorsFacingDown
-  ld    a,(DrillMachineCurrentlyMovingInDirection?) ;0=not moving, 1=up, 2=right, 3=down, 4=left
+  ld    a,(DrillMachineCurrentlyMovingInDirection?) ;0=not moving, 1=up, 2=right, 3=down, 4=left, 5=drilling up, 6=drilling right, 7=drilling down, 8=drilling left
   cp    3
   ret   nz
   add   hl,bc
@@ -2546,7 +2546,7 @@ PutDrillMachineCharacterAndColorData:
   .Right:
   ld    hl,DrillCharacterSprites + (0 * 14 * 32)
   ld    de,DrillColorsHorizontal
-  ld    a,(DrillMachineCurrentlyMovingInDirection?) ;0=not moving, 1=up, 2=right, 3=down, 4=left
+  ld    a,(DrillMachineCurrentlyMovingInDirection?) ;0=not moving, 1=up, 2=right, 3=down, 4=left, 5=drilling up, 6=drilling right, 7=drilling down, 8=drilling left
   cp    2
   ret   nz
   add   hl,bc
@@ -2554,7 +2554,7 @@ PutDrillMachineCharacterAndColorData:
   .Up:
   ld    hl,DrillCharacterSprites + (9 * 14 * 32)
   ld    de,DrillColorsFacingUp
-  ld    a,(DrillMachineCurrentlyMovingInDirection?) ;0=not moving, 1=up, 2=right, 3=down, 4=left
+  ld    a,(DrillMachineCurrentlyMovingInDirection?) ;0=not moving, 1=up, 2=right, 3=down, 4=left, 5=drilling up, 6=drilling right, 7=drilling down, 8=drilling left
   cp    1
   ret   nz
   add   hl,bc
@@ -2591,8 +2591,176 @@ MoveDrillMachine:
   call  MoveDrillInItsDirection
   ret
 
+ConvertDrillingLeftTileWeCameFrom:
+  ;at this point we have drilled for a few frames. this also means we have moved some pixels to the left
+  ;check 16 pixels left of drill machine and 16 pixels right of drill machine. replace those tiles with the appropriate tiles
+  ld    de,+0                                       ;y increase
+  ld    b,+16                                       ;x increase
+  call  CheckTileDrillMachine                       ;in: de=y increase, b=x increase, out: a=tilenr
+  ld    d,0
+  ld    e,a
+  push  hl
+  ld    hl,.TileConversionDrillingLeft
+  add   hl,de
+  ld    a,(hl)
+  pop   hl
+  ld    (hl),a                                      ;change tile in tilemap (we have drilled here, tile now is passable)
+  ret
+  .TileConversionDrillingLeft:
+  db    08,06,02,07,12,10,06,07
+  db    08,11,10,11,12,15,02
+
+ConvertDrillingLeftTileWeMoveTo:
+  dec   hl
+  ld    a,(hl)
+  cp    15
+  jp    c,.WeMoveToAlreadyPassableTerrain
+  ld    (hl),0
+  ret
+  .WeMoveToAlreadyPassableTerrain:
+  ld    d,0
+  ld    e,a
+  push  hl
+  ld    hl,.TileConversionDrillingLeft
+  add   hl,de
+  ld    a,(hl)
+  pop   hl
+  ld    (hl),a                                      ;change tile in tilemap (we have drilled here, tile now is passable)
+  ret
+  .TileConversionDrillingLeft:
+  db    00,05,08,04,04,05,10,12
+  db    08,13,10,15,12,13,00
+  ret
+
+ConvertDrillingRightTileWeCameFrom:
+  ;at this point we have drilled for a few frames. this also means we have moved some pixels to the left
+  ;check 16 pixels left of drill machine and 16 pixels right of drill machine. replace those tiles with the appropriate tiles
+  ld    de,+0                                       ;y increase
+  ld    b,+16                                       ;x increase
+  call  CheckTileDrillMachine                       ;in: de=y increase, b=x increase, out: a=tilenr
+  ld    d,0
+  ld    e,a
+  push  hl
+  ld    hl,.TileConversionDrillingLeft
+  add   hl,de
+  ld    a,(hl)
+  pop   hl
+  ld    (hl),a                                      ;change tile in tilemap (we have drilled here, tile now is passable)
+  ret
+  .TileConversionDrillingLeft:
+  db    00,05,08,04,05,06,10,12
+  db    08,13,10,15,12,13,00
+
+ConvertDrillingRightTileWeMoveTo:
+  inc   hl
+  ld    a,(hl)
+  cp    15
+  jp    c,.WeMoveToAlreadyPassableTerrain
+  ld    (hl),2
+  ret
+  .WeMoveToAlreadyPassableTerrain:
+  ld    d,0
+  ld    e,a
+  push  hl
+  ld    hl,.TileConversionDrillingLeft
+  add   hl,de
+  ld    a,(hl)
+  pop   hl
+  ld    (hl),a                                      ;change tile in tilemap (we have drilled here, tile now is passable)
+  ret
+  .TileConversionDrillingLeft:
+  db    08,06,08,07,12,10,06,07
+  db    08,11,10,11,12,15,02
+  ret
+
+ConvertDrillingUpTileWeCameFrom:
+  ;at this point we have drilled for a few frames. this also means we have moved some pixels to the left
+  ;check 16 pixels left of drill machine and 16 pixels right of drill machine. replace those tiles with the appropriate tiles
+  ld    de,+16                                      ;y increase
+  ld    b,+00                                       ;x increase
+  call  CheckTileDrillMachine                       ;in: de=y increase, b=x increase, out: a=tilenr
+  ld    d,0
+  ld    e,a
+  push  hl
+  ld    hl,.TileConversionDrillingLeft
+  add   hl,de
+  ld    a,(hl)
+  pop   hl
+  ld    (hl),a                                      ;change tile in tilemap (we have drilled here, tile now is passable)
+  ret
+  .TileConversionDrillingLeft:
+  db    04,09,07,03,04,13,11,07
+  db    12,09,15,11,12,13,03
+
+ConvertDrillingUpTileWeMoveTo:
+  ld    de,-8
+  add   hl,de
+;  inc   hl
+  ld    a,(hl)
+  cp    15
+  jp    c,.WeMoveToAlreadyPassableTerrain
+  ld    (hl),1
+  ret
+  .WeMoveToAlreadyPassableTerrain:
+  ld    d,0
+  ld    e,a
+  push  hl
+  ld    hl,.TileConversionDrillingLeft
+  add   hl,de
+  ld    a,(hl)
+  pop   hl
+  ld    (hl),a                                      ;change tile in tilemap (we have drilled here, tile now is passable)
+  ret
+  .TileConversionDrillingLeft:
+  db    05,01,06,09,13,05,06,11
+  db    10,09,10,11,15,13,01
+  ret
+
+ConvertDrillingDownTileWeCameFrom:
+  ;at this point we have drilled for a few frames. this also means we have moved some pixels to the left
+  ;check 16 pixels left of drill machine and 16 pixels right of drill machine. replace those tiles with the appropriate tiles
+  ld    de,+00                                      ;y increase
+  ld    b,+00                                       ;x increase
+  call  CheckTileDrillMachine                       ;in: de=y increase, b=x increase, out: a=tilenr
+  ld    d,0
+  ld    e,a
+  push  hl
+  ld    hl,.TileConversionDrillingLeft
+  add   hl,de
+  ld    a,(hl)
+  pop   hl
+  ld    (hl),a                                      ;change tile in tilemap (we have drilled here, tile now is passable)
+  ret
+  .TileConversionDrillingLeft:
+  db    05,01,06,09,13,05,06,11
+  db    10,09,10,11,15,13,01
+
+ConvertDrillingDownTileWeMoveTo:
+  ld    de,8
+  add   hl,de
+;  inc   hl
+  ld    a,(hl)
+  cp    15
+  jp    c,.WeMoveToAlreadyPassableTerrain
+  ld    (hl),3
+  ret
+  .WeMoveToAlreadyPassableTerrain:
+  ld    d,0
+  ld    e,a
+  push  hl
+  ld    hl,.TileConversionDrillingLeft
+  add   hl,de
+  ld    a,(hl)
+  pop   hl
+  ld    (hl),a                                      ;change tile in tilemap (we have drilled here, tile now is passable)
+  ret
+  .TileConversionDrillingLeft:
+  db    03,09,07,03,04,13,11,07
+  db    12,09,15,11,12,13,03
+  ret
+
 MoveDrillInItsDirection:
-  ld    a,(DrillMachineCurrentlyMovingInDirection?) ;0=not moving, 1=up, 2=right, 3=down, 4=left
+  ld    a,(DrillMachineCurrentlyMovingInDirection?) ;0=not moving, 1=up, 2=right, 3=down, 4=left, 5=drilling up, 6=drilling right, 7=drilling down, 8=drilling left
   or    a
   ret   z
   dec   a
@@ -2614,12 +2782,120 @@ MoveDrillInItsDirection:
   ret
 
   .DrillingDown:
+  ld    a,3
+  ld    (DrillMachineFaceDirection),a       ;1=up, 2=right, 3=down, 4=left
+
+  ld    a,(DrillingTime)
+  and   7
+  jr    nz,.EndCheckMoveDownWhileDrilling
+  ld    hl,(DrillMachineY)
+  inc   hl
+  ld    (DrillMachineY),hl
+  .EndCheckMoveDownWhileDrilling:
+
+  ld    a,(DrillingTime)
+  inc   a
+  and   31
+  ld    (DrillingTime),a
+  ret   nz
+
+  call  ConvertDrillingDownTileWeCameFrom
+  call  ConvertDrillingDownTileWeMoveTo
+
+  ld    de,+0                                       ;y increase
+  ld    b,+00                                       ;x increase
+  call  CheckTileDrillMachine                       ;in: de=y increase, b=x increase, out: a=tilenr
+  ld    c,+00                                       ;y increase0
+  ld    b,+00                                       ;x increase
+  call  PutTileInScreen                             ;in: a=tilenr, c=y increase, b=x increase
+
+  ld    de,+32                                      ;y increase
+  ld    b,+00                                       ;x increase
+  call  CheckTileDrillMachine                       ;in: de=y increase, b=x increase, out: a=tilenr
+  ld    c,+32                                       ;y increase
+  ld    b,+00                                       ;x increase
+  call  PutTileInScreen                             ;in: a=tilenr, c=y increase, b=x increase
+
+  ld    a,3
+  ld    (DrillMachineCurrentlyMovingInDirection?),a ;0=not moving, 1=up, 2=right, 3=down, 4=left, 5=drilling up, 6=drilling right, 7=drilling down, 8=drilling left
   ret
 
   .DrillingUp:
+  ld    a,1
+  ld    (DrillMachineFaceDirection),a       ;1=up, 2=right, 3=down, 4=left
+
+  ld    a,(DrillingTime)
+  and   7
+  jr    nz,.EndCheckMoveUpWhileDrilling
+  ld    hl,(DrillMachineY)
+  dec   hl
+  ld    (DrillMachineY),hl
+  .EndCheckMoveUpWhileDrilling:
+
+  ld    a,(DrillingTime)
+  inc   a
+  and   31
+  ld    (DrillingTime),a
+  ret   nz
+
+  call  ConvertDrillingUpTileWeCameFrom
+  call  ConvertDrillingUpTileWeMoveTo
+
+  ld    de,+0                                       ;y increase
+  ld    b,+00                                       ;x increase
+  call  CheckTileDrillMachine                       ;in: de=y increase, b=x increase, out: a=tilenr
+  ld    c,+00                                       ;y increase0
+  ld    b,+00                                       ;x increase
+  call  PutTileInScreen                             ;in: a=tilenr, c=y increase, b=x increase
+
+  ld    de,+16                                      ;y increase
+  ld    b,+00                                       ;x increase
+  call  CheckTileDrillMachine                       ;in: de=y increase, b=x increase, out: a=tilenr
+  ld    c,+16                                       ;y increase
+  ld    b,+00                                       ;x increase
+  call  PutTileInScreen                             ;in: a=tilenr, c=y increase, b=x increase
+
+  ld    a,1
+  ld    (DrillMachineCurrentlyMovingInDirection?),a ;0=not moving, 1=up, 2=right, 3=down, 4=left, 5=drilling up, 6=drilling right, 7=drilling down, 8=drilling left
   ret
 
   .DrillingRight:
+  ld    a,2
+  ld    (DrillMachineFaceDirection),a       ;1=up, 2=right, 3=down, 4=left
+
+  ld    a,(DrillingTime)
+  and   7
+  jr    nz,.EndCheckMoveRightWhileDrilling
+  ld    a,(DrillMachineX)
+  inc   a
+  ld    (DrillMachineX),a
+  .EndCheckMoveRightWhileDrilling:
+
+  ld    a,(DrillingTime)
+  inc   a
+  and   31
+  ld    (DrillingTime),a
+  ret   nz
+
+  call  ConvertDrillingRightTileWeCameFrom
+  call  ConvertDrillingRightTileWeMoveTo
+
+  ld    de,+0                                       ;y increase
+  ld    b,+00                                       ;x increase
+  call  CheckTileDrillMachine                       ;in: de=y increase, b=x increase, out: a=tilenr
+  ld    c,+00                                       ;y increase0
+  ld    b,+00                                       ;x increase
+  call  PutTileInScreen                             ;in: a=tilenr, c=y increase, b=x increase
+
+  ld    de,+0                                       ;y increase
+  ld    b,+32                                       ;x increase
+  call  CheckTileDrillMachine                       ;in: de=y increase, b=x increase, out: a=tilenr
+  ld    c,+00                                       ;y increase
+  ld    b,+32                                       ;x increase
+  call  PutTileInScreen                             ;in: a=tilenr, c=y increase, b=x increase
+
+  ld    a,2
+  ld    (DrillMachineCurrentlyMovingInDirection?),a ;0=not moving, 1=up, 2=right, 3=down, 4=left, 5=drilling up, 6=drilling right, 7=drilling down, 8=drilling left
   ret
 
   .DrillingLeft:
@@ -2640,23 +2916,25 @@ MoveDrillInItsDirection:
   ld    (DrillingTime),a
   ret   nz
 
-  ld    c,+00                                       ;y increase
-  ld    b,-32                                       ;x increase
-  ld    a,15                                        ;tilenr
-  call  PutTileInScreen                             ;in: a=tilenr, c=y increase, b=x increase
+  call  ConvertDrillingLeftTileWeCameFrom
+  call  ConvertDrillingLeftTileWeMoveTo
 
-  ld    c,+00                                       ;y increase
-  ld    b,-0                                       ;x increase
-  ld    a,15                                        ;tilenr
+  ld    de,+0                                       ;y increase
+  ld    b,-16                                       ;x increase
+  call  CheckTileDrillMachine                       ;in: de=y increase, b=x increase, out: a=tilenr
+  ld    c,+00                                       ;y increase0
+  ld    b,-16                                       ;x increase
   call  PutTileInScreen                             ;in: a=tilenr, c=y increase, b=x increase
 
   ld    de,+0                                       ;y increase
-  ld    b,-1                                        ;x increase
-  call  CheckTileDrillMachine                       ;in: de=y increase, b=x increase, out: tilenr
+  ld    b,+16                                       ;x increase
+  call  CheckTileDrillMachine                       ;in: de=y increase, b=x increase, out: a=tilenr
+  ld    c,+00                                       ;y increase
+  ld    b,+16                                       ;x increase
+  call  PutTileInScreen                             ;in: a=tilenr, c=y increase, b=x increase
 
-  ld    (hl),15                                     ;change tile in tilemap (we have drilled here, tile now is passable)
   ld    a,4
-  ld    (DrillMachineCurrentlyMovingInDirection?),a ;0=not moving, 1=up, 2=right, 3=down, 4=left
+  ld    (DrillMachineCurrentlyMovingInDirection?),a ;0=not moving, 1=up, 2=right, 3=down, 4=left, 5=drilling up, 6=drilling right, 7=drilling down, 8=drilling left
   ret
 
   .MoveDown:
@@ -2686,7 +2964,7 @@ MoveDrillInItsDirection:
   and   %1110 0000
   ld    (DrillMachineY),hl
   xor   a
-  ld    (DrillMachineCurrentlyMovingInDirection?),a ;0=not moving, 1=up, 2=right, 3=down, 4=left
+  ld    (DrillMachineCurrentlyMovingInDirection?),a ;0=not moving, 1=up, 2=right, 3=down, 4=left, 5=drilling up, 6=drilling right, 7=drilling down, 8=drilling left
   ret
 
   .MoveUp:
@@ -2717,7 +2995,7 @@ MoveDrillInItsDirection:
   and   %1110 0000
   ld    (DrillMachineY),hl
   xor   a
-  ld    (DrillMachineCurrentlyMovingInDirection?),a ;0=not moving, 1=up, 2=right, 3=down, 4=left
+  ld    (DrillMachineCurrentlyMovingInDirection?),a ;0=not moving, 1=up, 2=right, 3=down, 4=left, 5=drilling up, 6=drilling right, 7=drilling down, 8=drilling left
   ret
 
   .MoveRight:
@@ -2748,7 +3026,7 @@ MoveDrillInItsDirection:
   and   %1110 0000
   ld    (DrillMachineX),a
   xor   a
-  ld    (DrillMachineCurrentlyMovingInDirection?),a ;0=not moving, 1=up, 2=right, 3=down, 4=left
+  ld    (DrillMachineCurrentlyMovingInDirection?),a ;0=not moving, 1=up, 2=right, 3=down, 4=left, 5=drilling up, 6=drilling right, 7=drilling down, 8=drilling left
   ret
 
   .MoveLeft:
@@ -2778,7 +3056,7 @@ MoveDrillInItsDirection:
   and   %1110 0000
   ld    (DrillMachineX),a
   xor   a
-  ld    (DrillMachineCurrentlyMovingInDirection?),a ;0=not moving, 1=up, 2=right, 3=down, 4=left
+  ld    (DrillMachineCurrentlyMovingInDirection?),a ;0=not moving, 1=up, 2=right, 3=down, 4=left, 5=drilling up, 6=drilling right, 7=drilling down, 8=drilling left
   ret
 
 CheckTileDrillMachine:
@@ -2842,60 +3120,97 @@ CheckChangeDrillMovementDirection:
   ret
 
   .LeftPressed:
-  ld    a,(DrillMachineCurrentlyMovingInDirection?) ;0=not moving, 1=up, 2=right, 3=down, 4=left
+  ld    a,(DrillMachineCurrentlyMovingInDirection?) ;0=not moving, 1=up, 2=right, 3=down, 4=left, 5=drilling up, 6=drilling right, 7=drilling down, 8=drilling left
   or    a
   jr    z,.GoSetLeft
   cp    2                                           ;check if we are currently moving to the right, in which case we are allowed to turn around
   ret   nz
   ld    a,4
-  ld    (DrillMachineCurrentlyMovingInDirection?),a ;0=not moving, 1=up, 2=right, 3=down, 4=left
+  ld    (DrillMachineCurrentlyMovingInDirection?),a ;0=not moving, 1=up, 2=right, 3=down, 4=left, 5=drilling up, 6=drilling right, 7=drilling down, 8=drilling left
   ret
   .GoSetLeft:
   ld    a,4
-  ld    (DrillMachineCurrentlyMovingInDirection?),a ;0=not moving, 1=up, 2=right, 3=down, 4=left
+  ld    (DrillMachineCurrentlyMovingInDirection?),a ;0=not moving, 1=up, 2=right, 3=down, 4=left, 5=drilling up, 6=drilling right, 7=drilling down, 8=drilling left
 
   ld    de,+0                                       ;y increase
   ld    b,-1                                        ;x increase
-  call  CheckTileDrillMachine                       ;in: de=y increase, b=x increase, out: tilenr
-  cp    17
+  call  CheckTileDrillMachine                       ;in: de=y increase, b=x increase, out: a=tilenr
+  cp    16
   ret   c
 
   ld    a,8
-  ld    (DrillMachineCurrentlyMovingInDirection?),a ;0=not moving, 1=up, 2=right, 3=down, 4=left
+  ld    (DrillMachineCurrentlyMovingInDirection?),a ;0=not moving, 1=up, 2=right, 3=down, 4=left, 5=drilling up, 6=drilling right, 7=drilling down, 8=drilling left
   ret
 
   .RightPressed:
-  ld    a,(DrillMachineCurrentlyMovingInDirection?) ;0=not moving, 1=up, 2=right, 3=down, 4=left
+  ld    a,(DrillMachineCurrentlyMovingInDirection?) ;0=not moving, 1=up, 2=right, 3=down, 4=left, 5=drilling up, 6=drilling right, 7=drilling down, 8=drilling left
   or    a
   jr    z,.GoSetRight
   cp    4
   ret   nz
+  ld    a,2
+  ld    (DrillMachineCurrentlyMovingInDirection?),a ;0=not moving, 1=up, 2=right, 3=down, 4=left, 5=drilling up, 6=drilling right, 7=drilling down, 8=drilling left
+  ret
   .GoSetRight:
   ld    a,2
-  ld    (DrillMachineCurrentlyMovingInDirection?),a ;0=not moving, 1=up, 2=right, 3=down, 4=left
+  ld    (DrillMachineCurrentlyMovingInDirection?),a ;0=not moving, 1=up, 2=right, 3=down, 4=left, 5=drilling up, 6=drilling right, 7=drilling down, 8=drilling left
+
+  ld    de,+0                                       ;y increase
+  ld    b,+32                                       ;x increase
+  call  CheckTileDrillMachine                       ;in: de=y increase, b=x increase, out: a=tilenr
+  cp    16
+  ret   c
+
+  ld    a,6
+  ld    (DrillMachineCurrentlyMovingInDirection?),a ;0=not moving, 1=up, 2=right, 3=down, 4=left, 5=drilling up, 6=drilling right, 7=drilling down, 8=drilling left
   ret
 
   .UpPressed:
-  ld    a,(DrillMachineCurrentlyMovingInDirection?) ;0=not moving, 1=up, 2=right, 3=down, 4=left
+  ld    a,(DrillMachineCurrentlyMovingInDirection?) ;0=not moving, 1=up, 2=right, 3=down, 4=left, 5=drilling up, 6=drilling right, 7=drilling down, 8=drilling left
   or    a
   jr    z,.GoSetUp
   cp    3
   ret   nz
+  ld    a,1
+  ld    (DrillMachineCurrentlyMovingInDirection?),a ;0=not moving, 1=up, 2=right, 3=down, 4=left, 5=drilling up, 6=drilling right, 7=drilling down, 8=drilling left
+  ret
   .GoSetUp:
   ld    a,1
-  ld    (DrillMachineCurrentlyMovingInDirection?),a ;0=not moving, 1=up, 2=right, 3=down, 4=left
+  ld    (DrillMachineCurrentlyMovingInDirection?),a ;0=not moving, 1=up, 2=right, 3=down, 4=left, 5=drilling up, 6=drilling right, 7=drilling down, 8=drilling left
+
+  ld    de,-16                                      ;y increase
+  ld    b,+00                                       ;x increase
+  call  CheckTileDrillMachine                       ;in: de=y increase, b=x increase, out: a=tilenr
+  cp    16
+  ret   c
+
+  ld    a,5
+  ld    (DrillMachineCurrentlyMovingInDirection?),a ;0=not moving, 1=up, 2=right, 3=down, 4=left, 5=drilling up, 6=drilling right, 7=drilling down, 8=drilling left
   ret
 
   .DownPressed:
-  ld    a,(DrillMachineCurrentlyMovingInDirection?) ;0=not moving, 1=up, 2=right, 3=down, 4=left
+  ld    a,(DrillMachineCurrentlyMovingInDirection?) ;0=not moving, 1=up, 2=right, 3=down, 4=left, 5=drilling up, 6=drilling right, 7=drilling down, 8=drilling left
   or    a
   jr    z,.GoSetDown
   cp    1
   ret   nz
+  ld    a,3
+  ld    (DrillMachineCurrentlyMovingInDirection?),a ;0=not moving, 1=up, 2=right, 3=down, 4=left, 5=drilling up, 6=drilling right, 7=drilling down, 8=drilling left
+  ret
   .GoSetDown:
   ld    a,3
-  ld    (DrillMachineCurrentlyMovingInDirection?),a ;0=not moving, 1=up, 2=right, 3=down, 4=left
+  ld    (DrillMachineCurrentlyMovingInDirection?),a ;0=not moving, 1=up, 2=right, 3=down, 4=left, 5=drilling up, 6=drilling right, 7=drilling down, 8=drilling left
+
+  ld    de,+32                                      ;y increase
+  ld    b,+00                                       ;x increase
+  call  CheckTileDrillMachine                       ;in: de=y increase, b=x increase, out: a=tilenr
+  cp    16
+  ret   c
+
+  ld    a,7
+  ld    (DrillMachineCurrentlyMovingInDirection?),a ;0=not moving, 1=up, 2=right, 3=down, 4=left, 5=drilling up, 6=drilling right, 7=drilling down, 8=drilling left
   ret
+
 
 SetDrillMachineYRelative:                   ;DrillMachineYRelative = DrillingGameCameraY - DrillMachineY + r23onVblank
   ld    a,(r23onVblank)
@@ -3238,23 +3553,16 @@ PutTileInScreen:                            ;in: a=tilenr, c=y increase, b=x inc
 
   ld    a,(DrillMachineX)
   add   a,b
+  and   %1110 0000
   ld    (CopyTileDrillingGame+dx),a
   ld    a,(DrillMachineYRelative)
   add   a,c
+  and   %1110 0000
   ld    (CopyTileDrillingGame+dy),a
 
   ld    hl,CopyTileDrillingGame
   call  DoCopy
   ret
-;  ld    de,+0                                       ;y increase
-;  ld    b,-1                                        ;x increase
-;  ld    a,16                                        ;tilenr
-;  call  PutTileInScreen                             ;in: a=tilenr, de=y increase, b=x increase
-
-
-
-
-
 
 
 
