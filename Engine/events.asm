@@ -8,6 +8,16 @@ HighScoreBasketball: db 0
 HighScoreBlox: db 0
 HighScoreBikeRace: db 0
 
+race game: kijk naar het spel spy hunter arcade. gebruik color detection voor collision, ai generated tiles
+
+---
+
+the enddemo shows how you successfully colonised centauri. humanity thrives together with AI and explores the galaxy,
+eventually recolonising earth again, where earthling are given a second chance.
+in a far far future a earthling is playing a simulation game where he finds himself in the Arcade, and you will see 
+a full loop of the game.
+Was everything just a simulation ??? 
+
 -------------------------------
 
 hangarbay - drilling
@@ -31,6 +41,9 @@ build the structures for the colony on the planet (these structures are mostly t
 maybe with resources an automatic transfer system can be bought, so that when ending the drilling the resources
 get delivered to where they need to be (so you automatically get fuel/oxygen/food/upgrades etc)
 
+
+digging depth should be extreme (full 16k), but it should not be worth digging all the way to the bottom,
+instead you should find the depth thats still worth it, and then go to a new digsite
 
 -------------------------------
 

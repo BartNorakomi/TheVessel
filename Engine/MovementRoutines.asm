@@ -2155,6 +2155,54 @@ CheckPlayerNear:                            ;out ;d=0(no collision), d=1(collisi
   ld    d,1                                 ;d=0(no collision), d=1(collision)
   ret
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 BuildUpMapDrillingGame:
   ;we have tilemap at $8000 in ram, and the tiles are stored in page 3 in vram
   ld    a,(slot.page1rom)              	;all RAM except page 1+2
@@ -2480,8 +2528,11 @@ PutDrillMachineCharacterAndColorData:
   ld    hl,DrillCharacterSprites + (3 * 14 * 32)
   ld    de,DrillColorsHorizontal
   ld    a,(DrillMachineCurrentlyMovingInDirection?) ;0=not moving, 1=up, 2=right, 3=down, 4=left
+  cp    8
+  jr    z,.GoAnimateLeft
   cp    4
   ret   nz
+  .GoAnimateLeft:
   add   hl,bc
   ret
   .Down:
@@ -2552,6 +2603,60 @@ MoveDrillInItsDirection:
   jp    z,.MoveDown
   dec   a
   jp    z,.MoveLeft
+  dec   a
+  jp    z,.DrillingUp
+  dec   a
+  jp    z,.DrillingRight
+  dec   a
+  jp    z,.DrillingDown
+  dec   a
+  jp    z,.DrillingLeft
+  ret
+
+  .DrillingDown:
+  ret
+
+  .DrillingUp:
+  ret
+
+  .DrillingRight:
+  ret
+
+  .DrillingLeft:
+  ld    a,4
+  ld    (DrillMachineFaceDirection),a       ;1=up, 2=right, 3=down, 4=left
+
+  ld    a,(DrillingTime)
+  and   7
+  jr    nz,.EndCheckMoveLeftWhileDrilling
+  ld    a,(DrillMachineX)
+  dec   a
+  ld    (DrillMachineX),a
+  .EndCheckMoveLeftWhileDrilling:
+
+  ld    a,(DrillingTime)
+  inc   a
+  and   31
+  ld    (DrillingTime),a
+  ret   nz
+
+  ld    c,+00                                       ;y increase
+  ld    b,-32                                       ;x increase
+  ld    a,15                                        ;tilenr
+  call  PutTileInScreen                             ;in: a=tilenr, c=y increase, b=x increase
+
+  ld    c,+00                                       ;y increase
+  ld    b,-0                                       ;x increase
+  ld    a,15                                        ;tilenr
+  call  PutTileInScreen                             ;in: a=tilenr, c=y increase, b=x increase
+
+  ld    de,+0                                       ;y increase
+  ld    b,-1                                        ;x increase
+  call  CheckTileDrillMachine                       ;in: de=y increase, b=x increase, out: tilenr
+
+  ld    (hl),15                                     ;change tile in tilemap (we have drilled here, tile now is passable)
+  ld    a,4
+  ld    (DrillMachineCurrentlyMovingInDirection?),a ;0=not moving, 1=up, 2=right, 3=down, 4=left
   ret
 
   .MoveDown:
@@ -2676,6 +2781,44 @@ MoveDrillInItsDirection:
   ld    (DrillMachineCurrentlyMovingInDirection?),a ;0=not moving, 1=up, 2=right, 3=down, 4=left
   ret
 
+CheckTileDrillMachine:
+  push  bc                                  ;x increase in b
+  ;we have tilemap at $8000 in ram, and the tiles are stored in page 3 in vram
+  ld    a,(slot.page1rom)              	    ;all RAM except page 1+2
+  out   ($a8),a    
+
+  ld    hl,(DrillMachineY)
+  add   hl,de                               ;y increase
+
+  ld    a,l
+  and   %1110 0000                          ;we take drillmachine y per 32 pixels
+  ld    l,a
+
+  push  hl
+  pop   bc
+
+  ld    de,4                                ;divide the drillmachiney by 4 to get the row in the tilemap
+  call  DivideBCbyDE                        ; Out: BC = result, HL = rest
+  ld    hl,$8000
+  add   hl,bc                               ;row found
+
+  ld    a,(DrillMachineX)
+  pop   bc                                  ;x increase in b
+  add   a,b
+
+  and   %1110 0000                          ;we take drillmachine x per 32 pixels
+  srl   a                                   ;/2
+  srl   a                                   ;/4
+  srl   a                                   ;/8
+  srl   a                                   ;/16
+  srl   a                                   ;/32
+  ld    e,a
+  ld    d,0
+  add   hl,de
+
+  ld    a,(hl)
+  ret
+
 CheckChangeDrillMovementDirection:
 ;this works, but its better to change sprite character and spat positioning relative to DrillMachineCurrentlyMovingInDirection every other frame instead
   ld    a,(framecounter2) ;HACKJOB to get him to move at the exact frame we change character and color data for the sprite
@@ -2702,10 +2845,22 @@ CheckChangeDrillMovementDirection:
   ld    a,(DrillMachineCurrentlyMovingInDirection?) ;0=not moving, 1=up, 2=right, 3=down, 4=left
   or    a
   jr    z,.GoSetLeft
-  cp    2
+  cp    2                                           ;check if we are currently moving to the right, in which case we are allowed to turn around
   ret   nz
+  ld    a,4
+  ld    (DrillMachineCurrentlyMovingInDirection?),a ;0=not moving, 1=up, 2=right, 3=down, 4=left
+  ret
   .GoSetLeft:
   ld    a,4
+  ld    (DrillMachineCurrentlyMovingInDirection?),a ;0=not moving, 1=up, 2=right, 3=down, 4=left
+
+  ld    de,+0                                       ;y increase
+  ld    b,-1                                        ;x increase
+  call  CheckTileDrillMachine                       ;in: de=y increase, b=x increase, out: tilenr
+  cp    17
+  ret   c
+
+  ld    a,8
   ld    (DrillMachineCurrentlyMovingInDirection?),a ;0=not moving, 1=up, 2=right, 3=down, 4=left
   ret
 
@@ -3057,7 +3212,44 @@ BuildUpNewRowCameraGoingUp:
   ld    (CopyTileDrillingGame+dx),a         ;next column
   ret
 
+PutTileInScreen:                            ;in: a=tilenr, c=y increase, b=x increase
+  push  af
+  and   %0000 0111
+  add   a,a                                 ;*2
+  add   a,a                                 ;*4
+  add   a,a                                 ;*8
+  add   a,a                                 ;*16
+  add   a,a                                 ;*32
+  ld    (CopyTileDrillingGame+sx),a
 
+;  ld    a,(r23onVblank)
+;  and   %0001 0000
+;  ld    l,a
+
+  pop   af
+  and   %1111 1000
+  add   a,a                                 ;*16
+  add   a,a                                 ;*32
+;  add   a,l
+  ld    (CopyTileDrillingGame+sy),a
+
+  ld    a,32
+  ld    (CopyTileDrillingGame+ny),a         ;4x32 pixels
+
+  ld    a,(DrillMachineX)
+  add   a,b
+  ld    (CopyTileDrillingGame+dx),a
+  ld    a,(DrillMachineYRelative)
+  add   a,c
+  ld    (CopyTileDrillingGame+dy),a
+
+  ld    hl,CopyTileDrillingGame
+  call  DoCopy
+  ret
+;  ld    de,+0                                       ;y increase
+;  ld    b,-1                                        ;x increase
+;  ld    a,16                                        ;tilenr
+;  call  PutTileInScreen                             ;in: a=tilenr, de=y increase, b=x increase
 
 
 
