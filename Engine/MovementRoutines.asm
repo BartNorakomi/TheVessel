@@ -3538,7 +3538,51 @@ SetDrillMachineYRelative:                   ;DrillMachineYRelative = DrillingGam
   ld    (DrillMachineYRelative),a
   ret
 
+SetInterruptHandlerDrillingGame:
+  di
+  ld    hl,InterruptHandlerDrillingGame
+  ld    ($38+1),hl          ;set new normal interrupt
+  ld    a,$c3               ;jump command
+  ld    ($38),a
+  ;lineinterrupt on
+  ld    a,(VDP_0)                       ;set ei1
+  or    16                              ;ei1 checks for lineint and vblankint
+  ld    (VDP_0),a                       ;ei0 (which is default at boot) only checks vblankint
+  out   ($99),a
+  ld    a,128
+  out   ($99),a
+
+  ld    a,32
+  out   ($99),a
+  ld    a,19+128                        ;set lineinterrupt height
+  ei
+  out   ($99),a 
+  ret
+
 DrillMachineEventRoutine:
+
+
+;;;;;; MOVE THIS TO VBLANK
+  ld    a,0*32 + 31  ;set page
+  di
+  out   ($99),a
+  ld    a,2+128
+  ei
+  out   ($99),a
+
+  xor   a                     ;r#23
+  di
+  out   ($99),a
+  ld    a,23+128
+  ei
+  out   ($99),a
+
+
+
+
+
+
+
   ld    a,(framecounter2)
   inc   a
   ld    (framecounter2),a
@@ -3582,6 +3626,7 @@ DrillMachineEventRoutine:
   .Phase0:                                  ;build up map
   call  BuildUpMapDrillingGame
   call  SetHudDrillingGame
+  call  SetInterruptHandlerDrillingGame   	;sets Vblank and lineint for hud
   ld    (iy+ObjectPhase),1
   ret
 
@@ -3651,6 +3696,13 @@ DrillMachineEventRoutine:
   add   a,e
   ld    (r23onVblank),a
 
+;  sub   a,32                                ;adjust line int height
+;  di
+;  out   ($99),a
+;  ld    a,19+128                            ;set lineinterrupt height
+;  ei
+;  out   ($99),a   
+
   ld    a,2                                 ;1= camera moving up, 2=camera moving down
   ld    (BuildUpNewRow?),a
   ret
@@ -3676,6 +3728,13 @@ DrillMachineEventRoutine:
   ld    a,(r23onVblank)
   sub   a,e
   ld    (r23onVblank),a
+
+;  sub   a,32                                ;adjust line int height
+;  di
+;  out   ($99),a
+;  ld    a,19+128                            ;set lineinterrupt height
+;  ei
+;  out   ($99),a   
   ret
 
 

@@ -46,21 +46,29 @@ CheckLeaveRoom:
 
 
 vblankintflag:  db  0
-;lineintflag:  db  0
-;InterruptHandler:
-;  push  af
 
-;  xor   a                               ;set s#0
-;  out   ($99),a
-;  ld    a,15+128
-;  out   ($99),a
-;  in    a,($99)                         ;check and acknowledge vblank interrupt
-;  rlca
-;  jp    c,vblank                        ;vblank detected, so jp to that routine
+InterruptHandlerDrillingGame:
+  push  af
+  
+  ld    a,1               ;set s#1
+  out   ($99),a
+  ld    a,15+128
+  out   ($99),a
+  in    a,($99)           ;check and acknowledge line interrupt
+  rrca
+  jp    c,LineIntDrillingGame ;hud split
+  
+  xor   a                 ;set s#0
+  out   ($99),a
+  ld    a,15+128
+  out   ($99),a
+  in    a,($99)           ;check and acknowledge vblank interrupt
+  rlca
+  jp    c,vblank          ;vblank detected, so jp to that routine
  
-;  pop   af 
-;  ei
-;  ret
+  pop   af 
+  ei
+  ret
 
 InterruptHandler:
   push  af
@@ -266,6 +274,21 @@ LineInt:
 
   pop   hl
   pop   bc
+  pop   af 
+  ei
+  ret  
+
+LineIntDrillingGame:
+  ld    a,(PageOnNextVblank)  ;set page
+  out   ($99),a
+  ld    a,2+128
+  out   ($99),a
+
+  ld    a,(r23onVblank)
+  out   ($99),a
+  ld    a,23+128
+  out   ($99),a  
+
   pop   af 
   ei
   ret  
@@ -1700,7 +1723,21 @@ Restore2BlackLinesGoingDown:
 
 
 
+EnableHudSplitDrillingGame:             ;enable the hud split 
+  ld    a,(VDP_0)                       ;set ei1
+  or    16                              ;ei1 checks for lineint and vblankint
+  ld    (VDP_0),a                       ;ei0 (which is default at boot) only checks vblankint
+  di
+  out   ($99),a
+  ld    a,128
+  out   ($99),a
 
+  ld    a,32
+  out   ($99),a
+  ld    a,19+128                        ;set lineinterrupt height
+  ei
+  out   ($99),a 
+  ret
 
 
 
