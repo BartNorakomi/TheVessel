@@ -58,6 +58,8 @@ NPCConv008:
   db    SwitchCharacter,CharacterPortraitHost,"Some things aren't meant to be explained. Just... see for yourself.",255
 
 NPCConv009:
+;  db    SwitchCharacter,CharacterPortraitHost,"Energy Radiation Fuel Storage",255
+;  db    SwitchCharacter,CharacterPortraitHost,"ENERGY RADIATION FUEL STORAGE",255
   db    SwitchCharacter,CharacterPortraitHost,"Step up. If you're ready, the final game is waiting.",255
 
 NPCConv010:

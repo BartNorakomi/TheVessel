@@ -2200,8 +2200,12 @@ CheckPlayerNear:                            ;out ;d=0(no collision), d=1(collisi
 
 
 
-
-
+SetHudDrillingGame:
+  ld    a,DrillingGameHudBlock         	;block to copy graphics from
+  ld    hl,$4000 + (000*128) + (000/2) - 128
+  ld    de,$0000 + (000*128) + (000/2) - 128
+  ld    bc,$0000 + (032*256) + (256/2)
+  jp    CopyRomToVram                   ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
 
 BuildUpMapDrillingGame:
   ;we have tilemap at $8000 in ram, and the tiles are stored in page 3 in vram
@@ -3577,6 +3581,7 @@ DrillMachineEventRoutine:
 
   .Phase0:                                  ;build up map
   call  BuildUpMapDrillingGame
+  call  SetHudDrillingGame
   ld    (iy+ObjectPhase),1
   ret
 
