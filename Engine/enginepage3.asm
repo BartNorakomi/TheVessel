@@ -1579,7 +1579,9 @@ DrillMachineYRelative:	db	000
 DrillMachineFaceDirection:	db	3		;1=up, 2=right, 3=down, 4=left
 DrillMachineAnimationCounter:	db	0
 DrillingTime:						db	0
-DrillingAThinWall?:			db	0
+
+DrillingTimeFrames:						ds	1
+DrillingHigherLevelSoil?:			ds	1
 
 
 endenginepage3:

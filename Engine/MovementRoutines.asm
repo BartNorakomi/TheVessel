@@ -2254,12 +2254,19 @@ DrillCharacterSprites:
 incbin "..\grapx\drillinggame\maps\sprconv FOR SINGLE SPRITES\drillspritespart1.spr",0,(14 * 6 * 32)
 incbin "..\grapx\drillinggame\maps\sprconv FOR SINGLE SPRITES\drillspritespart2.spr",0,(14 * 6 * 32)
 
-DrillColorsHorizontal:
+DrillColorsFacingRight:
 ds  16,1 | ds 16,2+64 | ds  16,12+64
 ds  14,1 | ds 2,6 | ds 14,2+64 | ds 2,13+64 | ds  14,12+64 | ds 2,12+64
 ds  16,1 | ds 16,2+64 | ds  16,12+64
 ds  16,1 | ds 16,2+64 | ds  16,12+64
 ds  16,6 | ds 16,13+64
+
+DrillColorsFacingLeftWith32bitshift:
+ds  16,1 | ds 16,2+64 | ds  16,12+64
+ds  14,1 | ds 2,6 | ds 14,2+64 | ds 2,13+64 | ds  14,12+64 | ds 2,12+64
+ds  16,1 | ds 16,2+64 | ds  16,12+64
+ds  16,1 | ds 16,2+64 | ds  16,12+64
+ds  16,6+128 | ds 16,13+64+128
 
 DrillColorsFacingDown:
 ds  16,1 | ds 16,2+64 | ds  16,12+64
@@ -2289,7 +2296,7 @@ PutSpatDrillMachineSprite:
   ld    (spat+(4*001)+0),a
   ld    (spat+(4*002)+0),a
   ld    a,(DrillMachineX)
-  add   a,16
+  add   a,16 + 2
   ld    (spat+(4*000)+1),a
   ld    (spat+(4*001)+1),a
   ld    (spat+(4*002)+1),a
@@ -2299,6 +2306,7 @@ PutSpatDrillMachineSprite:
   ld    (spat+(4*004)+0),a
   ld    (spat+(4*005)+0),a
   ld    a,(DrillMachineX)
+  add   a,2
   ld    (spat+(4*003)+1),a
   ld    (spat+(4*004)+1),a
   ld    (spat+(4*005)+1),a
@@ -2309,7 +2317,7 @@ PutSpatDrillMachineSprite:
   ld    (spat+(4*007)+0),a
   ld    (spat+(4*008)+0),a
   ld    a,(DrillMachineX)
-  add   a,16
+  add   a,16 + 2
   ld    (spat+(4*006)+1),a
   ld    (spat+(4*007)+1),a
   ld    (spat+(4*008)+1),a
@@ -2320,6 +2328,7 @@ PutSpatDrillMachineSprite:
   ld    (spat+(4*010)+0),a
   ld    (spat+(4*011)+0),a
   ld    a,(DrillMachineX)
+  add   a,2
   ld    (spat+(4*009)+1),a
   ld    (spat+(4*010)+1),a
   ld    (spat+(4*011)+1),a
@@ -2329,13 +2338,14 @@ PutSpatDrillMachineSprite:
   ld    (spat+(4*012)+0),a
   ld    (spat+(4*013)+0),a
   ld    a,(DrillMachineX)
-  sub   a,16
+  sub   a,16 - 2 - 32 ;apply 32 bit shift
   ld    (spat+(4*012)+1),a
   ld    (spat+(4*013)+1),a
 	ret
 
   .PutSpatFacingDown:
   ld    a,(DrillMachineYRelative)
+  sub   a,3
   ld    (spat+(4*000)+0),a
   ld    (spat+(4*001)+0),a
   ld    (spat+(4*002)+0),a
@@ -2345,6 +2355,7 @@ PutSpatDrillMachineSprite:
   ld    (spat+(4*002)+1),a
 
   ld    a,(DrillMachineYRelative)
+  sub   a,3
   ld    (spat+(4*003)+0),a
   ld    (spat+(4*004)+0),a
   ld    (spat+(4*005)+0),a
@@ -2355,7 +2366,7 @@ PutSpatDrillMachineSprite:
   ld    (spat+(4*005)+1),a
 
   ld    a,(DrillMachineYRelative)
-  add   a,16
+  add   a,16 - 3
   ld    (spat+(4*006)+0),a
   ld    (spat+(4*007)+0),a
   ld    (spat+(4*008)+0),a
@@ -2365,7 +2376,7 @@ PutSpatDrillMachineSprite:
   ld    (spat+(4*008)+1),a
 
   ld    a,(DrillMachineYRelative)
-  add   a,16
+  add   a,16 - 3
   ld    (spat+(4*009)+0),a
   ld    (spat+(4*010)+0),a
   ld    (spat+(4*011)+0),a
@@ -2376,7 +2387,7 @@ PutSpatDrillMachineSprite:
   ld    (spat+(4*011)+1),a
 
   ld    a,(DrillMachineYRelative)
-  add   a,31
+  add   a,31 - 3
   ld    (spat+(4*012)+0),a
   ld    (spat+(4*013)+0),a
   ld    a,(DrillMachineX)
@@ -2386,11 +2397,16 @@ PutSpatDrillMachineSprite:
 	ret
 
   .PutSpatFacingRight:
+  ld    a,(DrillMachineX)
+  or    a
+  jp    z,.PutSpatFacingRightXequals0
+
   ld    a,(DrillMachineYRelative)
   ld    (spat+(4*000)+0),a
   ld    (spat+(4*001)+0),a
   ld    (spat+(4*002)+0),a
   ld    a,(DrillMachineX)
+  dec   a
   ld    (spat+(4*000)+1),a
   ld    (spat+(4*001)+1),a
   ld    (spat+(4*002)+1),a
@@ -2400,7 +2416,7 @@ PutSpatDrillMachineSprite:
   ld    (spat+(4*004)+0),a
   ld    (spat+(4*005)+0),a
   ld    a,(DrillMachineX)
-  add   a,16
+  add   a,16 - 1
   ld    (spat+(4*003)+1),a
   ld    (spat+(4*004)+1),a
   ld    (spat+(4*005)+1),a
@@ -2411,6 +2427,7 @@ PutSpatDrillMachineSprite:
   ld    (spat+(4*007)+0),a
   ld    (spat+(4*008)+0),a
   ld    a,(DrillMachineX)
+  dec   a
   ld    (spat+(4*006)+1),a
   ld    (spat+(4*007)+1),a
   ld    (spat+(4*008)+1),a
@@ -2421,7 +2438,7 @@ PutSpatDrillMachineSprite:
   ld    (spat+(4*010)+0),a
   ld    (spat+(4*011)+0),a
   ld    a,(DrillMachineX)
-  add   a,16
+  add   a,16 - 1
   ld    (spat+(4*009)+1),a
   ld    (spat+(4*010)+1),a
   ld    (spat+(4*011)+1),a
@@ -2431,14 +2448,68 @@ PutSpatDrillMachineSprite:
   ld    (spat+(4*012)+0),a
   ld    (spat+(4*013)+0),a
   ld    a,(DrillMachineX)
-  add   a,32
+  add   a,32 - 1
   ld    (spat+(4*012)+1),a
   ld    (spat+(4*013)+1),a
 	ret
 
-  .PutSpatFacingUp:
+  .PutSpatFacingRightXequals0:
+  ld    a,(DrillMachineYRelative)
+  ld    (spat+(4*000)+0),a
+  ld    (spat+(4*001)+0),a
+  ld    (spat+(4*002)+0),a
+  ld    a,(DrillMachineX)
+;  dec   a
+  ld    (spat+(4*000)+1),a
+  ld    (spat+(4*001)+1),a
+  ld    (spat+(4*002)+1),a
+
+  ld    a,(DrillMachineYRelative)
+  ld    (spat+(4*003)+0),a
+  ld    (spat+(4*004)+0),a
+  ld    (spat+(4*005)+0),a
+  ld    a,(DrillMachineX)
+  add   a,16 ;- 1
+  ld    (spat+(4*003)+1),a
+  ld    (spat+(4*004)+1),a
+  ld    (spat+(4*005)+1),a
+
   ld    a,(DrillMachineYRelative)
   add   a,16
+  ld    (spat+(4*006)+0),a
+  ld    (spat+(4*007)+0),a
+  ld    (spat+(4*008)+0),a
+  ld    a,(DrillMachineX)
+;  dec   a
+  ld    (spat+(4*006)+1),a
+  ld    (spat+(4*007)+1),a
+  ld    (spat+(4*008)+1),a
+
+  ld    a,(DrillMachineYRelative)
+  add   a,16
+  ld    (spat+(4*009)+0),a
+  ld    (spat+(4*010)+0),a
+  ld    (spat+(4*011)+0),a
+  ld    a,(DrillMachineX)
+  add   a,16 ;- 1
+  ld    (spat+(4*009)+1),a
+  ld    (spat+(4*010)+1),a
+  ld    (spat+(4*011)+1),a
+
+  ld    a,(DrillMachineYRelative)
+  add   a,08
+  ld    (spat+(4*012)+0),a
+  ld    (spat+(4*013)+0),a
+  ld    a,(DrillMachineX)
+  add   a,32 ;- 1
+  ld    (spat+(4*012)+1),a
+  ld    (spat+(4*013)+1),a
+	ret
+
+
+  .PutSpatFacingUp:
+  ld    a,(DrillMachineYRelative)
+  add   a,16 + 1
   ld    (spat+(4*000)+0),a
   ld    (spat+(4*001)+0),a
   ld    (spat+(4*002)+0),a
@@ -2448,7 +2519,7 @@ PutSpatDrillMachineSprite:
   ld    (spat+(4*002)+1),a
 
   ld    a,(DrillMachineYRelative)
-  add   a,16
+  add   a,16 + 1
   ld    (spat+(4*003)+0),a
   ld    (spat+(4*004)+0),a
   ld    (spat+(4*005)+0),a
@@ -2459,6 +2530,7 @@ PutSpatDrillMachineSprite:
   ld    (spat+(4*005)+1),a
 
   ld    a,(DrillMachineYRelative)
+  inc   a
   ld    (spat+(4*006)+0),a
   ld    (spat+(4*007)+0),a
   ld    (spat+(4*008)+0),a
@@ -2468,6 +2540,7 @@ PutSpatDrillMachineSprite:
   ld    (spat+(4*008)+1),a
 
   ld    a,(DrillMachineYRelative)
+  inc   a
   ld    (spat+(4*009)+0),a
   ld    (spat+(4*010)+0),a
   ld    (spat+(4*011)+0),a
@@ -2478,7 +2551,7 @@ PutSpatDrillMachineSprite:
   ld    (spat+(4*011)+1),a
 
   ld    a,(DrillMachineYRelative)
-  sub   a,15
+  sub   a,15 - 1
   ld    (spat+(4*012)+0),a
   ld    (spat+(4*013)+0),a
   ld    a,(DrillMachineX)
@@ -2526,7 +2599,7 @@ PutDrillMachineCharacterAndColorData:
   jr    z,.Down
   .Left:
   ld    hl,DrillCharacterSprites + (3 * 14 * 32)
-  ld    de,DrillColorsHorizontal
+  ld    de,DrillColorsFacingLeftWith32bitshift
   ld    a,(DrillMachineCurrentlyMovingInDirection?) ;0=not moving, 1=up, 2=right, 3=down, 4=left, 5=drilling up, 6=drilling right, 7=drilling down, 8=drilling left
   cp    8
   jr    z,.GoAnimateLeft
@@ -2539,24 +2612,33 @@ PutDrillMachineCharacterAndColorData:
   ld    hl,DrillCharacterSprites + (6 * 14 * 32)
   ld    de,DrillColorsFacingDown
   ld    a,(DrillMachineCurrentlyMovingInDirection?) ;0=not moving, 1=up, 2=right, 3=down, 4=left, 5=drilling up, 6=drilling right, 7=drilling down, 8=drilling left
+  cp    7
+  jr    z,.GoAnimateDown
   cp    3
   ret   nz
+  .GoAnimateDown:
   add   hl,bc
   ret
   .Right:
   ld    hl,DrillCharacterSprites + (0 * 14 * 32)
-  ld    de,DrillColorsHorizontal
+  ld    de,DrillColorsFacingRight
   ld    a,(DrillMachineCurrentlyMovingInDirection?) ;0=not moving, 1=up, 2=right, 3=down, 4=left, 5=drilling up, 6=drilling right, 7=drilling down, 8=drilling left
+  cp    6
+  jr    z,.GoAnimateRight
   cp    2
   ret   nz
+  .GoAnimateRight:
   add   hl,bc
   ret
   .Up:
   ld    hl,DrillCharacterSprites + (9 * 14 * 32)
   ld    de,DrillColorsFacingUp
   ld    a,(DrillMachineCurrentlyMovingInDirection?) ;0=not moving, 1=up, 2=right, 3=down, 4=left, 5=drilling up, 6=drilling right, 7=drilling down, 8=drilling left
+  cp    5
+  jr    z,.GoAnimateUp
   cp    1
   ret   nz
+  .GoAnimateUp:
   add   hl,bc
   ret
 
@@ -2608,10 +2690,18 @@ ConvertDrillingLeftTileWeCameFrom:
   ret
   .TileConversionDrillingLeft:
   db    08,06,02,07,12,10,06,07
-  db    08,11,10,11,12,15,02
+  db    08,11,10,11,12,15,02,15
 
 ConvertDrillingLeftTileWeMoveTo:
   dec   hl
+
+  ld    a,(DrillingHigherLevelSoil?)
+  or    a
+  jr    z,.EndCheckHigherLevelSoil
+  ld    (hl),15
+  ret
+
+  .EndCheckHigherLevelSoil:
   ld    a,(hl)
   cp    15
   jp    c,.WeMoveToAlreadyPassableTerrain
@@ -2629,7 +2719,7 @@ ConvertDrillingLeftTileWeMoveTo:
   ret
   .TileConversionDrillingLeft:
   db    00,05,08,04,04,05,10,12
-  db    08,13,10,15,12,13,00
+  db    08,13,10,15,12,13,00,15
   ret
 
 ConvertDrillingRightTileWeCameFrom:
@@ -2649,10 +2739,18 @@ ConvertDrillingRightTileWeCameFrom:
   ret
   .TileConversionDrillingLeft:
   db    00,05,08,04,05,06,10,12
-  db    08,13,10,15,12,13,00
+  db    08,13,10,15,12,13,00,15
 
 ConvertDrillingRightTileWeMoveTo:
   inc   hl
+
+  ld    a,(DrillingHigherLevelSoil?)
+  or    a
+  jr    z,.EndCheckHigherLevelSoil
+  ld    (hl),15
+  ret
+
+  .EndCheckHigherLevelSoil:
   ld    a,(hl)
   cp    15
   jp    c,.WeMoveToAlreadyPassableTerrain
@@ -2670,7 +2768,7 @@ ConvertDrillingRightTileWeMoveTo:
   ret
   .TileConversionDrillingLeft:
   db    08,06,08,07,12,10,06,07
-  db    08,11,10,11,12,15,02
+  db    08,11,10,11,12,15,02,15
   ret
 
 ConvertDrillingUpTileWeCameFrom:
@@ -2690,12 +2788,19 @@ ConvertDrillingUpTileWeCameFrom:
   ret
   .TileConversionDrillingLeft:
   db    04,09,07,03,04,13,11,07
-  db    12,09,15,11,12,13,03
+  db    12,09,15,11,12,13,03,15
 
 ConvertDrillingUpTileWeMoveTo:
   ld    de,-8
   add   hl,de
-;  inc   hl
+
+  ld    a,(DrillingHigherLevelSoil?)
+  or    a
+  jr    z,.EndCheckHigherLevelSoil
+  ld    (hl),15
+  ret
+
+  .EndCheckHigherLevelSoil:
   ld    a,(hl)
   cp    15
   jp    c,.WeMoveToAlreadyPassableTerrain
@@ -2713,7 +2818,7 @@ ConvertDrillingUpTileWeMoveTo:
   ret
   .TileConversionDrillingLeft:
   db    05,01,06,09,13,05,06,11
-  db    10,09,10,11,15,13,01
+  db    10,09,10,11,15,13,01,15
   ret
 
 ConvertDrillingDownTileWeCameFrom:
@@ -2733,12 +2838,19 @@ ConvertDrillingDownTileWeCameFrom:
   ret
   .TileConversionDrillingLeft:
   db    05,01,06,09,13,05,06,11
-  db    10,09,10,11,15,13,01
+  db    10,09,10,11,15,13,01,15
 
 ConvertDrillingDownTileWeMoveTo:
   ld    de,8
   add   hl,de
-;  inc   hl
+
+  ld    a,(DrillingHigherLevelSoil?)
+  or    a
+  jr    z,.EndCheckHigherLevelSoil
+  ld    (hl),15
+  ret
+
+  .EndCheckHigherLevelSoil:
   ld    a,(hl)
   cp    15
   jp    c,.WeMoveToAlreadyPassableTerrain
@@ -2756,7 +2868,7 @@ ConvertDrillingDownTileWeMoveTo:
   ret
   .TileConversionDrillingLeft:
   db    04,09,07,03,04,13,11,07
-  db    12,09,15,11,12,13,03
+  db    12,09,15,11,12,13,03,15
   ret
 
 MoveDrillInItsDirection:
@@ -2783,7 +2895,7 @@ MoveDrillInItsDirection:
 
   .DrillingDown:
   ld    a,3
-  ld    (DrillMachineFaceDirection),a       ;1=up, 2=right, 3=down, 4=left
+  ld    (DrillMachineFaceDirection),a               ;1=up, 2=right, 3=down, 4=left
 
   ld    a,(DrillingTime)
   and   7
@@ -2855,7 +2967,11 @@ MoveDrillInItsDirection:
 
   .DrillingRight:
   ld    a,2
-  ld    (DrillMachineFaceDirection),a       ;1=up, 2=right, 3=down, 4=left
+  ld    (DrillMachineFaceDirection),a               ;1=up, 2=right, 3=down, 4=left
+
+  ld    a,(DrillMachineX)
+  cp    256-32
+  jp    z,.EdgeOfScreenReached
 
   ld    a,(DrillingTime)
   and   7
@@ -2889,9 +3005,18 @@ MoveDrillInItsDirection:
   ld    (DrillMachineCurrentlyMovingInDirection?),a ;0=not moving, 1=up, 2=right, 3=down, 4=left, 5=drilling up, 6=drilling right, 7=drilling down, 8=drilling left
   ret
 
+  .EdgeOfScreenReached:
+  xor   a
+  ld    (DrillMachineCurrentlyMovingInDirection?),a ;0=not moving, 1=up, 2=right, 3=down, 4=left, 5=drilling up, 6=drilling right, 7=drilling down, 8=drilling left
+  ret
+
   .DrillingLeft:
   ld    a,4
-  ld    (DrillMachineFaceDirection),a       ;1=up, 2=right, 3=down, 4=left
+  ld    (DrillMachineFaceDirection),a               ;1=up, 2=right, 3=down, 4=left
+
+  ld    a,(DrillMachineX)
+  or    a
+  jp    z,.EdgeOfScreenReached
 
   ld    a,(DrillingTime)
   and   7
@@ -2927,7 +3052,7 @@ MoveDrillInItsDirection:
 
   .MoveDown:
   ld    a,3
-  ld    (DrillMachineFaceDirection),a       ;1=up, 2=right, 3=down, 4=left
+  ld    (DrillMachineFaceDirection),a               ;1=up, 2=right, 3=down, 4=left
   ld    hl,(DrillMachineY)
   ld    de,(DrillMachineSpeed)
   add   hl,de
@@ -2992,6 +3117,10 @@ MoveDrillInItsDirection:
   ld    a,2
   ld    (DrillMachineFaceDirection),a       ;1=up, 2=right, 3=down, 4=left
 
+  ld    a,(DrillMachineX)
+  cp    256-32
+  jp    z,.EdgeOfScreenReached
+
   ld    a,(DrillMachineSpeed)
   ld    e,a
   ld    a,(DrillMachineX)
@@ -3023,6 +3152,11 @@ MoveDrillInItsDirection:
   .MoveLeft:
   ld    a,4
   ld    (DrillMachineFaceDirection),a       ;1=up, 2=right, 3=down, 4=left
+
+  ld    a,(DrillMachineX)
+  or    a
+  jp    z,.EdgeOfScreenReached
+
   ld    a,(DrillMachineSpeed)
   ld    e,a
   ld    a,(DrillMachineX)
@@ -3053,12 +3187,8 @@ MoveDrillInItsDirection:
   ret
 
 HandleDrillingTime:
-  ld    a,(DrillingAThinWall?)
-  or    a
-  ld    b,31
-  jr    z,.DrillingTimeLeftFound
-  ld    b,07
-  .DrillingTimeLeftFound:
+  ld    a,(DrillingTimeFrames)
+  ld    b,a
 
   ld    a,(DrillingTime)
   inc   a
@@ -3168,15 +3298,11 @@ CheckChangeDrillMovementDirection:
 ;  and   %1110 0000
 ;  ld    (DrillMachineX),a
 
-  cp    16
-  ld    a,8
-  ld    (DrillMachineCurrentlyMovingInDirection?),a ;0=not moving, 1=up, 2=right, 3=down, 4=left, 5=drilling up, 6=drilling right, 7=drilling down, 8=drilling left
-  ld    a,0
-  ld    (DrillingAThinWall?),a
-  ret   nc
-  ld    a,1
-  ld    (DrillingAThinWall?),a
-  ret
+  ld    hl,DrillMachineCurrentlyMovingInDirection?  ;0=not moving, 1=up, 2=right, 3=down, 4=left, 5=drilling up, 6=drilling right, 7=drilling down, 8=drilling left
+  ld    (hl),8
+  ld    hl,DrillMachineFaceDirection                ;1=up, 2=right, 3=down, 4=left
+  ld    (hl),4
+  jp    CheckDrillingPossible
 
   .RightPressed:
   ld    a,(DrillMachineCurrentlyMovingInDirection?) ;0=not moving, 1=up, 2=right, 3=down, 4=left, 5=drilling up, 6=drilling right, 7=drilling down, 8=drilling left
@@ -3217,15 +3343,11 @@ CheckChangeDrillMovementDirection:
 ;  ld    a,(DrillMachineX)
 ;  and   %1110 0000
 ;  ld    (DrillMachineX),a
-  cp    16
-  ld    a,6
-  ld    (DrillMachineCurrentlyMovingInDirection?),a ;0=not moving, 1=up, 2=right, 3=down, 4=left, 5=drilling up, 6=drilling right, 7=drilling down, 8=drilling left
-  ld    a,0
-  ld    (DrillingAThinWall?),a
-  ret   nc
-  ld    a,1
-  ld    (DrillingAThinWall?),a
-  ret
+  ld    hl,DrillMachineCurrentlyMovingInDirection?  ;0=not moving, 1=up, 2=right, 3=down, 4=left, 5=drilling up, 6=drilling right, 7=drilling down, 8=drilling left
+  ld    (hl),6
+  ld    hl,DrillMachineFaceDirection                ;1=up, 2=right, 3=down, 4=left
+  ld    (hl),2
+  jp    CheckDrillingPossible
 
   .UpPressed:
   ld    a,(DrillMachineCurrentlyMovingInDirection?) ;0=not moving, 1=up, 2=right, 3=down, 4=left, 5=drilling up, 6=drilling right, 7=drilling down, 8=drilling left
@@ -3263,15 +3385,11 @@ CheckChangeDrillMovementDirection:
   cp    01
   ret   z
 
-  cp    16
-  ld    a,5
-  ld    (DrillMachineCurrentlyMovingInDirection?),a ;0=not moving, 1=up, 2=right, 3=down, 4=left, 5=drilling up, 6=drilling right, 7=drilling down, 8=drilling left
-  ld    a,0
-  ld    (DrillingAThinWall?),a
-  ret   nc
-  ld    a,1
-  ld    (DrillingAThinWall?),a
-  ret
+  ld    hl,DrillMachineCurrentlyMovingInDirection?  ;0=not moving, 1=up, 2=right, 3=down, 4=left, 5=drilling up, 6=drilling right, 7=drilling down, 8=drilling left
+  ld    (hl),5
+  ld    hl,DrillMachineFaceDirection                ;1=up, 2=right, 3=down, 4=left
+  ld    (hl),1
+  jp    CheckDrillingPossible
 
   .DownPressed:
   ld    a,(DrillMachineCurrentlyMovingInDirection?) ;0=not moving, 1=up, 2=right, 3=down, 4=left, 5=drilling up, 6=drilling right, 7=drilling down, 8=drilling left
@@ -3309,14 +3427,93 @@ CheckChangeDrillMovementDirection:
   cp    03
   ret   z
 
+  ld    hl,DrillMachineCurrentlyMovingInDirection?  ;0=not moving, 1=up, 2=right, 3=down, 4=left, 5=drilling up, 6=drilling right, 7=drilling down, 8=drilling left
+  ld    (hl),7
+  ld    hl,DrillMachineFaceDirection                ;1=up, 2=right, 3=down, 4=left
+  ld    (hl),3
+  jp    CheckDrillingPossible
+
+CheckDrillingPossible:
+  ld    hl,DrillingTimeFrames
+
   cp    16
-  ld    a,7
-  ld    (DrillMachineCurrentlyMovingInDirection?),a ;0=not moving, 1=up, 2=right, 3=down, 4=left, 5=drilling up, 6=drilling right, 7=drilling down, 8=drilling left
-  ld    a,0
-  ld    (DrillingAThinWall?),a
-  ret   nc
+  jr    c,.DrillThinWall
+  cp    24
+  jr    c,.DrillingLevel1Soil
+  cp    36
+  jr    c,.DrillingLevel2Soil
+  cp    47
+  jr    c,.DrillingLevel3Soil
+
+  .DrillingLevel4Soil:
   ld    a,1
-  ld    (DrillingAThinWall?),a
+  ld    (DrillingHigherLevelSoil?),a
+  ld    (hl),31                                      ;DrillingTimeFrames
+  ld    a,(ConicalDrillBit)                         ;0=can drill through level 1, 1=can drill through level 2, 2=can drill through level 3, 3=can drill through level 4 
+  cp    3
+  ret   nc
+  xor   a
+  ld    (DrillMachineCurrentlyMovingInDirection?),a ;0=not moving, 1=up, 2=right, 3=down, 4=left, 5=drilling up, 6=drilling right, 7=drilling down, 8=drilling left
+  ret
+
+  .DrillingLevel3Soil:
+  ld    a,1
+  ld    (DrillingHigherLevelSoil?),a
+  ld    (hl),15                                      ;DrillingTimeFrames
+  ld    a,(ConicalDrillBit)                         ;0=can drill through level 1, 1=can drill through level 2, 2=can drill through level 3, 3=can drill through level 4 
+  cp    3
+  ret   nc
+  ld    (hl),31                                     ;DrillingTimeFrames
+  cp    2
+  ret   nc
+  xor   a
+  ld    (DrillMachineCurrentlyMovingInDirection?),a ;0=not moving, 1=up, 2=right, 3=down, 4=left, 5=drilling up, 6=drilling right, 7=drilling down, 8=drilling left
+  ret
+
+  .DrillingLevel2Soil:
+  ld    a,1
+  ld    (DrillingHigherLevelSoil?),a
+  ld    (hl),7                                      ;DrillingTimeFrames
+  ld    a,(ConicalDrillBit)                         ;0=can drill through level 1, 1=can drill through level 2, 2=can drill through level 3, 3=can drill through level 4 
+  cp    3
+  ret   nc
+  ld    (hl),15                                     ;DrillingTimeFrames
+  cp    2
+  ret   nc
+  ld    (hl),31                                      ;DrillingTimeFrames
+  cp    1
+  ret   nc
+  xor   a
+  ld    (DrillMachineCurrentlyMovingInDirection?),a ;0=not moving, 1=up, 2=right, 3=down, 4=left, 5=drilling up, 6=drilling right, 7=drilling down, 8=drilling left
+  ret
+
+  .DrillingLevel1Soil:
+  xor   a
+  ld    (DrillingHigherLevelSoil?),a
+  ld    (hl),31                                      ;DrillingTimeFrames
+  ld    a,(ConicalDrillBit)                         ;0=can drill through level 1, 1=can drill through level 2, 2=can drill through level 3, 3=can drill through level 4 
+  cp    1
+  ret   c
+  ld    (hl),15                                     ;DrillingTimeFrames
+  cp    2
+  ret   c
+  ld    (hl),7                                      ;DrillingTimeFrames
+  cp    3
+  ret   c
+  ld    (hl),3                                      ;DrillingTimeFrames
+  ret
+
+  .DrillThinWall:
+  xor   a
+  ld    (DrillingHigherLevelSoil?),a
+  ld    (hl),7                                      ;DrillingTimeFrames
+  ld    a,(ConicalDrillBit)                         ;0=can drill through level 1, 1=can drill through level 2, 2=can drill through level 3, 3=can drill through level 4 
+  cp    1
+  ret   c
+  ld    (hl),3                                      ;DrillingTimeFrames
+  cp    2
+  ret   c
+  ld    (hl),1                                      ;DrillingTimeFrames
   ret
 
 SetDrillMachineYRelative:                   ;DrillMachineYRelative = DrillingGameCameraY - DrillMachineY + r23onVblank
@@ -3348,10 +3545,15 @@ DrillMachineEventRoutine:
 
   call  PutSpatDrillMachineSprite           ;sets the coordinates of drill machine in spat
   call  .MoveCamera                         ;updates DrillingGameCameraY and r23onVblank when moving the camera
+
+;  call  BackdropYellow
   call  MoveDrillMachine                    ;changes DrillMachineY and DrillMachineX
+;  call  BackdropBlack
   call  SetDrillMachineYRelative            ;DrillMachineYRelative = DrillingGameCameraY - DrillMachineY + r23onVblank
 
+;  call  BackdropRed
   call  .BuildUpNewRow                      ;every other frame builds up new rows
+;  call  BackdropBlack
   call  .HandlePhase
   call  .CheckEndGame
   call  .CheckNPCConversation

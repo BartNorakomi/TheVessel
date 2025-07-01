@@ -2179,9 +2179,14 @@ putlettre:
 	db		16,0,5,0
 	db		0,%0000 0000,$98	
 
+BackdropRed:
+  ld    a,3
+  jp    SetBackDrop
+BackdropYellow:
+  ld    a,9
+  jp    SetBackDrop
 BackdropGreen:
-  ld    a,10
-ld a,r
+  ld    a,0
   jp    SetBackDrop
 BackdropBlack:
   ld    a,15
@@ -2223,6 +2228,8 @@ DatePreviousLogin: ds 6
 DailyContinuesUsed: db 0                ;bit 0=roadfighter,bit 1=basketball,bit 2=blox,bit 4=bikerace
 
 TotalMinutesUntilLand:  dw  4320
+
+ConicalDrillBit:  db  1                 ;0=can drill through Crimson Loam, 1=can drill through Subcarbonite, 2=can drill through Tectonite, 3=can drill through Pyroclastite 
 
 EndSaveGameData:
 SaveGameDataLenght: equ EndSaveGameData-StartSaveGameData
