@@ -9,9 +9,9 @@ InitiateGame:
 ;  call  TitleScreen
 ;  endif
 ;  StartGame:
+	call	SetScreenOff
 	call	SpriteInitialize
 	call	ResetVariables
-	call	SetScreenOff
 	call	LoadRoomGfx											;sets room gfx and sets palette
 	call	PutObjects											;put objects and events
 	call	ResetRestoreTables							;all 4 objects have their own restore tables
@@ -22,6 +22,7 @@ InitiateGame:
 	inc		a
   ld    (ChangeSong?),a
   call  SetInterruptHandler           	;sets Vblank
+	call	SpritesOn
   jp    LevelEngine
 
 ResetVariables:
@@ -34,11 +35,21 @@ ResetVariables:
   ld    (SkipNPCCollision?),a
   ld    (WaitCenterScreenTimer),a
   ld    (r23onVblank),a
+  ld    (r23onLineInt),a
   ld    (BuildUpNewRow?),a
+  ld    (SetLineIntHeightOnVblankDrillingGame?),a
 	ld		a,8
 	ld		(ScreenOnDelay),a								;amount of frames until screen turns on (we need some frames to first put all objects in screen)
 	ld		a,1															;main player on (he gets turned off when playing a game)
 	ld		(Object1+on?),a
+
+	ld		hl,spat
+	ld		de,4
+	ld		b,32
+	.ClearSpatLoop:
+	ld		(hl),230
+	add		hl,de
+	djnz	.ClearSpatLoop
 	ret
 
 INCLUDE "RePlayer.asm"
@@ -948,6 +959,12 @@ CopyTileDrillingGame:
 	db		032,0,032,0
 	db		0,0,$d0	
 
+FillCommand:
+	db		0,0,0,0
+	db		0,0,0,0
+	db		0,0,7,0
+	db		0,0,$80	
+
 ChangeSong?:  db 0
 
 SetInterruptHandler:
@@ -1569,20 +1586,6 @@ PlayerSpriteStand: 			dw  Rstanding
 StartConversation?:			db	0
 StartWakeUpEvent?:			db	1
 
-DrillMachineCurrentlyMovingInDirection?:	db	0	;0=not moving, 1=up, 2=right, 3=down, 4=left
-DrillMachineSpeed:  		dw  1
-DrillingGameCameraY:		dw	00*32
-DrillMachineX:					db	096
-DrillMachineY:					dw	096
-DrillMachineYRelative:	db	000
-DrillMachineFaceDirection:	db	3		;1=up, 2=right, 3=down, 4=left
-DrillMachineAnimationCounter:	db	0
-DrillingTime:						db	0
-
-DrillingTimeFrames:						ds	1
-DrillingHigherLevelSoil?:			ds	1
-
-
 endenginepage3:
 dephase
 enginepage3length:	Equ	$-enginepage3
@@ -1685,7 +1688,22 @@ InitiateWakeUp?: 						rb	1
 SkipNPCCollision?: 					rb	1
 WaitCenterScreenTimer:			rb	1
 r23onVblank:								rb	1
+r23onLineInt:								rb	1
 BuildUpNewRow?:							rb	1
+SetLineIntHeightOnVblankDrillingGame?:	rb	1
+
+DrillMachineCurrentlyMovingInDirection?:	rb	1	;0=not moving, 1=up, 2=right, 3=down, 4=left
+DrillMachineSpeed:  				rb	2
+DrillingGameCameraY:				rb	2
+DrillMachineX:							rb	1
+DrillMachineY:							rb	2
+DrillMachineYRelative:			rb	1
+DrillMachineFaceDirection:	rb	1		;1=up, 2=right, 3=down, 4=left
+DrillMachineAnimationCounter:	rb	1
+DrillingTime:								rb	1
+
+DrillingTimeFrames:					rb	1
+DrillingHigherLevelSoil?:		rb	1
 
 
 endenginepage3variables:  equ $+enginepage3length

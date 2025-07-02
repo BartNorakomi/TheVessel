@@ -177,3 +177,5 @@ NPCConv023: ;science lab
   db    SwitchCharacter,CharacterPortraitAI,"Yes. Colony structures mirror ship facilities replicating vital systems for a sustainable settlement."
   db    SwitchCharacter,CharacterPortraitVessel,"Looks like the key to survival is drilling, upgrading, and building."
   db    SwitchCharacter,CharacterPortraitAI,"Survival is progress. Progress is survival.",255
+
+

@@ -2212,6 +2212,12 @@ BuildUpMapDrillingGame:
   ld    a,(slot.page1rom)              	;all RAM except page 1+2
   out   ($a8),a    
 
+  ld    a,32
+  ld    (CopyTileDrillingGame+ny),a         ;next row
+  xor   a
+  ld    (CopyTileDrillingGame+dx),a         ;dx
+  ld    (CopyTileDrillingGame+dy),a         ;dy
+
   ld    de,$8000 + (00 * 8)
   ld    b,64
   .PutTileLoop:
@@ -2699,6 +2705,8 @@ ConvertDrillingLeftTileWeCameFrom:
 ConvertDrillingLeftTileWeMoveTo:
   dec   hl
 
+  call  CheckResourceCollected
+
   ld    a,(DrillingHigherLevelSoil?)
   or    a
   jr    z,.EndCheckHigherLevelSoil
@@ -2745,8 +2753,89 @@ ConvertDrillingRightTileWeCameFrom:
   db    00,05,08,04,05,06,10,12
   db    08,13,10,15,12,13,00,15
 
+CheckResourceCollected:
+  push  hl
+  call  .Checktile
+  pop   hl
+  ret
+
+  .Checktile:
+  ld    e,(hl)                                      ;tilenr
+  ld    d,0
+  ld    hl,.TileResourceConversionTable
+  add   hl,de
+  ld    a,(hl)
+  or    a
+  ret   z
+
+  ld    hl,(Storage)
+  inc   hl
+  ld    (Storage),hl
+
+  dec   a
+  jr    z,.Level1
+  dec   a
+  jr    z,.Level2
+  dec   a
+  jr    z,.Level3
+  dec   a
+  jr    z,.Level4
+  dec   a
+  jr    z,.Level5
+  dec   a
+  jr    z,.Level6
+
+  .Level7:
+  ld    hl,(Level7Resources)
+  inc   hl
+  ld    (Level7Resources),hl
+  ret
+  .Level6:
+  ld    hl,(Level6Resources)
+  inc   hl
+  ld    (Level6Resources),hl
+  ret
+  .Level5:
+  ld    hl,(Level5Resources)
+  inc   hl
+  ld    (Level5Resources),hl
+  ret
+  .Level4:
+  ld    hl,(Level4Resources)
+  inc   hl
+  ld    (Level4Resources),hl
+  ret
+  .Level3:
+  ld    hl,(Level3Resources)
+  inc   hl
+  ld    (Level3Resources),hl
+  ret
+  .Level2:
+  ld    hl,(Level2Resources)
+  inc   hl
+  ld    (Level2Resources),hl
+  ret
+  .Level1:
+  ld    hl,(Level1Resources)
+  inc   hl
+  ld    (Level1Resources),hl
+  ret
+
+  .TileResourceConversionTable:
+  db  0,0,0,0, 0,0,0,0
+  db  0,0,0,0, 0,0,0,0
+  db  0,1,2,3, 4,5,6,7
+  db  0,0,0,0, 0,0,2,3
+
+  db  4,5,6,7, 0,0,0,0
+  db  0,0,3,4, 5,6,7,0
+  db  0,0,0,0, 0,4,5,6
+  db  7,0,0,0, 0,0,0,0
+
 ConvertDrillingRightTileWeMoveTo:
   inc   hl
+
+  call  CheckResourceCollected
 
   ld    a,(DrillingHigherLevelSoil?)
   or    a
@@ -2798,6 +2887,8 @@ ConvertDrillingUpTileWeMoveTo:
   ld    de,-8
   add   hl,de
 
+  call  CheckResourceCollected
+
   ld    a,(DrillingHigherLevelSoil?)
   or    a
   jr    z,.EndCheckHigherLevelSoil
@@ -2848,6 +2939,8 @@ ConvertDrillingDownTileWeMoveTo:
   ld    de,8
   add   hl,de
 
+  call  CheckResourceCollected
+
   ld    a,(DrillingHigherLevelSoil?)
   or    a
   jr    z,.EndCheckHigherLevelSoil
@@ -2873,6 +2966,16 @@ ConvertDrillingDownTileWeMoveTo:
   .TileConversionDrillingLeft:
   db    04,09,07,03,04,13,11,07
   db    12,09,15,11,12,13,03,15
+  ret
+
+ReduceFuelWhenMoving:
+  ld    a,(framecounter2)
+  and   31
+  ret   nz
+
+  ld    hl,(Fuel)
+  dec   hl
+  ld    (Fuel),hl
   ret
 
 MoveDrillInItsDirection:
@@ -3057,6 +3160,7 @@ MoveDrillInItsDirection:
   .MoveDown:
   ld    a,3
   ld    (DrillMachineFaceDirection),a               ;1=up, 2=right, 3=down, 4=left
+  call  ReduceFuelWhenMoving                        ;when moving you lose fuel depending on drillmachinespeed
   ld    hl,(DrillMachineY)
   ld    de,(DrillMachineSpeed)
   add   hl,de
@@ -3088,6 +3192,7 @@ MoveDrillInItsDirection:
   .MoveUp:
   ld    a,1
   ld    (DrillMachineFaceDirection),a       ;1=up, 2=right, 3=down, 4=left
+  call  ReduceFuelWhenMoving                        ;when moving you lose fuel depending on drillmachinespeed
   ld    hl,(DrillMachineY)
   ld    de,(DrillMachineSpeed)
   xor   a
@@ -3125,6 +3230,7 @@ MoveDrillInItsDirection:
   cp    256-32
   jp    z,.EdgeOfScreenReached
 
+  call  ReduceFuelWhenMoving                        ;when moving you lose fuel depending on drillmachinespeed
   ld    a,(DrillMachineSpeed)
   ld    e,a
   ld    a,(DrillMachineX)
@@ -3161,6 +3267,7 @@ MoveDrillInItsDirection:
   or    a
   jp    z,.EdgeOfScreenReached
 
+  call  ReduceFuelWhenMoving                        ;when moving you lose fuel depending on drillmachinespeed
   ld    a,(DrillMachineSpeed)
   ld    e,a
   ld    a,(DrillMachineX)
@@ -3520,8 +3627,8 @@ CheckDrillingPossible:
   ld    (hl),1                                      ;DrillingTimeFrames
   ret
 
-SetDrillMachineYRelative:                   ;DrillMachineYRelative = DrillingGameCameraY - DrillMachineY + r23onVblank
-  ld    a,(r23onVblank)
+SetDrillMachineYRelative:                   ;DrillMachineYRelative = DrillingGameCameraY - DrillMachineY + r23onLineInt
+  ld    a,(r23onLineInt)
   ld    b,a
 
   ld    hl,(DrillMachineY)
@@ -3552,89 +3659,227 @@ SetInterruptHandlerDrillingGame:
   ld    a,128
   out   ($99),a
 
-  ld    a,32
+  ld    a,LineIntHeightDrillingGame
   out   ($99),a
   ld    a,19+128                        ;set lineinterrupt height
   ei
   out   ($99),a 
   ret
 
+HandleHud:
+  ld    a,(framecounter2)               ;only handle hud when background is not being built up
+  and   7
+  cp    1
+  jr    z,HandleHudRadiation
+  cp    3
+  jr    z,HandleHudEnergy
+  cp    5
+  jr    z,HandleHudStorage
+  cp    7
+  jr    z,HandleHudFuel
+  ret
+
+HandleHudRadiation:
+  ld    hl,ClearHudRadiation
+  call  DoCopy
+
+  ld    c,DrillingGameColorRed+ (DrillingGameColorRed * 16)
+  ld    b,188                           ;dx
+  ld    a,018                           ;dy
+
+  ;nx= Radiation/RadiationMax*64
+  ld    hl,(Radiation)
+  ld    de,(RadiationMax)
+  jp    GoFill
+
+HandleHudEnergy:
+  ld    hl,ClearHudEnergy
+  call  DoCopy
+
+  ld    c,DrillingGameColorGreen+ (DrillingGameColorGreen * 16)
+  ld    b,059                           ;dx
+  ld    a,018                           ;dy
+
+  ;nx= Energy/EnergyMax*64
+  ld    hl,(Energy)
+  ld    de,(EnergyMax)
+  jp    GoFill
+
+HandleHudStorage:
+  ld    hl,ClearHudStorage
+  call  DoCopy
+
+  ld    c,DrillingGameColorGrey+ (DrillingGameColorGrey * 16)
+  ld    b,188                           ;dx
+  ld    a,003                           ;dy
+
+  ;nx= Storage/StorageMax*64
+  ld    hl,(Storage)
+  ld    de,(StorageMax)
+  jp    GoFill
+
+HandleHudFuel:
+  ld    hl,ClearHudFuel
+  call  DoCopy
+
+  ld    c,DrillingGameColorOrange+ (DrillingGameColorOrange * 16)
+  ld    b,059                           ;dx
+  ld    a,003                           ;dy
+
+  ld    hl,(Fuel)
+  ld    de,(FuelMax)
+  jp    GoFill
+
+GoFill:
+  ld    (FillCommand+dy),a
+  ld    a,b
+  ld    (FillCommand+dx),a
+  ld    a,c
+  ld    (FillCommand+clr),a
+
+  ;nx= resource*64/resourcemax
+  push  de
+  ld    de,64
+  call  MultiplyHlWithDE      ;HL = result
+
+  push  hl
+  pop   bc
+  pop   de
+  call  DivideBCbyDE          ; Out: BC = result, HL = rest
+
+  ld    a,c
+  ld    (FillCommand+nx),a
+
+  or    a
+  ret   z
+
+  ld    hl,FillCommand
+  jp    DoCopy
+
+DrillingGameColorBlack:   equ 15
+DrillingGameColorOrange:  equ 12
+DrillingGameColorGrey:    equ 6
+DrillingGameColorGreen:   equ 0
+DrillingGameColorRed:     equ 3
+ClearHudFuel:
+	db		0,0,0,0
+	db		058,0,003,0
+	db		066,0,007,0
+	db		DrillingGameColorBlack+ (DrillingGameColorBlack * 16),0,$c0	
+
+ClearHudStorage:
+	db		0,0,0,0
+	db		188,0,003,0
+	db		064,0,007,0
+	db		DrillingGameColorBlack+ (DrillingGameColorBlack * 16),0,$c0	
+
+ClearHudEnergy:
+	db		0,0,0,0
+	db		058,0,018,0
+	db		066,0,007,0
+	db		DrillingGameColorBlack+ (DrillingGameColorBlack * 16),0,$c0	
+
+ClearHudRadiation:
+	db		0,0,0,0
+	db		188,0,018,0
+	db		064,0,007,0
+	db		DrillingGameColorBlack+ (DrillingGameColorBlack * 16),0,$c0	
+
+HandleRadiation:
+  ld    a,(RadiationProtectionLevel)
+  dec   a
+  ld    b,63
+  jr    z,.RadiationProtectionLevelFound
+  dec   a
+  ld    b,127
+  jr    z,.RadiationProtectionLevelFound
+  ld    b,255
+
+  .RadiationProtectionLevelFound:
+  ld    a,(framecounter2)
+  and   b
+  ret   nz
+
+  ld    hl,(Radiation)
+  inc   hl
+  ld    (Radiation),hl
+  ret
+
+HandleEnergy:
+  ld    a,(framecounter2)
+  and   a
+  ret   nz
+
+  ld    hl,(Energy)
+  dec   hl
+  ld    (Energy),hl
+  ret
+
 DrillMachineEventRoutine:
-
-
-;;;;;; MOVE THIS TO VBLANK
-  ld    a,0*32 + 31  ;set page
-  di
-  out   ($99),a
-  ld    a,2+128
-  ei
-  out   ($99),a
-
-  xor   a                     ;r#23
-  di
-  out   ($99),a
-  ld    a,23+128
-  ei
-  out   ($99),a
-
-
-
-
-
-
-
   ld    a,(framecounter2)
   inc   a
   ld    (framecounter2),a
 
+  call  .HandlePhase                        ;used to build up screen and initiate variables
+  call  .CheckEndGame
+  call  .MoveCamera                         ;updates DrillingGameCameraY and r23onLineInt when moving the camera
 ;  call  BackdropGreen
   call  PutDrillMachineCharacterAndColorData;every other frame outs the character and color data to vram
 ;  call  BackdropBlack
 
   call  PutSpatDrillMachineSprite           ;sets the coordinates of drill machine in spat
-  call  .MoveCamera                         ;updates DrillingGameCameraY and r23onVblank when moving the camera
 
 ;  call  BackdropYellow
   call  MoveDrillMachine                    ;changes DrillMachineY and DrillMachineX
 ;  call  BackdropBlack
-  call  SetDrillMachineYRelative            ;DrillMachineYRelative = DrillingGameCameraY - DrillMachineY + r23onVblank
+  call  SetDrillMachineYRelative            ;DrillMachineYRelative = DrillingGameCameraY - DrillMachineY + r23onLineInt
 
 ;  call  BackdropRed
   call  .BuildUpNewRow                      ;every other frame builds up new rows
 ;  call  BackdropBlack
-  call  .HandlePhase
-  call  .CheckEndGame
   call  .CheckNPCConversation
+
+  call  HandleHud                           ;displays fuel, storage, energy and radiation
+  call  HandleRadiation                     ;radiation is increased over time, depending on RadiationProtectionLevel
+  call  HandleEnergy                        ;energy is decreased over time
   ret
 
   .HandlePhase:
   ld    a,(iy+ObjectPhase)
   or    a
-  jp    z,.Phase0                           ;build up map
-  dec   a
-  jp    z,.Phase1                           ;
-  dec   a
-  jp    z,.Phase2                           ;
-  ret
+  ret   nz
 
-  .Phase2:                                  ;
-  ret
-
-  .Phase1:                                  ;
-  ret
-
-  .Phase0:                                  ;build up map
-  call  BuildUpMapDrillingGame
+  call  BuildUpMapDrillingGame              ;build up map
   call  SetHudDrillingGame
-  call  SetInterruptHandlerDrillingGame   	;sets Vblank and lineint for hud
+  ld    a,0*32 + 31                         ;page 0 at vblank (for the hud), page 2 will be for the game (set on lineint)
+	ld    (PageOnNextVblank),a
+  xor   a
+  ld    (r23onVblank),a
+  ld    (DrillMachineCurrentlyMovingInDirection?),a
+  ld    (DrillMachineYRelative),a
+  ld    (DrillMachineAnimationCounter),a
+  ld    (DrillingTime),a
+  ld    hl,0
+  ld    (DrillingGameCameraY),hl
+
+  ld    hl,1
+  ld    (DrillMachineSpeed),hl
+
+  ld    a,96
+  ld    (DrillMachineX),a
+  ld    hl,32
+  ld    (DrillMachineY),hl
+  ld    a,3
+  ld    (DrillMachineFaceDirection),a
+  ld    a,1
+  ld    (SetLineIntHeightOnVblankDrillingGame?),a
   ld    (iy+ObjectPhase),1
+  call  SetInterruptHandlerDrillingGame   	;sets Vblank and lineint for hud
   ret
 
 .CheckNPCConversation:
-  ld    a,2*32 + 31                         ;page 2 is always our active page when we are playing the drilling game
-	ld    (PageOnNextVblank),a
   ld    a,1
-  ld    (framecounter),a                    ;we force framecounter to 1 so that the sf2 object handler doesn't swap page ever (so we always stay on page 2)
+  ld    (framecounter),a                    ;we force framecounter to 1 so that the sf2 object handler doesn't swap page ever (so we always stay on page 2 for the game, and page 0 for the hud)
 
 ;
 ; bit	7	  6	  5		    4		    3		    2		  1		  0
@@ -3651,12 +3896,14 @@ DrillMachineEventRoutine:
   ld    (NPCConvBlock),a
   ld    hl,NPCConv009
   ld    (NPCConvAddress),hl
-
-  ld    a,0*32 + 31                         ;npc conversation starts when we are in page 0 and takes place in page 0 and page 1
-	ld    (PageOnNextVblank),a
   ret
 
   .CheckEndGame:
+  ld    hl,(DrillMachineY)
+  ld    de,10
+  call  CompareHLwithDE
+  jr    c,.EndGame
+
 ;
 ; bit	7	  6	  5		    4		    3		    2		  1		  0
 ;		  0	  0	  trig-b	trig-a	right	  left	down	up	(joystick)
@@ -3666,6 +3913,8 @@ DrillMachineEventRoutine:
 	bit		5,a           ;trig b pressed ?
   ret   z
 
+  .EndGame:
+  call  SetInterruptHandler
   ld    a,1
   ld    (ChangeRoom?),a
   ld    a,4
@@ -3680,9 +3929,9 @@ DrillMachineEventRoutine:
   ret   nz
 
   .CheckMoveCameraDown:
-  ld    a,(r23onVblank)
+  ld    a,(r23onLineInt)
   ld    b,a
-  ld    a,(DrillMachineYRelative)           ;DrillMachineYRelative = DrillingGameCameraY - DrillMachineY + r23onVblank
+  ld    a,(DrillMachineYRelative)           ;DrillMachineYRelative = DrillingGameCameraY - DrillMachineY + r23onLineInt
   sub   a,b
   cp    50
   ret   c
@@ -3692,9 +3941,9 @@ DrillMachineEventRoutine:
   add   hl,de
   ld    (DrillingGameCameraY),hl
 
-  ld    a,(r23onVblank)
+  ld    a,(r23onLineInt)
   add   a,e
-  ld    (r23onVblank),a
+  ld    (r23onLineInt),a
 
 ;  sub   a,32                                ;adjust line int height
 ;  di
@@ -3708,9 +3957,9 @@ DrillMachineEventRoutine:
   ret
 
   .CheckMoveCameraUp:
-  ld    a,(r23onVblank)
+  ld    a,(r23onLineInt)
   ld    b,a
-  ld    a,(DrillMachineYRelative)           ;DrillMachineYRelative = DrillingGameCameraY - DrillMachineY + r23onVblank
+  ld    a,(DrillMachineYRelative)           ;DrillMachineYRelative = DrillingGameCameraY - DrillMachineY + r23onLineInt
   sub   a,b
   cp    120
   ret   nc
@@ -3725,16 +3974,16 @@ DrillMachineEventRoutine:
   ld    a,1                                 ;1= camera moving up, 2=camera moving down
   ld    (BuildUpNewRow?),a
 
-  ld    a,(r23onVblank)
+  ld    a,(r23onLineInt)
   sub   a,e
-  ld    (r23onVblank),a
+  ld    (r23onLineInt),a
 
-;  sub   a,32                                ;adjust line int height
+;  sub   a,32
 ;  di
 ;  out   ($99),a
-;  ld    a,19+128                            ;set lineinterrupt height
+;  ld    a,19+128                        ;set lineinterrupt height
 ;  ei
-;  out   ($99),a   
+;  out   ($99),a 
   ret
 
 
@@ -3757,7 +4006,7 @@ DrillMachineEventRoutine:
   jr    z,BuildUpNewRowCameraGoingUp
 
 BuildUpNewRowCameraGoingDown:
-  ld    a,(r23onVblank)
+  ld    a,(r23onLineInt)
   and   %1111 0000
   add   a,7*32
   ld    (CopyTileDrillingGame+dy),a         ;dy
@@ -3810,7 +4059,7 @@ BuildUpNewRowCameraGoingDown:
   add   a,a                                 ;*32
   ld    (CopyTileDrillingGame+sx),a
 
-  ld    a,(r23onVblank)
+  ld    a,(r23onLineInt)
   and   %0001 0000
   ld    l,a
 
@@ -3833,7 +4082,7 @@ BuildUpNewRowCameraGoingDown:
   ret
 
 BuildUpNewRowCameraGoingUp:
-  ld    a,(r23onVblank)
+  ld    a,(r23onLineInt)
   and   %1111 0000
   ld    (CopyTileDrillingGame+dy),a         ;dy
   xor   a
@@ -3878,7 +4127,7 @@ BuildUpNewRowCameraGoingUp:
   add   a,a                                 ;*32
   ld    (CopyTileDrillingGame+sx),a
 
-  ld    a,(r23onVblank)
+  ld    a,(r23onLineInt)
   and   %0001 0000
   ld    l,a
 
@@ -3910,7 +4159,7 @@ PutTileInScreen:                            ;in: a=tilenr, c=y increase, b=x inc
   add   a,a                                 ;*32
   ld    (CopyTileDrillingGame+sx),a
 
-;  ld    a,(r23onVblank)
+;  ld    a,(r23onLineInt)
 ;  and   %0001 0000
 ;  ld    l,a
 

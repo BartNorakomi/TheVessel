@@ -604,7 +604,7 @@ DrillingGameMapsBlock:  				equ   ($-RomStartAddress) and (romsize-1) /RomBlockS
 	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
 
 DrillingGameHudBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
-  incbin "..\grapx\drillinggame\hud.SC5",7,032 * 128      ;032 lines
+  incbin "..\grapx\drillinggame\hud.SC5",7,028 * 128      ;032 lines
 	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
 
 OpenDoorGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize

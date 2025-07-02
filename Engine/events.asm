@@ -41,9 +41,10 @@ build the structures for the colony on the planet (these structures are mostly t
 maybe with resources an automatic transfer system can be bought, so that when ending the drilling the resources
 get delivered to where they need to be (so you automatically get fuel/oxygen/food/upgrades etc)
 
-
 digging depth should be extreme (full 16k), but it should not be worth digging all the way to the bottom,
 instead you should find the depth thats still worth it, and then go to a new digsite
+
+You should have the option to directly enter science lab (or another room) at the end of drilling...
 
 -------------------------------
 
@@ -84,7 +85,7 @@ the biopod room has no further function in game, but the 2 biopods will be used 
 
 reactorchamber
 
-has no function is game, but the reactor chamber provides energy to the entire ship
+has no function in game, but the reactor chamber provides energy to the entire ship
 
 -------------------------------
 
@@ -102,6 +103,23 @@ has no function, but you can enjoy playing the games again
 -------------------------------
 
 science lab
+
+radiation upgrades:
+  Proxima Centauri, a red dwarf star, is known for frequent stellar flares that emit intense X-rays and ultraviolet radiation, which would make planetary surfaces particularly hazardous. Here’s a potential upgrade concept:
+
+  Nanoshield Symbiotic Skin (NSS)
+
+  This upgrade involves a bio-engineered skin layer integrated with adaptive nanotechnology. The NSS functions as follows:
+
+  Radiation-Absorbing Nanites: The skin contains microscopic nanobots that detect and absorb ionizing radiation (e.g., X-rays, gamma rays). These nanites convert harmful radiation into harmless energy, storing it in micro-capacitors within the skin for later use, such as powering other cybernetic implants or releasing it as heat.
+
+  Dynamic Melanin Enhancement: The skin adapts its melanin-like pigment structure to block UV radiation, shifting its density and composition in real-time based on radiation levels. This mimics natural melanin but is far more efficient, reducing UV damage to near zero.
+
+  Self-Repairing Tissue: The bio-engineered skin rapidly repairs cellular damage from any radiation that penetrates the nanite layer, using CRISPR-based gene-editing mechanisms to correct DNA mutations in real-time.
+
+  Thermal Regulation: Since Proxima Centauri planets may have extreme temperature variations (especially if tidally locked), the NSS also regulates body temperature to prevent overheating from absorbed radiation energy.
+  Gameplay Benefits:
+
 
 -------------------------------
 

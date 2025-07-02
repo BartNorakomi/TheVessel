@@ -158,6 +158,23 @@ vblank:
   ld    a,23+128
   out   ($99),a  
 
+  ;adjust line int height on vblank for the drilling game
+  ld    a,(SetLineIntHeightOnVblankDrillingGame?)
+  or    a
+  jr    z,.EndSetLineIntHeight
+  ld    a,LineIntHeightDrillingGame
+  out   ($99),a
+  ld    a,19+128                        ;set lineinterrupt height
+  out   ($99),a
+
+  ld    a,(VDP_8)         ;sprites off
+  or    %00000010
+  ld    (VDP_8),a
+  out   ($99),a
+  ld    a,8+128
+  out   ($99),a
+  .EndSetLineIntHeight:
+
   pop   hl 
   pop   de 
   pop   bc 
@@ -278,16 +295,65 @@ LineInt:
   ei
   ret  
 
+LineIntHeightDrillingGame:  equ 25
 LineIntDrillingGame:
-  ld    a,(PageOnNextVblank)  ;set page
+  ld    a,2               ;Set Status register #2
+  out   ($99),a
+  ld    a,15+128          ;we are about to check for HR
+  out   ($99),a
+ 
+.Waitline2:                ;wait until end of HBLANK
+  in    a,($99)           ;Read Status register #2
+  and   %0010 0000        ;bit to check for HBlank detection
+  jr    z,.Waitline2
+
+  ;screen always gets turned on/off at the END of the line
+  ld    a,(VDP_0+1)       ;screen off
+  and   %1011 1111
+  out   ($99),a
+  ld    a,1+128
+  out   ($99),a
+ ;so after turning off the screen wait till the end of HBLANK, then perform actions
+
+  ld    a,2               ;Set Status register #2
+  out   ($99),a
+  ld    a,15+128          ;we are about to check for HR
+  out   ($99),a
+ 
+.Waitline:                ;wait until end of HBLANK
+  in    a,($99)           ;Read Status register #2
+  and   %0010 0000        ;bit to check for HBlank detection
+  jr    z,.Waitline
+
+  ld    a,2*32 + 31         ;page 2 is our active page for the drilling game
   out   ($99),a
   ld    a,2+128
   out   ($99),a
 
-  ld    a,(r23onVblank)
+  ld    a,(r23onLineInt)
   out   ($99),a
   ld    a,23+128
   out   ($99),a  
+
+  ld    a,(r23onLineInt)
+  add   a,LineIntHeightDrillingGame
+  out   ($99),a
+  ld    a,19+128                        ;set lineinterrupt height
+  out   ($99),a   
+
+  ld    a,(VDP_8)             ;sprites on
+  and   %11111101
+  ld    (VDP_8),a
+  out   ($99),a
+  ld    a,8+128
+  out   ($99),a
+
+  ld    a,(VDP_0+1)       ;screen on
+  or    %0100 0000
+  out   ($99),a
+  ld    a,1+128
+  out   ($99),a
+;  call  BackdropRandom
 
   pop   af 
   ei
@@ -1723,25 +1789,6 @@ Restore2BlackLinesGoingDown:
 
 
 
-EnableHudSplitDrillingGame:             ;enable the hud split 
-  ld    a,(VDP_0)                       ;set ei1
-  or    16                              ;ei1 checks for lineint and vblankint
-  ld    (VDP_0),a                       ;ei0 (which is default at boot) only checks vblankint
-  di
-  out   ($99),a
-  ld    a,128
-  out   ($99),a
-
-  ld    a,32
-  out   ($99),a
-  ld    a,19+128                        ;set lineinterrupt height
-  ei
-  out   ($99),a 
-  ret
-
-
-
-
 
 
 
@@ -2216,6 +2263,9 @@ putlettre:
 	db		16,0,5,0
 	db		0,%0000 0000,$98	
 
+BackdropRandom:
+  ld    a,r
+  jp    SetBackDrop
 BackdropRed:
   ld    a,3
   jp    SetBackDrop
@@ -2245,7 +2295,7 @@ StartSaveGameData:
 CurrentRoom:  db  12                    ;0=arcadehall1, 1=arcadehall2, 2=biopod, 3=hydroponicsbay, 4=hangarbay, 5=trainingdeck, 6=reactorchamber, 7=sleepingquarters, 8=armoryvault, 9=holodeck, 10=medicalbay
                                         ;11=sciencelab, 12=drillinggame
 GamesPlayed:  db 9                      ;increases after leaving a game. max=255
-HighScoreTotalAverage: db 80            ;recruiter appears when 80 (%) is reached
+HighScoreTotalAverage: db 00            ;recruiter appears when 80 (%) is reached
 HighScoreBackroomGame:  db  100
 
 HighScoreRoadFighter: db 0
@@ -2264,9 +2314,33 @@ DateCurrentLogin: ds 6
 DatePreviousLogin: ds 6
 DailyContinuesUsed: db 0                ;bit 0=roadfighter,bit 1=basketball,bit 2=blox,bit 4=bikerace
 
-TotalMinutesUntilLand:  dw  4320
+TotalMinutesUntilLand:      dw  4320
 
-ConicalDrillBit:  db  1                 ;0=can drill through Crimson Loam, 1=can drill through Subcarbonite, 2=can drill through Tectonite, 3=can drill through Pyroclastite 
+OxygenOnShip:               db  255
+WaterOnShip:                dw  200
+FoodOnShip:                 dw  400
+
+;Drilling Game:
+ConicalDrillBit:            db  1       ;0=can drill through Crimson Loam, 1=can drill through Subcarbonite, 2=can drill through Tectonite, 3=can drill through Pyroclastite 
+DrillMachineMaxSpeed:       db  1       ;1=level 1, 2=level 2, 3=level 3, 4=level 4
+Fuel:                       dw  364
+FuelMax:                    dw  364
+Level1Resources:            dw  0
+Level2Resources:            dw  0
+Level3Resources:            dw  0
+Level4Resources:            dw  0
+Level5Resources:            dw  0
+Level6Resources:            dw  0
+Level7Resources:            dw  0
+Storage:                    dw  000
+StorageMax:                 dw  064
+Energy:                     dw  196
+EnergyMax:                  dw  200
+EnergyXP:                   db  0
+Radiation:                  dw  0
+RadiationMax:               dw  1000
+RadiationProtectionLevel:   db  1       ;1=level 1, 2=level 2,3=level 3
+
 
 EndSaveGameData:
 SaveGameDataLenght: equ EndSaveGameData-StartSaveGameData
