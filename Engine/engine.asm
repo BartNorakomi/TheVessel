@@ -2385,7 +2385,7 @@ WaterOnShip:                dw  200
 FoodOnShip:                 dw  400
 
 ;Drilling Game:
-ConicalDrillBit:            db  1       ;0=can drill through Basalt, 1=can drill through Ironstone, 2=can drill through metallic ore, 3=can drill through xenodiamond 
+ConicalDrillBit:            db  0       ;0=can drill through Basalt, 1=can drill through Ironstone, 2=can drill through metallic ore, 3=can drill through xenodiamond 
 DrillMachineMaxSpeed:       db  1       ;1=level 1, 2=level 2, 3=level 3, 4=level 4
 Level1Resources:            dw  0
 Level2Resources:            dw  0
@@ -2404,7 +2404,7 @@ EnergyXP:                   db  0
 Radiation:                  dw  800
 RadiationMax:               dw  1000
 RadiationProtectionLevel:   db  1       ;1=level 1, 2=level 2,3=level 3
-ConvSoldier: db %0000 0001               ;conversations handled bit0=intro, bit1=low fuel, bit2=low fuel short, bit3=low energy, bit4=low energy short, bit5=high radiation, bit6=storage full
+ConvSoldier: db %0000 0001               ;conversations handled bit0=intro, bit1=low fuel, bit2=low fuel short, bit3=low energy, bit4=low energy short, bit5=high radiation, bit6=storage full, bit7=storage full short
 
 
 EndSaveGameData:

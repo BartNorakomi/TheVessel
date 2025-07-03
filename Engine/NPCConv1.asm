@@ -176,13 +176,22 @@ NPCConv023: ;science lab
   db    SwitchCharacter,CharacterPortraitVessel,"Looks like the key to survival is drilling, upgrading, and building."
   db    SwitchCharacter,CharacterPortraitAI,"Survival is progress. Progress is survival.",255
 
+
+
+
+
+
+
+
+
+
 NPCConv024: ;first time drilling
-  db    SwitchCharacter,CharacterPortraitSoldier,"Drill systems online. First descent protocol initiated. This is the moment you take the first step toward securing our future."
-  db    SwitchCharacter,CharacterPortraitSoldier,"You will begin in Basalt. It is soft, widespread, and easily breached by your current drill configuration."
-  db    SwitchCharacter,CharacterPortraitSoldier,"Deeper down lie Ironstone, Metallic Ore, and the rare Xenodiamond. Tougher materials, yes-but with greater rewards for those prepared to rise to the challenge."
-  db    SwitchCharacter,CharacterPortraitSoldier,"Your drill cone won't pierce these layers yet. Upgrades are essential to push further."
-  db    SwitchCharacter,CharacterPortraitVessel,"So I can't just dig straight down without upgrades?"
-  db    SwitchCharacter,CharacterPortraitSoldier,"Exactly. Every resource you gather fuels progress. Upgrade your gear in the science lab and come back stronger."
+  db    SwitchCharacter,CharacterPortraitSoldier,"Drill systems online. First descent protocol active. This is your first real step toward securing the colony's future."
+  db    SwitchCharacter,CharacterPortraitSoldier,"You'll start close to the surface. It's stable, manageable-perfect for getting used to the drill."
+  db    SwitchCharacter,CharacterPortraitSoldier,"The deeper you go, the tougher it gets. You'll hit harder layers and more resistance-but the rewards will be worth it."
+  db    SwitchCharacter,CharacterPortraitSoldier,"Your current gear can only get you so far. To push deeper, you'll need to upgrade your equipment."
+  db    SwitchCharacter,CharacterPortraitVessel,"So I can't just dig straight down without upgrading first?"
+  db    SwitchCharacter,CharacterPortraitSoldier,"Correct. Gather resources, upgrade your gear in the science lab and come back stronger."
   db    SwitchCharacter,CharacterPortraitSoldier,"Monitor your fuel reserves closely. If you deplete them entirely, you will be stranded underground. This is not a simulation. Additionally, return to the surface before exhausting your energy supply. Fatigue compromises judgment and survival."
   db    SwitchCharacter,CharacterPortraitSoldier,"One final note: outside the ship, you are no longer shielded from radiation exposure. Daily visits to the medical bay are mandatory to manage contamination levels."
   db    SwitchCharacter,CharacterPortraitSoldier,"Dig smart. Prioritize what matters. And above all, come home safe."
@@ -232,3 +241,9 @@ NPCConv030: ;storage full - return to surface
 
 NPCConv031: ;storage full - short
   db    SwitchCharacter,CharacterPortraitSoldier,"Storage full. We can't carry any more. Extra resources will be crushed and lost for good.",255
+
+NPCConv032: ;drill can't break material
+  db    SwitchCharacter,CharacterPortraitSoldier,"Hold it. That material's too dense for your current drill. You'll need an upgrade before you can cut through it.",255
+
+NPCConv033: ;lava encountered
+  db    SwitchCharacter,CharacterPortraitSoldier,"Caution-magma flow detected. Temperature exceeds structural limits of all known drill alloys. Passage is impossible. Reroute your path immediately.",255

@@ -2984,6 +2984,14 @@ ReduceFuelWhenMoving:
   ld    (Fuel),hl
   ret
 
+ReduceAdditionalFuelWhenDrilling:
+  push  hl
+  ld    hl,(Fuel)
+  dec   hl
+  ld    (Fuel),hl
+  pop   hl
+  ret
+
 MoveDrillInItsDirection:
   ld    a,(DrillMachineCurrentlyMovingInDirection?) ;0=not moving, 1=up, 2=right, 3=down, 4=left, 5=drilling up, 6=drilling right, 7=drilling down, 8=drilling left
   or    a
@@ -3554,15 +3562,29 @@ CheckDrillingPossible:
   ld    hl,DrillingTimeFrames
 
   cp    16
-  jr    c,.DrillThinWall
+  jp    c,.DrillThinWall
   cp    24
-  jr    c,.DrillingLevel1Soil
+  jp    c,.DrillingLevel1Soil
   cp    36
-  jr    c,.DrillingLevel2Soil
+  jp    c,.DrillingLevel2Soil
   cp    47
-  jr    c,.DrillingLevel3Soil
+  jp    c,.DrillingLevel3Soil
+  cp    57
+  jp    c,.DrillingLevel4Soil
+
+  .DrillingLava: ;
+;  ld    a,1
+;  ld    (DrillingHigherLevelSoil?),a
+;  ld    (hl),31                                      ;DrillingTimeFrames
+;  ld    a,(ConicalDrillBit)                         ;0=can drill through level 1, 1=can drill through level 2, 2=can drill through level 3, 3=can drill through level 4 
+;  cp    3
+;  ret   nc
+  xor   a
+  ld    (DrillMachineCurrentlyMovingInDirection?),a ;0=not moving, 1=up, 2=right, 3=down, 4=left, 5=drilling up, 6=drilling right, 7=drilling down, 8=drilling left
+  jp    HandleSoldierConversations.DrillingLava
 
   .DrillingLevel4Soil:
+  call  ReduceAdditionalFuelWhenDrilling
   ld    a,1
   ld    (DrillingHigherLevelSoil?),a
   ld    (hl),31                                      ;DrillingTimeFrames
@@ -3571,9 +3593,10 @@ CheckDrillingPossible:
   ret   nc
   xor   a
   ld    (DrillMachineCurrentlyMovingInDirection?),a ;0=not moving, 1=up, 2=right, 3=down, 4=left, 5=drilling up, 6=drilling right, 7=drilling down, 8=drilling left
-  ret
+  jp    HandleSoldierConversations.DrillingNotPossible
 
   .DrillingLevel3Soil:
+  call  ReduceAdditionalFuelWhenDrilling
   ld    a,1
   ld    (DrillingHigherLevelSoil?),a
   ld    (hl),15                                      ;DrillingTimeFrames
@@ -3585,9 +3608,10 @@ CheckDrillingPossible:
   ret   nc
   xor   a
   ld    (DrillMachineCurrentlyMovingInDirection?),a ;0=not moving, 1=up, 2=right, 3=down, 4=left, 5=drilling up, 6=drilling right, 7=drilling down, 8=drilling left
-  ret
+  jp    HandleSoldierConversations.DrillingNotPossible
 
   .DrillingLevel2Soil:
+  call  ReduceAdditionalFuelWhenDrilling
   ld    a,1
   ld    (DrillingHigherLevelSoil?),a
   ld    (hl),7                                      ;DrillingTimeFrames
@@ -3602,9 +3626,10 @@ CheckDrillingPossible:
   ret   nc
   xor   a
   ld    (DrillMachineCurrentlyMovingInDirection?),a ;0=not moving, 1=up, 2=right, 3=down, 4=left, 5=drilling up, 6=drilling right, 7=drilling down, 8=drilling left
-  ret
+  jp    HandleSoldierConversations.DrillingNotPossible
 
   .DrillingLevel1Soil:
+  call  ReduceAdditionalFuelWhenDrilling
   xor   a
   ld    (DrillingHigherLevelSoil?),a
   ld    (hl),31                                      ;DrillingTimeFrames
@@ -4018,7 +4043,7 @@ HandleSoldierConversations:
   ld    (NPCConvBlock),a
   ld    hl,NPCConv028
   ld    (NPCConvAddress),hl
-  jr    .StartConversation
+  jp    .StartConversation
   .LowEnergyLongMessage:
   set   3,(hl)
   set   4,(hl)
@@ -4034,7 +4059,7 @@ HandleSoldierConversations:
   ret   c
 
   ld    hl,(DrillMachineY)
-  ld    de,128
+  ld    de,128*3
   add   hl,de
   ex    de,hl
 
@@ -4084,6 +4109,20 @@ HandleSoldierConversations:
   ld    a,NPCConv1Block
   ld    (NPCConvBlock),a
   ld    hl,NPCConv024
+  ld    (NPCConvAddress),hl
+  jr    .StartConversation
+
+  .DrillingNotPossible:
+  ld    a,NPCConv1Block
+  ld    (NPCConvBlock),a
+  ld    hl,NPCConv032
+  ld    (NPCConvAddress),hl
+  jr    .StartConversation
+
+  .DrillingLava:
+  ld    a,NPCConv1Block
+  ld    (NPCConvBlock),a
+  ld    hl,NPCConv033
   ld    (NPCConvAddress),hl
   jr    .StartConversation
 
