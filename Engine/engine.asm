@@ -2398,10 +2398,10 @@ Fuel:                       dw  64
 FuelMax:                    dw  64
 Storage:                    dw  044
 StorageMax:                 dw  064
-Energy:                     dw  30
+Energy:                     dw  64
 EnergyMax:                  dw  64
 EnergyXP:                   db  0
-Radiation:                  dw  800
+Radiation:                  dw  100
 RadiationMax:               dw  1000
 RadiationProtectionLevel:   db  1       ;1=level 1, 2=level 2,3=level 3
 ConvSoldier: db %0000 0001               ;conversations handled bit0=intro, bit1=low fuel, bit2=low fuel short, bit3=low energy, bit4=low energy short, bit5=high radiation, bit6=storage full, bit7=storage full short

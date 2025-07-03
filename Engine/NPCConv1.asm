@@ -247,3 +247,12 @@ NPCConv032: ;drill can't break material
 
 NPCConv033: ;lava encountered
   db    SwitchCharacter,CharacterPortraitSoldier,"Caution-magma flow detected. Temperature exceeds structural limits of all known drill alloys. Passage is impossible. Reroute your path immediately.",255
+
+NPCConv034: ;out of fuel
+  db    SwitchCharacter,CharacterPortraitSoldier,"OUT OF FUEL. MISSION FAILED. GAME OVER!",255
+
+NPCConv035: ;out of energy
+  db    SwitchCharacter,CharacterPortraitSoldier,"OUT OF ENERGY. MISSION FAILED. GAME OVER!",255
+
+NPCConv036: ;radiation full
+  db    SwitchCharacter,CharacterPortraitSoldier,"DEATH BY RADIATION. MISSION FAILED. GAME OVER!",255

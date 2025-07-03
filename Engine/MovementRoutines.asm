@@ -3952,8 +3952,60 @@ HandleSoldierConversations:
   call  .CheckLowFuelConversation
   call  .CheckLowEnergyConversation
   call  .CheckHighRadiationConversation
-;  call  .CheckStorageFullConversation
-;  ret
+  call  .CheckStorageFullConversation
+  call  .CheckOutOfFuelConversation
+  call  .CheckOutOfEnergyConversation
+  call  .CheckDeathByRadiationConversation
+  ret
+
+  .CheckDeathByRadiationConversation:
+  ld    hl,(Radiation)
+  ld    de,(RadiationMax)
+  inc   de
+  inc   de
+  inc   de
+  inc   de
+  call  CompareHLwithDE
+  ret   nz
+  ld    a,NPCConv1Block
+  ld    (NPCConvBlock),a
+  ld    hl,NPCConv036
+  ld    (NPCConvAddress),hl
+  ld    a,1
+  ld    (ChangeRoom?),a
+  ld    a,10
+  ld    (CurrentRoom),a
+  jp    .StartConversation  
+
+  .CheckOutOfEnergyConversation:
+  ld    hl,(Energy)
+  ld    de,-1
+  call  CompareHLwithDE
+  ret   nz
+  ld    a,NPCConv1Block
+  ld    (NPCConvBlock),a
+  ld    hl,NPCConv035
+  ld    (NPCConvAddress),hl
+  ld    a,1
+  ld    (ChangeRoom?),a
+  ld    a,7
+  ld    (CurrentRoom),a
+  jp    .StartConversation  
+
+  .CheckOutOfFuelConversation:
+  ld    hl,(Fuel)
+  ld    de,-1
+  call  CompareHLwithDE
+  ret   nz
+  ld    a,NPCConv1Block
+  ld    (NPCConvBlock),a
+  ld    hl,NPCConv034
+  ld    (NPCConvAddress),hl
+  ld    a,1
+  ld    (ChangeRoom?),a
+  ld    a,10
+  ld    (CurrentRoom),a
+  jp    .StartConversation  
 
   .CheckStorageFullConversation:
   ld    a,(DrillMachineY)

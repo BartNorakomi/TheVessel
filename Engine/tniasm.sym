@@ -1,4 +1,4 @@
-DrillMachineEventRoutine.HandlePhase: equ 0734Ah ; last def. pass 3
+DrillMachineEventRoutine.HandlePhase: equ 073C2h ; last def. pass 3
 PutObjectsmedicalbay: equ 0CA82h ; last def. pass 3
 EventSirens: equ 0C6E1h ; last def. pass 3
 PopulateControls.freezecontrols: equ 0D3BDh ; last def. pass 3
@@ -49,6 +49,7 @@ CheckShowPressTrigAIconsleepingquarters: equ 047E1h ; last def. pass 3
 HostMovementRoutine.Phase5: equ 04336h ; last def. pass 3
 Host_6_0: equ 087DAh ; last def. pass 3
 outix144: equ 0D4D5h ; last def. pass 3
+NPCConv034: equ 07D05h ; last def. pass 3
 TheVesselrightrunning_8: equ 04024h ; last def. pass 3
 putplayer_clipleft.totallyoutofscreen: equ 069Ah ; last def. pass 3
 ClearHudEnergy: equ 070F2h ; last def. pass 3
@@ -62,7 +63,7 @@ ArcadeHall2EventRoutine.CheckPlayerLeavingRoom: equ 0456Eh ; last def. pass 3
 Depack.get_gamma_value_bits: equ 0D33Eh ; last def. pass 3
 Object4RestoreTable: equ 03CCh ; last def. pass 3
 DrillMachineYRelative: equ 0D6E6h ; last def. pass 3
-HandleSoldierConversations.CheckHighRadiationConversation: equ 0721Ah ; last def. pass 3
+HandleSoldierConversations.CheckHighRadiationConversation: equ 07292h ; last def. pass 3
 Depack.depack_loop: equ 0D30Eh ; last def. pass 3
 NewPrContr: equ 0D6BFh ; last def. pass 3
 MoveLeft.Collision: equ 0422Fh ; last def. pass 3
@@ -79,7 +80,7 @@ Depack.rlbgetbits: equ 0D358h ; last def. pass 3
 RePlayer_Detect_Format: equ 0C392h ; last def. pass 3
 HandleConversations: equ 0794h ; last def. pass 3
 armoryvault_0_0: equ 08000h ; last def. pass 3
-HandleSoldierConversations.LowEnergyShortMessage: equ 07266h ; last def. pass 3
+HandleSoldierConversations.LowEnergyShortMessage: equ 072DEh ; last def. pass 3
 RadiationProtectionLevel: equ 01130h ; last def. pass 3
 BackroomGamex: equ 04449h ; last def. pass 3
 NPCConv033: equ 07C6Fh ; last def. pass 3
@@ -162,7 +163,7 @@ outix176: equ 0D495h ; last def. pass 3
 TheVesselrightrunning_9: equ 04028h ; last def. pass 3
 PortraitBlock: equ 077Fh ; last def. pass 3
 BackroomGamey: equ 04448h ; last def. pass 3
-BuildUpNewRowCameraGoingUp.PutTile: equ 074B1h ; last def. pass 3
+BuildUpNewRowCameraGoingUp.PutTile: equ 07529h ; last def. pass 3
 ClearTextInMirrorPage.PageFound: equ 0F32h ; last def. pass 3
 NPCConv002: equ 04169h ; last def. pass 3
 GirlMovementRoutine: equ 04CBEh ; last def. pass 3
@@ -192,7 +193,7 @@ reactorchamberGfxBlock: equ 013h ; last def. pass 3
 sy: equ 02h ; last def. pass 3
 r23onLineInt: equ 0D6DBh ; last def. pass 3
 DoCopy.vdpready: equ 0D259h ; last def. pass 3
-DrillMachineEventRoutine.CheckEndGame: equ 07393h ; last def. pass 3
+DrillMachineEventRoutine.CheckEndGame: equ 0740Bh ; last def. pass 3
 DisablePaletteSplit: equ 097Ah ; last def. pass 3
 CheckResourceCollected.Level6: equ 06A85h ; last def. pass 3
 SetDrillMachineYRelative: equ 07004h ; last def. pass 3
@@ -250,7 +251,7 @@ LoadTileMap.Biopod: equ 0C9C4h ; last def. pass 3
 soldierPortraitBlock.Mouth: equ 0EE1h ; last def. pass 3
 Div16_Loop1: equ 0C2Fh ; last def. pass 3
 ResetRestoreBackgroundTables: equ 0C8BDh ; last def. pass 3
-HandleSoldierConversations.StorageFullLongMessage: equ 07208h ; last def. pass 3
+HandleSoldierConversations.StorageFullLongMessage: equ 07280h ; last def. pass 3
 CloseBlackWindowDrillingGame.PageFound: equ 088Ch ; last def. pass 3
 RedHeadBoyMovementRoutine: equ 04D3Eh ; last def. pass 3
 CheckShowPressTrigAIconsciencelab: equ 046D2h ; last def. pass 3
@@ -290,13 +291,13 @@ Fill2BlackLinesGoingDown: equ 0BFCh ; last def. pass 3
 Vesselright_12_0: equ 0910Ch ; last def. pass 3
 SetScreenon.go: equ 0D3D1h ; last def. pass 3
 HangarbayGfxBlock: equ 0Fh ; last def. pass 3
-DrillMachineEventRoutine.MoveCamera: equ 073B2h ; last def. pass 3
+DrillMachineEventRoutine.MoveCamera: equ 0742Ah ; last def. pass 3
 CopyPage0To1: equ 0CF9Eh ; last def. pass 3
 EndConversation: equ 0FFh ; last def. pass 3
-HandleSoldierConversations.StartConversation: equ 07300h ; last def. pass 3
+HandleSoldierConversations.StartConversation: equ 07378h ; last def. pass 3
 sleepingquartersEventRoutine.armoryvault: equ 04835h ; last def. pass 3
 medicalbaybed2x: equ 04753h ; last def. pass 3
-HandleSoldierConversations.LowEnergyWarning: equ 0725Ch ; last def. pass 3
+HandleSoldierConversations.LowEnergyWarning: equ 072D4h ; last def. pass 3
 TheVesselleftrunning_3: equ 04044h ; last def. pass 3
 Vesselleft_3_0: equ 0845Bh ; last def. pass 3
 ConvertDrillingLeftTileWeCameFrom.TileConversionDrillingLeft: equ 069E2h ; last def. pass 3
@@ -326,7 +327,7 @@ trainingdeckGfxBlock: equ 011h ; last def. pass 3
 WaitCenterScreen.DontPutConversation: equ 0487Dh ; last def. pass 3
 TheVesselleftidle_0: equ 04034h ; last def. pass 3
 ObjectRedHeadBoy: equ 0C648h ; last def. pass 3
-HandleSoldierConversations.LowEnergyLongMessage: equ 07276h ; last def. pass 3
+HandleSoldierConversations.LowEnergyLongMessage: equ 072EEh ; last def. pass 3
 NPCAniCount: equ 0D682h ; last def. pass 3
 medicalbayEventRoutine: equ 04775h ; last def. pass 3
 RestoreBackgroundObject4Page3: equ 04B5h ; last def. pass 3
@@ -350,7 +351,7 @@ PutObjectsArcadeHall1.HighScoreNot80Yet: equ 0CBE7h ; last def. pass 3
 FormatOPL4_ID: equ 01h ; last def. pass 3
 MoonSound_WriteFM2: equ 0C0C3h ; last def. pass 3
 sprcharaddr: equ 07800h ; last def. pass 3
-BuildUpNewRowCameraGoingUp: equ 0747Eh ; last def. pass 3
+BuildUpNewRowCameraGoingUp: equ 074F6h ; last def. pass 3
 TrainingdeckEventRoutine.reactorchamber: equ 04939h ; last def. pass 3
 SirensRoutine: equ 04A93h ; last def. pass 3
 TheVesselPortraitBlock.Eyes: equ 0DCEh ; last def. pass 3
@@ -441,7 +442,7 @@ NPCConv015: equ 05965h ; last def. pass 3
 ReduceAdditionalFuelWhenDrilling: equ 06BEAh ; last def. pass 3
 SpritesOn: equ 01095h ; last def. pass 3
 VesselMovementRoutine: equ 0407Ch ; last def. pass 3
-DrillMachineEventRoutine.EndGame: equ 073A4h ; last def. pass 3
+DrillMachineEventRoutine.EndGame: equ 0741Ch ; last def. pass 3
 HighScoreTotalAverage: equ 010EFh ; last def. pass 3
 AIPortraitBlock.Mouth: equ 0F16h ; last def. pass 3
 outix32: equ 0D5B5h ; last def. pass 3
@@ -466,7 +467,7 @@ putplayer_clipright.setpage: equ 05D0h ; last def. pass 3
 findRam.read: equ 0C142h ; last def. pass 3
 NPCConv012: equ 0D5F6h ; last def. pass 3
 SirensRoutine.SetOpenDoorPage2: equ 04AF4h ; last def. pass 3
-PutTileInScreen: equ 074DBh ; last def. pass 3
+PutTileInScreen: equ 07553h ; last def. pass 3
 ConvertDrillingRightTileWeMoveTo.WeMoveToAlreadyPassableTerrain: equ 06B0Bh ; last def. pass 3
 BuildUpMapDrillingGame: equ 04DBAh ; last def. pass 3
 CheckPlayerNear.CheckTopSide: equ 04D90h ; last def. pass 3
@@ -502,7 +503,7 @@ CheckPlayerNearArcadeMachine.CheckLeftSide: equ 04495h ; last def. pass 3
 ConvertDrillingRightTileWeMoveTo.EndCheckHigherLevelSoil: equ 06B02h ; last def. pass 3
 Host_15: equ 04316h ; last def. pass 3
 VGMRePlay: equ 0C369h ; last def. pass 3
-HandleSoldierConversations.DrillingNotPossible: equ 072E6h ; last def. pass 3
+HandleSoldierConversations.DrillingNotPossible: equ 0735Eh ; last def. pass 3
 NPCConv016: equ 05B1Eh ; last def. pass 3
 hydroponicsbay_1: equ 04C46h ; last def. pass 3
 ConvertDrillingDownTileWeMoveTo.WeMoveToAlreadyPassableTerrain: equ 06BBFh ; last def. pass 3
@@ -512,12 +513,13 @@ RePlayer_ClearJumpTable: equ 0C3A9h ; last def. pass 3
 putplayer_clipright_totallyoutofscreenright: equ 05B9h ; last def. pass 3
 reactorchamberframelistblock: equ 041h ; last def. pass 3
 outix16: equ 0D5D5h ; last def. pass 3
+HandleSoldierConversations.CheckOutOfFuelConversation: equ 07232h ; last def. pass 3
 Host_6: equ 042F2h ; last def. pass 3
 TheVesselleftsitting_0: equ 04064h ; last def. pass 3
 CheckResourceCollected.Checktile: equ 06A4Fh ; last def. pass 3
 Vesselgettingup_3_0: equ 083CFh ; last def. pass 3
 MoonSound_WriteWave: equ 0C0CAh ; last def. pass 3
-DrillMachineEventRoutine.CheckMoveCameraUp: equ 073DFh ; last def. pass 3
+DrillMachineEventRoutine.CheckMoveCameraUp: equ 07457h ; last def. pass 3
 RGettingUp.HandlePhase: equ 04086h ; last def. pass 3
 CheckCollisionNPCs.CheckTopSide: equ 041E9h ; last def. pass 3
 loader.address: equ 08000h ; last def. pass 3
@@ -566,10 +568,10 @@ sleepingquartersEventRoutine.reactorchamber: equ 0484Ah ; last def. pass 3
 BlinkEyes.PageFound: equ 0AB8h ; last def. pass 3
 Host_5: equ 042EEh ; last def. pass 3
 LenghtDoCopyTable: equ 0Fh ; last def. pass 3
-BuildUpNewRowCameraGoingDown.PutTile: equ 07454h ; last def. pass 3
+BuildUpNewRowCameraGoingDown.PutTile: equ 074CCh ; last def. pass 3
 sleepingquartersTileMap: equ 08000h ; last def. pass 3
 AnimateObject: equ 04185h ; last def. pass 3
-BuildUpNewRowCameraGoingUp.PutTileLoop: equ 074A9h ; last def. pass 3
+BuildUpNewRowCameraGoingUp.PutTileLoop: equ 07521h ; last def. pass 3
 CheckChangeDrillMovementDirection.UpPressed: equ 06EDBh ; last def. pass 3
 CheckCollisionNPCs: equ 041C4h ; last def. pass 3
 CurrentPortraitPalette: equ 075Fh ; last def. pass 3
@@ -604,6 +606,7 @@ Level4Resources: equ 01117h ; last def. pass 3
 LoadTileMap.reactorchamber: equ 0C994h ; last def. pass 3
 EntityaRoutine: equ 04B94h ; last def. pass 3
 BiopodPalette: equ 0CC43h ; last def. pass 3
+HandleSoldierConversations.CheckDeathByRadiationConversation: equ 071E9h ; last def. pass 3
 AnimateMouth.goAnimate: equ 0A15h ; last def. pass 3
 AnimateEntity: equ 04C23h ; last def. pass 3
 ArcadeHall2GfxBlock: equ 09h ; last def. pass 3
@@ -660,7 +663,7 @@ Biopod_9: equ 04CA8h ; last def. pass 3
 StartConversation: equ 09D8h ; last def. pass 3
 MoveUp: equ 04255h ; last def. pass 3
 CheckPlayerNear.CheckBottomSide: equ 04D89h ; last def. pass 3
-HandleSoldierConversations.CheckLowFuelConversation: equ 07287h ; last def. pass 3
+HandleSoldierConversations.CheckLowFuelConversation: equ 072FFh ; last def. pass 3
 TheVesselleftrunning_1: equ 0403Ch ; last def. pass 3
 PutSpatDrillMachineSprite.PutSpatFacingLeft: equ 06693h ; last def. pass 3
 CheckStartConversation: equ 04D60h ; last def. pass 3
@@ -723,6 +726,7 @@ Host_9_0: equ 08BCDh ; last def. pass 3
 Host_0_0: equ 08000h ; last def. pass 3
 MoveDown.Collision: equ 04284h ; last def. pass 3
 PutObjectsArcadeHall1: equ 0CB74h ; last def. pass 3
+NPCConv035: equ 07D2Fh ; last def. pass 3
 Div16: equ 0C29h ; last def. pass 3
 CheckCollisionNPCs.CheckBottomSide: equ 041E2h ; last def. pass 3
 RestoreBackgroundObject1Page0: equ 03D4h ; last def. pass 3
@@ -849,6 +853,7 @@ BackupBackgroundInRam.loop: equ 0807h ; last def. pass 3
 Host_13_0: equ 090E9h ; last def. pass 3
 ChangeSong?: equ 0D016h ; last def. pass 3
 Biopod_7: equ 04CA0h ; last def. pass 3
+NPCConv036: equ 07D5Bh ; last def. pass 3
 EntitycRoutine: equ 04C1Eh ; last def. pass 3
 CurrentPortraitPaletteFaded: equ 073Fh ; last def. pass 3
 GetMovementInBC.CheckDown: equ 042CBh ; last def. pass 3
@@ -874,7 +879,7 @@ SetText: equ 0C85h ; last def. pass 3
 Host_3: equ 042E6h ; last def. pass 3
 medicalbaybed1y: equ 04750h ; last def. pass 3
 SongWarzoneA: equ 0Ch ; last def. pass 3
-HandleSoldierConversations.LowFuelLongMessage: equ 072BAh ; last def. pass 3
+HandleSoldierConversations.LowFuelLongMessage: equ 07332h ; last def. pass 3
 PutSpatDrillMachineSprite.PutSpatFacingUp: equ 068A0h ; last def. pass 3
 romSlot: equ 0C0CCh ; last def. pass 3
 capgirlPortraitPalette: equ 0E4Ch ; last def. pass 3
@@ -914,7 +919,7 @@ putplayer_noclip.loop: equ 0587h ; last def. pass 3
 CurrentPalette: equ 0CE85h ; last def. pass 3
 putplayer_clipleft.exit: equ 06C7h ; last def. pass 3
 Object1: equ 0277h ; last def. pass 3
-HandleSoldierConversations.CheckStorageFullConversation: equ 071DCh ; last def. pass 3
+HandleSoldierConversations.CheckStorageFullConversation: equ 07254h ; last def. pass 3
 LenghtObject: equ 011h ; last def. pass 3
 endenginepage3: equ 0D688h ; last def. pass 3
 ConvGirl: equ 010F5h ; last def. pass 3
@@ -1014,7 +1019,7 @@ Vesselleft_6_0: equ 08886h ; last def. pass 3
 SetText.HandleWaitVblank: equ 0CB4h ; last def. pass 3
 trainingdeck3Routine: equ 04C63h ; last def. pass 3
 CheckCollisionNPCs.check: equ 041DEh ; last def. pass 3
-DrillMachineEventRoutine.CheckMoveCameraDown: equ 073BCh ; last def. pass 3
+DrillMachineEventRoutine.CheckMoveCameraDown: equ 07434h ; last def. pass 3
 RestoreBackgroundObject2Page0: equ 0410h ; last def. pass 3
 CloseBlackWindow: equ 08E8h ; last def. pass 3
 Biopod_4: equ 04C94h ; last def. pass 3
@@ -1030,13 +1035,14 @@ armoryvaultPalette: equ 0CD03h ; last def. pass 3
 SetupWindowAddresses: equ 083Bh ; last def. pass 3
 medicalbayframelistblock: equ 045h ; last def. pass 3
 Hostframelistblock: equ 033h ; last def. pass 3
+HandleSoldierConversations.CheckOutOfEnergyConversation: equ 07210h ; last def. pass 3
 MoonSound_MuteWave_Loop: equ 0C2F5h ; last def. pass 3
 TheVesselleftrunning_6: equ 04050h ; last def. pass 3
-DrillMachineEventRoutine: equ 07318h ; last def. pass 3
+DrillMachineEventRoutine: equ 07390h ; last def. pass 3
 SongGloomyB: equ 06h ; last def. pass 3
 ConvCapGirl: equ 010F6h ; last def. pass 3
 PutObjectsHangarbay: equ 0CAD4h ; last def. pass 3
-HandleSoldierConversations.StorageFullShortMessage: equ 071F8h ; last def. pass 3
+HandleSoldierConversations.StorageFullShortMessage: equ 07270h ; last def. pass 3
 ClearHudRadiation: equ 07101h ; last def. pass 3
 EyesBlinkingStep: equ 0A61h ; last def. pass 3
 capgirlPortraitBlock.Mouth: equ 0E77h ; last def. pass 3
@@ -1090,10 +1096,10 @@ ObjectWall: equ 0C66Ah ; last def. pass 3
 LoadTileMap.ArcadeHall1: equ 0C9D0h ; last def. pass 3
 MusicOn?: equ 00h ; last def. pass 3
 ArcadeMachine4y: equ 04415h ; last def. pass 3
-HandleSoldierConversations.LowFuelShortMessage: equ 072ABh ; last def. pass 3
+HandleSoldierConversations.LowFuelShortMessage: equ 07323h ; last def. pass 3
 AssignOrderByY.AssignLoop: equ 06FCh ; last def. pass 3
 PortraitMouthDXDY: equ 078Ch ; last def. pass 3
-HandleSoldierConversations.LowFuelWarning: equ 072A1h ; last def. pass 3
+HandleSoldierConversations.LowFuelWarning: equ 07319h ; last def. pass 3
 ChangeRoom?: equ 0D6C4h ; last def. pass 3
 PutSpritePose: equ 042B9h ; last def. pass 3
 Vesselright_1_0: equ 08189h ; last def. pass 3
@@ -1164,7 +1170,7 @@ Objectx: equ 0D6CEh ; last def. pass 3
 RestoreBackgroundObject2Page3: equ 043Dh ; last def. pass 3
 soldierPortraitGfxBlock: equ 029h ; last def. pass 3
 spatpointer: equ 0D6C1h ; last def. pass 3
-BuildUpNewRowCameraGoingDown: equ 07418h ; last def. pass 3
+BuildUpNewRowCameraGoingDown: equ 07490h ; last def. pass 3
 hydroponicsbay_0_0: equ 08000h ; last def. pass 3
 Objectreactorchamber3: equ 0C813h ; last def. pass 3
 hostPortraitBlock: equ 0EA1h ; last def. pass 3
@@ -1211,7 +1217,7 @@ TheVesselrightsitting_0: equ 04030h ; last def. pass 3
 ConvertDrillingRightTileWeMoveTo: equ 06AF5h ; last def. pass 3
 hostPortraitGfxBlock: equ 028h ; last def. pass 3
 ArcadeHall1GfxBlock: equ 06h ; last def. pass 3
-BuildUpNewRowCameraGoingUp.FindStartingAddressInRam: equ 0749Ch ; last def. pass 3
+BuildUpNewRowCameraGoingUp.FindStartingAddressInRam: equ 07514h ; last def. pass 3
 RomSize: equ 0800000h ; last def. pass 3
 Vesselright_5_0: equ 08731h ; last def. pass 3
 DrillColorsFacingDown: equ 064C4h ; last def. pass 3
@@ -1237,7 +1243,7 @@ NPCConv028: equ 07779h ; last def. pass 3
 NPCConv030: equ 079C4h ; last def. pass 3
 putplayer_noclip.setpage: equ 0570h ; last def. pass 3
 outix320: equ 0D3E9h ; last def. pass 3
-DrillMachineEventRoutine.BuildUpNewRow: equ 07405h ; last def. pass 3
+DrillMachineEventRoutine.BuildUpNewRow: equ 0747Dh ; last def. pass 3
 medicalbayTileMap: equ 0AB80h ; last def. pass 3
 medicalbayEventRoutine.HandleExplainerConversation: equ 0478Ah ; last def. pass 3
 SwapPageConversation: equ 0B46h ; last def. pass 3
@@ -1268,7 +1274,7 @@ LoadTileMap: equ 0C905h ; last def. pass 3
 slot.page1rom: equ 0D689h ; last def. pass 3
 memblocks.1: equ 0D68Ch ; last def. pass 3
 LoadTileMap.drillinggame: equ 0C93Dh ; last def. pass 3
-HandleSoldierConversations.CheckFirstTimeDrillingConversation: equ 072CBh ; last def. pass 3
+HandleSoldierConversations.CheckFirstTimeDrillingConversation: equ 07343h ; last def. pass 3
 RGettingUp.Phase0: equ 040DBh ; last def. pass 3
 CheckChangeDrillMovementDirection.DownPressed: equ 06F1Ch ; last def. pass 3
 BiopodTileMapBlock: equ 01h ; last def. pass 3
@@ -1278,8 +1284,8 @@ ArcadeHall2EventRoutine: equ 04561h ; last def. pass 3
 BlinkEyes: equ 0A62h ; last def. pass 3
 DateCurrentLogin: equ 010FBh ; last def. pass 3
 trainingdeckframelistblock: equ 03Fh ; last def. pass 3
-HandleSoldierConversations.DrillingLava: equ 072F3h ; last def. pass 3
-HandleSoldierConversations.CheckLowEnergyConversation: equ 0723Fh ; last def. pass 3
+HandleSoldierConversations.DrillingLava: equ 0736Bh ; last def. pass 3
+HandleSoldierConversations.CheckLowEnergyConversation: equ 072B7h ; last def. pass 3
 PlayerHeight: equ 049h ; last def. pass 3
 findRam.check: equ 0C11Ch ; last def. pass 3
 Set_R_run: equ 042AEh ; last def. pass 3
@@ -1292,7 +1298,7 @@ TurboOn?: equ 0D6BBh ; last def. pass 3
 AIPortraitBlock.Eyes: equ 0F0Ch ; last def. pass 3
 medicalbayEventRoutine.CheckPlayerLeavingRoom: equ 047A6h ; last def. pass 3
 LoadTileMap.Trainingdeck: equ 0C9A0h ; last def. pass 3
-BuildUpNewRowCameraGoingDown.PutTileLoop: equ 0744Ch ; last def. pass 3
+BuildUpNewRowCameraGoingDown.PutTileLoop: equ 074C4h ; last def. pass 3
 RGettingUp: equ 04086h ; last def. pass 3
 outix352: equ 0D3E3h ; last def. pass 3
 AnimateMouth: equ 0A0Ch ; last def. pass 3
