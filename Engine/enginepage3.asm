@@ -38,6 +38,11 @@ ResetVariables:
   ld    (r23onLineInt),a
   ld    (BuildUpNewRow?),a
   ld    (SetLineIntHeightOnVblankDrillingGame?),a
+  ld    (NPCConversationsInDrillingGame?),a
+  ld    hl,ConvSoldier									;conversations handled bit0=intro, bit1=low fuel, bit2=low fuel short, bit3=low energy, bit4=high radiation, bit5=storage full
+  res   2,(hl)
+  res   4,(hl)
+  res   7,(hl)
 	ld		a,8
 	ld		(ScreenOnDelay),a								;amount of frames until screen turns on (we need some frames to first put all objects in screen)
 	ld		a,1															;main player on (he gets turned off when playing a game)
@@ -953,6 +958,12 @@ PutLetter:
   db    008,000,013,000                 ;nx,--,ny,--
   db    000,000,$98              				;transparant copy
 
+CopyCurrentVisiblePage2ToPage0:
+	db		0,0,30,2
+	db		0,0,30,0
+	db		0,1,182,0
+	db		0,0,$d0	
+
 CopyTileDrillingGame:
 	db		192,0,032,3
 	db		000,0,000,2
@@ -964,6 +975,18 @@ FillCommand:
 	db		0,0,0,0
 	db		0,0,7,0
 	db		0,0,$80	
+
+CloseBlackWindowDrillingGame2LinesTop:
+	db		0,0,0,2
+	db		0,0,0,0
+	db		0,1,1,0
+	db		0,0,$d0	
+
+CloseBlackWindowDrillingGame2LinesBottom:
+	db		0,0,0,2
+	db		0,0,0,0
+	db		0,1,1,0
+	db		0,0,$d0	
 
 ChangeSong?:  db 0
 
@@ -1704,6 +1727,7 @@ DrillingTime:								rb	1
 
 DrillingTimeFrames:					rb	1
 DrillingHigherLevelSoil?:		rb	1
+NPCConversationsInDrillingGame?:		rb	1
 
 
 endenginepage3variables:  equ $+enginepage3length

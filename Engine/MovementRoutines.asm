@@ -2204,7 +2204,7 @@ SetHudDrillingGame:
   ld    a,DrillingGameHudBlock         	;block to copy graphics from
   ld    hl,$4000 + (000*128) + (000/2) - 128
   ld    de,$0000 + (000*128) + (000/2) - 128
-  ld    bc,$0000 + (032*256) + (256/2)
+  ld    bc,$0000 + (030*256) + (256/2)
   jp    CopyRomToVram                   ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
 
 BuildUpMapDrillingGame:
@@ -2767,6 +2767,12 @@ CheckResourceCollected:
   ld    a,(hl)
   or    a
   ret   z
+
+  ld    hl,(Storage)
+  ld    de,(StorageMax)
+  or    a
+  sbc   hl,de
+  ret   nc
 
   ld    hl,(Storage)
   inc   hl
@@ -3765,25 +3771,25 @@ ClearHudFuel:
 	db		0,0,0,0
 	db		058,0,003,0
 	db		066,0,007,0
-	db		DrillingGameColorBlack+ (DrillingGameColorBlack * 16),0,$c0	
+	db		DrillingGameColorBlack+ (DrillingGameColorBlack * 16),0,$c0
 
 ClearHudStorage:
 	db		0,0,0,0
 	db		188,0,003,0
 	db		064,0,007,0
-	db		DrillingGameColorBlack+ (DrillingGameColorBlack * 16),0,$c0	
+	db		DrillingGameColorBlack+ (DrillingGameColorBlack * 16),0,$c0
 
 ClearHudEnergy:
 	db		0,0,0,0
 	db		058,0,018,0
 	db		066,0,007,0
-	db		DrillingGameColorBlack+ (DrillingGameColorBlack * 16),0,$c0	
+	db		DrillingGameColorBlack+ (DrillingGameColorBlack * 16),0,$c0
 
 ClearHudRadiation:
 	db		0,0,0,0
 	db		188,0,018,0
 	db		064,0,007,0
-	db		DrillingGameColorBlack+ (DrillingGameColorBlack * 16),0,$c0	
+	db		DrillingGameColorBlack+ (DrillingGameColorBlack * 16),0,$c0
 
 HandleRadiation:
   ld    a,(RadiationProtectionLevel)
@@ -3815,11 +3821,292 @@ HandleEnergy:
   ld    (Energy),hl
   ret
 
+;ClearPage0:
+;	db		0,0,0,0
+;	db		000,0,030,0
+;	db		000,1,256-30,0
+;	db		DrillingGameColorBlack+ (DrillingGameColorBlack * 16),0,$c0
+
+CopyCurrentVisiblePage2ToPage0and1:
+;  ld    hl,ClearPage0
+;  call  DoCopy
+
+  ld    a,182                             ;ny
+  ld    (CopyCurrentVisiblePage2ToPage0+ny),a
+  ld    a,30
+  ld    (CopyCurrentVisiblePage2ToPage0+dy),a
+
+  ld    a,(r23onLineInt)
+  add   a,30
+  ld    (CopyCurrentVisiblePage2ToPage0+sy),a
+
+  add   a,182                             ;ny
+  jr    nc,.EndOverFlowCheck
+
+  ;if there is overflow we have to copy in 2 parts, first the part until y=256
+  ld    a,(r23onLineInt)
+  add   a,30
+  ld    b,a
+  xor   a
+  sub   a,b
+  ld    (CopyCurrentVisiblePage2ToPage0+ny),a
+  ld    hl,CopyCurrentVisiblePage2ToPage0
+  call  DoCopy
+  ;and then the 2nd part starting at y=0 
+  xor   a
+  ld    (CopyCurrentVisiblePage2ToPage0+sy),a
+
+  ld    a,(CopyCurrentVisiblePage2ToPage0+ny)
+  ld    b,a
+  ld    a,(CopyCurrentVisiblePage2ToPage0+dy)
+  add   a,b
+  ld    (CopyCurrentVisiblePage2ToPage0+dy),a
+
+  ld    a,182
+  sub   a,b
+  ld    (CopyCurrentVisiblePage2ToPage0+ny),a
+
+  .EndOverFlowCheck:
+  ld    hl,CopyCurrentVisiblePage2ToPage0
+  call  DoCopy
+
+  ;copy from page 0 to page 1
+  ld    a,0
+  ld    (CopyPageToPage212High+sPage),a
+  ld    a,1
+  ld    (CopyPageToPage212High+dPage),a
+  ld    hl,CopyPageToPage212High
+  call  DoCopy
+  ret
+
+CheckNPCConversation:
+  ld    a,1
+  ld    (framecounter),a                    ;we force framecounter to 1 so that the sf2 object handler doesn't swap page ever (so we always stay on page 2 for the game, and page 0 for the hud)
+;
+; bit	7	  6	  5		    4		    3		    2		  1		  0
+;		  0	  0	  trig-b	trig-a	right	  left	down	up	(joystick)
+;		  F5	F1	'M'		  space	  right	  left	down	up	(keyboard)
+;
+	ld		a,(Controls)
+	bit		4,a           ;trig a pressed ?
+  ret   z
+
+  call  CopyCurrentVisiblePage2ToPage0and1
+  call  SetInterruptHandler
+  xor   a
+  ld    (SetLineIntHeightOnVblankDrillingGame?),a
+
+  ld    a,90
+  ld    (YConversationWindowCentre),a
+
+  ld    a,1
+  ld    (StartConversation?),a
+  ld    (NPCConversationsInDrillingGame?),a
+  ld    a,NPCConv1Block
+  ld    (NPCConvBlock),a
+  ld    hl,NPCConv024
+  ld    (NPCConvAddress),hl
+  ret
+
+CheckReturnFromNPCConversatin:
+  ld    a,(NPCConversationsInDrillingGame?)
+  dec   a
+  ret   m
+  ld    (NPCConversationsInDrillingGame?),a
+
+  ld    a,1
+  ld    (SetLineIntHeightOnVblankDrillingGame?),a
+  call  SetInterruptHandlerDrillingGame   	;sets Vblank and lineint for hud
+  ;this is not needed, if this is set for every NPC conversation
+  ld    a,60
+  ld    (YConversationWindowCentre),a
+  ret
+
+HandleSoldierConversations:
+  call  .CheckFirstTimeDrillingConversation
+  call  .CheckLowFuelConversation
+  call  .CheckLowEnergyConversation
+  call  .CheckHighRadiationConversation
+;  call  .CheckStorageFullConversation
+;  ret
+
+  .CheckStorageFullConversation:
+  ld    a,(DrillMachineY)
+  cp    60
+  ret   c
+
+  ld    hl,(Storage)
+  ld    de,(StorageMax)
+  or    a
+  sbc   hl,de
+  ret   c
+  ld    hl,ConvSoldier
+  bit   6,(hl)
+  jp    z,.StorageFullLongMessage
+  bit   7,(hl)
+  ret   nz
+  .StorageFullShortMessage:
+  set   7,(hl)
+  ld    a,NPCConv1Block
+  ld    (NPCConvBlock),a
+  ld    hl,NPCConv031
+  ld    (NPCConvAddress),hl
+  jp    .StartConversation
+  .StorageFullLongMessage:
+  set   6,(hl)
+  set   7,(hl)
+  ld    a,NPCConv1Block
+  ld    (NPCConvBlock),a
+  ld    hl,NPCConv030
+  ld    (NPCConvAddress),hl
+  jp    .StartConversation
+
+  .CheckHighRadiationConversation:
+  ld    a,(DrillMachineY)
+  cp    60
+  ret   c
+
+  ld    hl,(Radiation)
+  ld    de,900
+  sbc   hl,de
+  ret   c
+  ld    hl,ConvSoldier
+  bit   5,(hl)
+  ret   nz
+  set   5,(hl)
+  ld    a,NPCConv1Block
+  ld    (NPCConvBlock),a
+  ld    hl,NPCConv029
+  ld    (NPCConvAddress),hl
+  jp    .StartConversation
+
+  .CheckLowEnergyConversation:
+  ld    a,(DrillMachineY)
+  cp    60
+  ret   c
+
+  ;energy depletes every 256 frames, distance per energy is depending on the drill machine speed 
+  ;for speed 1 we can travel 256 pixels per energy, so each amount of energy allows us to move 256 pixels deep
+  ld    hl,(DrillMachineY)
+  ld    de,256
+  add   hl,de
+  ex    de,hl
+
+  ld    hl,(Energy)
+  add   hl,hl                               ;*2
+  add   hl,hl                               ;*4
+  add   hl,hl                               ;*8
+  add   hl,hl                               ;*16
+  add   hl,hl                               ;*32
+  add   hl,hl                               ;*64
+  add   hl,hl                               ;*128
+  add   hl,hl                               ;*256
+  ;each amount of fuel allows us to dig 32 pixels deep
+  xor   a
+  sbc   hl,de
+  ret   nc
+
+  .LowEnergyWarning:
+  ld    hl,ConvSoldier
+  bit   3,(hl)
+  jr    z,.LowEnergyLongMessage
+  bit   4,(hl)
+  ret   nz
+  .LowEnergyShortMessage:
+  set   4,(hl)
+  ld    a,NPCConv1Block
+  ld    (NPCConvBlock),a
+  ld    hl,NPCConv028
+  ld    (NPCConvAddress),hl
+  jr    .StartConversation
+  .LowEnergyLongMessage:
+  set   3,(hl)
+  set   4,(hl)
+  ld    a,NPCConv1Block
+  ld    (NPCConvBlock),a
+  ld    hl,NPCConv027
+  ld    (NPCConvAddress),hl
+  jr    .StartConversation
+
+  .CheckLowFuelConversation:
+  ld    a,(DrillMachineY)
+  cp    60
+  ret   c
+
+  ld    hl,(DrillMachineY)
+  ld    de,128
+  add   hl,de
+  ex    de,hl
+
+  ld    hl,(Fuel)
+  add   hl,hl                               ;*2
+  add   hl,hl                               ;*4
+  add   hl,hl                               ;*8
+  add   hl,hl                               ;*16
+  add   hl,hl                               ;*32
+  ;each amount of fuel allows us to dig 32 pixels deep
+  xor   a
+  sbc   hl,de
+  ret   nc
+
+  .LowFuelWarning:
+  ld    hl,ConvSoldier
+  bit   1,(hl)
+  jr    z,.LowFuelLongMessage
+  bit   2,(hl)
+  ret   nz
+  .LowFuelShortMessage:
+  set   2,(hl)
+  ld    a,NPCConv1Block
+  ld    (NPCConvBlock),a
+  ld    hl,NPCConv026
+  ld    (NPCConvAddress),hl
+  jr    .StartConversation
+  .LowFuelLongMessage:
+  set   1,(hl)
+  set   2,(hl)
+  ld    a,NPCConv1Block
+  ld    (NPCConvBlock),a
+  ld    hl,NPCConv025
+  ld    (NPCConvAddress),hl
+  jr    .StartConversation
+
+  .CheckFirstTimeDrillingConversation:
+  ld    hl,ConvSoldier
+  bit   0,(hl)
+  ret   nz
+
+  ld    a,(DrillMachineY)
+  cp    60
+  ret   c
+
+  set   0,(hl)
+  ld    a,NPCConv1Block
+  ld    (NPCConvBlock),a
+  ld    hl,NPCConv024
+  ld    (NPCConvAddress),hl
+  jr    .StartConversation
+
+  .StartConversation:
+  call  CopyCurrentVisiblePage2ToPage0and1
+  call  SetInterruptHandler
+  xor   a
+  ld    (SetLineIntHeightOnVblankDrillingGame?),a
+
+  ld    a,90
+  ld    (YConversationWindowCentre),a
+
+  ld    a,1
+  ld    (StartConversation?),a
+  ld    (NPCConversationsInDrillingGame?),a
+  ret
+
 DrillMachineEventRoutine:
   ld    a,(framecounter2)
   inc   a
   ld    (framecounter2),a
 
+  call  CheckReturnFromNPCConversatin
   call  .HandlePhase                        ;used to build up screen and initiate variables
   call  .CheckEndGame
   call  .MoveCamera                         ;updates DrillingGameCameraY and r23onLineInt when moving the camera
@@ -3837,11 +4124,12 @@ DrillMachineEventRoutine:
 ;  call  BackdropRed
   call  .BuildUpNewRow                      ;every other frame builds up new rows
 ;  call  BackdropBlack
-  call  .CheckNPCConversation
 
   call  HandleHud                           ;displays fuel, storage, energy and radiation
   call  HandleRadiation                     ;radiation is increased over time, depending on RadiationProtectionLevel
   call  HandleEnergy                        ;energy is decreased over time
+  call  HandleSoldierConversations          ;conversation when low on fuel/energy high on radiation, storage full and intro first time drilling
+  call  CheckNPCConversation
   ret
 
   .HandlePhase:
@@ -3875,27 +4163,6 @@ DrillMachineEventRoutine:
   ld    (SetLineIntHeightOnVblankDrillingGame?),a
   ld    (iy+ObjectPhase),1
   call  SetInterruptHandlerDrillingGame   	;sets Vblank and lineint for hud
-  ret
-
-.CheckNPCConversation:
-  ld    a,1
-  ld    (framecounter),a                    ;we force framecounter to 1 so that the sf2 object handler doesn't swap page ever (so we always stay on page 2 for the game, and page 0 for the hud)
-
-;
-; bit	7	  6	  5		    4		    3		    2		  1		  0
-;		  0	  0	  trig-b	trig-a	right	  left	down	up	(joystick)
-;		  F5	F1	'M'		  space	  right	  left	down	up	(keyboard)
-;
-	ld		a,(Controls)
-	bit		4,a           ;trig a pressed ?
-  ret   z
-
-  ld    a,1
-  ld    (StartConversation?),a
-  ld    a,NPCConv1Block
-  ld    (NPCConvBlock),a
-  ld    hl,NPCConv009
-  ld    (NPCConvAddress),hl
   ret
 
   .CheckEndGame:

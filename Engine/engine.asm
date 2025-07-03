@@ -1210,11 +1210,17 @@ HandleConversations:
   call  ClearNPCConversationWindow      ;clear window, swap page and clear window again
   call  DisablePaletteSplit             ;turn off lineint and set top and bot y for restore black lines
   call  CloseBlackWindow                ;close  black window 2 lines per int (page 0 and page 1)
-  call  SpritesOn
+  ld    a,(NPCConversationsInDrillingGame?)
+  or    a
+  call  z,SpritesOn
   halt                                  ;cleanly end of this routine at vblank (because at vblank a pageswap will occur)
   ret
 
 BackupBackgroundInRam:                  ;store Vram data of page 0+1 in ram
+  ld    a,(NPCConversationsInDrillingGame?)
+  or    a
+  ret   nz
+
   ld		a,(slot.ram)	                  ;back to full RAM
   out		($a8),a	
 
@@ -1306,7 +1312,65 @@ SetupWindowAddresses:
   ld    (BottomWindowAddressPage1Ram),hl
   ret
 
+CloseBlackWindowDrillingGame:
+	ld    a,(PageOnNextVblank)            ;we only start a conversation when current page=0
+  cp    0*32 + 31
+  ld    a,0
+  jr    z,.PageFound
+  ld    a,1
+  .PageFound:
+  ld    (CloseBlackWindowDrillingGame2LinesTop+dPage),a
+  ld    (CloseBlackWindowDrillingGame2LinesBottom+dPage),a
+
+  ld    a,(r23onLineInt)
+  ld    b,a
+
+  ld    a,(YConversationWindowCentre)
+  sub   a,52                            ;top of the conversation window
+  ld    (CloseBlackWindowDrillingGame2LinesTop+dy),a
+  add   a,b
+  ld    (CloseBlackWindowDrillingGame2LinesTop+sy),a
+
+  ld    a,(YConversationWindowCentre)
+  add   a,53                            ;bottom of the conversation window
+  ld    (CloseBlackWindowDrillingGame2LinesBottom+dy),a
+  add   a,b
+  ld    (CloseBlackWindowDrillingGame2LinesBottom+sy),a
+
+  ld    d,27                            ;amount of lines (*2) to close from top to middle
+  .loop:
+  halt
+  call  .Restore1LineTopAndBottom
+  call  .Restore1LineTopAndBottom
+  dec   d
+  jr    nz,.loop
+  ret
+
+  .Restore1LineTopAndBottom:
+  ld    hl,CloseBlackWindowDrillingGame2LinesTop
+  call  DoCopy
+  ld    a,(CloseBlackWindowDrillingGame2LinesTop+dy)
+  add   a,1
+  ld    (CloseBlackWindowDrillingGame2LinesTop+dy),a
+  ld    a,(CloseBlackWindowDrillingGame2LinesTop+sy)
+  add   a,1
+  ld    (CloseBlackWindowDrillingGame2LinesTop+sy),a
+
+  ld    hl,CloseBlackWindowDrillingGame2LinesBottom
+  call  DoCopy
+  ld    a,(CloseBlackWindowDrillingGame2LinesBottom+dy)
+  sub   a,1
+  ld    (CloseBlackWindowDrillingGame2LinesBottom+dy),a
+  ld    a,(CloseBlackWindowDrillingGame2LinesBottom+sy)
+  sub   a,1
+  ld    (CloseBlackWindowDrillingGame2LinesBottom+sy),a
+  ret
+
 CloseBlackWindow:
+  ld    a,(NPCConversationsInDrillingGame?)
+  or    a
+  jp    nz,CloseBlackWindowDrillingGame
+
   ld		a,(slot.ram)	                  ;back to full RAM
   out		($a8),a	
 
@@ -2321,10 +2385,8 @@ WaterOnShip:                dw  200
 FoodOnShip:                 dw  400
 
 ;Drilling Game:
-ConicalDrillBit:            db  1       ;0=can drill through Crimson Loam, 1=can drill through Subcarbonite, 2=can drill through Tectonite, 3=can drill through Pyroclastite 
+ConicalDrillBit:            db  1       ;0=can drill through Basalt, 1=can drill through Ironstone, 2=can drill through metallic ore, 3=can drill through xenodiamond 
 DrillMachineMaxSpeed:       db  1       ;1=level 1, 2=level 2, 3=level 3, 4=level 4
-Fuel:                       dw  364
-FuelMax:                    dw  364
 Level1Resources:            dw  0
 Level2Resources:            dw  0
 Level3Resources:            dw  0
@@ -2332,14 +2394,17 @@ Level4Resources:            dw  0
 Level5Resources:            dw  0
 Level6Resources:            dw  0
 Level7Resources:            dw  0
-Storage:                    dw  000
+Fuel:                       dw  64
+FuelMax:                    dw  64
+Storage:                    dw  044
 StorageMax:                 dw  064
-Energy:                     dw  196
-EnergyMax:                  dw  200
+Energy:                     dw  30
+EnergyMax:                  dw  64
 EnergyXP:                   db  0
-Radiation:                  dw  0
+Radiation:                  dw  800
 RadiationMax:               dw  1000
 RadiationProtectionLevel:   db  1       ;1=level 1, 2=level 2,3=level 3
+ConvSoldier: db %0000 0001               ;conversations handled bit0=intro, bit1=low fuel, bit2=low fuel short, bit3=low energy, bit4=low energy short, bit5=high radiation, bit6=storage full
 
 
 EndSaveGameData:

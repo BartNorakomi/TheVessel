@@ -58,8 +58,6 @@ NPCConv008:
   db    SwitchCharacter,CharacterPortraitHost,"Some things aren't meant to be explained. Just... see for yourself.",255
 
 NPCConv009:
-;  db    SwitchCharacter,CharacterPortraitHost,"Energy Radiation Fuel Storage",255
-;  db    SwitchCharacter,CharacterPortraitHost,"ENERGY RADIATION FUEL STORAGE",255
   db    SwitchCharacter,CharacterPortraitHost,"Step up. If you're ready, the final game is waiting.",255
 
 NPCConv010:
@@ -178,4 +176,59 @@ NPCConv023: ;science lab
   db    SwitchCharacter,CharacterPortraitVessel,"Looks like the key to survival is drilling, upgrading, and building."
   db    SwitchCharacter,CharacterPortraitAI,"Survival is progress. Progress is survival.",255
 
+NPCConv024: ;first time drilling
+  db    SwitchCharacter,CharacterPortraitSoldier,"Drill systems online. First descent protocol initiated. This is the moment you take the first step toward securing our future."
+  db    SwitchCharacter,CharacterPortraitSoldier,"You will begin in Basalt. It is soft, widespread, and easily breached by your current drill configuration."
+  db    SwitchCharacter,CharacterPortraitSoldier,"Deeper down lie Ironstone, Metallic Ore, and the rare Xenodiamond. Tougher materials, yes-but with greater rewards for those prepared to rise to the challenge."
+  db    SwitchCharacter,CharacterPortraitSoldier,"Your drill cone won't pierce these layers yet. Upgrades are essential to push further."
+  db    SwitchCharacter,CharacterPortraitVessel,"So I can't just dig straight down without upgrades?"
+  db    SwitchCharacter,CharacterPortraitSoldier,"Exactly. Every resource you gather fuels progress. Upgrade your gear in the science lab and come back stronger."
+  db    SwitchCharacter,CharacterPortraitSoldier,"Monitor your fuel reserves closely. If you deplete them entirely, you will be stranded underground. This is not a simulation. Additionally, return to the surface before exhausting your energy supply. Fatigue compromises judgment and survival."
+  db    SwitchCharacter,CharacterPortraitSoldier,"One final note: outside the ship, you are no longer shielded from radiation exposure. Daily visits to the medical bay are mandatory to manage contamination levels."
+  db    SwitchCharacter,CharacterPortraitSoldier,"Dig smart. Prioritize what matters. And above all, come home safe."
+  db    SwitchCharacter,CharacterPortraitVessel,"Understood. In, out, no unnecessary risks."
+  db    SwitchCharacter,CharacterPortraitSoldier,"Good. Bring back enough, and we'll turn this barren world into a thriving colony.",255
 
+NPCConv025: ;low fuel warning - urgent return
+  db    SwitchCharacter,CharacterPortraitSoldier,"Warning: Fuel reserves critically low. Drill operation cannot continue."
+  db    SwitchCharacter,CharacterPortraitSoldier,"You must abort the mission and ascend immediately. Remaining underground is a fatal risk."
+  db    SwitchCharacter,CharacterPortraitVessel,"Copy that. Beginning ascent now."
+  db    SwitchCharacter,CharacterPortraitSoldier,"Stay focused. Prioritize a safe and steady return. Every second counts."
+  db    SwitchCharacter,CharacterPortraitSoldier,"Remember, survival is the mission's true objective. We need you back intact."
+  db    SwitchCharacter,CharacterPortraitVessel,"Understood. On my way up."
+  db    SwitchCharacter,CharacterPortraitSoldier,"Good. When you reach the surface, refuel and recover. The colony depends on you.",255
+
+NPCConv026: ;low fuel warning - short
+  db    SwitchCharacter,CharacterPortraitSoldier,"Fuel critical. Abort mission and return now."
+  db    SwitchCharacter,CharacterPortraitVessel,"Copy. Ascending.",255
+
+NPCConv027: ;low energy warning - urgent return
+  db    SwitchCharacter,CharacterPortraitSoldier,"Body scans indicate your energy levels are critically low. Risk of fatigue or loss of consciousness is high."
+  db    SwitchCharacter,CharacterPortraitSoldier,"You must abort the drilling operation and ascend immediately to prevent collapse."
+  db    SwitchCharacter,CharacterPortraitVessel,"Understood. Initiating ascent now."
+  db    SwitchCharacter,CharacterPortraitSoldier,"Remember: no extraction is worth risking your life. Return alive, return strong. Once on the surface, proceed directly to your sleeping quarters to rest and fully restore your energy.",255
+  db    SwitchCharacter,CharacterPortraitVessel,"Copy that.",255
+
+NPCConv028: ;low energy warning - short
+  db    SwitchCharacter,CharacterPortraitSoldier,"Energy levels critical. You need to return immediately."
+  db    SwitchCharacter,CharacterPortraitSoldier,"Rest in your quarters as soon as you're topside."
+  db    SwitchCharacter,CharacterPortraitVessel,"Understood. Heading up.",255
+
+NPCConv029: ;high radiation warning - urgent return (encouraging tone)
+  db    SwitchCharacter,CharacterPortraitSoldier,"Warning: Your radiation levels are dangerously high. This isn't something to ignore."
+  db    SwitchCharacter,CharacterPortraitSoldier,"You need to stop drilling and get back to the surface right now. Your health comes first."
+  db    SwitchCharacter,CharacterPortraitVessel,"Understood. Heading back now."
+  db    SwitchCharacter,CharacterPortraitSoldier,"No mission is worth risking your life. Upon reaching the surface, report to the medical bay immediately for decontamination and care."
+  db    SwitchCharacter,CharacterPortraitVessel,"Got it. I'll go to the med bay as soon as I'm back."
+  db    SwitchCharacter,CharacterPortraitSoldier,"Good. Stay strong-we need you healthy for what's ahead.",255
+
+NPCConv030: ;storage full - return to surface
+  db    SwitchCharacter,CharacterPortraitSoldier,"Storage at maximum capacity. We can't hold any more resources right now."
+  db    SwitchCharacter,CharacterPortraitSoldier,"You've done an amazing job down there-time to head back to the surface."
+  db    SwitchCharacter,CharacterPortraitSoldier,"Any additional resources you drill now will be lost. The drill will pulverize them and leave the dust behind-no way to retrieve it later."
+  db    SwitchCharacter,CharacterPortraitVessel,"Understood. Returning with the haul."
+  db    SwitchCharacter,CharacterPortraitSoldier,"Bring those resources home safely. The colony depends on what you've gathered."
+  db    SwitchCharacter,CharacterPortraitSoldier,"Rest up when you get back. We'll gear up and plan the next dive soon.",255
+
+NPCConv031: ;storage full - short
+  db    SwitchCharacter,CharacterPortraitSoldier,"Storage full. We can't carry any more. Extra resources will be crushed and lost for good.",255
