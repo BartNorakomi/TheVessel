@@ -1831,6 +1831,19 @@ OffLoadResourcesConversationWindow:
   call  CopyRomToVram                   ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
   push  ix
   call  .SetResourceRewardValues
+
+  ld    hl,(TotalCredits)
+  ld    de,(TotalValueResources)
+  add   hl,de
+  ld    (TotalCredits),hl
+  ld    hl,0
+  ld    (Level1Resources),hl
+  ld    (Level2Resources),hl
+  ld    (Level3Resources),hl
+  ld    (Level4Resources),hl
+  ld    (Level5Resources),hl
+  ld    (Level6Resources),hl
+  ld    (Level7Resources),hl
   pop   ix
   ret
 
@@ -2573,7 +2586,7 @@ OxygenOnShip:               db  255
 WaterOnShip:                dw  200
 FoodOnShip:                 dw  400
 
-
+TotalCredits:               dw  0       ;total credits collected from drilled resources converted into credits
 valueLevel1Resources:       equ 02      ;credit per unit collected
 valueLevel2Resources:       equ 05      ;credit per unit collected
 valueLevel3Resources:       equ 08      ;credit per unit collected
