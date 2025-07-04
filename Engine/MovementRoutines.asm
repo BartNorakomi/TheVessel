@@ -3921,35 +3921,6 @@ CopyCurrentVisiblePage2ToPage0and1:
   call  DoCopy
   ret
 
-CheckNPCConversation:
-  ld    a,1
-  ld    (framecounter),a                    ;we force framecounter to 1 so that the sf2 object handler doesn't swap page ever (so we always stay on page 2 for the game, and page 0 for the hud)
-;
-; bit	7	  6	  5		    4		    3		    2		  1		  0
-;		  0	  0	  trig-b	trig-a	right	  left	down	up	(joystick)
-;		  F5	F1	'M'		  space	  right	  left	down	up	(keyboard)
-;
-	ld		a,(Controls)
-	bit		4,a           ;trig a pressed ?
-  ret   z
-
-  call  CopyCurrentVisiblePage2ToPage0and1
-  call  SetInterruptHandler
-  xor   a
-  ld    (SetLineIntHeightOnVblankDrillingGame?),a
-
-  ld    a,90
-  ld    (YConversationWindowCentre),a
-
-  ld    a,1
-  ld    (StartConversation?),a
-  ld    (NPCConversationsInDrillingGame?),a
-  ld    a,NPCConv1Block
-  ld    (NPCConvBlock),a
-  ld    hl,NPCConv024
-  ld    (NPCConvAddress),hl
-  ret
-
 CheckReturnFromNPCConversatin:
   ld    a,(NPCConversationsInDrillingGame?)
   dec   a
@@ -4213,6 +4184,8 @@ DrillMachineEventRoutine:
   ld    a,(framecounter2)
   inc   a
   ld    (framecounter2),a
+  ld    a,1
+  ld    (framecounter),a                    ;we force framecounter to 1 so that the sf2 object handler doesn't swap page ever (so we always stay on page 2 for the game, and page 0 for the hud)
 
   call  CheckReturnFromNPCConversatin
   call  .HandlePhase                        ;used to build up screen and initiate variables
@@ -4237,7 +4210,6 @@ DrillMachineEventRoutine:
   call  HandleRadiation                     ;radiation is increased over time, depending on RadiationProtectionLevel
   call  HandleEnergy                        ;energy is decreased over time
   call  HandleSoldierConversations          ;conversation when low on fuel/energy high on radiation, storage full and intro first time drilling
-  call  CheckNPCConversation
   ret
 
   .HandlePhase:

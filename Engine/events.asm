@@ -104,6 +104,21 @@ has no function, but you can enjoy playing the games again
 
 science lab
 
+
+credits can be used to: 
+upgrade drill: fuel tank (level 1,2,3 and 4), drill cone (level 1,2,3,4)
+drill machine speed (level 1,2,3,4)
+increase or replenish oxygen reserves in the ship
+increase or replenish food reserves in the ship
+increase or replenish water reserves in the ship
+buy a oxyygen generator that generates oxygen from the atmosphere
+water recycler (50% less water lost)
+upgrade personal radiation protection
+choose automatically refuel ??
+setup new dig site
+build colony
+
+
 radiation upgrades:
   Proxima Centauri, a red dwarf star, is known for frequent stellar flares that emit intense X-rays and ultraviolet radiation, which would make planetary surfaces particularly hazardous. Here’s a potential upgrade concept:
 
