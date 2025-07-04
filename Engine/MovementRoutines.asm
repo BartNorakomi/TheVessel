@@ -1472,7 +1472,24 @@ TrainingdeckEventRoutine:
   ld    (ChangeRoom?),a
   ret
 
+CheckOffLoadResources:
+  ld    a,(OffloadResources?)
+  dec   a
+  ret   m
+  ld    (OffloadResources?),a
+  cp    10
+  ret   nz
+
+  ld    a,1
+  ld    (StartConversation?),a
+  ld    a,NPCConv1Block
+  ld    (NPCConvBlock),a
+  ld    hl,NPCConv038
+  ld    (NPCConvAddress),hl
+  ret
+
 HangarbayEventRoutine:
+  call  CheckOffLoadResources
   call  .CheckPlayerLeavingRoom             ;when y>116 player enters arcadehall1 
   call  PutConversationCloud
   call  CheckShowPressTrigAIconHangarBay
@@ -4272,9 +4289,11 @@ DrillMachineEventRoutine:
   ret   z
 
   .EndGame:
-  call  SetInterruptHandler
+  call  SetInterruptHandler  
   ld    a,1
   ld    (ChangeRoom?),a
+  ld    a,40
+  ld    (OffloadResources?),a
   ld    a,4
   ld    (CurrentRoom),a
   ret

@@ -5,6 +5,7 @@ CharacterPortraitCapGirl:       equ 3
 CharacterPortraitHost:          equ 4
 CharacterPortraitSoldier:       equ 5
 CharacterPortraitAI:            equ 6
+CharacterPortraitResourceOffload:  equ 7
 SwitchCharacter:  equ 254
 EndConversation:  equ 255
 NPCConv001:
@@ -200,11 +201,8 @@ NPCConv024: ;first time drilling
 
 NPCConv025: ;low fuel warning - urgent return
   db    SwitchCharacter,CharacterPortraitSoldier,"Warning: Fuel reserves critically low. Drill operation cannot continue."
-  db    SwitchCharacter,CharacterPortraitSoldier,"You must abort the mission and ascend immediately. Remaining underground is a fatal risk."
+  db    SwitchCharacter,CharacterPortraitSoldier,"You must abort mining and ascend immediately. Remaining underground is a fatal risk."
   db    SwitchCharacter,CharacterPortraitVessel,"Copy that. Beginning ascent now."
-  db    SwitchCharacter,CharacterPortraitSoldier,"Stay focused. Prioritize a safe and steady return. Every second counts."
-  db    SwitchCharacter,CharacterPortraitSoldier,"Remember, survival is the mission's true objective. We need you back intact."
-  db    SwitchCharacter,CharacterPortraitVessel,"Understood. On my way up."
   db    SwitchCharacter,CharacterPortraitSoldier,"Good. When you reach the surface, refuel and recover. The colony depends on you.",255
 
 NPCConv026: ;low fuel warning - short
@@ -256,3 +254,23 @@ NPCConv035: ;out of energy
 
 NPCConv036: ;radiation full
   db    SwitchCharacter,CharacterPortraitSoldier,"DEATH BY RADIATION. MISSION FAILED. GAME OVER!",255
+
+NPCConv037: ;resource offload
+  db    SwitchCharacter,CharacterPortraitAI,"Resource extraction complete. Initializing cargo offload sequence..."
+  db    SwitchCharacter,CharacterPortraitAI,"Scanning inventory... "
+  db    SwitchCharacter,CharacterPortraitAI,"Processing materials... "
+  db    SwitchCharacter,CharacterPortraitAI,"Calculating market valuation... "
+  db    SwitchCharacter,CharacterPortraitAI,"Offload Summary:"
+  db    SwitchCharacter,CharacterPortraitAI,"Coal x 128 units - (2 Cr/unit) = 256 Credits"
+  db    SwitchCharacter,CharacterPortraitAI,"Ironium x 94 units - 5 Cr/unit - 470 Credits"
+  db    SwitchCharacter,CharacterPortraitAI,"Bronzium x 61 units - 8 Cr/unit - 488 Credits"
+  db    SwitchCharacter,CharacterPortraitAI,"Silverium x 37 units - 12 Cr/unit - 444 Credits"
+  db    SwitchCharacter,CharacterPortraitAI,"Goldium x 22 units - 18 Cr/unit - 396 Credits"
+  db    SwitchCharacter,CharacterPortraitAI,"Emerald x 9 units - 30 Cr/unit - 270 Credits"
+  db    SwitchCharacter,CharacterPortraitAI,"Diamond x 3 units - 50 Cr/unit - 150 Credits"
+  db    SwitchCharacter,CharacterPortraitAI,"Total Value: 2,474 Credits"
+  db    SwitchCharacter,CharacterPortraitAI,"Resource containment pods depressurized. Materials transferred to storage silos."
+  db    SwitchCharacter,CharacterPortraitAI,"Market-ready and logged for trade routing.",255
+
+NPCConv038: ;resource offload
+  db    SwitchCharacter,CharacterPortraitResourceOffload," ",255

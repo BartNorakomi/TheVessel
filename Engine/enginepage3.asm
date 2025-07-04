@@ -1604,10 +1604,61 @@ DIV_DONE:
     pop bc
     ret
 
+
+
+
+
+
+
+
+
+
+; Convert a 16-bit value to ASCII decimal string
+; Input: HL = 16-bit number (0-65535)
+; Output: ASCII string stored at (DE), null-terminated
+; Uses: AF, BC, DE, HL
+
+NUM_TO_ASCII:
+  ld    de,Ascii5Byte
+
+    LD   BC, -10000     ; Start with ten-thousands place
+    CALL CONVERT_DIGIT
+    LD   BC, -1000      ; Thousands place
+    CALL CONVERT_DIGIT
+    LD   BC, -100       ; Hundreds place
+    CALL CONVERT_DIGIT
+    LD   BC, -10        ; Tens place
+    CALL CONVERT_DIGIT
+    LD   BC, -1        	; Ones place
+    CALL CONVERT_DIGIT
+		ret
+
+CONVERT_DIGIT:
+    LD   A,"0" - 1     ; Initialize digit counter
+COUNT_LOOP:
+    INC  A              ; Increment ASCII digit
+    ADD  HL, BC         ; Subtract divisor (negative BC)
+    JR   C, COUNT_LOOP  ; If no borrow, continue counting
+    SBC  HL, BC         ; Add back last subtraction
+    LD   (DE), A        ; Store ASCII digit
+    INC  DE             ; Move to next position
+    RET
+
+Ascii5Byte:	db "29993",255
+
+
+
+
+
+
 NPCAniCount:     				db  0,0
 PlayerSpriteStand: 			dw  Rstanding
 StartConversation?:			db	0
 StartWakeUpEvent?:			db	1
+OffloadResources?:			db	0
+
+
+
 
 endenginepage3:
 dephase
@@ -1728,6 +1779,7 @@ DrillingTime:								rb	1
 DrillingTimeFrames:					rb	1
 DrillingHigherLevelSoil?:		rb	1
 NPCConversationsInDrillingGame?:		rb	1
+TotalValueResources:				rb	2
 
 
 endenginepage3variables:  equ $+enginepage3length

@@ -1813,8 +1813,190 @@ PutPortraitInMirrorPage:
   ld    hl,$4000 + (000*128) + (000/2) - 128
 ;  ld    de,$0000 + (010*128) + (002/2) - 128
   ld    bc,$0000 + (102*256) + (102/2)
+
+  ld    a,(OffloadResources?)
+  or    a
+  jr    nz,OffLoadResourcesConversationWindow
+
   ld    a,(PortraitBlock)            ;block to copy graphics from
   jp    CopyRomToVram                   ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
+
+OffLoadResourcesConversationWindow:
+  xor   a
+  ld    (OffloadResources?),a
+
+  dec   de
+  ld    bc,$0000 + (102*256) + (256/2)
+  ld    a,(PortraitBlock)            ;block to copy graphics from
+  call  CopyRomToVram                   ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
+  push  ix
+  call  .SetResourceRewardValues
+  pop   ix
+  ret
+
+  .SetResourceRewardValues:
+  ld    a,1
+  ld    (PutLetter+dPage),a             ;set page where to put text
+  ;amounts
+  ld    hl,(Level1Resources)            ;coal
+  ld    b,092                           ;dx
+  ld    c,007+(0*12)                    ;dy + YLineintOn
+  ld    ix,Ascii5Byte+2
+  call  .Setvalue
+
+  ld    hl,(Level2Resources)            ;iron
+  ld    b,092                           ;dx
+  ld    c,007+(1*12)                    ;dy + YLineintOn
+  ld    ix,Ascii5Byte+2
+  call  .Setvalue
+
+  ld    hl,(Level3Resources)            ;bronze
+  ld    b,092                           ;dx
+  ld    c,007+(2*12)                    ;dy + YLineintOn
+  ld    ix,Ascii5Byte+2
+  call  .Setvalue
+
+  ld    hl,(Level4Resources)            ;silver
+  ld    b,092                           ;dx
+  ld    c,007+(3*12)                    ;dy + YLineintOn
+  ld    ix,Ascii5Byte+2
+  call  .Setvalue
+
+  ld    hl,(Level5Resources)            ;gold
+  ld    b,092                           ;dx
+  ld    c,007+(4*12)                    ;dy + YLineintOn
+  ld    ix,Ascii5Byte+2
+  call  .Setvalue
+
+  ld    hl,(Level6Resources)            ;emerald
+  ld    b,092                           ;dx
+  ld    c,007+(5*12)                    ;dy + YLineintOn
+  ld    ix,Ascii5Byte+2
+  call  .Setvalue
+
+  ld    hl,(Level7Resources)            ;diamond
+  ld    b,092                           ;dx
+  ld    c,007+(6*12)                    ;dy + YLineintOn
+  ld    ix,Ascii5Byte+2
+  call  .Setvalue
+
+  ;credit value
+  ld    hl,0
+  ld    (TotalValueResources),hl
+  ld    hl,(Level1Resources)            ;coal
+  ld    de,valueLevel1Resources
+  call  MultiplyHlWithDE
+  call  AddToTotalValueResources
+  ld    b,207                           ;dx
+  ld    c,007+(0*12)                    ;dy + YLineintOn
+  ld    ix,Ascii5Byte+1
+  call  .Setvalue
+
+  ld    hl,(Level2Resources)            ;iron
+  ld    de,valueLevel2Resources
+  call  MultiplyHlWithDE
+  call  AddToTotalValueResources
+  ld    b,207                           ;dx
+  ld    c,007+(1*12)                    ;dy + YLineintOn
+  ld    ix,Ascii5Byte+1
+  call  .Setvalue
+
+  ld    hl,(Level3Resources)            ;bronze
+  ld    de,valueLevel3Resources
+  call  MultiplyHlWithDE
+  call  AddToTotalValueResources
+  ld    b,207                           ;dx
+  ld    c,007+(2*12)                    ;dy + YLineintOn
+  ld    ix,Ascii5Byte+1
+  call  .Setvalue
+
+  ld    hl,(Level4Resources)            ;silver
+  ld    de,valueLevel4Resources
+  call  MultiplyHlWithDE
+  call  AddToTotalValueResources
+  ld    b,207                           ;dx
+  ld    c,007+(3*12)                    ;dy + YLineintOn
+  ld    ix,Ascii5Byte+1
+  call  .Setvalue
+
+  ld    hl,(Level5Resources)            ;gold
+  ld    de,valueLevel5Resources
+  call  MultiplyHlWithDE
+  call  AddToTotalValueResources
+  ld    b,207                           ;dx
+  ld    c,007+(4*12)                    ;dy + YLineintOn
+  ld    ix,Ascii5Byte+1
+  call  .Setvalue
+
+  ld    hl,(Level6Resources)            ;emerald
+  ld    de,valueLevel6Resources
+  call  MultiplyHlWithDE
+  call  AddToTotalValueResources
+  ld    b,207                           ;dx
+  ld    c,007+(5*12)                    ;dy + YLineintOn
+  ld    ix,Ascii5Byte+1
+  call  .Setvalue
+
+  ld    hl,(Level7Resources)            ;diamond
+  ld    de,valueLevel7Resources
+  call  MultiplyHlWithDE
+  call  AddToTotalValueResources
+  ld    b,207                           ;dx
+  ld    c,007+(6*12)                    ;dy + YLineintOn
+  ld    ix,Ascii5Byte+1
+  call  .Setvalue
+
+  ;total value
+  ld    hl,(TotalValueResources)
+  ld    b,135                           ;dx
+  ld    c,007+(7*12)+4                  ;dy + YLineintOn
+  ld    ix,Ascii5Byte+1
+;  call  .Setvalue
+;  ret
+
+  .Setvalue:
+  ld    a,b                             ;dx text
+  ld    (PutLetter+dx),a                ;set dx of next letter
+  ld    a,(YLineintOn)
+  add   a,c
+  ld    (PutLetter+dy),a                ;set dy of text
+  call  NUM_TO_ASCII
+
+  .Skip0sLoop:
+  ld    a,(ix)
+  cp    255
+  jr    z,.TotalValueIs0
+  cp    "0"
+  jp    nz,SetText.NextLetter           ;in: ix->text
+  inc   ix
+  ld    a,(PutLetter+dx)                ;set dx of next letter
+  add   a,8
+  ld    (PutLetter+dx),a                ;set dx of next letter
+  jr    .Skip0sLoop
+
+  .TotalValueIs0:
+  dec   ix
+  ld    a,(PutLetter+dx)                ;set dx of next letter
+  sub   a,8
+  ld    (PutLetter+dx),a                ;set dx of next letter
+  jp    SetText.NextLetter              ;in: ix->text
+
+AddToTotalValueResources:
+  push  hl
+  ld    bc,(TotalValueResources)
+  add   hl,bc
+  ld    (TotalValueResources),hl
+  pop   hl
+  ret
+
+
+;Level1Resources:            dw  21
+;Level2Resources:            dw  13
+;Level3Resources:            dw  4
+;Level4Resources:            dw  15
+;Level5Resources:            dw  6
+;Level6Resources:            dw  4
+;Level7Resources:            dw  7
 
 
 Fill2BlackLinesGoingUp:
@@ -2183,7 +2365,14 @@ AIPortraitBlock:                  db  AIPortraitGfxBlock
 .Mouth: dw  $0000 + (002*256) + (002/2) ;nx,ny
         dw  $0000 + (046*128) + ((034+2)/2) - 128 ;dx,dy
         dw  $4000 + (000*128) + (102/2) - 128 | dw  $4000 + (018*128) + (102/2) - 128 | dw  $4000 + (036*128) + (102/2) - 128 ;sx,sy
-
+ResourceOffloadPortraitPalette:                incbin "..\grapx\ship\hangarbay\resourceoffload.SC5",$7680+7,32
+ResourceOffloadPortraitBlock:                  db  ResourceOffloadPortraitGfxBlock
+.Eyes:  dw  $0000 + (001*256) + (002/2) ;nx,ny
+        dw  $0000 + (000*128) + ((000+2)/2) - 128 ;dx,dy
+        dw  $4000 + (000*128) + (000/2) - 128 | dw  $4000 + (000*128) + (000/2) - 128 | dw  $4000 + (000*128) + (000/2) - 128 ;sx,sy
+.Mouth: dw  $0000 + (001*256) + (002/2) ;nx,ny
+        dw  $0000 + (000*128) + ((000+2)/2) - 128 ;dx,dy
+        dw  $4000 + (000*128) + (000/2) - 128 | dw  $4000 + (000*128) + (000/2) - 128 | dw  $4000 + (000*128) + (000/2) - 128 ;sx,sy
 
 ClearTextInMirrorPage:
   ld    a,(YLineintOn)
@@ -2384,16 +2573,24 @@ OxygenOnShip:               db  255
 WaterOnShip:                dw  200
 FoodOnShip:                 dw  400
 
+
+valueLevel1Resources:       equ 02      ;credit per unit collected
+valueLevel2Resources:       equ 05      ;credit per unit collected
+valueLevel3Resources:       equ 08      ;credit per unit collected
+valueLevel4Resources:       equ 12      ;credit per unit collected
+valueLevel5Resources:       equ 18      ;credit per unit collected
+valueLevel6Resources:       equ 30      ;credit per unit collected
+valueLevel7Resources:       equ 50      ;credit per unit collected
 ;Drilling Game:
 ConicalDrillBit:            db  0       ;0=can drill through Basalt, 1=can drill through Ironstone, 2=can drill through metallic ore, 3=can drill through xenodiamond 
 DrillMachineMaxSpeed:       db  1       ;1=level 1, 2=level 2, 3=level 3, 4=level 4
-Level1Resources:            dw  0
-Level2Resources:            dw  0
-Level3Resources:            dw  0
+Level1Resources:            dw  21
+Level2Resources:            dw  13
+Level3Resources:            dw  4
 Level4Resources:            dw  0
-Level5Resources:            dw  0
-Level6Resources:            dw  0
-Level7Resources:            dw  0
+Level5Resources:            dw  6
+Level6Resources:            dw  4
+Level7Resources:            dw  104
 Fuel:                       dw  64
 FuelMax:                    dw  64
 Storage:                    dw  044
