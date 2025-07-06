@@ -116,6 +116,8 @@ Eventsciencelab:					db	1,$28,$7e | dw 000,000					,000        | db 255      ,Mo
 
 EventDrillingGame:				db	1,$28,$7e | dw 000,000					,000        | db 255      ,MovementRoutinesBlock | dw DrillMachineEventRoutine	| db 000,000 ,000, 000
 
+EventUpgradeMenu:					db	1,$28,$7e | dw 000,000					,000        | db 255      ,MovementRoutines2Block| dw UpgradeMenuEventRoutine		| db 000,000 ,000, 000
+
 
 
 LenghtDoCopyTable:  equ	RestoreBackgroundObject1Page1-RestoreBackgroundObject1Page0
@@ -180,6 +182,11 @@ LoadTileMap:
 	jp		z,.sciencelab
 	dec		a
 	jp		z,.drillinggame
+	dec		a
+	jp		z,.upgrademenu
+	ret
+
+	.upgrademenu:
 	ret
 
 	.drillinggame:
@@ -335,6 +342,18 @@ PutObjects:															;put objects and events
 	jp		z,PutObjectssciencelab
 	dec		a
 	jp		z,PutObjectsDrillingGame
+	dec		a
+	jp		z,PutObjectsUpgradeMenu
+	ret
+
+PutObjectsUpgradeMenu:
+	xor		a																;turn off main player sprite (we don't use this at the games)
+	ld		(Object1+on?),a
+
+	ld		de,ObjEvent1										;now put events
+
+	ld		hl,EventUpgradeMenu							;put upgrade menu game event
+	call	PutSingleObject
 	ret
 
 PutObjectsDrillingGame:
@@ -602,6 +621,8 @@ sciencelabPalette:                    			;palette file
   incbin "..\grapx\ship\sciencelab\sciencelab.SC5",$7680+7,32
 drillinggamePalette:                    			;palette file
   incbin "..\grapx\drillinggame\maps\tileset.SC5",$7680+7,32
+upgrademenuPalette:                    			;palette file
+  incbin "..\grapx\ship\sciencelab\upgrademenu.SC5",$7680+7,32
 
 
 LoadRoomGfx:
@@ -631,8 +652,15 @@ LoadRoomGfx:
 	dec		a
 	jp		z,LoadsciencelabGfx      				;loads the sleepingquarters room in all 4 pages, and sets palette
 	dec		a
-	jp		z,LoadDrillingGameGfx      			;loads thedrilling game tiles , and sets palette
+	jp		z,LoadDrillingGameGfx      			;loads the drilling game tiles , and sets palette
+	dec		a
+	jp		z,LoadUpgradeMenuGfx      			;loads the upgrade menu tiles , and sets palette
 	ret
+
+LoadUpgradeMenuGfx:
+  ld    hl,upgrademenuPalette
+  ld    a,UpgradeMenuGfxBlock     			;block to copy graphics from
+	jp		LoadArcadeHallGfx
 
 LoadDrillingGameGfx:
   ld    hl,drillinggamePalette
@@ -763,6 +791,13 @@ SetFontPage1Y212:                       ;set font at (0,212) page 0
   ld    de,$8000 + (212*128) + (000/2) - 128
   ld    bc,$0000 + (039*256) + (256/2)
   ld    a,FontBlock         ;font graphics block
+  jp    CopyRomToVram          ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
+
+SetFontUpgradeMenuThickPage1Y212:     	;set font at (0,212) page 0
+  ld    hl,$4000 + (000*128) + (000/2) - 128
+  ld    de,$8000 + (212*128) + (000/2) - 128
+  ld    bc,$0000 + (039*256) + (256/2)
+  ld    a,FontUpgradeMenuBlock         ;font graphics block
   jp    CopyRomToVram          ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
 
 LoadOpenDoorGfx:

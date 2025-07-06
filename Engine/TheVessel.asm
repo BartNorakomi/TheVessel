@@ -611,6 +611,11 @@ ResourceOffloadPortraitGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /
   incbin "..\grapx\ship\hangarbay\resourceoffload.SC5",7,099 * 128      ;98 lines
 	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
 
+UpgradeMenuGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
+  incbin "..\grapx\ship\sciencelab\UpgradeMenu.SC5",7,212 * 128      ;98 lines
+	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
+
+
 OpenDoorGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
   incbin "..\grapx\arcadehall\opendoor.SC5",7,097 * 128      ;097 lines
 	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
@@ -651,6 +656,10 @@ NPCConv1Block:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
 
 FontBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
   incbin "..\grapx\fonts\font.SC5",7,039 * 128      ;039 lines
+	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
+
+FontUpgradeMenuBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
+  incbin "..\grapx\fonts\fontUpgradeMenuThick.SC5",7,039 * 128      ;039 lines
 	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
 
 ;the vessel right
@@ -786,6 +795,11 @@ medicalbayspritedatablock:			equ ($-RomStartAddress) and (romsize-1) /RomBlockSi
 ;movement routines
 MovementRoutinesBlock:	equ ($-RomStartAddress) and (romsize-1) /RomBlockSize ;$04
 								include "MovementRoutines.asm"  
+								DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
+
+;movement routines2
+MovementRoutines2Block:	equ ($-RomStartAddress) and (romsize-1) /RomBlockSize ;$04
+								include "MovementRoutines2.asm"  
 								DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
 
 

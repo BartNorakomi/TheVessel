@@ -51,6 +51,10 @@
 MovementRoutinesAddress:  equ $4000
 Phase MovementRoutinesAddress
 
+
+
+
+
 TheVesselrightidle_0:        db    TheVesselrightframelistblock, TheVesselrightspritedatablock | dw    Vesselright_0_0
 TheVesselrightrunning_0:        db    TheVesselrightframelistblock, TheVesselrightspritedatablock | dw    Vesselright_1_0
 TheVesselrightrunning_1:        db    TheVesselrightframelistblock, TheVesselrightspritedatablock | dw    Vesselright_2_0
@@ -3921,7 +3925,7 @@ CopyCurrentVisiblePage2ToPage0and1:
   call  DoCopy
   ret
 
-CheckReturnFromNPCConversatin:
+CheckReturnFromNPCConversation:
   ld    a,(NPCConversationsInDrillingGame?)
   dec   a
   ret   m
@@ -4187,7 +4191,7 @@ DrillMachineEventRoutine:
   ld    a,1
   ld    (framecounter),a                    ;we force framecounter to 1 so that the sf2 object handler doesn't swap page ever (so we always stay on page 2 for the game, and page 0 for the hud)
 
-  call  CheckReturnFromNPCConversatin
+  call  CheckReturnFromNPCConversation
   call  .HandlePhase                        ;used to build up screen and initiate variables
   call  .CheckEndGame
   call  .MoveCamera                         ;updates DrillingGameCameraY and r23onLineInt when moving the camera

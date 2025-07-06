@@ -2155,6 +2155,8 @@ WaitVblank:                             ;wait for vblank flag to be set
   ld    (hl),a
   ret
 
+
+
 LetterSpeed:  db  0,0                   ;0=slow, 1=fast
 SetText:                                ;in: ix->text
   xor   a
@@ -2558,8 +2560,8 @@ CompareHLwithDE:
   ret
 
 StartSaveGameData:
-CurrentRoom:  db  11                    ;0=arcadehall1, 1=arcadehall2, 2=biopod, 3=hydroponicsbay, 4=hangarbay, 5=trainingdeck, 6=reactorchamber, 7=sleepingquarters, 8=armoryvault, 9=holodeck, 10=medicalbay
-                                        ;11=sciencelab, 12=drillinggame
+CurrentRoom:  db  13                    ;0=arcadehall1, 1=arcadehall2, 2=biopod, 3=hydroponicsbay, 4=hangarbay, 5=trainingdeck, 6=reactorchamber, 7=sleepingquarters, 8=armoryvault, 9=holodeck, 10=medicalbay
+                                        ;11=sciencelab, 12=drillinggame, 13=upgrademenu
 GamesPlayed:  db 9                      ;increases after leaving a game. max=255
 HighScoreTotalAverage: db 00            ;recruiter appears when 80 (%) is reached
 HighScoreBackroomGame:  db  100
