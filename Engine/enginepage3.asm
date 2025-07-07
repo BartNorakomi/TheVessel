@@ -1034,6 +1034,13 @@ OxygenFoodWaterInnerBarFilled:
 	db		000,0,007,0
 	db		7+ (7 * 16),0,$80
 
+AntiRadiationProtectionOrDigSiteBars:
+	db		012,0,071,2
+	db		101,0,081,1
+	db		029,0,009,0
+	db		0,0,$90
+
+
 ChangeSong?:  db 0
 
 SetInterruptHandler:

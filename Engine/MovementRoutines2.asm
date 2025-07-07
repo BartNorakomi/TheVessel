@@ -119,12 +119,12 @@ ClearScienceLabMenuPage0:
 	db		012,0,018,3
 	db		012,0,018,0
 	db		122,0,180,0
-	db		0,0,$d0	
+	db		0,0,$d0
 ClearScienceLabMenuPage1:
 	db		012,0,018,3
 	db		012,0,018,1
 	db		122,0,180,0
-	db		0,0,$d0	
+	db		0,0,$d0
 
 ClearItemInfoWindowPage0:
 	db		0,0,0,0
@@ -279,7 +279,77 @@ BuildUpPurchaseMenu:
 
   call  SetItemInfoPurchase                 ;sets the text about the currently selected item in the window in the right bottom
   call  SetCredits                          ;sets the current player's credits
+  call  SetRadiationProtectionBars          ;Set the amount of radiation protection bars
+  call  SetDigSiteBars                      ;Set the amount of digsite bars
   jp    SwapPageOnNextVblank                ;swaps between page 0 and page 1
+
+SetDigSiteBars:
+  ld    a,094
+  ld    (AntiRadiationProtectionOrDigSiteBars+dx),a
+  ld    a,101
+  ld    (AntiRadiationProtectionOrDigSiteBars+dy),a
+  ld    a,036
+  ld    (AntiRadiationProtectionOrDigSiteBars+nx),a
+
+  ld    a,(AmountOfDigSitesUnlocked)
+  dec   a
+  ld    b,40                                ;sx (1 digsite)
+  jr    z,.SetBars
+  dec   a
+  ld    b,33                                ;sx (2 digsites)
+  jr    z,.SetBars
+  dec   a
+  ld    b,26                                ;sx (3 digsites)
+  jr    z,.SetBars
+  dec   a
+  ld    b,19                                ;sx (4 digsites)
+  jr    z,.SetBars
+  ld    b,12                                ;sx (5 digsites)
+
+  .SetBars:
+  ld    a,b
+  ld    (AntiRadiationProtectionOrDigSiteBars+sx),a
+  ld    hl,AntiRadiationProtectionOrDigSiteBars
+  call  DoCopy
+  ret
+
+SetRadiationProtectionBars:
+  ld    a,(PageOnNextVblank)
+  cp    0*32 + 31                           ;page 0
+  ld    a,1
+  jr    z,.PageFound
+  xor   a
+  .PageFound:
+  ld    (AntiRadiationProtectionOrDigSiteBars+dPage),a
+
+  ld    a,101
+  ld    (AntiRadiationProtectionOrDigSiteBars+dx),a
+  ld    a,080
+  ld    (AntiRadiationProtectionOrDigSiteBars+dy),a
+  ld    a,029
+  ld    (AntiRadiationProtectionOrDigSiteBars+nx),a
+
+  ld    a,(RadiationProtectionLevel)
+  or    a
+  ld    b,47                                ;sx (no protection)
+  jr    z,.SetBars
+  dec   a
+  ld    b,40                                ;sx (level 1)
+  jr    z,.SetBars
+  dec   a
+  ld    b,33                                ;sx (level 2)
+  jr    z,.SetBars
+  dec   a
+  ld    b,26                                ;sx (level 3)
+  jr    z,.SetBars
+  ld    b,19                                ;sx (level 4)
+
+  .SetBars:
+  ld    a,b
+  ld    (AntiRadiationProtectionOrDigSiteBars+sx),a
+  ld    hl,AntiRadiationProtectionOrDigSiteBars
+  call  DoCopy
+  ret
 
 BuildUpLifeSupportMenu:
   ld    a,(ShowScienceLabMenu)              ;0=dont show, 1=show upgrades menu, 2=show life support menu, 3=show purchase menu
@@ -352,7 +422,15 @@ SetOxygenFoodWaterBars:
   ld    (OxygenFoodWaterInnerBarFilled+dx),a
   ld    a,042
   ld    (OxygenFoodWaterInnerBarFilled+dy),a
-  ld    a,025
+  ;nx= OxygenOnShip*66/MaxOxygenOnShip
+  ld    hl,(OxygenOnShip)
+  ld    de,66
+  call  MultiplyHlWithDE      ;HL = result
+  push  hl
+  pop   bc
+  ld    de,(MaxOxygenOnShip)
+  call  DivideBCbyDE          ; Out: BC = result, HL = rest
+  ld    a,c
   ld    (OxygenFoodWaterInnerBarFilled+nx),a
   ld    hl,OxygenFoodWaterInnerBarFilled
   call  DoCopy
@@ -374,7 +452,15 @@ SetOxygenFoodWaterBars:
   ld    (OxygenFoodWaterInnerBarFilled+dx),a
   ld    a,061
   ld    (OxygenFoodWaterInnerBarFilled+dy),a
-  ld    a,025
+  ;nx= FoodOnShip*79/MaxFoodOnShip
+  ld    hl,(FoodOnShip)
+  ld    de,79
+  call  MultiplyHlWithDE      ;HL = result
+  push  hl
+  pop   bc
+  ld    de,(MaxFoodOnShip)
+  call  DivideBCbyDE          ; Out: BC = result, HL = rest
+  ld    a,c
   ld    (OxygenFoodWaterInnerBarFilled+nx),a
   ld    hl,OxygenFoodWaterInnerBarFilled
   call  DoCopy
@@ -396,7 +482,15 @@ SetOxygenFoodWaterBars:
   ld    (OxygenFoodWaterInnerBarFilled+dx),a
   ld    a,081
   ld    (OxygenFoodWaterInnerBarFilled+dy),a
-  ld    a,025
+  ;nx= WaterOnShip*75/MaxWaterOnShip
+  ld    hl,(WaterOnShip)
+  ld    de,75
+  call  MultiplyHlWithDE      ;HL = result
+  push  hl
+  pop   bc
+  ld    de,(MaxWaterOnShip)
+  call  DivideBCbyDE          ; Out: BC = result, HL = rest
+  ld    a,c
   ld    (OxygenFoodWaterInnerBarFilled+nx),a
   ld    hl,OxygenFoodWaterInnerBarFilled
   call  DoCopy
@@ -608,9 +702,9 @@ SetCredits:                                 ;sets the current player's credits
   ld    ix,Ascii5Byte
   ld    b,077                               ;dx
   ld    c,000                               ;increase in dy
-;  call  SetText2
+  jp    SetTextSkip0sLoop
 
-  .Skip0sLoop:
+SetTextSkip0sLoop:
   ld    a,(ix)
   cp    255
   jr    z,.TotalValueIs0
@@ -620,7 +714,7 @@ SetCredits:                                 ;sets the current player's credits
 ;  ld    a,(PutLetter+dx)                    ;set dx of next letter
 ;  add   a,8
 ;  ld    (PutLetter+dx),a                    ;set dx of next letter
-  jr    .Skip0sLoop
+  jr    SetTextSkip0sLoop
 
   .TotalValueIs0:
   dec   ix
@@ -630,7 +724,86 @@ SetCredits:                                 ;sets the current player's credits
   jp    SetText2.NextLetter                 ;in: ix->text
 
 SetItemInfoLifeSupport:
+  ld    a,112                               ;dy
+  ld    (PutLetter+dy),a                    ;set dy of text
+
+  ld    a,(ScienceLabMenuItemSelected)      ;which item in the current list is selected/highlighted ?
+  dec   a
+  jp    z,.Oxygen
+  dec   a
+  jp    z,.Food
+  dec   a
+  jp    z,.Water
   ret
+
+  .Water:
+  ld    ix,TextWater
+  ld    de,TextCost
+  call  SetItemInfo
+  jp    SetCostWater
+
+  .Food:
+  ld    ix,TextFood
+  ld    de,TextCost
+  call  SetItemInfo
+  jp    SetCostFood
+
+  .Oxygen:
+  ld    ix,TextOxygen
+  ld    de,TextCost
+  call  SetItemInfo
+  jp    SetCostOxygen
+
+SetCostWater:                               ;sets the current player's credits
+  ld    a,188                               ;dy
+  ld    (PutLetter+dy),a                    ;set dy of text
+  ld    a,191
+  ld    (PutLetter+dx),a                    ;set dx of next letter
+
+  ld    hl,(MaxWaterOnShip)
+  ld    de,(WaterOnShip)
+  xor   a
+  sbc   hl,de
+  call  NUM_TO_ASCII
+
+  ld    ix,Ascii5Byte
+  ld    b,191                               ;dx
+  ld    c,000                               ;increase in dy
+  jp    SetTextSkip0sLoop
+
+SetCostFood:                                ;sets the current player's credits
+  ld    a,188                               ;dy
+  ld    (PutLetter+dy),a                    ;set dy of text
+  ld    a,191
+  ld    (PutLetter+dx),a                    ;set dx of next letter
+
+  ld    hl,(MaxFoodOnShip)
+  ld    de,(FoodOnShip)
+  xor   a
+  sbc   hl,de
+  call  NUM_TO_ASCII
+
+  ld    ix,Ascii5Byte
+  ld    b,191                               ;dx
+  ld    c,000                               ;increase in dy
+  jp    SetTextSkip0sLoop
+
+SetCostOxygen:                              ;sets the current player's credits
+  ld    a,188                               ;dy
+  ld    (PutLetter+dy),a                    ;set dy of text
+  ld    a,191
+  ld    (PutLetter+dx),a                    ;set dx of next letter
+
+  ld    hl,(MaxOxygenOnShip)
+  ld    de,(OxygenOnShip)
+  xor   a
+  sbc   hl,de
+  call  NUM_TO_ASCII
+
+  ld    ix,Ascii5Byte
+  ld    b,191                               ;dx
+  ld    c,000                               ;increase in dy
+  jp    SetTextSkip0sLoop
 
 SetItemInfoPurchase:
   ld    a,112                               ;dy
@@ -782,6 +955,19 @@ SetText2CostItem:
   ld    b,dxItemInfo                        ;dx
   ld    c,000                               ;increase in dy
   jp    SetText2
+
+TextCost:
+  db    "Cost:",255
+
+TextOxygen:
+  db    "Complete life support oxygen refill",255
+
+TextFood:
+  db    "Complete Food System Refill",255
+
+TextWater:
+  db    "Completely replenish the ship's water reserves",255
+
 
 TextOxygenGenerator:
   db    "Extracts oxygen from carbon dioxide-rich atmosphere.",255

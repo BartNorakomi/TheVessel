@@ -2584,10 +2584,13 @@ DailyContinuesUsed: db 0                ;bit 0=roadfighter,bit 1=basketball,bit 
 
 TotalMinutesUntilLand:      dw  4320
 
-OxygenOnShip:               db  255
-WaterOnShip:                dw  200
-FoodOnShip:                 dw  400
-
+OxygenOnShip:               dw  100
+MaxOxygenOnShip:            dw  400
+FoodOnShip:                 dw  100
+MaxFoodOnShip:              dw  500
+WaterOnShip:                dw  100
+MaxWaterOnShip:             dw  300
+AmountOfDigSitesUnlocked:   db  1
 FuelTankLevel1MaxFuel:      equ 064
 FuelTankLevel2MaxFuel:      equ FuelTankLevel1MaxFuel * 2
 FuelTankLevel3MaxFuel:      equ FuelTankLevel2MaxFuel * 2
@@ -2629,8 +2632,8 @@ EnergyMax:                  dw  64
 EnergyXP:                   db  0
 Radiation:                  dw  100
 RadiationMax:               dw  1000
-RadiationProtectionLevel:   db  1       ;1=level 1, 2=level 2,3=level 3
-ConvSoldier: db %0000 0001               ;conversations handled bit0=intro, bit1=low fuel, bit2=low fuel short, bit3=low energy, bit4=low energy short, bit5=high radiation, bit6=storage full, bit7=storage full short
+RadiationProtectionLevel:   db  3       ;0=no protection, 1=level 1, 2=level 2,3=level 3, 4=level 4
+ConvSoldier: db %0000 0001              ;conversations handled bit0=intro, bit1=low fuel, bit2=low fuel short, bit3=low energy, bit4=low energy short, bit5=high radiation, bit6=storage full, bit7=storage full short
 
 
 EndSaveGameData:
