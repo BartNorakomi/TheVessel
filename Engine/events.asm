@@ -147,6 +147,11 @@ over time food gets depleted (automatically), since the player uses food (althou
 over time water gets depleted (automatically), since the player uses food (although you dont see him eating)
 over time the ship's oxygen gets depleted (automatically), since the player breathes air
 
+
+At the start of act 2 10 children are being grown
+they will hatch at year 5 ??
+at year 5 you will need to have the colony ready, otherwise they perish and the game ends ???????
+
 -------------------------------
 
 

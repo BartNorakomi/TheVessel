@@ -622,8 +622,7 @@ sciencelabPalette:                    			;palette file
 drillinggamePalette:                    			;palette file
   incbin "..\grapx\drillinggame\maps\tileset.SC5",$7680+7,32
 upgrademenuPalette:                    			;palette file
-  incbin "..\grapx\ship\sciencelab\upgrademenu.SC5",$7680+7,32
-
+  incbin "..\grapx\ship\sciencelab\upgrademenu2.SC5",$7680+7,32
 
 LoadRoomGfx:
 	ld		a,(CurrentRoom)									;0=arcadehall1, 1=arcadehall2
@@ -1022,6 +1021,18 @@ CloseBlackWindowDrillingGame2LinesBottom:
 	db		0,0,0,0
 	db		0,1,1,0
 	db		0,0,$d0	
+
+CopySelectionWindowPage2:
+	db		012,0,035,2
+	db		012,0,035,1
+	db		122,0,019,0
+	db		0,0,$d0	
+
+OxygenFoodWaterInnerBarFilled:
+	db		0,0,0,0
+	db		000,0,000,0
+	db		000,0,007,0
+	db		7+ (7 * 16),0,$80
 
 ChangeSong?:  db 0
 
@@ -1815,6 +1826,9 @@ DrillingTimeFrames:					rb	1
 DrillingHigherLevelSoil?:		rb	1
 NPCConversationsInDrillingGame?:		rb	1
 TotalValueResources:				rb	2
+ShowScienceLabMenu:					rb	1
+CurrentScienceLabMenu:			rb	1
+ScienceLabMenuItemSelected:	rb	1
 
 
 endenginepage3variables:  equ $+enginepage3length

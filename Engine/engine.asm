@@ -2588,7 +2588,17 @@ OxygenOnShip:               db  255
 WaterOnShip:                dw  200
 FoodOnShip:                 dw  400
 
-TotalCredits:               dw  0       ;total credits collected from drilled resources converted into credits
+FuelTankLevel1MaxFuel:      equ 064
+FuelTankLevel2MaxFuel:      equ FuelTankLevel1MaxFuel * 2
+FuelTankLevel3MaxFuel:      equ FuelTankLevel2MaxFuel * 2
+FuelTankLevel4MaxFuel:      equ FuelTankLevel3MaxFuel * 2
+CargoSizeLevel1MaxStorage:  equ 064
+CargoSizeLevel2MaxStorage:  equ CargoSizeLevel1MaxStorage * 2
+CargoSizeLevel3MaxStorage:  equ CargoSizeLevel2MaxStorage * 2
+CargoSizeLevel4MaxStorage:  equ CargoSizeLevel3MaxStorage * 2
+
+
+TotalCredits:               dw  6478    ;total credits collected from drilled resources converted into credits
 valueLevel1Resources:       equ 02      ;credit per unit collected
 valueLevel2Resources:       equ 05      ;credit per unit collected
 valueLevel3Resources:       equ 08      ;credit per unit collected
@@ -2597,8 +2607,12 @@ valueLevel5Resources:       equ 18      ;credit per unit collected
 valueLevel6Resources:       equ 30      ;credit per unit collected
 valueLevel7Resources:       equ 50      ;credit per unit collected
 ;Drilling Game:
-ConicalDrillBit:            db  0       ;0=can drill through Basalt, 1=can drill through Ironstone, 2=can drill through metallic ore, 3=can drill through xenodiamond 
-DrillMachineMaxSpeed:       db  1       ;1=level 1, 2=level 2, 3=level 3, 4=level 4
+
+ConicalDrillBit:            db  0       ;0=can drill through Basalt, 1=can drill through Ironstone, 2=can drill through metallic ore, 3=can drill through xenodiamond
+MinerSpeedLevel:            db  1       ;1=level 1, 2=level 2, 3=level 3, 4=level 4
+FuelTankLevel:              db  1       ;1=level 1, 2=level 2, 3=level 3, 4=level 4
+CargoSizeLevel:             db  1       ;1=level 1, 2=level 2, 3=level 3, 4=level 4
+
 Level1Resources:            dw  21
 Level2Resources:            dw  13
 Level3Resources:            dw  4
@@ -2607,9 +2621,9 @@ Level5Resources:            dw  6
 Level6Resources:            dw  4
 Level7Resources:            dw  104
 Fuel:                       dw  64
-FuelMax:                    dw  64
+FuelMax:                    dw  FuelTankLevel1MaxFuel
 Storage:                    dw  044
-StorageMax:                 dw  064
+StorageMax:                 dw  CargoSizeLevel1MaxStorage
 Energy:                     dw  64
 EnergyMax:                  dw  64
 EnergyXP:                   db  0

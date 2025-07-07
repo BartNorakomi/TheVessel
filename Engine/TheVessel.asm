@@ -612,7 +612,7 @@ ResourceOffloadPortraitGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /
 	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
 
 UpgradeMenuGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
-  incbin "..\grapx\ship\sciencelab\UpgradeMenu.SC5",7,212 * 128      ;98 lines
+  incbin "..\grapx\ship\sciencelab\UpgradeMenu2.SC5",7,212 * 128      ;98 lines
 	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
 
 

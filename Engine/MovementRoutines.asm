@@ -1520,7 +1520,6 @@ HangarbayEventRoutine:
   ld    (ChangeRoom?),a
   ret    
 
-
   .HandleExplainerConversation:
   ld    hl,ConvEntityShipExplanations
   bit   1,(hl)
