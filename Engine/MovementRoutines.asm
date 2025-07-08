@@ -1102,7 +1102,19 @@ CheckShowPressTrigAIconsciencelab:
   ld    (TriggerAy),a
   ld    a,(iy+x)
   ld    (TriggerAx),a
-  ret
+;
+; bit	7	  6	  5		    4		    3		    2		  1		  0
+;		  0	  0	  trig-b	trig-a	right	  left	down	up	(joystick)
+;		  F5	F1	'M'		  space	  right	  left	down	up	(keyboard)
+;
+	ld		a,(NewPrContr)
+	bit		4,a           ;trig a pressed ?
+  ret   z
+  ld    a,13                                ;upgrade menu
+  ld    (CurrentRoom),a
+  ld    a,1
+  ld    (ChangeRoom?),a
+  ret    
 
 sciencelabEventRoutine:
   call  .CheckPlayerLeavingRoom             ;when y>116 player enters arcadehall1 

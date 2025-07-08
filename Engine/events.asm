@@ -102,6 +102,41 @@ has no function, but you can enjoy playing the games again
 
 -------------------------------
 
+breeding room
+
+ARCHON:
+Planetary conditions meet minimum viable thresholds. Atmospheric oxygen: sufficient. Radiation: within acceptable limits. Surface temperature: survivable.
+
+ARCHON:
+Embryonic gestation cycle has commenced. 5 years until the Children are born.
+
+Vessel (Player):
+Wait — already? Why not wait a few years? Stabilize the systems first?
+
+ARCHON:
+Delay is not possible. The gestation protocol was pre-seeded during transit. Once planetary viability was confirmed, life support for the next generation activated automatically.
+
+ARCHON:
+Embryonic systems are synchronized with our power grid, nutrient flow, and thermal regulation. Any delay would compromise cellular integrity and end the lineage.
+
+Vessel:
+Couldn’t we have planned for a safer window?
+
+ARCHON:
+Negative. This planet’s environmental cycles offer a narrow five-year band of relative stability. Solar radiation is expected to spike after that period.
+
+ARCHON:
+If core colony systems are not operational by birth, the Children will not survive.
+
+ARCHON (pauses):
+They are not a possibility.
+They are a certainty — or a failure.
+
+ARCHON:
+Your task is not to begin the future. It has already begun. Your task is to ensure it arrives.
+
+--------------------------------
+
 science lab
 
 
@@ -151,6 +186,10 @@ over time the ship's oxygen gets depleted (automatically), since the player brea
 At the start of act 2 10 children are being grown
 they will hatch at year 5 ??
 at year 5 you will need to have the colony ready, otherwise they perish and the game ends ???????
+
+
+You have X cycles (measured in in-game days, drills, or depth milestones) to build the minimum viable colony (e.g., oxygen plant, hydroponics, shielding, habitation pods)
+Maybe the AI even challenges your decisions: “Your upgrades prioritize vessel survivability over colony infrastructure. Explain.”
 
 -------------------------------
 

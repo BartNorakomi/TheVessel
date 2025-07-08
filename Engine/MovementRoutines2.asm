@@ -43,6 +43,8 @@ NavigateMenus:
 ;		  F5	F1	'M'		  space	  right	  left	down	up	(keyboard)
 ;
 	ld		a,(NewPrContr)
+	bit		4,a           ;space pressed ?
+  jr    nz,SpacePressedPurchaseItem
 	bit		3,a           ;right pressed ?
   jr    nz,.RightPressed
 	bit		2,a           ;left pressed ?
@@ -108,6 +110,457 @@ NavigateMenus:
   ld    a,1
   ld    (ShowScienceLabMenu),a              ;0=dont show, 1=show upgrades menu, 2=show life support menu, 3=show purchase menu
   ret
+
+SpacePressedPurchaseItem:
+  ld    a,(CurrentScienceLabMenu)           ;1=upgrades menu, 2=life support menu, 3=purchase menu
+  dec   a
+  jp    z,.UpgradesMenu
+  dec   a
+  jp    z,.LifeSupportMenu
+
+  .PurchaseMenu:
+  ld    a,3
+  ld    (ShowScienceLabMenu),a              ;0=dont show, 1=show upgrades menu, 2=show life support menu, 3=show purchase menu
+  ld    hl,(TotalCredits)
+
+  ld    a,(ScienceLabMenuItemSelected)      ;which item in the current list is selected/highlighted ?
+  dec   a
+  jp    z,.OxygenGenerator
+  dec   a
+  jp    z,.WaterRecycler
+  dec   a
+  jp    z,.AntiRadiation
+  dec   a
+  jp    z,.DigSite
+  dec   a
+  jp    z,.ColonyExpansion
+  dec   a
+  jp    z,.ExitUpgradeMenu
+
+  .ColonyExpansion:
+  ld    a,(ColonyExpansionPurchased?)
+  or    a
+  ret   nz
+  ld    de,CostColonyExpansion
+  xor   a
+  sbc   hl,de
+  jp    c,.NotEnoughCredits
+  ld    (TotalCredits),hl
+  ld    a,1
+  ld    (ColonyExpansionPurchased?),a
+  ret
+
+  .DigSite:
+  ld    a,(AmountOfDigSitesUnlocked)
+  cp    5
+  ret   z
+  ld    de,CostDigSite
+  xor   a
+  sbc   hl,de
+  jp    c,.NotEnoughCredits
+  ld    (TotalCredits),hl
+  ld    a,(AmountOfDigSitesUnlocked)
+  inc   a
+  ld    (AmountOfDigSitesUnlocked),a
+  ret
+
+  .AntiRadiation:
+  ld    a,(RadiationProtectionLevel)        ;0=no protection, 1=level 1, 2=level 2,3=level 3, 4=level 4
+  cp    4
+  ret   z
+  ld    de,CostRadiationShieldLevel1
+  or    a
+  jr    z,.CostRadiationShieldFound
+  ld    de,CostRadiationShieldLevel2
+  dec   a
+  jr    z,.CostRadiationShieldFound
+  ld    de,CostRadiationShieldLevel3
+  dec   a
+  jr    z,.CostRadiationShieldFound
+  ld    de,CostRadiationShieldLevel4
+  .CostRadiationShieldFound:
+  xor   a
+  sbc   hl,de
+  jp    c,.NotEnoughCredits
+  ld    (TotalCredits),hl
+  ld    a,(RadiationProtectionLevel)
+  inc   a
+  ld    (RadiationProtectionLevel),a
+  ret
+
+  .WaterRecycler:
+  ld    a,(WaterRecyclerPurchased?)
+  or    a
+  ret   nz
+  ld    de,CostWaterRecycler
+  xor   a
+  sbc   hl,de
+  jp    c,.NotEnoughCredits
+  ld    (TotalCredits),hl
+  ld    a,1
+  ld    (WaterRecyclerPurchased?),a
+  ret
+
+  .OxygenGenerator:
+  ld    a,(OxygenGeneratorPurchased?)
+  or    a
+  ret   nz
+  ld    de,CostOxygenGenerator
+  xor   a
+  sbc   hl,de
+  jp    c,.NotEnoughCredits
+  ld    (TotalCredits),hl
+  ld    a,1
+  ld    (OxygenGeneratorPurchased?),a
+  ret
+
+  .LifeSupportMenu:
+  ld    a,2
+  ld    (ShowScienceLabMenu),a              ;0=dont show, 1=show upgrades menu, 2=show life support menu, 3=show purchase menu
+
+  ld    a,(ScienceLabMenuItemSelected)      ;which item in the current list is selected/highlighted ?
+  dec   a
+  jp    z,.Oxygen
+  dec   a
+  jp    z,.Food
+  dec   a
+  jp    z,.Water
+  dec   a
+  jp    z,.ExitUpgradeMenu
+
+  .Water:
+  call  CalculateCostWater                  ;out: hl total cost of refilling water supply on the ship
+  push  hl
+  pop   de
+  ld    hl,(TotalCredits)
+  ld    a,l
+  or    h
+  jp    z,.NotEnoughCredits
+  xor   a
+  sbc   hl,de
+  jp    c,.NotEnoughCreditsForTotalRefillWater
+  ld    (TotalCredits),hl
+  ld    hl,(MaxWaterOnShip)
+  ld    (WaterOnShip),hl
+  ret
+  .NotEnoughCreditsForTotalRefillWater:
+  ld    hl,(TotalCredits)
+  ld    de,(WaterOnShip)
+  add   hl,de
+  ld    (WaterOnShip),hl
+  ld    hl,0
+  ld    (TotalCredits),hl
+  ret
+
+  .Food:
+  call  CalculateCostFood                   ;out: hl total cost of refilling food supply on the ship
+  push  hl
+  pop   de
+  ld    hl,(TotalCredits)
+  ld    a,l
+  or    h
+  jp    z,.NotEnoughCredits
+  xor   a
+  sbc   hl,de
+  jp    c,.NotEnoughCreditsForTotalRefillFood
+  ld    (TotalCredits),hl
+  ld    hl,(MaxFoodOnShip)
+  ld    (FoodOnShip),hl
+  ret
+  .NotEnoughCreditsForTotalRefillFood:
+  ld    hl,(TotalCredits)
+  ld    de,(FoodOnShip)
+  add   hl,de
+  ld    (FoodOnShip),hl
+  ld    hl,0
+  ld    (TotalCredits),hl
+  ret
+
+  .Oxygen:
+  call  CalculateCostOxygen                 ;out: hl total cost of refilling oxygen supply on the ship
+  push  hl
+  pop   de
+  ld    hl,(TotalCredits)
+  ld    a,l
+  or    h
+  jp    z,.NotEnoughCredits
+  xor   a
+  sbc   hl,de
+  jp    c,.NotEnoughCreditsForTotalRefillOxygen
+  ld    (TotalCredits),hl
+  ld    hl,(MaxOxygenOnShip)
+  ld    (OxygenOnShip),hl
+  ret
+  .NotEnoughCreditsForTotalRefillOxygen:
+  ld    hl,(TotalCredits)
+  ld    de,(OxygenOnShip)
+  add   hl,de
+  ld    (OxygenOnShip),hl
+  ld    hl,0
+  ld    (TotalCredits),hl
+  ret
+
+  .UpgradesMenu:
+  ld    a,1
+  ld    (ShowScienceLabMenu),a              ;0=dont show, 1=show upgrades menu, 2=show life support menu, 3=show purchase menu
+  ld    hl,(TotalCredits)
+
+  ld    a,(ScienceLabMenuItemSelected)      ;which item in the current list is selected/highlighted ?
+  dec   a
+  jp    z,.FuelTank
+  dec   a
+  jp    z,.CargoSize
+  dec   a
+  jp    z,.DrillCone
+  dec   a
+  jp    z,.MinerSpeed
+  dec   a
+  jp    z,.ExitUpgradeMenu
+
+  .MinerSpeed:
+  ld    a,(MinerSpeedLevel)
+  dec   a
+  ld    de,CostMinerSpeedLevel2
+  jp    z,.MinerSpeedLevelFound
+  dec   a
+  ld    de,CostMinerSpeedLevel3
+  jp    z,.MinerSpeedLevelFound
+  dec   a
+  ld    de,CostMinerSpeedLevel4
+  ret   nz                                  ;maxed out
+  .MinerSpeedLevelFound:
+  xor   a
+  sbc   hl,de
+  jp    c,.NotEnoughCredits
+  ld    (TotalCredits),hl
+  ld    a,(MinerSpeedLevel)
+  inc   a
+  ld    (MinerSpeedLevel),a
+  ret
+
+  .DrillCone:
+  ld    a,(ConicalDrillBit)
+  or    a
+  ld    de,CostDrillConeLevel2
+  jp    z,.ConicalDrillBitFound
+  dec   a
+  ld    de,CostDrillConeLevel3
+  jp    z,.ConicalDrillBitFound
+  dec   a
+  ld    de,CostDrillConeLevel4
+  ret   nz                                  ;maxed out
+  .ConicalDrillBitFound:
+  xor   a
+  sbc   hl,de
+  jp    c,.NotEnoughCredits
+  ld    (TotalCredits),hl
+  ld    a,(ConicalDrillBit)
+  inc   a
+  ld    (ConicalDrillBit),a
+  ret
+
+  .CargoSize:
+  ld    a,(CargoSizeLevel)
+  dec   a
+  ld    de,CostCargoSizeLevel2
+  jp    z,.CargoSizeLevelFound
+  dec   a
+  ld    de,CostCargoSizeLevel3
+  jp    z,.CargoSizeLevelFound
+  dec   a
+  ld    de,CostCargoSizeLevel4
+  ret   nz                                  ;maxed out
+  .CargoSizeLevelFound:
+  xor   a
+  sbc   hl,de
+  jp    c,.NotEnoughCredits
+  ld    (TotalCredits),hl
+  ld    a,(CargoSizeLevel)
+  inc   a
+  ld    (CargoSizeLevel),a
+  ret
+
+  .FuelTank:
+  ld    a,(FuelTankLevel)
+  dec   a
+  ld    de,CostFuelTankLevel2
+  jp    z,.FuelTankLevelFound
+  dec   a
+  ld    de,CostFuelTankLevel3
+  jp    z,.FuelTankLevelFound
+  dec   a
+  ld    de,CostFuelTankLevel4
+  ret   nz                                  ;maxed out
+  .FuelTankLevelFound:
+  xor   a
+  sbc   hl,de
+  jp    c,.NotEnoughCredits
+  ld    (TotalCredits),hl
+  ld    a,(FuelTankLevel)
+  inc   a
+  ld    (FuelTankLevel),a
+  ret
+
+  .ExitUpgradeMenu:
+  ld    a,1
+  ld    (ChangeRoom?),a
+  ld    a,11
+  ld    (CurrentRoom),a
+  ret
+
+  .NotEnoughCredits:
+  ;play sfx
+  ret
+
+
+TextCost:
+  db    "Cost:",255
+TextOxygen:
+  db    "Complete life support oxygen refill",255
+TextFood:
+  db    "Complete Food System Refill",255
+TextWater:
+  db    "Completely replenish the ship's water reserves",255
+TextOxygenGenerator:
+  db    "Extracts oxygen from carbon dioxide-rich atmosphere.",255
+TextOxygenGeneratorPurchased:
+  db    "Purchased",255
+TextCostOxygenGenerator:
+  db    "Cost: 250",255       | CostOxygenGenerator:  equ 250
+TextWaterRecycler:
+  db    "Recycles waste water into clean, drinkable water using filtration systems.",255
+TextWaterRecyclerPurchased:
+  db    "Purchased",255
+TextCostWaterRecycler:
+  db    "Cost: 250",255       | CostWaterRecycler:  equ 250
+TextRadiationShieldLevel1:
+  db    "Nanoshield Symbiotic Skin +20% active radiation shielding",255
+TextRadiationShieldLevel2:
+  db    "Radiation Absorbing Nanites +40% active radiation shielding",255
+TextRadiationShieldLevel3:
+  db    "Dynamic Melanin Enhancement +60% active radiation shielding",255
+TextRadiationShieldLevel4:
+  db    "Self-Repairing Tissue +80% active radiation shielding",255
+TextCostRadiationShieldLevel1:
+  db    "Cost: 250",255       | CostRadiationShieldLevel1:  equ 250
+TextCostRadiationShieldLevel2:
+  db    "Cost: 260",255       | CostRadiationShieldLevel2:  equ 260
+TextCostRadiationShieldLevel3:
+  db    "Cost: 270",255       | CostRadiationShieldLevel3:  equ 270
+TextCostRadiationShieldLevel4:
+  db    "Cost: 280",255       | CostRadiationShieldLevel4:  equ 280
+TextDigSite:
+  db    "Unlocks an additional drilling location",255
+TextCostDigSite:
+  db    "Cost: 250",255       | CostDigSite:  equ 250
+TextColonyExpansion:
+  db    "Develops new colony sectors",255
+TextColonyExpansionPurchased:
+  db    "Purchased",255
+TextCostColonyExpansion:
+  db    "Cost: 250",255       | CostColonyExpansion:  equ 250
+TextMaxedOut:
+  db    "Maxed Out",255
+TextCostMaxedOut:
+  db    " ",255
+TextCredits:
+  db    "Credits:",255
+TextMinerSpeedLevel2:
+  db    "Increases miner speed by 50% Current: Level 1",255
+TextCostMinerSpeedLevel2:
+  db    "Cost: 250",255       | CostMinerSpeedLevel2:  equ 250
+TextMinerSpeedLevel3:
+  db    "Doubles miner speed Current: Level 2",255
+TextCostMinerSpeedLevel3:
+  db    "Cost: 750",255       | CostMinerSpeedLevel3:  equ 750
+TextMinerSpeedLevel4:
+  db    "Drill speed keeps building up when uninterrupted Current: Lvl 3",255
+TextCostMinerSpeedLevel4:
+  db    "Cost: 2000",255      | CostMinerSpeedLevel4:  equ 2000
+TextDrillConeLevel2:
+  db    "Allows drilling through Ironstone Current: Level 1",255
+TextCostDrillConeLevel2:
+  db    "Cost: 250",255       | CostDrillConeLevel2:  equ 250
+TextDrillConeLevel3:
+  db    "Allows drilling through Metallic Ore Current: Level 2",255
+TextCostDrillConeLevel3:
+  db    "Cost: 750",255       | CostDrillConeLevel3:  equ 750
+TextDrillConeLevel4:
+  db    "Allows drilling through Xenodiamond Current: Level 3",255
+TextCostDrillConeLevel4:
+  db    "Cost: 1500",255      | CostDrillConeLevel4:  equ 1500
+TextCargoSizeLevel2:
+  db    "Doubles cargo capacity Current: Level 1",255
+TextCostCargoSizeLevel2:
+  db    "Cost: 250",255       | CostCargoSizeLevel2:  equ 250
+TextCargoSizeLevel3:
+  db    "Doubles cargo capacity Current: Level 2",255
+TextCostCargoSizeLevel3:
+  db    "Cost: 500",255       | CostCargoSizeLevel3:  equ 500
+TextCargoSizeLevel4:
+  db    "Doubles cargo capacity Current: Level 3",255
+TextCostCargoSizeLevel4:
+  db    "Cost: 750",255       | CostCargoSizeLevel4:  equ 750
+TextFuelTankLevel2:
+  db    "Doubles fuel capacity Current: Level 1",255
+TextCostFuelTankLevel2:
+  db    "Cost: 250",255       | CostFuelTankLevel2:  equ 250
+TextFuelTankLevel3:
+  db    "Doubles fuel capacity Current: Level 2",255
+TextCostFuelTankLevel3:
+  db    "Cost: 600",255       | CostFuelTankLevel3:  equ 600
+TextFuelTankLevel4:
+  db    "Doubles fuel capacity Current: Level 3",255
+TextCostFuelTankLevel4:
+  db    "Cost: 900",255       | CostFuelTankLevel4:  equ 900
+TextReady?:
+  db    "READY?",255
+TextUpgrades:
+  db    "UPGRADES",255
+TextFuelTankLvl2:
+  db    "Fuel Tank Lvl 2",255
+TextFuelTankLvl3:
+  db    "Fuel Tank Lvl 3",255
+TextFuelTankLvl4:
+  db    "Fuel Tank Lvl 4",255
+TextFuelTankMax:
+  db    "Fuel Tank (Max)",255
+TextCargoSizeLvl2:
+  db    "Cargo Size Lvl 2",255
+TextCargoSizeLvl3:
+  db    "Cargo Size Lvl 3",255
+TextCargoSizeLvl4:
+  db    "Cargo Size Lvl 4",255
+TextCargoSizeMax:
+  db    "Cargo Size (Max)",255
+TextDrillConeLvl2:
+  db    "Drill Cone Lvl 2",255
+TextDrillConeLvl3:
+  db    "Drill Cone Lvl 3",255
+TextDrillConeLvl4:
+  db    "Drill Cone Lvl 4",255
+TextDrillConeMax:
+  db    "Drill Cone (Max)",255
+TextMinerSpeedLvl2:
+  db    "Miner Speed Lvl 2",255
+TextMinerSpeedLvl3:
+  db    "Miner Speed Lvl 3",255
+TextMinerSpeedLvl4:
+  db    "Miner Speed Lvl 4",255
+TextMinerSpeedMax:
+  db    "Miner Speed (Max)",255
+TextLifeSupport:
+  db    "LIFE SUPPORT",255
+  db    "Oxygen",255
+  db    "Food",255
+  db    "Water",255
+TextPurchase:
+  db    "PURCHASE",255
+  db    "Oxygen Generator",255
+  db    "Water Recycler",255
+  db    "Anti Radiation",255
+  db    "Dig Site",255
+  db    "Colony Expansion",255
 
 ClearBarsPage3:
 	db		0,0,0,0
@@ -231,7 +684,7 @@ BuildUpPurchaseMenu:
   ld    (ShowScienceLabMenu),a              ;0=dont show, 1=show upgrades menu, 2=show life support menu, 3=show purchase menu
 
   call  ClearMirrorPageScienceLabMenu
-  call  CopySelectionWindow                 ;copies selection window form page 2
+  call  CopySelectionWindow                 ;copies selection window from page 2
 
   ld    a,018                               ;dy
   ld    (PutLetter+dy),a                    ;set dy of text
@@ -360,7 +813,7 @@ BuildUpLifeSupportMenu:
   ld    (ShowScienceLabMenu),a              ;0=dont show, 1=show upgrades menu, 2=show life support menu, 3=show purchase menu
 
   call  ClearMirrorPageScienceLabMenu
-  call  CopySelectionWindow                 ;copies selection window form page 2
+  call  CopySelectionWindow                 ;copies selection window from page 2
 
   ld    a,018                               ;dy
   ld    (PutLetter+dy),a                    ;set dy of text
@@ -574,7 +1027,7 @@ BuildUpUpgradesMenu:
   ld    (ShowScienceLabMenu),a              ;0=dont show, 1=show upgrades menu, 2=show life support menu, 3=show purchase menu
 
   call  ClearMirrorPageScienceLabMenu
-  call  CopySelectionWindow                 ;copies selection window form page 2
+  call  CopySelectionWindow                 ;copies selection window from page 2
 
   ld    a,018                               ;dy
   ld    (PutLetter+dy),a                    ;set dy of text
@@ -685,22 +1138,22 @@ BuildUpUpgradesMenu:
   jp    SwapPageOnNextVblank                ;swaps between page 0 and page 1
 
 SetCredits:                                 ;sets the current player's credits
-  ld    a,172                               ;dy
+  ld    a,170                               ;dy
   ld    (PutLetter+dy),a                    ;set dy of text
 
   ld    ix,TextCredits
-  ld    b,027                               ;dx
+  ld    b,035                               ;dx
   ld    c,000                               ;increase in dy
   call  SetText2
 
   ld    hl,(TotalCredits)
   call  NUM_TO_ASCII
 
-  ld    a,077
+  ld    a,085
   ld    (PutLetter+dx),a                    ;set dx of next letter
 
   ld    ix,Ascii5Byte
-  ld    b,077                               ;dx
+  ld    b,085                               ;dx
   ld    c,000                               ;increase in dy
   jp    SetTextSkip0sLoop
 
@@ -754,16 +1207,34 @@ SetItemInfoLifeSupport:
   call  SetItemInfo
   jp    SetCostOxygen
 
+CalculateCostWater:
+  ld    hl,(MaxWaterOnShip)
+  ld    de,(WaterOnShip)
+  xor   a
+  sbc   hl,de
+  ret
+
+CalculateCostFood:
+  ld    hl,(MaxFoodOnShip)
+  ld    de,(FoodOnShip)
+  xor   a
+  sbc   hl,de
+  ret
+
+CalculateCostOxygen:
+  ld    hl,(MaxOxygenOnShip)
+  ld    de,(OxygenOnShip)
+  xor   a
+  sbc   hl,de
+  ret
+
 SetCostWater:                               ;sets the current player's credits
   ld    a,188                               ;dy
   ld    (PutLetter+dy),a                    ;set dy of text
   ld    a,191
   ld    (PutLetter+dx),a                    ;set dx of next letter
 
-  ld    hl,(MaxWaterOnShip)
-  ld    de,(WaterOnShip)
-  xor   a
-  sbc   hl,de
+  call  CalculateCostWater                  ;out: hl total cost of refilling water supply on the ship
   call  NUM_TO_ASCII
 
   ld    ix,Ascii5Byte
@@ -777,10 +1248,7 @@ SetCostFood:                                ;sets the current player's credits
   ld    a,191
   ld    (PutLetter+dx),a                    ;set dx of next letter
 
-  ld    hl,(MaxFoodOnShip)
-  ld    de,(FoodOnShip)
-  xor   a
-  sbc   hl,de
+  call  CalculateCostFood                   ;out: hl total cost of refilling food supply on the ship
   call  NUM_TO_ASCII
 
   ld    ix,Ascii5Byte
@@ -794,10 +1262,7 @@ SetCostOxygen:                              ;sets the current player's credits
   ld    a,191
   ld    (PutLetter+dx),a                    ;set dx of next letter
 
-  ld    hl,(MaxOxygenOnShip)
-  ld    de,(OxygenOnShip)
-  xor   a
-  sbc   hl,de
+  call  CalculateCostOxygen                 ;out: hl total cost of refilling oxygen supply on the ship
   call  NUM_TO_ASCII
 
   ld    ix,Ascii5Byte
@@ -823,28 +1288,74 @@ SetItemInfoPurchase:
   ret
 
   .ColonyExpansion:
+  ld    a,(ColonyExpansionPurchased?)
+  or    a
+  jr    nz,.ColonyExpansionPurchased
   ld    ix,TextColonyExpansion
   ld    de,TextCostColonyExpansion  
   jp    SetItemInfo
+  .ColonyExpansionPurchased:
+  ld    ix,TextColonyExpansionPurchased
+  ld    de,TextCostMaxedOut  
+  jp    SetItemInfo
 
   .DigSite:
+  ld    a,(AmountOfDigSitesUnlocked)
+  cp    5
+  ld    de,TextCostDigSite
   ld    ix,TextDigSite
-  ld    de,TextCostDigSite  
+  jr    nz,.AmountOfDigSitesFound
+  ld    de,TextCostMaxedOut
+  ld    ix,TextMaxedOut
+  .AmountOfDigSitesFound:
   jp    SetItemInfo
 
   .RadiationShield:
-  ld    ix,TextRadiationShield
-  ld    de,TextCostRadiationShield  
-  jp    SetItemInfo
+
+  ld    a,(RadiationProtectionLevel)        ;0=no protection, 1=level 1, 2=level 2,3=level 3, 4=level 4
+  or    a
+  ld    ix,TextRadiationShieldLevel1
+  ld    de,TextCostRadiationShieldLevel1
+  jp    z,SetItemInfo
+  dec   a
+  ld    ix,TextRadiationShieldLevel2
+  ld    de,TextCostRadiationShieldLevel2
+  jp    z,SetItemInfo
+  dec   a
+  ld    ix,TextRadiationShieldLevel3
+  ld    de,TextCostRadiationShieldLevel3
+  jp    z,SetItemInfo
+  dec   a
+  ld    ix,TextRadiationShieldLevel4
+  ld    de,TextCostRadiationShieldLevel4
+  jp    z,SetItemInfo
+  dec   a
+  ld    ix,TextMaxedOut
+  ld    de,TextCostMaxedOut
+  jp    z,SetItemInfo
 
   .WaterRecycler:
+  ld    a,(WaterRecyclerPurchased?)
+  or    a
+  jr    nz,.WaterRecyclerPurchased
   ld    ix,TextWaterRecycler
   ld    de,TextCostWaterRecycler  
   jp    SetItemInfo
+  .WaterRecyclerPurchased:
+  ld    ix,TextWaterRecyclerPurchased
+  ld    de,TextCostMaxedOut  
+  jp    SetItemInfo
 
   .OxygenGenerator:
+  ld    a,(OxygenGeneratorPurchased?)
+  or    a
+  jr    nz,.OxygenGeneratorPurchased
   ld    ix,TextOxygenGenerator
   ld    de,TextCostOxygenGenerator  
+  jp    SetItemInfo
+  .OxygenGeneratorPurchased:
+  ld    ix,TextOxygenGeneratorPurchased
+  ld    de,TextCostMaxedOut  
   jp    SetItemInfo
 
 
@@ -956,183 +1467,6 @@ SetText2CostItem:
   ld    c,000                               ;increase in dy
   jp    SetText2
 
-TextCost:
-  db    "Cost:",255
-
-TextOxygen:
-  db    "Complete life support oxygen refill",255
-
-TextFood:
-  db    "Complete Food System Refill",255
-
-TextWater:
-  db    "Completely replenish the ship's water reserves",255
-
-
-TextOxygenGenerator:
-  db    "Extracts oxygen from carbon dioxide-rich atmosphere.",255
-TextCostOxygenGenerator:
-  db    "Cost: 250",255
-
-
-TextWaterRecycler:
-  db    "Recycles waste water into clean, drinkable water using filtration systems.",255
-TextCostWaterRecycler:
-  db    "Cost: 250",255
-
-
-TextRadiationShield:
-  db    "Nanoshield Skin provides active radiation shielding",255
-TextCostRadiationShield:
-  db    "Cost: 250",255
-
-
-TextDigSite:
-  db    "Unlocks an additional drilling location",255
-TextCostDigSite:
-  db    "Cost: 250",255
-
-
-TextColonyExpansion:
-  db    "Develops new colony sectors",255
-TextCostColonyExpansion:
-  db    "Cost: 250",255
-
-
-
-
-
-
-
-
-TextMaxedOut:
-  db    "Maxed Out",255
-TextCostMaxedOut:
-  db    " ",255
-
-TextCredits:
-  db    "Credits:",255
-
-TextMinerSpeedLevel2:
-  db    "Increases miner speed by 50% Current: Level 1",255
-TextCostMinerSpeedLevel2:
-  db    "Cost: 250",255
-
-TextMinerSpeedLevel3:
-  db    "Doubles miner speed Current: Level 2",255
-TextCostMinerSpeedLevel3:
-  db    "Cost: 750",255
-
-TextMinerSpeedLevel4:
-  db    "Drill speed keeps building up when uninterrupted Current: Lvl 3",255
-TextCostMinerSpeedLevel4:
-  db    "Cost: 2000",255
-
-
-TextDrillConeLevel2:
-  db    "Allows drilling through Ironstone Current: Level 1",255
-TextCostDrillConeLevel2:
-  db    "Cost: 250",255
-
-TextDrillConeLevel3:
-  db    "Allows drilling through Metallic Ore Current: Level 2",255
-TextCostDrillConeLevel3:
-  db    "Cost: 750",255
-
-TextDrillConeLevel4:
-  db    "Allows drilling through Xenodiamond Current: Level 3",255
-TextCostDrillConeLevel4:
-  db    "Cost: 2000",255
-
-
-TextCargoSizeLevel2:
-  db    "Doubles cargo capacity Current: Level 1",255
-TextCostCargoSizeLevel2:
-  db    "Cost: 250",255
-
-TextCargoSizeLevel3:
-  db    "Doubles cargo capacity Current: Level 2",255
-TextCostCargoSizeLevel3:
-  db    "Cost: 750",255
-
-TextCargoSizeLevel4:
-  db    "Doubles cargo capacity Current: Level 3",255
-TextCostCargoSizeLevel4:
-  db    "Cost: 2000",255
-
-
-TextFuelTankLevel2:
-  db    "Doubles fuel capacity Current: Level 1",255
-TextCostFuelTankLevel2:
-  db    "Cost: 250",255
-
-TextFuelTankLevel3:
-  db    "Doubles fuel capacity Current: Level 2",255
-TextCostFuelTankLevel3:
-  db    "Cost: 750",255
-
-TextFuelTankLevel4:
-  db    "Doubles fuel capacity Current: Level 3",255
-TextCostFuelTankLevel4:
-  db    "Cost: 2000",255
-
-
-TextReady?:
-  db    "READY?",255
-
-TextUpgrades:
-  db    "UPGRADES",255
-
-TextFuelTankLvl2:
-  db    "Fuel Tank Lvl 2",255
-TextFuelTankLvl3:
-  db    "Fuel Tank Lvl 3",255
-TextFuelTankLvl4:
-  db    "Fuel Tank Lvl 4",255
-TextFuelTankMax:
-  db    "Fuel Tank (Max)",255
-
-TextCargoSizeLvl2:
-  db    "Cargo Size Lvl 2",255
-TextCargoSizeLvl3:
-  db    "Cargo Size Lvl 3",255
-TextCargoSizeLvl4:
-  db    "Cargo Size Lvl 4",255
-TextCargoSizeMax:
-  db    "Cargo Size (Max)",255
-
-TextDrillConeLvl2:
-  db    "Drill Cone Lvl 2",255
-TextDrillConeLvl3:
-  db    "Drill Cone Lvl 3",255
-TextDrillConeLvl4:
-  db    "Drill Cone Lvl 4",255
-TextDrillConeMax:
-  db    "Drill Cone (Max)",255
-
-TextMinerSpeedLvl2:
-  db    "Miner Speed Lvl 2",255
-TextMinerSpeedLvl3:
-  db    "Miner Speed Lvl 3",255
-TextMinerSpeedLvl4:
-  db    "Miner Speed Lvl 4",255
-TextMinerSpeedMax:
-  db    "Miner Speed (Max)",255
-
-TextLifeSupport:
-  db    "LIFE SUPPORT",255
-  db    "Oxygen",255
-  db    "Food",255
-  db    "Water",255
-
-TextPurchase:
-  db    "PURCHASE",255
-  db    "Oxygen Generator",255
-  db    "Water Recycler",255
-  db    "Anti Radiation",255
-  db    "Dig Site",255
-  db    "Colony Expansion",255
-
 SetText2:                               ;in: ix->text
   ld    a,b                             ;dx text
   ld    (PutLetter+dx),a                ;set dx of next letter
@@ -1198,7 +1532,9 @@ SetText2:                               ;in: ix->text
   jp    nz,.NextLetter
 
   ;the next letter is a space, we now need to calculate if the next word is gonna fit in the screen, if not put the next word on the next line
+  push  iy
   call  CalculateLenghtNextWord         ;out: b=total lenght next word
+  pop   iy
 
   ld    a,(PutLetter+dx)                ;set dx of next letter
   add   a,b

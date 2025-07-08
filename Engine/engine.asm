@@ -2584,6 +2584,10 @@ DailyContinuesUsed: db 0                ;bit 0=roadfighter,bit 1=basketball,bit 
 
 TotalMinutesUntilLand:      dw  4320
 
+OxygenGeneratorPurchased?:  db  0
+WaterRecyclerPurchased?:    db  0
+ColonyExpansionPurchased?:  db  0
+
 OxygenOnShip:               dw  100
 MaxOxygenOnShip:            dw  400
 FoodOnShip:                 dw  100
@@ -2599,7 +2603,6 @@ CargoSizeLevel1MaxStorage:  equ 064
 CargoSizeLevel2MaxStorage:  equ CargoSizeLevel1MaxStorage * 2
 CargoSizeLevel3MaxStorage:  equ CargoSizeLevel2MaxStorage * 2
 CargoSizeLevel4MaxStorage:  equ CargoSizeLevel3MaxStorage * 2
-
 
 TotalCredits:               dw  6478    ;total credits collected from drilled resources converted into credits
 valueLevel1Resources:       equ 02      ;credit per unit collected
@@ -2632,7 +2635,7 @@ EnergyMax:                  dw  64
 EnergyXP:                   db  0
 Radiation:                  dw  100
 RadiationMax:               dw  1000
-RadiationProtectionLevel:   db  3       ;0=no protection, 1=level 1, 2=level 2,3=level 3, 4=level 4
+RadiationProtectionLevel:   db  0       ;0=no protection, 1=level 1, 2=level 2,3=level 3, 4=level 4
 ConvSoldier: db %0000 0001              ;conversations handled bit0=intro, bit1=low fuel, bit2=low fuel short, bit3=low energy, bit4=low energy short, bit5=high radiation, bit6=storage full, bit7=storage full short
 
 

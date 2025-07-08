@@ -1040,6 +1040,18 @@ AntiRadiationProtectionOrDigSiteBars:
 	db		029,0,009,0
 	db		0,0,$90
 
+STOPWAITSPACEPRESSED:
+  call  PopulateControls
+;
+; bit	7	  6	  5		    4		    3		    2		  1		  0
+;		  0	  0	  trig-b	trig-a	right	  left	down	up	(joystick)
+;		  F5	F1	'M'		  space	  right	  left	down	up	(keyboard)
+;
+	halt
+	ld		a,(NewPrContr)
+	bit		4,a                             ;trig a pressed ?
+	jr		z,STOPWAITSPACEPRESSED
+	ret
 
 ChangeSong?:  db 0
 
