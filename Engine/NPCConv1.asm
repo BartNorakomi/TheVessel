@@ -274,3 +274,4 @@ NPCConv037: ;resource offload
 
 NPCConv038: ;resource offload
   db    SwitchCharacter,CharacterPortraitResourceOffload," ",255
+

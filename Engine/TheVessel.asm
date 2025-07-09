@@ -498,6 +498,10 @@ dephase
 enlength:	Equ	$-engine
 	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
 
+DrillingGameMapsBlock:  				equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
+  incbin "..\grapx\drillinggame\maps\map01.map"
+	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
+
 ArcadeHall1TileMapBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
 ArcadeHall2TileMapBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
 ArcadeHall2EntityTileMapBlock: 	equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
@@ -595,12 +599,17 @@ sciencelabGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
   incbin "..\grapx\ship\sciencelab\sciencelab.SC5",7,212 * 128      ;212 lines
 	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
 
-DrillingGameGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
-  incbin "..\grapx\drillinggame\maps\tileset.SC5",7,212 * 128      ;212 lines
+sciencelabIconsTotalGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
+  incbin "..\grapx\ship\sciencelab\icons\IconsTotal.SC5",7,212 * 128      ;212 lines
 	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
 
-DrillingGameMapsBlock:  				equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
-  incbin "..\grapx\drillinggame\maps\map01.map"
+sciencelabIconColonyExpansionGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
+  incbin "..\grapx\ship\sciencelab\icons\icons12.SC5",7,212 * 128      ;212 lines
+	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
+
+DrillingGameGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
+  incbin "..\grapx\drillinggame\maps\tileset.SC5",7,212 * 128      ;212 lines
+  incbin "..\grapx\drillinggame\maps\tilesetLast44Lines.SC5",7,044 * 128      ;212 lines
 	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
 
 DrillingGameHudBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
@@ -614,7 +623,6 @@ ResourceOffloadPortraitGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /
 UpgradeMenuGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
   incbin "..\grapx\ship\sciencelab\UpgradeMenu2.SC5",7,212 * 128      ;98 lines
 	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
-
 
 OpenDoorGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
   incbin "..\grapx\arcadehall\opendoor.SC5",7,097 * 128      ;097 lines

@@ -20,6 +20,16 @@ Was everything just a simulation ???
 
 -------------------------------
 
+F1 pause menu in game
+
+should show:
+total credits
+energy
+radiation
+day (until 5 year total)
+
+-------------
+
 hangarbay - drilling
 
 by drilling you collect resources

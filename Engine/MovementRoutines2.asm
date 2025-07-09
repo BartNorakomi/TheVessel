@@ -363,12 +363,15 @@ SpacePressedPurchaseItem:
   ld    a,(CargoSizeLevel)
   dec   a
   ld    de,CostCargoSizeLevel2
+  ld    bc,CargoSizeLevel2MaxStorage
   jp    z,.CargoSizeLevelFound
   dec   a
   ld    de,CostCargoSizeLevel3
+  ld    bc,CargoSizeLevel3MaxStorage
   jp    z,.CargoSizeLevelFound
   dec   a
   ld    de,CostCargoSizeLevel4
+  ld    bc,CargoSizeLevel4MaxStorage
   ret   nz                                  ;maxed out
   .CargoSizeLevelFound:
   xor   a
@@ -378,18 +381,22 @@ SpacePressedPurchaseItem:
   ld    a,(CargoSizeLevel)
   inc   a
   ld    (CargoSizeLevel),a
+  ld    (StorageMax),bc
   ret
 
   .FuelTank:
   ld    a,(FuelTankLevel)
   dec   a
   ld    de,CostFuelTankLevel2
+  ld    bc,FuelTankLevel2MaxFuel
   jp    z,.FuelTankLevelFound
   dec   a
   ld    de,CostFuelTankLevel3
+  ld    bc,FuelTankLevel3MaxFuel
   jp    z,.FuelTankLevelFound
   dec   a
   ld    de,CostFuelTankLevel4
+  ld    bc,FuelTankLevel4MaxFuel
   ret   nz                                  ;maxed out
   .FuelTankLevelFound:
   xor   a
@@ -399,6 +406,7 @@ SpacePressedPurchaseItem:
   ld    a,(FuelTankLevel)
   inc   a
   ld    (FuelTankLevel),a
+  ld    (FuelMax),bc
   ret
 
   .ExitUpgradeMenu:
@@ -442,13 +450,13 @@ TextRadiationShieldLevel3:
 TextRadiationShieldLevel4:
   db    "Self-Repairing Tissue +80% active radiation shielding",255
 TextCostRadiationShieldLevel1:
-  db    "Cost: 250",255       | CostRadiationShieldLevel1:  equ 250
+  db    "Cost: 050",255       | CostRadiationShieldLevel1:  equ 050
 TextCostRadiationShieldLevel2:
-  db    "Cost: 260",255       | CostRadiationShieldLevel2:  equ 260
+  db    "Cost: 080",255       | CostRadiationShieldLevel2:  equ 080
 TextCostRadiationShieldLevel3:
-  db    "Cost: 270",255       | CostRadiationShieldLevel3:  equ 270
+  db    "Cost: 110",255       | CostRadiationShieldLevel3:  equ 110
 TextCostRadiationShieldLevel4:
-  db    "Cost: 280",255       | CostRadiationShieldLevel4:  equ 280
+  db    "Cost: 140",255       | CostRadiationShieldLevel4:  equ 140
 TextDigSite:
   db    "Unlocks an additional drilling location",255
 TextCostDigSite:
@@ -468,51 +476,51 @@ TextCredits:
 TextMinerSpeedLevel2:
   db    "Increases miner speed by 50% Current: Level 1",255
 TextCostMinerSpeedLevel2:
-  db    "Cost: 250",255       | CostMinerSpeedLevel2:  equ 250
+  db    "Cost: 025",255       | CostMinerSpeedLevel2:  equ 025
 TextMinerSpeedLevel3:
   db    "Doubles miner speed Current: Level 2",255
 TextCostMinerSpeedLevel3:
-  db    "Cost: 750",255       | CostMinerSpeedLevel3:  equ 750
+  db    "Cost: 050",255       | CostMinerSpeedLevel3:  equ 050
 TextMinerSpeedLevel4:
   db    "Drill speed keeps building up when uninterrupted Current: Lvl 3",255
 TextCostMinerSpeedLevel4:
-  db    "Cost: 2000",255      | CostMinerSpeedLevel4:  equ 2000
+  db    "Cost: 075",255      | CostMinerSpeedLevel4:  equ 075
 TextDrillConeLevel2:
   db    "Allows drilling through Ironstone Current: Level 1",255
 TextCostDrillConeLevel2:
-  db    "Cost: 250",255       | CostDrillConeLevel2:  equ 250
+  db    "Cost: 030",255       | CostDrillConeLevel2:  equ 030
 TextDrillConeLevel3:
   db    "Allows drilling through Metallic Ore Current: Level 2",255
 TextCostDrillConeLevel3:
-  db    "Cost: 750",255       | CostDrillConeLevel3:  equ 750
+  db    "Cost: 070",255       | CostDrillConeLevel3:  equ 070
 TextDrillConeLevel4:
   db    "Allows drilling through Xenodiamond Current: Level 3",255
 TextCostDrillConeLevel4:
-  db    "Cost: 1500",255      | CostDrillConeLevel4:  equ 1500
+  db    "Cost: 150",255      | CostDrillConeLevel4:  equ 150
 TextCargoSizeLevel2:
   db    "Doubles cargo capacity Current: Level 1",255
 TextCostCargoSizeLevel2:
-  db    "Cost: 250",255       | CostCargoSizeLevel2:  equ 250
+  db    "Cost: 060",255       | CostCargoSizeLevel2:  equ 060
 TextCargoSizeLevel3:
   db    "Doubles cargo capacity Current: Level 2",255
 TextCostCargoSizeLevel3:
-  db    "Cost: 500",255       | CostCargoSizeLevel3:  equ 500
+  db    "Cost: 100",255       | CostCargoSizeLevel3:  equ 100
 TextCargoSizeLevel4:
   db    "Doubles cargo capacity Current: Level 3",255
 TextCostCargoSizeLevel4:
-  db    "Cost: 750",255       | CostCargoSizeLevel4:  equ 750
+  db    "Cost: 150",255       | CostCargoSizeLevel4:  equ 150
 TextFuelTankLevel2:
   db    "Doubles fuel capacity Current: Level 1",255
 TextCostFuelTankLevel2:
-  db    "Cost: 250",255       | CostFuelTankLevel2:  equ 250
+  db    "Cost: 050",255       | CostFuelTankLevel2:  equ 050
 TextFuelTankLevel3:
   db    "Doubles fuel capacity Current: Level 2",255
 TextCostFuelTankLevel3:
-  db    "Cost: 600",255       | CostFuelTankLevel3:  equ 600
+  db    "Cost: 100",255       | CostFuelTankLevel3:  equ 100
 TextFuelTankLevel4:
   db    "Doubles fuel capacity Current: Level 3",255
 TextCostFuelTankLevel4:
-  db    "Cost: 900",255       | CostFuelTankLevel4:  equ 900
+  db    "Cost: 250",255       | CostFuelTankLevel4:  equ 250
 TextReady?:
   db    "READY?",255
 TextUpgrades:
@@ -590,6 +598,17 @@ ClearItemInfoWindowPage1:
 	db		086,0,085,0
 	db		0+ (0 * 16),0,$c0
 
+ClearIconWindowPage0:
+	db		154,0,013,3
+	db		154,0,013,0
+	db		090,0,071,0
+	db		0,0,$d0
+ClearIconWindowPage1:
+	db		154,0,013,3
+	db		154,0,013,1
+	db		090,0,071,0
+	db		0,0,$d0
+
 ClearMirrorPageScienceLabMenu:
   ld    a,(PageOnNextVblank)
   cp    0*32 + 31                           ;page 0
@@ -597,6 +616,14 @@ ClearMirrorPageScienceLabMenu:
   jr    z,.ClearInfoWindow
   ld    hl,ClearItemInfoWindowPage0
   .ClearInfoWindow:
+  call  DoCopy
+
+  ld    a,(PageOnNextVblank)
+  cp    0*32 + 31                           ;page 0
+  ld    hl,ClearIconWindowPage1
+  jr    z,.ClearIconWindow
+  ld    hl,ClearIconWindowPage0
+  .ClearIconWindow:
   call  DoCopy
 
   ld    a,(PageOnNextVblank)
@@ -642,8 +669,7 @@ CopySelectionWindow:
   ld    (CopySelectionWindowPage2+dy),a
 
   ld    hl,CopySelectionWindowPage2
-  call  DoCopy
-  ret
+  jp    DoCopy
 
   .DisplayReadyWindow:
   ld    a,(PageOnNextVblank)
@@ -734,7 +760,7 @@ BuildUpPurchaseMenu:
   call  SetCredits                          ;sets the current player's credits
   call  SetRadiationProtectionBars          ;Set the amount of radiation protection bars
   call  SetDigSiteBars                      ;Set the amount of digsite bars
-  jp    SwapPageOnNextVblank                ;swaps between page 0 and page 1
+  jp    SetSciencelabIconsPurchase          ;set the icon in the window in the top right
 
 SetDigSiteBars:
   ld    a,094
@@ -852,7 +878,7 @@ BuildUpLifeSupportMenu:
   call  SetItemInfoLifeSupport              ;sets the text about the currently selected item in the window in the right bottom
   call  SetCredits                          ;sets the current player's credits
   call  SetOxygenFoodWaterBars
-  jp    SwapPageOnNextVblank                ;swaps between page 0 and page 1
+  jp    SetSciencelabIconsLifeSupport       ;set the icon in the window in the top right
 
 SetOxygenFoodWaterBars:
   ld    a,(PageOnNextVblank)
@@ -1057,8 +1083,6 @@ BuildUpUpgradesMenu:
   ld    c,022                               ;increase in dy
   call  SetText2
 
-
-
   ;cargo size
   ld    a,(CargoSizeLevel)
   dec   a
@@ -1078,8 +1102,6 @@ BuildUpUpgradesMenu:
   ld    c,020                               ;increase in dy
   call  SetText2
 
-
-
   ;drill cone
   ld    a,(ConicalDrillBit)
   or    a
@@ -1098,12 +1120,6 @@ BuildUpUpgradesMenu:
   ld    b,017                               ;dx
   ld    c,020                               ;increase in dy
   call  SetText2
-
-
-
-
-
-
 
   ;miner speed
   ld    a,(MinerSpeedLevel)
@@ -1135,7 +1151,263 @@ BuildUpUpgradesMenu:
 
   call  SetItemInfoUpgrades                 ;sets the text about the currently selected item in the window in the right bottom
   call  SetCredits                          ;sets the current player's credits
+  jp    SetSciencelabIconsUpgrades          ;set the icon in the window in the top right
+
+SetSciencelabIconsPurchase:                 ;set the icon in the window in the top right
+	ld    a,(PageOnNextVblank)
+  cp    0*32 + 31
+  ld    de,$8000 + (013*128) + (154/2) - 128
+  jr    z,.PageFound
+  ld    de,$0000 + (013*128) + (154/2) - 128
+  .PageFound:
+
+  ld    a,(ScienceLabMenuItemSelected)      ;which item in the current list is selected/highlighted ?
+  dec   a
+  jp    z,.OxygenGenerator
+  dec   a
+  jp    z,.WaterRecycler
+  dec   a
+  jp    z,.RadiationShield
+  dec   a
+  jp    z,.DigSite
+  dec   a
+  jp    z,.ColonyExpansion  
   jp    SwapPageOnNextVblank                ;swaps between page 0 and page 1
+
+  .ColonyExpansion:
+;  ld    hl,024/2                              ;dx
+;  add   hl,de
+;  ex    de,hl
+
+  ld    a,sciencelabIconColonyExpansionGfxBlock         	;block to copy graphics from
+  ld    hl,$4000 + (000*128) + (000/2) - 128
+  ld    bc,$0000 + (071*256) + (090/2)
+  call  CopyRomToVram                   ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
+  call  SwapPageOnNextVblank                ;swaps between page 0 and page 1
+  halt
+  ld    hl,ColonyExpansionPalette
+  jp    SetPalette
+
+  .DigSite:
+  ld    hl,002/2                              ;dx
+  add   hl,de
+  ex    de,hl
+
+  ld    a,sciencelabIconsTotalGfxBlock         	;block to copy graphics from
+  ld    hl,$4000 + (071*128) + (152/2) - 128
+  ld    bc,$0000 + (071*256) + (086/2)
+  call  CopyRomToVram                   ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
+  call  SwapPageOnNextVblank                ;swaps between page 0 and page 1
+  halt
+  ld    hl,DigSitePalette
+  jp    SetPalette
+
+  .RadiationShield:
+  ld    hl,010/2                              ;dx
+  add   hl,de
+  ex    de,hl
+
+  ld    a,sciencelabIconsTotalGfxBlock         	;block to copy graphics from
+  ld    hl,$4000 + (142*128) + (136/2) - 128
+  ld    bc,$0000 + (070*256) + (070/2)
+  call  CopyRomToVram                   ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
+  call  SwapPageOnNextVblank                ;swaps between page 0 and page 1
+  halt
+  ld    hl,AntiRadiationPalette
+  jp    SetPalette
+
+  .WaterRecycler:
+  ld    hl,010/2                              ;dx
+  add   hl,de
+  ex    de,hl
+
+  ld    a,sciencelabIconsTotalGfxBlock         	;block to copy graphics from
+  ld    hl,$4000 + (142*128) + (066/2) - 128
+  ld    bc,$0000 + (070*256) + (070/2)
+  call  CopyRomToVram                   ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
+  call  SwapPageOnNextVblank                ;swaps between page 0 and page 1
+  halt
+  ld    hl,WaterRecyclerPalette
+  jp    SetPalette
+
+  .OxygenGenerator:
+  ld    hl,012/2                              ;dx
+  add   hl,de
+  ex    de,hl
+
+  ld    a,sciencelabIconsTotalGfxBlock         	;block to copy graphics from
+  ld    hl,$4000 + (142*128) + (000/2) - 128
+  ld    bc,$0000 + (070*256) + (066/2)
+  call  CopyRomToVram                   ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
+  call  SwapPageOnNextVblank                ;swaps between page 0 and page 1
+  halt
+  ld    hl,OxygenGeneratorPalette
+  jp    SetPalette
+
+SetSciencelabIconsLifeSupport:              ;set the icon in the window in the top right
+	ld    a,(PageOnNextVblank)
+  cp    0*32 + 31
+  ld    de,$8000 + (013*128) + (154/2) - 128
+  jr    z,.PageFound
+  ld    de,$0000 + (013*128) + (154/2) - 128
+  .PageFound:
+
+  ld    a,(ScienceLabMenuItemSelected)      ;which item in the current list is selected/highlighted ?
+  dec   a
+  jp    z,.Oxygen
+  dec   a
+  jp    z,.Food
+  dec   a
+  jp    z,.Water
+  jp    SwapPageOnNextVblank                ;swaps between page 0 and page 1
+
+  .Water:
+  ld    hl,024/2                              ;dx
+  add   hl,de
+  ex    de,hl
+
+  ld    a,sciencelabIconsTotalGfxBlock         	;block to copy graphics from
+  ld    hl,$4000 + (142*128) + (206/2) - 128
+  ld    bc,$0000 + (070*256) + (046/2)
+  call  CopyRomToVram                   ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
+  call  SwapPageOnNextVblank                ;swaps between page 0 and page 1
+  halt
+  ld    hl,WaterPalette
+  jp    SetPalette
+
+  .Food:
+  ld    hl,006/2                              ;dx
+  add   hl,de
+  ex    de,hl
+
+  ld    a,sciencelabIconsTotalGfxBlock         	;block to copy graphics from
+  ld    hl,$4000 + (071*128) + (074/2) - 128
+  ld    bc,$0000 + (071*256) + (078/2)
+  call  CopyRomToVram                   ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
+  call  SwapPageOnNextVblank                ;swaps between page 0 and page 1
+  halt
+  ld    hl,FoodPalette
+  jp    SetPalette
+
+  .Oxygen:
+  ld    hl,006/2                              ;dx
+  add   hl,de
+  ex    de,hl
+
+  ld    a,sciencelabIconsTotalGfxBlock         	;block to copy graphics from
+  ld    hl,$4000 + (071*128) + (000/2) - 128
+  ld    bc,$0000 + (071*256) + (074/2)
+  call  CopyRomToVram                   ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
+  call  SwapPageOnNextVblank                ;swaps between page 0 and page 1
+  halt
+  ld    hl,OxygenPalette
+  jp    SetPalette
+
+SetSciencelabIconsUpgrades:                 ;set the icon in the window in the top right
+	ld    a,(PageOnNextVblank)
+  cp    0*32 + 31
+  ld    de,$8000 + (013*128) + (154/2) - 128
+  jr    z,.PageFound
+  ld    de,$0000 + (013*128) + (154/2) - 128
+  .PageFound:
+
+  ld    a,(ScienceLabMenuItemSelected)      ;which item in the current list is selected/highlighted ?
+  dec   a
+  jp    z,.FuelTank
+  dec   a
+  jp    z,.CargoSize
+  dec   a
+  jp    z,.DrillCone
+  dec   a
+  jp    z,.MinerSpeed
+  jp    SwapPageOnNextVblank                ;swaps between page 0 and page 1
+
+  .MinerSpeed:
+  ld    hl,010/2                              ;dx
+  add   hl,de
+  ex    de,hl
+
+  ld    a,sciencelabIconsTotalGfxBlock         	;block to copy graphics from
+  ld    hl,$4000 + (000*128) + (182/2) - 128
+  ld    bc,$0000 + (071*256) + (070/2)
+  call  CopyRomToVram                   ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
+  call  SwapPageOnNextVblank                ;swaps between page 0 and page 1
+  halt
+  ld    hl,MinerSpeedPalette
+  jp    SetPalette
+
+  .DrillCone:
+  ld    hl,024/2                              ;dx
+  add   hl,de
+  ex    de,hl
+
+  ld    a,sciencelabIconsTotalGfxBlock         	;block to copy graphics from
+  ld    hl,$4000 + (000*128) + (138/2) - 128
+  ld    bc,$0000 + (071*256) + (044/2)
+  call  CopyRomToVram                   ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
+  call  SwapPageOnNextVblank                ;swaps between page 0 and page 1
+  halt
+  ld    hl,DrillConePalette
+  jp    SetPalette
+
+  .CargoSize:
+  ld    hl,014/2                              ;dx
+  add   hl,de
+  ex    de,hl
+
+  ld    a,sciencelabIconsTotalGfxBlock         	;block to copy graphics from
+  ld    hl,$4000 + (000*128) + (076/2) - 128
+  ld    bc,$0000 + (071*256) + (062/2)
+  call  CopyRomToVram                   ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
+  call  SwapPageOnNextVblank                ;swaps between page 0 and page 1
+  halt
+  ld    hl,CargoSizePalette
+  jp    SetPalette
+
+  .FuelTank:
+  ld    hl,008/2                            ;dx
+  add   hl,de
+  ex    de,hl
+
+  ld    a,sciencelabIconsTotalGfxBlock         	;block to copy graphics from
+  ld    hl,$4000 + (000*128) + (000/2) - 128
+  ld    bc,$0000 + (071*256) + (076/2)
+  call  CopyRomToVram                   ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
+  call  SwapPageOnNextVblank                ;swaps between page 0 and page 1
+  halt
+  ld    hl,FuelTankPalette
+  jp    SetPalette
+
+FuelTankPalette:                    	;palette file
+  incbin "..\grapx\ship\sciencelab\icons\FuelTank.PL",0,32
+CargoSizePalette:                    	;palette file
+  incbin "..\grapx\ship\sciencelab\icons\CargoSize.PL",0,32
+DrillConePalette:                    	;palette file
+  incbin "..\grapx\ship\sciencelab\icons\DrillCone.PL",0,32
+MinerSpeedPalette:                    	;palette file
+  incbin "..\grapx\ship\sciencelab\icons\MinerSpeed.PL",0,32
+
+OxygenPalette:                    	;palette file
+  incbin "..\grapx\ship\sciencelab\icons\Oxygen.PL",0,32
+FoodPalette:                    	;palette file
+  incbin "..\grapx\ship\sciencelab\icons\Food.PL",0,32
+WaterPalette:                    	;palette file
+  incbin "..\grapx\ship\sciencelab\icons\Water.PL",0,32
+
+OxygenGeneratorPalette:                    	;palette file
+  incbin "..\grapx\ship\sciencelab\icons\OxygenGenerator.PL",0,32
+WaterRecyclerPalette:                    	;palette file
+  incbin "..\grapx\ship\sciencelab\icons\WaterRecycler.PL",0,32
+AntiRadiationPalette:                    	;palette file
+  incbin "..\grapx\ship\sciencelab\icons\AntiRadiation.PL",0,32
+DigSitePalette:                    	;palette file
+  incbin "..\grapx\ship\sciencelab\icons\DigSite.PL",0,32
+ColonyExpansionPalette:                    	;palette file
+  incbin "..\grapx\ship\sciencelab\icons\ColonyExpansion.PL",0,32
+
+
+
+
 
 SetCredits:                                 ;sets the current player's credits
   ld    a,170                               ;dy

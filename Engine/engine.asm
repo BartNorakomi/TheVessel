@@ -18,7 +18,10 @@ LevelEngine:
 ;  call  BackdropGreen
   call  HandleObjects
 ;  call  BackdropBlack
+
+  if ConversationsOn?
   call  HandleConversations             ;handles NPC conversations
+  endif
   call  CheckLeaveRoom
 
   xor   a
@@ -1205,6 +1208,7 @@ HandleConversations:
   call  EnablePaletteSplit              ;set ei1 and setup palette split
   call  StartConversation               ;handles the entire text engine (puts letters, swaps characters, clears textwindow etc etc)
   call  WaitTrigABlinkEyes              ;wait for user to press trigger a. Eyes are blinking
+  call  CheckRefuel                     ;refueling at hangar bay is also a conversation, handle it if thats the current conversation
   call  EnableFadeOutPortrait           ;enable fade out portrait
   call  FadeOutPortrait                 ;fade out portrait
   call  ClearNPCConversationWindow      ;clear window, swap page and clear window again
@@ -1214,6 +1218,53 @@ HandleConversations:
   or    a
   call  z,SpritesOn
   halt                                  ;cleanly end of this routine at vblank (because at vblank a pageswap will occur)
+  ret
+
+AmoungOfFuelPerCredit:  equ 10
+CheckRefuel:
+  ld    hl,RefuelConversation
+  ld    de,(NPCConvAddress)
+  call  CompareHLwithDE
+  ret   nz
+
+; bit	7	  6	  5		    4		    3		    2		  1		  0
+;		  0	  0	  trig-b	trig-a	right	  left	down	up	(joystick)
+;		  F5	F1	'M'		  space	  right	  left	down	up	(keyboard)
+;
+	ld		a,(NewPrContr)
+	bit		5,a                             ;trig b pressed ?
+  ret   nz
+
+  ld    hl,(FuelMax)
+  ld    de,(Fuel)
+  xor   a
+  sbc   hl,de                           ;missing fuel in hl
+
+  push  hl
+  pop   bc
+  ld    de,AmoungOfFuelPerCredit
+  call  DivideBCbyDE                    ; Out: BC = result, HL = rest
+  ;cost missing fuel = missing fuel/10
+
+  ld    hl,(TotalCredits)
+  xor   a
+  sbc   hl,bc
+  jr    c,.NotEnoughCredits
+  ld    (TotalCredits),hl
+
+  ld    hl,(FuelMax)
+  ld    (Fuel),hl
+  ret
+
+  .NotEnoughCredits:
+  ld    hl,(TotalCredits)
+  ld    de,AmoungOfFuelPerCredit
+  call  MultiplyHlWithDE                ;HL = result
+  ld    de,(Fuel)
+  add   hl,de
+  ld    (Fuel),hl
+  ld    hl,0
+  ld    (TotalCredits),hl
   ret
 
 BackupBackgroundInRam:                  ;store Vram data of page 0+1 in ram
@@ -1518,6 +1569,9 @@ WaitTrigABlinkEyes:                     ;wait for user to press trigger a. Eyes 
 ;
 	ld		a,(NewPrContr)
 	bit		4,a                             ;trig a pressed ?
+  ret   nz
+	ld		a,(NewPrContr)
+	bit		5,a                             ;trig b pressed ?
   ret   nz
   jr    WaitTrigABlinkEyes
 
@@ -1844,6 +1898,7 @@ OffLoadResourcesConversationWindow:
   ld    (Level5Resources),hl
   ld    (Level6Resources),hl
   ld    (Level7Resources),hl
+  ld    (Storage),hl
   pop   ix
   ret
 
@@ -2560,7 +2615,7 @@ CompareHLwithDE:
   ret
 
 StartSaveGameData:
-CurrentRoom:  db  13                    ;0=arcadehall1, 1=arcadehall2, 2=biopod, 3=hydroponicsbay, 4=hangarbay, 5=trainingdeck, 6=reactorchamber, 7=sleepingquarters, 8=armoryvault, 9=holodeck, 10=medicalbay
+CurrentRoom:  db  07                    ;0=arcadehall1, 1=arcadehall2, 2=biopod, 3=hydroponicsbay, 4=hangarbay, 5=trainingdeck, 6=reactorchamber, 7=sleepingquarters, 8=armoryvault, 9=holodeck, 10=medicalbay
                                         ;11=sciencelab, 12=drillinggame, 13=upgrademenu
 GamesPlayed:  db 9                      ;increases after leaving a game. max=255
 HighScoreTotalAverage: db 00            ;recruiter appears when 80 (%) is reached
@@ -2595,16 +2650,8 @@ MaxFoodOnShip:              dw  500
 WaterOnShip:                dw  100
 MaxWaterOnShip:             dw  300
 AmountOfDigSitesUnlocked:   db  1
-FuelTankLevel1MaxFuel:      equ 064
-FuelTankLevel2MaxFuel:      equ FuelTankLevel1MaxFuel * 2
-FuelTankLevel3MaxFuel:      equ FuelTankLevel2MaxFuel * 2
-FuelTankLevel4MaxFuel:      equ FuelTankLevel3MaxFuel * 2
-CargoSizeLevel1MaxStorage:  equ 064
-CargoSizeLevel2MaxStorage:  equ CargoSizeLevel1MaxStorage * 2
-CargoSizeLevel3MaxStorage:  equ CargoSizeLevel2MaxStorage * 2
-CargoSizeLevel4MaxStorage:  equ CargoSizeLevel3MaxStorage * 2
 
-TotalCredits:               dw  6478    ;total credits collected from drilled resources converted into credits
+TotalCredits:               dw  0000    ;total credits collected from drilled resources converted into credits
 valueLevel1Resources:       equ 02      ;credit per unit collected
 valueLevel2Resources:       equ 05      ;credit per unit collected
 valueLevel3Resources:       equ 08      ;credit per unit collected
@@ -2619,24 +2666,33 @@ MinerSpeedLevel:            db  1       ;1=level 1, 2=level 2, 3=level 3, 4=leve
 FuelTankLevel:              db  1       ;1=level 1, 2=level 2, 3=level 3, 4=level 4
 CargoSizeLevel:             db  1       ;1=level 1, 2=level 2, 3=level 3, 4=level 4
 
-Level1Resources:            dw  21
-Level2Resources:            dw  13
-Level3Resources:            dw  4
+Level1Resources:            dw  0
+Level2Resources:            dw  0
+Level3Resources:            dw  0
 Level4Resources:            dw  0
-Level5Resources:            dw  6
-Level6Resources:            dw  4
-Level7Resources:            dw  104
-Fuel:                       dw  64
+Level5Resources:            dw  0
+Level6Resources:            dw  0
+Level7Resources:            dw  0
+Fuel:                       dw  FuelTankLevel1MaxFuel
 FuelMax:                    dw  FuelTankLevel1MaxFuel
-Storage:                    dw  044
+Storage:                    dw  000
 StorageMax:                 dw  CargoSizeLevel1MaxStorage
-Energy:                     dw  64
-EnergyMax:                  dw  64
+Energy:                     dw  250
+EnergyMax:                  dw  250
 EnergyXP:                   db  0
-Radiation:                  dw  100
-RadiationMax:               dw  1000
+Radiation:                  dw  0
+RadiationMax:               dw  400
 RadiationProtectionLevel:   db  0       ;0=no protection, 1=level 1, 2=level 2,3=level 3, 4=level 4
 ConvSoldier: db %0000 0001              ;conversations handled bit0=intro, bit1=low fuel, bit2=low fuel short, bit3=low energy, bit4=low energy short, bit5=high radiation, bit6=storage full, bit7=storage full short
+
+FuelTankLevel1MaxFuel:      equ 500
+FuelTankLevel2MaxFuel:      equ FuelTankLevel1MaxFuel * 2
+FuelTankLevel3MaxFuel:      equ FuelTankLevel2MaxFuel * 2
+FuelTankLevel4MaxFuel:      equ FuelTankLevel3MaxFuel * 2
+CargoSizeLevel1MaxStorage:  equ 032
+CargoSizeLevel2MaxStorage:  equ CargoSizeLevel1MaxStorage * 2
+CargoSizeLevel3MaxStorage:  equ CargoSizeLevel2MaxStorage * 2
+CargoSizeLevel4MaxStorage:  equ CargoSizeLevel3MaxStorage * 2
 
 
 EndSaveGameData:

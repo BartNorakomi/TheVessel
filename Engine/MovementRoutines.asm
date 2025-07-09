@@ -1526,6 +1526,56 @@ HangarbayEventRoutine:
 	ld		a,(NewPrContr)
 	bit		4,a           ;trig a pressed ?
   ret   z
+
+  ;Refuel ?
+  ld    hl,(Fuel)
+  ld    de,(FuelMax)
+  call  CompareHLwithDE
+  jr    z,.StartDrillingGame  
+
+  ld    a,(AlreadyAskedToRefuel?)
+  or    a
+  ld    a,1
+  ld    (AlreadyAskedToRefuel?),a
+  jr    nz,.StartDrillingGame
+
+  ;set total credits
+  ld    hl,(TotalCredits)
+  call  NUM_TO_ASCII
+  ld    hl,Ascii5Byte
+  ld    de,RefuelTotalCreditsText
+  ld    bc,5
+  ldir
+
+  ;set total cost missing fuel
+  ld    hl,(FuelMax)
+  ld    de,(Fuel)
+  xor   a
+  sbc   hl,de                           ;missing fuel in hl
+
+  push  hl
+  pop   bc
+  ld    de,AmoungOfFuelPerCredit
+  call  DivideBCbyDE                    ; Out: BC = result, HL = rest
+  ;cost missing fuel = missing fuel/10
+  push  bc
+  pop   hl
+  call  NUM_TO_ASCII
+  ld    hl,Ascii5Byte+2
+  ld    de,RefuelCostText
+  ld    bc,3
+  ldir
+
+
+  ld    a,1
+  ld    (StartConversation?),a
+  ld    a,NPCConv1Block
+  ld    (NPCConvBlock),a
+  ld    hl,RefuelConversation
+  ld    (NPCConvAddress),hl
+  ret
+
+  .StartDrillingGame:
   ld    a,12                                ;drilling game
   ld    (CurrentRoom),a
   ld    a,1
@@ -3424,6 +3474,13 @@ CheckChangeDrillMovementDirection:
   ld    (DrillMachineCurrentlyMovingInDirection?),a ;0=not moving, 1=up, 2=right, 3=down, 4=left, 5=drilling up, 6=drilling right, 7=drilling down, 8=drilling left
   ret
   .GoSetLeft:
+
+  ld    hl,DrillMachineFaceDirection                ;1=up, 2=right, 3=down, 4=left
+  ld    (hl),4  ;NOT TESTED NOT TESTED NOT TESTED NOT TESTED NOT TESTED NOT TESTED NOT TESTED NOT TESTED NOT TESTED NOT TESTED 
+  ld    a,(DrillMachineX)
+  or    a
+  ret   z
+
   ld    a,4
   ld    (DrillMachineCurrentlyMovingInDirection?),a ;0=not moving, 1=up, 2=right, 3=down, 4=left, 5=drilling up, 6=drilling right, 7=drilling down, 8=drilling left
 
@@ -3471,6 +3528,12 @@ CheckChangeDrillMovementDirection:
   ld    (DrillMachineCurrentlyMovingInDirection?),a ;0=not moving, 1=up, 2=right, 3=down, 4=left, 5=drilling up, 6=drilling right, 7=drilling down, 8=drilling left
   ret
   .GoSetRight:
+  ld    hl,DrillMachineFaceDirection                ;1=up, 2=right, 3=down, 4=left
+  ld    (hl),2  ;NOT TESTED NOT TESTED NOT TESTED NOT TESTED NOT TESTED NOT TESTED NOT TESTED NOT TESTED NOT TESTED NOT TESTED 
+  ld    a,(DrillMachineX)
+  cp    256-32
+  ret   z
+
   ld    a,2
   ld    (DrillMachineCurrentlyMovingInDirection?),a ;0=not moving, 1=up, 2=right, 3=down, 4=left, 5=drilling up, 6=drilling right, 7=drilling down, 8=drilling left
 
@@ -3791,7 +3854,31 @@ HandleHudFuel:
 
   ld    hl,(Fuel)
   ld    de,(FuelMax)
+  call  DivideHLandDEby4                ;on the GoFill routine we perform nx= resource*64/resourcemax. to avoid overflow when we do resource*64, we divide all values by 4, because msx fuel at level 4 = 4000
   jp    GoFill
+
+DivideHLandDEby4:
+  push  af
+  push  bc
+
+  ld    bc,(Fuel)
+  ld    de,4
+  call  DivideBCbyDE          ; Out: BC = result, HL = rest
+  push  bc
+
+
+  ld    bc,(FuelMax)
+  ld    de,4
+  call  DivideBCbyDE          ; Out: BC = result, HL = rest
+  push  bc
+
+  pop   de
+  pop   hl
+
+
+  pop   bc
+  pop   af
+  ret
 
 GoFill:
   ld    (FillCommand+dy),a
@@ -4070,7 +4157,16 @@ HandleSoldierConversations:
   ld    hl,(DrillMachineY)
   ld    de,256
   add   hl,de
-  ex    de,hl
+
+  ;we divide this value by 4, so we don't have to multiply energy * 256 (to avoid overflow, this way we only have to do energy * 64)
+  push  hl
+  pop   bc
+  ld    de,4
+  call  DivideBCbyDE                        ; Out: BC = result, HL = rest
+  push  bc
+  pop   de
+
+;  ex    de,hl
 
   ld    hl,(Energy)
   add   hl,hl                               ;*2
@@ -4079,8 +4175,8 @@ HandleSoldierConversations:
   add   hl,hl                               ;*16
   add   hl,hl                               ;*32
   add   hl,hl                               ;*64
-  add   hl,hl                               ;*128
-  add   hl,hl                               ;*256
+;  add   hl,hl                               ;*128
+;  add   hl,hl                               ;*256
   ;each amount of fuel allows us to dig 32 pixels deep
   xor   a
   sbc   hl,de
@@ -4283,6 +4379,8 @@ DrillMachineEventRoutine:
   ld    (OffloadResources?),a
   ld    a,4
   ld    (CurrentRoom),a
+
+  call  SaveDrillingGameMap
   ret
 
   .MoveCamera:

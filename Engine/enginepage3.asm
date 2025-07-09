@@ -3,6 +3,7 @@ phase	$c000
 StartAtTitleScreen?:                equ 0
 MusicOn?:                           equ 0
 Promo?:                             equ 0
+ConversationsOn?:                  	equ 1
 
 InitiateGame:
 ;  if  StartAtTitleScreen?
@@ -39,6 +40,7 @@ ResetVariables:
   ld    (BuildUpNewRow?),a
   ld    (SetLineIntHeightOnVblankDrillingGame?),a
   ld    (NPCConversationsInDrillingGame?),a
+  ld    (AlreadyAskedToRefuel?),a
   ld    hl,ConvSoldier									;conversations handled bit0=intro, bit1=low fuel, bit2=low fuel short, bit3=low energy, bit4=high radiation, bit5=storage full
   res   2,(hl)
   res   4,(hl)
@@ -153,6 +155,89 @@ ResetRestoreTables:											;all 4 objects have their own restore tables
 	ld		hl,Object4RestoreTable
 	ld		(Object4+ObjectRestoreTable),hl
 	ret
+
+SectorErase:                          ;erases sector (in hl=pointer to romblock)
+  ld    a,$aa
+  ld    ($4aaa),a
+
+  ld    a,$55
+  ld    ($4555),a
+
+  ld    a,$80
+  ld    ($4aaa),a
+
+  ld    a,$aa
+  ld    ($4aaa),a
+
+  ld    a,$55
+  ld    ($4555),a
+
+  ld    a,$30
+  ld    (hl),a
+
+.CheckEraseDone:
+;  ld    hl,8000H    ; adres in sector die gewist word
+	ld    a,0FFH      ; als het klaar is moet het FFH zijn
+  Erase_Wait:
+	cp    (hl)        ; is de erase klaar?
+	ret   z          ; ja, klaar
+	jr    Erase_Wait  ; nee, nog bezig, wacht
+  ret
+
+SaveDrillingGameMap:
+  ld    a,(slot.page12rom)            ;all RAM except page 1+2
+  out   ($a8),a
+
+  ld    a,DrillingGameMapsBlock       	;drilling game map
+  call  block12                       	;CARE!!! we can only switch block34 if page 1 is in rom  
+
+  di                                  ;we keep int disabled when accessing (reading and writing) upper 4MB, because the int. revert changes made to the map switching
+
+  ;erase sector (first 8 sectors are 8kb, all other sectors are 64kb)
+  ld    hl,$4000
+  call  SectorErase                   ;erases sector (in hl=pointer to romblock)
+
+	;drilling game map is in ram at $8000
+  ld    a,(slot.page1rom)              	;all RAM except page 1+2
+  out   ($a8),a      
+
+  ;write save data for current game to flashrom
+  ld    hl,$8000
+  ld    de,$4000
+  ld    bc,$2000												;8 kb
+  call  FlashWrite
+
+	ld		a,MovementRoutinesBlock
+  call  block12                             ;CARE!!! we can only switch block34 if page 1 is in rom  
+	ret
+
+
+FlashWrite:                           ;in: hl->source, de->destination, bc->amount
+  ld    a,$AA                         ; magic bytes (om per ongeluk schrijven te voorkomen)
+  ld    ($4AAA),a
+  ld    a,$55
+  ld    ($4555),a
+  ld    a,$A0                         ; program commando
+  ld    ($4AAA),a
+
+  ld    a,(hl)
+  ld    (de),a
+
+  .CheckIfWritten:
+  ld    a,(de)
+  cp    (hl)
+  jr    nz,.CheckIfWritten
+
+
+  inc   hl
+  inc   de
+  dec   bc
+
+  ld    a,b
+  or    c
+  jr    nz,FlashWrite
+  ret
+
 
 LoadTileMap:
 	ld		a,(CurrentRoom)									;0=arcadehall1, 1=arcadehall2
@@ -659,67 +744,67 @@ LoadRoomGfx:
 LoadUpgradeMenuGfx:
   ld    hl,upgrademenuPalette
   ld    a,UpgradeMenuGfxBlock     			;block to copy graphics from
-	jp		LoadArcadeHallGfx
+	jp		LoadGfx212High
 
 LoadDrillingGameGfx:
   ld    hl,drillinggamePalette
   ld    a,DrillingGameGfxBlock     			;block to copy graphics from
-	jp		LoadArcadeHallGfx
+	jp		LoadGfx256HighPage3
 
 LoadsciencelabGfx:
   ld    hl,sciencelabPalette
   ld    a,sciencelabGfxBlock       			;block to copy graphics from
-	jp		LoadArcadeHallGfx
+	jp		LoadGfx212High
 
 LoadarmoryvaultGfx:
   ld    hl,armoryvaultPalette
   ld    a,armoryvaultGfxBlock       		;block to copy graphics from
-	jp		LoadArcadeHallGfx
+	jp		LoadGfx212High
 
 LoadholodeckGfx:
   ld    hl,holodeckPalette
   ld    a,holodeckGfxBlock       				;block to copy graphics from
-	jp		LoadArcadeHallGfx
+	jp		LoadGfx212High
 
 LoadmedicalbayGfx:
   ld    hl,medicalbayPalette
   ld    a,medicalbayGfxBlock       			;block to copy graphics from
-	jp		LoadArcadeHallGfx
+	jp		LoadGfx212High
 
 LoadsleepingquartersGfx:
   ld    hl,sleepingquartersPalette
   ld    a,sleepingquartersGfxBlock    	;block to copy graphics from
-	jp		LoadArcadeHallGfx
+	jp		LoadGfx212High
 
 LoadreactorchamberGfx:
   ld    hl,reactorchamberPalette
   ld    a,reactorchamberGfxBlock       	;block to copy graphics from
-	jp		LoadArcadeHallGfx
+	jp		LoadGfx212High
 
 LoadTrainingdeckGfx:
   ld    hl,TrainingdeckPalette
   ld    a,TrainingdeckGfxBlock       		;block to copy graphics from
-	jp		LoadArcadeHallGfx
+	jp		LoadGfx212High
 
 LoadHangarbayGfx:
   ld    hl,HangarbayPalette
   ld    a,HangarbayGfxBlock       			;block to copy graphics from
-	jp		LoadArcadeHallGfx
+	jp		LoadGfx212High
 
 LoadHydroponicsbayGfx:
   ld    hl,HydroponicsbayPalette
   ld    a,HydroponicsbayGfxBlock       	;block to copy graphics from
-	jp		LoadArcadeHallGfx
+	jp		LoadGfx212High
 
 LoadBiopodGfx:
   ld    hl,BiopodPalette
   ld    a,BiopodGfxBlock         				;block to copy graphics from
-	jp		LoadArcadeHallGfx
+	jp		LoadGfx212High
 
 LoadArcadeHall1Gfx:
   ld    hl,ArcadeHall1Palette
   ld    a,ArcadeHall1GfxBlock         	;block to copy graphics from
-	jp		LoadArcadeHallGfx
+	jp		LoadGfx212High
 
 LoadArcadeHall1redlightsGfx:
   ld    a,ArcadeHall1redlightsGfxBlock         	;block to copy graphics from
@@ -730,12 +815,34 @@ LoadArcadeHall1redlightsGfx:
 LoadArcadeHall2Gfx:
   ld    hl,ArcadeHall2Palette
   ld    a,ArcadeHall2GfxBlock         	;block to copy graphics from
-	jp		LoadArcadeHallGfx
+	jp		LoadGfx212High
 
-LoadArcadeHallGfx:
+LoadGfx256HighPage3:
+	push	hl															;current palette
+	push	af
+  ld    a,1
+  ld    (Vdp_Write_HighPage?),a
+	pop		af
+  call  .LoadGfx256HighPage3
+  xor   a
+  ld    (Vdp_Write_HighPage?),a
+	pop		hl															;current palette
+	ld		de,CurrentPalette
+	ld		bc,16*2
+	ldir
+  ld    hl,CurrentPalette
+  jp		SetPalette
+
+.LoadGfx256HighPage3:
+  ld    hl,$4000 + (000*128) + (000/2) - 128
+  ld    de,$8000 + (000*128) + (000/2) - 128
+  ld    bc,$0000 + (000*256) + (256/2)
+  jp    CopyRomToVram                   ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
+
+LoadGfx212High:
 	push	hl															;current palette
 	push	af															;block to copy graphics from
-  call  SetArcadeGfxPage0
+  call  LoadGfx212HighPage0
   ;copy from page 0 to page 2
   ld    a,0
   ld    (CopyPageToPage212High+sPage),a
@@ -744,7 +851,7 @@ LoadArcadeHallGfx:
   ld    hl,CopyPageToPage212High
   call  DoCopy
 	pop		af															;block to copy graphics from
-  call  SetArcadeGfxPage1
+  call  LoadGfx212HighPage1
   ;copy from page 1 to page 3
   ld    a,1
   ld    (CopyPageToPage212High+sPage),a
@@ -761,13 +868,13 @@ LoadArcadeHallGfx:
 
 CurrentPalette:	ds	16*2
 
-SetArcadeGfxPage0:
+LoadGfx212HighPage0:
   ld    hl,$4000 + (000*128) + (000/2) - 128
   ld    de,$0000 + (000*128) + (000/2) - 128
   ld    bc,$0000 + (212*256) + (256/2)
   jp    CopyRomToVram                   ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
 
-SetArcadeGfxPage1:
+LoadGfx212HighPage1:
   ld    hl,$4000 + (000*128) + (000/2) - 128
   ld    de,$8000 + (000*128) + (000/2) - 128
   ld    bc,$0000 + (212*256) + (256/2)
@@ -1625,6 +1732,11 @@ outix8:
 	outi	outi	outi	outi	outi	outi	outi	outi	
 	ret	
 
+RefuelConversation: 		db	SwitchCharacter,CharacterPortraitAI,"Refuel ? Total Credits: "
+RefuelTotalCreditsText:	db	"xxxxx Refuel Cost: "
+RefuelCostText:					db	"xxx Credits Trig-A=Yes Trig-B=No",255
+
+
 NPCConv012:
   db    SwitchCharacter,CharacterPortraitVessel,"Still here. Anything new?"
   db    SwitchCharacter,CharacterPortraitAI,"No changes. Continue training. We will land in "
@@ -1848,6 +1960,7 @@ TotalValueResources:				rb	2
 ShowScienceLabMenu:					rb	1
 CurrentScienceLabMenu:			rb	1
 ScienceLabMenuItemSelected:	rb	1
+AlreadyAskedToRefuel?:			rb	1
 
 
 endenginepage3variables:  equ $+enginepage3length

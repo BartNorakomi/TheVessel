@@ -23,11 +23,19 @@
             "scaleInDock": 1
         },
         "map01.tmx": {
-            "scale": 1,
+            "scale": 0.5,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 434,
-                "y": 451
+                "x": -316,
+                "y": 474
+            }
+        },
+        "map02.tmx": {
+            "scale": 0.10888671875,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 128.5739910313896,
+                "y": 3453.1300448430493
             }
         },
         "tileset.tsx": {
@@ -46,6 +54,7 @@
     "recentFiles": [
         "tileset.tsx",
         "map01.tmx",
+        "map02.tmx",
         "C:/Users/bartf/Documents/GitHub/MSXHeroes/maps/GentleAutumnMap01.tmx"
     ],
     "tileset.lastUsedFormat": "tsx"
