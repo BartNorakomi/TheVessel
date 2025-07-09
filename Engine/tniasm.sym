@@ -50,7 +50,7 @@ WaitVdpReady: equ 0D3BFh ; last def. pass 3
 CheckDrillingPossible.DrillingLevel1Soil: equ 07073h ; last def. pass 3
 CopyPage1To0: equ 0D0A4h ; last def. pass 3
 Cloudx: equ 0D884h ; last def. pass 3
-Vesselright_7_0: equ 08A13h ; last def. pass 3
+Vesselright_7_0: equ 089EFh ; last def. pass 3
 TheVesselleftrunning_8: equ 04058h ; last def. pass 3
 RePlayer_Tick.DontChangeSong: equ 0C400h ; last def. pass 3
 NPCConv020: equ 063F5h ; last def. pass 3
@@ -112,7 +112,7 @@ outix208: equ 0D585h ; last def. pass 3
 MoonSound_ReadFM1Register: equ 0C313h ; last def. pass 3
 FadeStep: equ 073Dh ; last def. pass 3
 sciencelabPalette: equ 0CDF6h ; last def. pass 3
-Vesselright_8_0: equ 08B8Ch ; last def. pass 3
+Vesselright_8_0: equ 08B68h ; last def. pass 3
 npcs_6_0: equ 0898Eh ; last def. pass 3
 OffloadResources?: equ 0D839h ; last def. pass 3
 Controls: equ 0D870h ; last def. pass 3
@@ -291,7 +291,7 @@ SongSquareB: equ 0Bh ; last def. pass 3
 SpacePressedPurchaseItem.NotEnoughCredits: equ 042E8h ; last def. pass 3
 SongWarzoneB: equ 0Dh ; last def. pass 3
 TextCostCargoSizeLevel4: equ 04786h ; last def. pass 3
-Vesselright_10_0: equ 08E3Eh ; last def. pass 3
+Vesselright_10_0: equ 08E1Ah ; last def. pass 3
 ShowPressTriggerAIcon?: equ 0D885h ; last def. pass 3
 LineIntDrillingGame.Waitline: equ 0239h ; last def. pass 3
 findRam.primary.next: equ 0C0FAh ; last def. pass 3
@@ -357,7 +357,7 @@ PutObjects: equ 0CA80h ; last def. pass 3
 outix8: equ 0D715h ; last def. pass 3
 NPCConv010: equ 04ACFh ; last def. pass 3
 Fill2BlackLinesGoingDown: equ 0DEBh ; last def. pass 3
-Vesselright_12_0: equ 0910Ch ; last def. pass 3
+Vesselright_12_0: equ 090E8h ; last def. pass 3
 SetScreenon.go: equ 0D501h ; last def. pass 3
 HangarbayGfxBlock: equ 010h ; last def. pass 3
 DrillMachineEventRoutine.MoveCamera: equ 074CCh ; last def. pass 3
@@ -496,7 +496,7 @@ vblank.EndCheckCountdownDays: equ 0F8h ; last def. pass 3
 ObjectBiopod2: equ 0C706h ; last def. pass 3
 GoRestoreObject: equ 037Fh ; last def. pass 3
 entityframelistblock: equ 040h ; last def. pass 3
-Vesselright_4_0: equ 085E0h ; last def. pass 3
+Vesselright_4_0: equ 085BCh ; last def. pass 3
 MoveDrillInItsDirection.EndCheckMoveLeftWhileDrilling: equ 06D8Eh ; last def. pass 3
 GirlPortraitGfxBlock: equ 02Ch ; last def. pass 3
 CostRadiationShieldLevel3: equ 06Eh ; last def. pass 3
@@ -995,7 +995,7 @@ MoonSound_FM2_DATA: equ 0C7h ; last def. pass 3
 sx: equ 00h ; last def. pass 3
 ColonyExpansionPurchased?: equ 01330h ; last def. pass 3
 MoonSound_Mute: equ 0C2C7h ; last def. pass 3
-Vesselright_2_0: equ 08316h ; last def. pass 3
+Vesselright_2_0: equ 082F2h ; last def. pass 3
 FreeToUseFastCopy1: equ 0128Eh ; last def. pass 3
 PutSpriteleftSideOfScreen.carry: equ 0540h ; last def. pass 3
 NPCConv022: equ 068D7h ; last def. pass 3
@@ -1311,7 +1311,7 @@ capgirlPortraitBlock.Mouth: equ 01066h ; last def. pass 3
 reactorchamber2Routine: equ 04CF7h ; last def. pass 3
 SetTextSkip0sLoop: equ 05195h ; last def. pass 3
 Host_10_0: equ 08D2Eh ; last def. pass 3
-Vesselright_3_0: equ 0848Bh ; last def. pass 3
+Vesselright_3_0: equ 08467h ; last def. pass 3
 EventBiopod: equ 0C728h ; last def. pass 3
 Objectreactorchamber2: equ 0C805h ; last def. pass 3
 ObjectEntityb: equ 0C6A0h ; last def. pass 3
@@ -1374,7 +1374,7 @@ HandleSoldierConversations.LowFuelWarning: equ 073B1h ; last def. pass 3
 ChangeRoom?: equ 0D876h ; last def. pass 3
 OffLoadResourcesConversationWindow.SetResourceRewardValues: equ 0C85h ; last def. pass 3
 PutSpritePose: equ 042B9h ; last def. pass 3
-Vesselright_1_0: equ 08189h ; last def. pass 3
+Vesselright_1_0: equ 08165h ; last def. pass 3
 RStanding: equ 04141h ; last def. pass 3
 PortraitEyesDXDY: equ 0782h ; last def. pass 3
 CloseBlackWindowDrillingGame.Restore1LineTopAndBottom: equ 090Bh ; last def. pass 3
@@ -1387,7 +1387,7 @@ RestoreBackgroundObject4Page1: equ 0497h ; last def. pass 3
 DrillConePalette: equ 0502Fh ; last def. pass 3
 capgirlPortraitBlock: equ 0105Bh ; last def. pass 3
 HandleHudRadiation: equ 070F7h ; last def. pass 3
-Vesselright_6_0: equ 0888Ah ; last def. pass 3
+Vesselright_6_0: equ 08866h ; last def. pass 3
 PutObjectssleepingquarters: equ 0CB2Bh ; last def. pass 3
 HandleHudStorage: equ 07123h ; last def. pass 3
 framecounter2: equ 0D86Fh ; last def. pass 3
@@ -1452,7 +1452,7 @@ SetItemInfoLifeSupport.Oxygen: equ 051D9h ; last def. pass 3
 TextMinerSpeedLevel4: equ 045F4h ; last def. pass 3
 Object1RestoreTable: equ 03B4h ; last def. pass 3
 Objecty: equ 0D87Fh ; last def. pass 3
-Vesselright_11_0: equ 08F87h ; last def. pass 3
+Vesselright_11_0: equ 08F63h ; last def. pass 3
 findRam.secondary: equ 0C10Ah ; last def. pass 3
 BottomWindowAddressPage1Vram: equ 0885h ; last def. pass 3
 PutDrillMachineCharacterAndColorData.Left: equ 069EAh ; last def. pass 3
@@ -1518,7 +1518,7 @@ hostPortraitGfxBlock: equ 030h ; last def. pass 3
 ArcadeHall1GfxBlock: equ 07h ; last def. pass 3
 BuildUpNewRowCameraGoingUp.FindStartingAddressInRam: equ 075B6h ; last def. pass 3
 RomSize: equ 0800000h ; last def. pass 3
-Vesselright_5_0: equ 08731h ; last def. pass 3
+Vesselright_5_0: equ 0870Dh ; last def. pass 3
 DrillColorsFacingDown: equ 0654Eh ; last def. pass 3
 BackdropYellow: equ 012F5h ; last def. pass 3
 TrainingdeckEventRoutine.HandleExplainerConversation: equ 0491Eh ; last def. pass 3
@@ -1678,7 +1678,7 @@ RomBlockSize: equ 04000h ; last def. pass 3
 npcs_3_0: equ 084DFh ; last def. pass 3
 PageOnNextVblank: equ 0D875h ; last def. pass 3
 HangarbayEventRoutine.HandleExplainerConversation: equ 04A16h ; last def. pass 3
-Vesselright_9_0: equ 08CE9h ; last def. pass 3
+Vesselright_9_0: equ 08CC5h ; last def. pass 3
 SongDewB: equ 04h ; last def. pass 3
 npcs_8_0: equ 08C5Ch ; last def. pass 3
 MinerSpeedLevel: equ 01341h ; last def. pass 3

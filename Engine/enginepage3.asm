@@ -97,9 +97,9 @@ Objecttrainingdeck2: 			db  1,087,000 | dw 000,000	,trainingdeck_1  		| db 001		
 Objecttrainingdeck3: 			db  1,104,054 | dw 000,000	,trainingdeck_2  		| db 001			,MovementRoutinesBlock | dw trainingdeck3Routine			| db 000,000 ,000, 000
 
 Eventreactorchamber:			db	1,$28,$7e | dw 000,000					,000        | db 255      ,MovementRoutinesBlock | dw reactorchamberEventRoutine| db 000,000 ,000, 000
-Objectreactorchamber1: 		db  1,083,128 | dw 000,000	,reactorchamber_0  	| db 001			,MovementRoutinesBlock | dw reactorchamber1Routine		| db 000,000 ,000, 000
-Objectreactorchamber2: 		db  1,083,128 | dw 000,000	,reactorchamber_1  	| db 001			,MovementRoutinesBlock | dw reactorchamber2Routine		| db 000,000 ,000, 000
-Objectreactorchamber3: 		db  1,074,248 | dw 000,000	,reactorchamber_2  	| db 001			,MovementRoutinesBlock | dw reactorchamber3Routine		| db 000,000 ,000, 000
+Objectreactorchamber1: 		db  0,083,128 | dw 000,000	,reactorchamber_0  	| db 001			,MovementRoutinesBlock | dw reactorchamber1Routine		| db 000,000 ,000, 000
+Objectreactorchamber2: 		db  0,083,128 | dw 000,000	,reactorchamber_1  	| db 001			,MovementRoutinesBlock | dw reactorchamber2Routine		| db 000,000 ,000, 000
+Objectreactorchamber3: 		db  0,074,248 | dw 000,000	,reactorchamber_2  	| db 001			,MovementRoutinesBlock | dw reactorchamber3Routine		| db 000,000 ,000, 000
 
 Eventarmoryvault:					db	1,$28,$7e | dw 000,000					,000        | db 255      ,MovementRoutinesBlock | dw armoryvaultEventRoutine		| db 000,000 ,000, 000
 Objectarmoryvault1: 			db  1,098,250 | dw 000,000	,armoryvault_0  		| db 001			,MovementRoutinesBlock | dw armoryvault1Routine				| db 000,000 ,000, 000
