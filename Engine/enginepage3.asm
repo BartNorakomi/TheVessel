@@ -92,9 +92,9 @@ Objecthangarbay1: 				db  1,068,114 | dw 000,000	,hangarbay_0  			| db 001			,Mo
 Objecthangarbay2: 				db  1,068,114 | dw 000,000	,hangarbay_1  			| db 001			,MovementRoutinesBlock | dw hangarbay2Routine					| db 000,000 ,000, 000
 
 EventTrainingdeck: 				db	1,$28,$7e | dw 000,000					,000        | db 255      ,MovementRoutinesBlock | dw TrainingdeckEventRoutine	| db 000,000 ,000, 000
-Objecttrainingdeck1: 			db  1,099,254 | dw 000,000	,trainingdeck_0  		| db 001			,MovementRoutinesBlock | dw trainingdeck1Routine			| db 000,000 ,000, 000
-Objecttrainingdeck2: 			db  1,087,000 | dw 000,000	,trainingdeck_1  		| db 001			,MovementRoutinesBlock | dw trainingdeck2Routine			| db 000,000 ,000, 000
-Objecttrainingdeck3: 			db  1,104,054 | dw 000,000	,trainingdeck_2  		| db 001			,MovementRoutinesBlock | dw trainingdeck3Routine			| db 000,000 ,000, 000
+Objecttrainingdeck1: 			db  0,099,254 | dw 000,000	,trainingdeck_0  		| db 001			,MovementRoutinesBlock | dw trainingdeck1Routine			| db 000,000 ,000, 000
+Objecttrainingdeck2: 			db  0,087,000 | dw 000,000	,trainingdeck_1  		| db 001			,MovementRoutinesBlock | dw trainingdeck2Routine			| db 000,000 ,000, 000
+Objecttrainingdeck3: 			db  0,104,054 | dw 000,000	,trainingdeck_2  		| db 001			,MovementRoutinesBlock | dw trainingdeck3Routine			| db 000,000 ,000, 000
 
 Eventreactorchamber:			db	1,$28,$7e | dw 000,000					,000        | db 255      ,MovementRoutinesBlock | dw reactorchamberEventRoutine| db 000,000 ,000, 000
 Objectreactorchamber1: 		db  0,083,128 | dw 000,000	,reactorchamber_0  	| db 001			,MovementRoutinesBlock | dw reactorchamber1Routine		| db 000,000 ,000, 000
@@ -102,7 +102,7 @@ Objectreactorchamber2: 		db  0,083,128 | dw 000,000	,reactorchamber_1  	| db 001
 Objectreactorchamber3: 		db  0,074,248 | dw 000,000	,reactorchamber_2  	| db 001			,MovementRoutinesBlock | dw reactorchamber3Routine		| db 000,000 ,000, 000
 
 Eventarmoryvault:					db	1,$28,$7e | dw 000,000					,000        | db 255      ,MovementRoutinesBlock | dw armoryvaultEventRoutine		| db 000,000 ,000, 000
-Objectarmoryvault1: 			db  1,098,250 | dw 000,000	,armoryvault_0  		| db 001			,MovementRoutinesBlock | dw armoryvault1Routine				| db 000,000 ,000, 000
+Objectarmoryvault1: 			db  0,098,250 | dw 000,000	,armoryvault_0  		| db 001			,MovementRoutinesBlock | dw armoryvault1Routine				| db 000,000 ,000, 000
 
 
 Eventsleepingquarters:		db	1,$28,$7e | dw 000,000					,000        | db 255      ,MovementRoutinesBlock | dw sleepingquartersEventRoutine| db 000,000 ,000, 000
