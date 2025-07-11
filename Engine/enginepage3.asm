@@ -84,8 +84,8 @@ ObjectBiopod3: 						db  0,022,134 | dw 000,000					,Biopod_2  	| db 001			,Move
 EventBiopod: 							db	1,$28,$7e | dw 000,000					,000        | db 255      ,MovementRoutinesBlock | dw BiopodEventRoutine				| db 000,000 ,000, 000
 
 EventHydroponicsbay: 			db	1,$28,$7e | dw 000,000					,000        | db 255      ,MovementRoutinesBlock | dw HydroponicsbayEventRoutine| db 000,000 ,000, 000
-Objecthydroponicsbay1: 		db  1,094,042 | dw 000,000	,hydroponicsbay_0  	| db 001			,MovementRoutinesBlock | dw hydroponicsbay1Routine		| db 000,000 ,000, 000
-Objecthydroponicsbay2: 		db  1,094,178 | dw 000,000	,hydroponicsbay_1  	| db 001			,MovementRoutinesBlock | dw hydroponicsbay2Routine		| db 000,000 ,000, 000
+Objecthydroponicsbay1: 		db  0,094,042 | dw 000,000	,hydroponicsbay_0  	| db 001			,MovementRoutinesBlock | dw hydroponicsbay1Routine		| db 000,000 ,000, 000
+Objecthydroponicsbay2: 		db  0,094,178 | dw 000,000	,hydroponicsbay_1  	| db 001			,MovementRoutinesBlock | dw hydroponicsbay2Routine		| db 000,000 ,000, 000
 
 EventHangarbay: 					db	1,$28,$7e | dw 000,000					,000        | db 255      ,MovementRoutinesBlock | dw HangarbayEventRoutine			| db 000,000 ,000, 000
 Objecthangarbay1: 				db  0,068,114 | dw 000,000	,hangarbay_0  			| db 001			,MovementRoutinesBlock | dw hangarbay1Routine					| db 000,000 ,000, 000
