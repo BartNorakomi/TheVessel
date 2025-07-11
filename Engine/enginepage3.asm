@@ -78,9 +78,9 @@ EventArcadeHall1:					db	1,0,0     | dw 000,000					,000   			| db 255      ,Mov
 EventArcadeHall2: 				db	1,0,0     | dw 000,000					,000        | db 255      ,MovementRoutinesBlock | dw ArcadeHall2EventRoutine		| db 000,000 ,000, 000
 EventSirens: 							db	1,0,0     | dw 000,000					,000        | db 255      ,MovementRoutinesBlock | dw SirensRoutine							| db 000,000 ,000, 000
 
-ObjectBiopod1: 						db  1,050,198 | dw 000,000					,Biopod_0  	| db 001			,MovementRoutinesBlock | dw BioPod1Routine						| db 000,000 ,000, 000
-ObjectBiopod2: 						db  1,050,064 | dw 000,000					,Biopod_1  	| db 001			,MovementRoutinesBlock | dw BioPod2Routine						| db 000,000 ,000, 000
-ObjectBiopod3: 						db  1,022,134 | dw 000,000					,Biopod_2  	| db 001			,MovementRoutinesBlock | dw BioPodBlinkingLightRoutine| db 000,000 ,000, 000
+ObjectBiopod1: 						db  0,050,198 | dw 000,000					,Biopod_0  	| db 001			,MovementRoutinesBlock | dw BioPod1Routine						| db 000,000 ,000, 000
+ObjectBiopod2: 						db  0,050,064 | dw 000,000					,Biopod_1  	| db 001			,MovementRoutinesBlock | dw BioPod2Routine						| db 000,000 ,000, 000
+ObjectBiopod3: 						db  0,022,134 | dw 000,000					,Biopod_2  	| db 001			,MovementRoutinesBlock | dw BioPodBlinkingLightRoutine| db 000,000 ,000, 000
 EventBiopod: 							db	1,$28,$7e | dw 000,000					,000        | db 255      ,MovementRoutinesBlock | dw BiopodEventRoutine				| db 000,000 ,000, 000
 
 EventHydroponicsbay: 			db	1,$28,$7e | dw 000,000					,000        | db 255      ,MovementRoutinesBlock | dw HydroponicsbayEventRoutine| db 000,000 ,000, 000
@@ -88,8 +88,8 @@ Objecthydroponicsbay1: 		db  1,094,042 | dw 000,000	,hydroponicsbay_0  	| db 001
 Objecthydroponicsbay2: 		db  1,094,178 | dw 000,000	,hydroponicsbay_1  	| db 001			,MovementRoutinesBlock | dw hydroponicsbay2Routine		| db 000,000 ,000, 000
 
 EventHangarbay: 					db	1,$28,$7e | dw 000,000					,000        | db 255      ,MovementRoutinesBlock | dw HangarbayEventRoutine			| db 000,000 ,000, 000
-Objecthangarbay1: 				db  1,068,114 | dw 000,000	,hangarbay_0  			| db 001			,MovementRoutinesBlock | dw hangarbay1Routine					| db 000,000 ,000, 000
-Objecthangarbay2: 				db  1,068,114 | dw 000,000	,hangarbay_1  			| db 001			,MovementRoutinesBlock | dw hangarbay2Routine					| db 000,000 ,000, 000
+Objecthangarbay1: 				db  0,068,114 | dw 000,000	,hangarbay_0  			| db 001			,MovementRoutinesBlock | dw hangarbay1Routine					| db 000,000 ,000, 000
+Objecthangarbay2: 				db  0,068,114 | dw 000,000	,hangarbay_1  			| db 001			,MovementRoutinesBlock | dw hangarbay2Routine					| db 000,000 ,000, 000
 
 EventTrainingdeck: 				db	1,$28,$7e | dw 000,000					,000        | db 255      ,MovementRoutinesBlock | dw TrainingdeckEventRoutine	| db 000,000 ,000, 000
 Objecttrainingdeck1: 			db  0,099,254 | dw 000,000	,trainingdeck_0  		| db 001			,MovementRoutinesBlock | dw trainingdeck1Routine			| db 000,000 ,000, 000
