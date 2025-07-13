@@ -2206,9 +2206,6 @@ holodeck1Routine:
   call  PutSpritePose                       ;in hl=spritepose, out writes spritepose to objecttable
   call  .SetSlice2
 
-
-
-
 holodeck2Routine:
   ret
 

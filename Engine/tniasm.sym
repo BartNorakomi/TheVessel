@@ -114,7 +114,7 @@ outix208: equ 0D5B3h ; last def. pass 3
 MoonSound_ReadFM1Register: equ 0C313h ; last def. pass 3
 FadeStep: equ 073Dh ; last def. pass 3
 sciencelabPalette: equ 0CE24h ; last def. pass 3
-holodeck_12_0: equ 08F20h ; last def. pass 3
+holodeck_12_0: equ 08F24h ; last def. pass 3
 Vesselright_8_0: equ 08B68h ; last def. pass 3
 npcs_6_0: equ 0898Eh ; last def. pass 3
 OffloadResources?: equ 0D867h ; last def. pass 3
@@ -261,7 +261,7 @@ ObjectRestoreTable: equ 05h ; last def. pass 3
 soldierPortraitBlock.Eyes: equ 010C6h ; last def. pass 3
 CheckPlayerNearArcadeMachine.CheckPlayerNear: equ 04478h ; last def. pass 3
 oldControls: equ 0D8A0h ; last def. pass 3
-holodeck_9_0: equ 08B5Dh ; last def. pass 3
+holodeck_9_0: equ 08B59h ; last def. pass 3
 AssignOrderByY: equ 06E7h ; last def. pass 3
 GirlMovementRoutine.NPCConv001: equ 04ECFh ; last def. pass 3
 OffLoadResourcesConversationWindow.TotalValueIs0: equ 0DC4h ; last def. pass 3
@@ -329,7 +329,7 @@ holodeck_1.holodeck_3: equ 04D3Ch ; last def. pass 3
 CloseBlackWindowDrillingGame.PageFound: equ 08DCh ; last def. pass 3
 RedHeadBoyMovementRoutine: equ 04F26h ; last def. pass 3
 CheckShowPressTrigAIconsciencelab: equ 046D2h ; last def. pass 3
-holodeck_16_0: equ 0942Ch ; last def. pass 3
+holodeck_16_0: equ 09430h ; last def. pass 3
 ResetRestoreBackgroundTables.loop: equ 0C8FCh ; last def. pass 3
 DayOfMonthEenheden: equ 0D894h ; last def. pass 3
 RedheadboyPortraitBlock.Eyes: equ 01027h ; last def. pass 3
@@ -840,7 +840,7 @@ Biopod_6: equ 04E84h ; last def. pass 3
 Objecthydroponicsbay1: equ 0C74Ah ; last def. pass 3
 SwitchCharacter: equ 0FEh ; last def. pass 3
 Host_13: equ 0430Eh ; last def. pass 3
-holodeck_14_0: equ 091A6h ; last def. pass 3
+holodeck_14_0: equ 091AAh ; last def. pass 3
 FadeOutPortrait: equ 0B4Dh ; last def. pass 3
 TheVesselleftrunning_5: equ 0404Ch ; last def. pass 3
 medicalbay_0_0: equ 08000h ; last def. pass 3
@@ -906,7 +906,7 @@ DrillingGameMapsBlock: equ 01h ; last def. pass 3
 NPCConv013: equ 055F8h ; last def. pass 3
 DIV_LOOP: equ 0D817h ; last def. pass 3
 hangarbay_1: equ 04CDAh ; last def. pass 3
-holodeck_3_0: equ 083CBh ; last def. pass 3
+holodeck_3_0: equ 083C7h ; last def. pass 3
 block12: equ 0D389h ; last def. pass 3
 Biopod_2: equ 04E74h ; last def. pass 3
 putplayer_clipleft.notcarry: equ 0636h ; last def. pass 3
@@ -1095,7 +1095,7 @@ SetPaletteFadeStep.EndCheckOverFlowRed: equ 0B83h ; last def. pass 3
 StartWakeUpEvent?: equ 0D866h ; last def. pass 3
 TheVesselleftspritedatablock: equ 039h ; last def. pass 3
 GoPutSF2Object: equ 04FDh ; last def. pass 3
-holodeck_20_0: equ 09934h ; last def. pass 3
+holodeck_20_0: equ 0993Ch ; last def. pass 3
 ArcadeMachine2x: equ 04412h ; last def. pass 3
 entity_1_2: equ 084F9h ; last def. pass 3
 entityspritedatablock: equ 041h ; last def. pass 3
@@ -1182,7 +1182,7 @@ entity_2_0: equ 085D6h ; last def. pass 3
 PutObject: equ 035Ah ; last def. pass 3
 sleepingquartersEventRoutine: equ 0480Ah ; last def. pass 3
 TheVesselleftrunning_7: equ 04054h ; last def. pass 3
-holodeck_7_0: equ 088D7h ; last def. pass 3
+holodeck_7_0: equ 088D3h ; last def. pass 3
 entity_0_2: equ 081EAh ; last def. pass 3
 armoryvaultEventRoutine.sleepingquarters: equ 0463Bh ; last def. pass 3
 copytype: equ 0Eh ; last def. pass 3
@@ -1216,7 +1216,7 @@ Object1: equ 0277h ; last def. pass 3
 HandleSoldierConversations.CheckStorageFullConversation: equ 07443h ; last def. pass 3
 SetCostOxygen: equ 0523Dh ; last def. pass 3
 CloseholodeckDoor.holodeck_6: equ 04D80h ; last def. pass 3
-holodeck_15_0: equ 092EBh ; last def. pass 3
+holodeck_15_0: equ 092EFh ; last def. pass 3
 LenghtObject: equ 011h ; last def. pass 3
 endenginepage3: equ 0D868h ; last def. pass 3
 holodeck_0.holodeck_4: equ 04D14h ; last def. pass 3
@@ -1305,7 +1305,7 @@ CharacterPortraitCapGirl: equ 03h ; last def. pass 3
 ConvertDrillingLeftTileWeMoveTo.TileConversionDrillingLeft: equ 06BFCh ; last def. pass 3
 outix112: equ 0D673h ; last def. pass 3
 PlayerSpriteStand: equ 0D863h ; last def. pass 3
-holodeck_5_0: equ 08651h ; last def. pass 3
+holodeck_5_0: equ 0864Dh ; last def. pass 3
 CapGirlMovementRoutine: equ 04EDCh ; last def. pass 3
 ObjEvent3: equ 02DDh ; last def. pass 3
 ConvertDrillingLeftTileWeCameFrom: equ 06BB6h ; last def. pass 3
@@ -1388,7 +1388,7 @@ freezecontrols?: equ 0D4BEh ; last def. pass 3
 SongSquareA: equ 0Ah ; last def. pass 3
 holodeck_1.holodeck_7: equ 04D44h ; last def. pass 3
 MovePlayer.MoveHorizontally: equ 0420Fh ; last def. pass 3
-holodeck_10_0: equ 08C9Ah ; last def. pass 3
+holodeck_10_0: equ 08C9Eh ; last def. pass 3
 Lrunning: equ 04155h ; last def. pass 3
 CostCargoSizeLevel3: equ 064h ; last def. pass 3
 TheVesselgettingupspritedatablock: equ 03Bh ; last def. pass 3
@@ -1400,7 +1400,7 @@ FoodOuterBarPage1: equ 04D16h ; last def. pass 3
 LineInt: equ 012Dh ; last def. pass 3
 SetTempisr: equ 0D191h ; last def. pass 3
 ConvertDrillingUpTileWeMoveTo: equ 06D34h ; last def. pass 3
-holodeck_21_0: equ 0993Dh ; last def. pass 3
+holodeck_21_0: equ 09945h ; last def. pass 3
 TextLandinDays: equ 0D7EEh ; last def. pass 3
 CloseBlackWindow.RestoreLoop: equ 0949h ; last def. pass 3
 MoonSound_WAVE_ADDRESS: equ 07Eh ; last def. pass 3
@@ -1423,7 +1423,7 @@ PutSF2ObjectSlice: equ 04C4h ; last def. pass 3
 PutDrillMachineCharacterAndColorData.GoAnimateLeft: equ 06B58h ; last def. pass 3
 ObjectBiopod3: equ 0C717h ; last def. pass 3
 DigSitePalette: equ 0512Fh ; last def. pass 3
-holodeck_17_0: equ 09571h ; last def. pass 3
+holodeck_17_0: equ 09575h ; last def. pass 3
 vblank: equ 0B6h ; last def. pass 3
 endenginepage3variables: equ 0F13Bh ; last def. pass 3
 npcsframelistblock: equ 03Eh ; last def. pass 3
@@ -1434,7 +1434,7 @@ LoadTileMap.ArcadeHall1: equ 0CA73h ; last def. pass 3
 MusicOn?: equ 00h ; last def. pass 3
 SpacePressedPurchaseItem.DigSite: equ 040EFh ; last def. pass 3
 ArcadeMachine4y: equ 04415h ; last def. pass 3
-holodeck_18_0: equ 096AEh ; last def. pass 3
+holodeck_18_0: equ 096B6h ; last def. pass 3
 HandleSoldierConversations.LowFuelShortMessage: equ 07519h ; last def. pass 3
 AssignOrderByY.AssignLoop: equ 06FCh ; last def. pass 3
 PortraitMouthDXDY: equ 078Ch ; last def. pass 3
@@ -1679,7 +1679,7 @@ TheVesselrightidle_0: equ 04000h ; last def. pass 3
 TurboOn?: equ 0D89Bh ; last def. pass 3
 AIPortraitBlock.Eyes: equ 010FBh ; last def. pass 3
 medicalbayEventRoutine.CheckPlayerLeavingRoom: equ 047B6h ; last def. pass 3
-holodeck_1_0: equ 08145h ; last def. pass 3
+holodeck_1_0: equ 08141h ; last def. pass 3
 LoadTileMap.Trainingdeck: equ 0CA43h ; last def. pass 3
 BuildUpNewRowCameraGoingDown.PutTileLoop: equ 076C4h ; last def. pass 3
 RGettingUp: equ 04086h ; last def. pass 3
@@ -1769,7 +1769,7 @@ NPCConv003: equ 041AEh ; last def. pass 3
 HandleRadiation: equ 0732Dh ; last def. pass 3
 holodeck_0.holodeck_12: equ 04D24h ; last def. pass 3
 LoadTileMap.sciencelab: equ 0C9FBh ; last def. pass 3
-holodeck_19_0: equ 097F3h ; last def. pass 3
+holodeck_19_0: equ 097FBh ; last def. pass 3
 LoadRoomGfx: equ 0CE84h ; last def. pass 3
 FillCommand: equ 0D10Eh ; last def. pass 3
 Depack.getbits: equ 0D4B8h ; last def. pass 3

@@ -113,8 +113,8 @@ Objectholodeck2: 					db  1,017,000 | dw 000,000	,holodeck_1					| db 001			,Mov
 
 
 Eventmedicalbay:					db	1,$28,$7e | dw 000,000					,000        | db 255      ,MovementRoutinesBlock | dw medicalbayEventRoutine		| db 000,000 ,000, 000
-Objectmedicalbay1: 				db  1,070,070 | dw 000,000	,medicalbay_0  			| db 001			,MovementRoutinesBlock | dw medicalbay1Routine				| db 000,000 ,000, 000
-Objectmedicalbay2: 				db  1,070,070 | dw 000,000	,medicalbay_1  			| db 001			,MovementRoutinesBlock | dw medicalbay2Routine				| db 000,000 ,000, 000
+Objectmedicalbay1: 				db  0,070,070 | dw 000,000	,medicalbay_0  			| db 001			,MovementRoutinesBlock | dw medicalbay1Routine				| db 000,000 ,000, 000
+Objectmedicalbay2: 				db  0,070,070 | dw 000,000	,medicalbay_1  			| db 001			,MovementRoutinesBlock | dw medicalbay2Routine				| db 000,000 ,000, 000
 
 
 Eventsciencelab:					db	1,$28,$7e | dw 000,000					,000        | db 255      ,MovementRoutinesBlock | dw sciencelabEventRoutine		| db 000,000 ,000, 000
