@@ -108,6 +108,9 @@ Objectarmoryvault1: 			db  0,098,250 | dw 000,000	,armoryvault_0  		| db 001			,
 Eventsleepingquarters:		db	1,$28,$7e | dw 000,000					,000        | db 255      ,MovementRoutinesBlock | dw sleepingquartersEventRoutine| db 000,000 ,000, 000
 
 Eventholodeck:						db	1,$28,$7e | dw 000,000					,000        | db 255      ,MovementRoutinesBlock | dw holodeckEventRoutine			| db 000,000 ,000, 000
+Objectholodeck1: 					db  1,017,000 | dw 000,000	,holodeck_0					| db 001			,MovementRoutinesBlock | dw holodeck1Routine					| db 000,000 ,000, 000
+Objectholodeck2: 					db  1,017,000 | dw 000,000	,holodeck_1					| db 001			,MovementRoutinesBlock | dw holodeck2Routine					| db 000,000 ,000, 000
+
 
 Eventmedicalbay:					db	1,$28,$7e | dw 000,000					,000        | db 255      ,MovementRoutinesBlock | dw medicalbayEventRoutine		| db 000,000 ,000, 000
 Objectmedicalbay1: 				db  1,070,070 | dw 000,000	,medicalbay_0  			| db 001			,MovementRoutinesBlock | dw medicalbay1Routine				| db 000,000 ,000, 000
@@ -469,6 +472,11 @@ PutObjectsarmoryvault:
 	ret
 
 PutObjectsholodeck:
+	ld		hl,Objectholodeck1						;put holodeck 1
+	call	PutSingleObject 
+	ld		hl,Objectholodeck2						;put holodeck 2
+	call	PutSingleObject 
+
 	ld		de,ObjEvent1										;now put events
 
 	ld		hl,Eventholodeck								;put holodeck event

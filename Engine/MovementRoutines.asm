@@ -2055,6 +2055,162 @@ medicalbay_1:        db    medicalbayframelistblock, medicalbayspritedatablock |
 medicalbay2Routine:
   ret
 
+;slice 1
+OpenholodeckDoor:
+holodeck_0:        db    holodeckframelistblock, holodeckspritedatablock | dw    holodeck_0_0
+.holodeck_2:        db    holodeckframelistblock, holodeckspritedatablock | dw    holodeck_2_0
+.holodeck_4:        db    holodeckframelistblock, holodeckspritedatablock | dw    holodeck_4_0
+.holodeck_6:        db    holodeckframelistblock, holodeckspritedatablock | dw    holodeck_6_0
+.holodeck_8:        db    holodeckframelistblock, holodeckspritedatablock | dw    holodeck_8_0
+.holodeck_10:        db    holodeckframelistblock, holodeckspritedatablock | dw    holodeck_10_0
+.holodeck_12:        db    holodeckframelistblock, holodeckspritedatablock | dw    holodeck_12_0
+.holodeck_14:        db    holodeckframelistblock, holodeckspritedatablock | dw    holodeck_14_0
+.holodeck_16:        db    holodeckframelistblock, holodeckspritedatablock | dw    holodeck_16_0
+.holodeck_18:        db    holodeckframelistblock, holodeckspritedatablock | dw    holodeck_18_0
+holodeck_20:        db    holodeckframelistblock, holodeckspritedatablock | dw    holodeck_20_0
+
+;slice 2
+holodeck_1:        db    holodeckframelistblock, holodeckspritedatablock | dw    holodeck_1_0
+.holodeck_3:        db    holodeckframelistblock, holodeckspritedatablock | dw    holodeck_3_0
+.holodeck_5:        db    holodeckframelistblock, holodeckspritedatablock | dw    holodeck_5_0
+.holodeck_7:        db    holodeckframelistblock, holodeckspritedatablock | dw    holodeck_7_0
+.holodeck_9:        db    holodeckframelistblock, holodeckspritedatablock | dw    holodeck_9_0
+.holodeck_11:        db    holodeckframelistblock, holodeckspritedatablock | dw    holodeck_11_0
+.holodeck_13:        db    holodeckframelistblock, holodeckspritedatablock | dw    holodeck_13_0
+.holodeck_15:        db    holodeckframelistblock, holodeckspritedatablock | dw    holodeck_15_0
+.holodeck_17:        db    holodeckframelistblock, holodeckspritedatablock | dw    holodeck_17_0
+.holodeck_19:        db    holodeckframelistblock, holodeckspritedatablock | dw    holodeck_19_0
+.holodeck_21:        db    holodeckframelistblock, holodeckspritedatablock | dw    holodeck_21_0
+
+;slice 1
+CloseholodeckDoor:
+.holodeck_20:        db    holodeckframelistblock, holodeckspritedatablock | dw    holodeck_20_0
+.holodeck_18:        db    holodeckframelistblock, holodeckspritedatablock | dw    holodeck_18_0
+.holodeck_16:        db    holodeckframelistblock, holodeckspritedatablock | dw    holodeck_16_0
+.holodeck_14:        db    holodeckframelistblock, holodeckspritedatablock | dw    holodeck_14_0
+.holodeck_12:        db    holodeckframelistblock, holodeckspritedatablock | dw    holodeck_12_0
+.holodeck_10:        db    holodeckframelistblock, holodeckspritedatablock | dw    holodeck_10_0
+.holodeck_8:        db    holodeckframelistblock, holodeckspritedatablock | dw    holodeck_8_0
+.holodeck_6:        db    holodeckframelistblock, holodeckspritedatablock | dw    holodeck_6_0
+.holodeck_4:        db    holodeckframelistblock, holodeckspritedatablock | dw    holodeck_4_0
+.holodeck_2:        db    holodeckframelistblock, holodeckspritedatablock | dw    holodeck_2_0
+.holodeck_0:        db    holodeckframelistblock, holodeckspritedatablock | dw    holodeck_0_0
+
+;slice 2
+.holodeck_21:        db    holodeckframelistblock, holodeckspritedatablock | dw    holodeck_21_0
+.holodeck_19:        db    holodeckframelistblock, holodeckspritedatablock | dw    holodeck_19_0
+.holodeck_17:        db    holodeckframelistblock, holodeckspritedatablock | dw    holodeck_17_0
+.holodeck_15:        db    holodeckframelistblock, holodeckspritedatablock | dw    holodeck_15_0
+.holodeck_13:        db    holodeckframelistblock, holodeckspritedatablock | dw    holodeck_13_0
+.holodeck_11:        db    holodeckframelistblock, holodeckspritedatablock | dw    holodeck_11_0
+.holodeck_9:        db    holodeckframelistblock, holodeckspritedatablock | dw    holodeck_9_0
+.holodeck_7:        db    holodeckframelistblock, holodeckspritedatablock | dw    holodeck_7_0
+.holodeck_5:        db    holodeckframelistblock, holodeckspritedatablock | dw    holodeck_5_0
+.holodeck_3:        db    holodeckframelistblock, holodeckspritedatablock | dw    holodeck_3_0
+.holodeck_1:        db    holodeckframelistblock, holodeckspritedatablock | dw    holodeck_1_0
+
+
+holodeck1Routine:
+  ld    a,1
+  ld    (SkipNPCCollision?),a
+
+  call  .OpenOrCloseDoorWhenEnteringRoom    ;once set door open when coming from the left or close when coming from the right
+  call  .ShouldWeOpenOrCloseDoor?
+
+  ld    a,(iy+var2)                         ;0=no action, ,1=open door, 2=close door 
+  or    a
+  ret   z
+  dec   a
+  jr    z,.OpenDoor
+
+  .CloseDoor:
+  ld    a,(framecounter)                    ;at max 4 objects can be put in screen divided over 4 frames
+  and   3
+  ret   nz
+  ld    hl,CloseholodeckDoor                ;starting pose
+  ld    b,11                                ;animation steps
+  call  AnimateObject                       ;in hl=starting pose, b=animation steps, uses: var1
+  call  .SetSlice2
+
+	ld		a,(iy+var1)
+  cp    10
+  ret   nz
+  ld    (iy+var2),0                         ;0=no action, ,1=open door, 2=close door   
+  ret
+
+  .OpenDoor:
+  ld    a,(framecounter)                    ;at max 4 objects can be put in screen divided over 4 frames
+  and   3
+  ret   nz
+  ld    hl,OpenholodeckDoor                         ;starting pose
+  ld    b,11                                ;animation steps
+  call  AnimateObject                       ;in hl=starting pose, b=animation steps, uses: var1
+  call  .SetSlice2
+
+	ld		a,(iy+var1)
+  cp    10
+  ret   nz
+  ld    (iy+var2),0                         ;0=no action, ,1=open door, 2=close door   
+  ret
+
+  .ShouldWeOpenOrCloseDoor?:
+  ld    a,(iy+var2)                         ;0=no action, ,1=open door, 2=close door 
+  or    a
+  ret   nz
+
+  ld    a,(Object1+x)
+  cp    100
+  jr    c,.Open
+
+  .Close:
+  ld    l,(iy+7)                            ;current sprite in hl
+  ld    h,(iy+8)
+  ld    de,CloseholodeckDoor.holodeck_0                       ;sprite door completely closed
+  call  CompareHLwithDE
+  ret   z                                   ;return if already closed
+  ld    (iy+var2),2                         ;0=no action, ,1=open door, 2=close door 
+  ret
+
+  .Open:
+  ld    l,(iy+7)                            ;current sprite in hl
+  ld    h,(iy+8)
+  ld    de,holodeck_20                      ;sprite door completely open
+  call  CompareHLwithDE
+  ret   z                                   ;return if already open
+  ld    (iy+var2),1                         ;0=no action, ,1=open door, 2=close door 
+  ret
+
+  .SetSlice2:
+  ld    l,(iy+7)                            ;take sprite slice 1
+  ld    h,(iy+8)
+  ld    de,4*11                             ;add 11 sprites (4 bytes per sprite info) to go to slice 2
+  add   hl,de
+  ld    (iy+7+LenghtObject),l
+  ld    (iy+8+LenghtObject),h
+  ret
+
+  .OpenOrCloseDoorWhenEnteringRoom:
+  bit   0,(iy+var3)
+  set   0,(iy+var3)
+  ret   nz
+
+  ld    hl,holodeck_20                      ;sprite door completely open
+  call  PutSpritePose                       ;in hl=spritepose, out writes spritepose to objecttable
+  call  .SetSlice2
+
+  ld    a,(Object1+x)
+  cp    100
+  ret   c
+
+  ld    hl,CloseholodeckDoor.holodeck_0     ;sprite door completely closed
+  call  PutSpritePose                       ;in hl=spritepose, out writes spritepose to objecttable
+  call  .SetSlice2
+
+
+
+
+holodeck2Routine:
+  ret
 
 Biopod_0:        db    biopodframelistblock, biopodspritedatablock | dw    biopod_0_0
 BioPod1Routine:

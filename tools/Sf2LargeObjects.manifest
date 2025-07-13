@@ -1,3 +1,18 @@
+holodeck=@{
+		all=`
+	@{	name="holodeck";
+		imagePath="holodeck156x165.bmp";
+		palettePath="..\grapx\ship\holodeck\holodeck.PL";
+		destinationPath="";
+		pixelFilePath="holodeck.dat";
+		transparentColor=-1;fillcolor=15;
+		canvasX=0;canvasY=0;canvasWidth=22*156;canvasHeight=(1*165);
+		frameWidth=156;frameHeight=165;
+		subjectX=0;subjectWidth=156;subjectY=-1;subjectHeight=-1;
+		slices=1;
+	};
+};
+
 medicalbay=@{
 		all=`
 	@{	name="medicalbay";

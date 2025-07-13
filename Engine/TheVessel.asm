@@ -800,6 +800,16 @@ medicalbayspritedatablock:			equ ($-RomStartAddress) and (romsize-1) /RomBlockSi
 									incbin "..\tools\medicalbay.dat"
 									DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
 
+;holodeck
+holodeckframelistblock:			equ ($-RomStartAddress) and (romsize-1) /RomBlockSize
+									phase	$8000
+									include "..\tools\holodeck.asm" 
+									DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
+									dephase
+holodeckspritedatablock:			equ ($-RomStartAddress) and (romsize-1) /RomBlockSize
+									incbin "..\tools\holodeck.dat"
+									DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
+
 ;movement routines
 MovementRoutinesBlock:	equ ($-RomStartAddress) and (romsize-1) /RomBlockSize ;$04
 								include "MovementRoutines.asm"  
