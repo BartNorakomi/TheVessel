@@ -118,8 +118,8 @@ Objectholodeck2: 					db  1,017,000 | dw 000,000	,holodeck_1					| db 001			,Mov
 
 
 Eventmedicalbay:					db	1,$28,$7e | dw 000,000					,000        | db 255      ,MovementRoutinesBlock | dw medicalbayEventRoutine		| db 000,000 ,000, 000
-Objectmedicalbay1: 				db  0,070,070 | dw 000,000	,medicalbay_0  			| db 001			,MovementRoutinesBlock | dw medicalbay1Routine				| db 000,000 ,000, 000
-Objectmedicalbay2: 				db  0,070,070 | dw 000,000	,medicalbay_1  			| db 001			,MovementRoutinesBlock | dw medicalbay2Routine				| db 000,000 ,000, 000
+Objectmedicalbay1: 				db  1,070,070 | dw 000,000	,medicalbay_0  			| db 001			,MovementRoutinesBlock | dw medicalbay1Routine				| db 000,000 ,000, 000
+Objectmedicalbay2: 				db  1,070,070 | dw 000,000	,medicalbay_1  			| db 001			,MovementRoutinesBlock | dw medicalbay2Routine				| db 000,000 ,000, 000
 
 
 Eventsciencelab:					db	1,$28,$7e | dw 000,000					,000        | db 255      ,MovementRoutinesBlock | dw sciencelabEventRoutine		| db 000,000 ,000, 000
@@ -1751,13 +1751,34 @@ RefuelConversation: 		db	SwitchCharacter,CharacterPortraitAI,"Refuel ? Total Cre
 RefuelTotalCreditsText:	db	"xxxxx Refuel Cost: "
 RefuelCostText:					db	"xxx Credits Trig-A=Yes Trig-B=No",255
 
-
 NPCConv012:
   db    SwitchCharacter,CharacterPortraitVessel,"Still here. Anything new?"
   db    SwitchCharacter,CharacterPortraitAI,"No changes. Continue training. We will land in "
 	TextLandinDays: 		db 	"x days "
 	TextLandinHours:		db	"xx hours and "
 	TextLandinMinutes:	db	"xx minutes.",255
+
+NPCConv041: ;breeding room - embryo check followup  
+  db    SwitchCharacter,CharacterPortraitVessel,"How are they doing?"
+  db    SwitchCharacter,CharacterPortraitAI,"Embryonic life signs are stable. Nutrient intake and metabolic activity remain within optimal thresholds."
+  db    SwitchCharacter,CharacterPortraitVessel,"How much time is left?"
+  db    SwitchCharacter,CharacterPortraitAI
+TextRemainingIncubationPeriod:
+  db    "Four years, eleven months, thirty-seven days."
+  db    SwitchCharacter,CharacterPortraitVessel,"Feels faster every time I check..."
+  db    SwitchCharacter,CharacterPortraitAI,"Temporal perception under duress often accelerates. But the count remains absolute."
+  db    SwitchCharacter,CharacterPortraitVessel,"Right. No margin for error."
+  db    SwitchCharacter,CharacterPortraitAI,"Correct. When the timer reaches zero, survival must be sustainable-or it will not be.",255
+
+NPCConv042: ;medbay <25% radiation  
+  db    SwitchCharacter,CharacterPortraitVessel,"Medbay access. I could use a quick decon-feeling a bit fried from that last run."
+  db    SwitchCharacter,CharacterPortraitAI,"Radiation exposure detected, but levels remain below the treatment threshold. Current contamination: "
+TextRadiationLevel:	db		"22%."
+  db    SwitchCharacter,CharacterPortraitAI,"Medbay protocols are reserved for critical exposure. Early use would divert essential power and compound system strain."
+  db    SwitchCharacter,CharacterPortraitVessel,"It's not critical, just... uncomfortable. Thought I'd get ahead of it."
+  db    SwitchCharacter,CharacterPortraitAI,"Authorization denied. Decontamination will activate only when exposure surpasses 25%."
+  db    SwitchCharacter,CharacterPortraitVessel,"Right. Guess I'll tough it out a little longer."
+  db    SwitchCharacter,CharacterPortraitAI,"Correct. Endure. Persist. Continue forward momentum.",255
 
 AsciiOutput:    ds 2          ; Output: 2-byte ASCII (tens, units)
 ; Subroutine: Convert value <100 to 2-byte ASCII

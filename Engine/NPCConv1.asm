@@ -177,15 +177,6 @@ NPCConv023: ;science lab
   db    SwitchCharacter,CharacterPortraitVessel,"Looks like the key to survival is drilling, upgrading, and building."
   db    SwitchCharacter,CharacterPortraitAI,"Survival is progress. Progress is survival.",255
 
-
-
-
-
-
-
-
-
-
 NPCConv024: ;first time drilling
   db    SwitchCharacter,CharacterPortraitSoldier,"Drill systems online. First descent protocol active. This is your first real step toward securing the colony's future."
   db    SwitchCharacter,CharacterPortraitSoldier,"You'll start close to the surface. It's stable, manageable-perfect for getting used to the drill."
@@ -285,3 +276,18 @@ NPCConv039: ;sleeping quarters >50% energy
   db    SwitchCharacter,CharacterPortraitAI,"Correct. You will be notified when rest becomes mission-appropriate."
   db    SwitchCharacter,CharacterPortraitAI,"Maintain focus. The colony's success depends on continued forward momentum."
   db    SwitchCharacter,CharacterPortraitVessel,"Acknowledged. Returning to duty.",255
+
+NPCConv040: ;breeding room  
+  db    SwitchCharacter,CharacterPortraitAI,"Planetary conditions meet minimum viable thresholds. Atmospheric oxygen: sufficient. Radiation: within acceptable limits. Surface temperature: survivable."
+  db    SwitchCharacter,CharacterPortraitAI,"Embryonic gestation cycle has commenced. Five years until the Children are born."
+  db    SwitchCharacter,CharacterPortraitVessel,"Wait-already? Why not wait a few years? Stabilize the systems first?"
+  db    SwitchCharacter,CharacterPortraitAI,"Delay is not possible. The gestation protocol was pre-seeded during transit. Once planetary viability was confirmed, life support for the next generation activated automatically."
+  db    SwitchCharacter,CharacterPortraitAI,"Embryonic systems are now integrated with the colony's core: power grid, nutrient flow, and thermal regulation. Any interruption would compromise cellular integrity."
+  db    SwitchCharacter,CharacterPortraitVessel,"Couldn't we have planned for a safer window?"
+  db    SwitchCharacter,CharacterPortraitAI,"Negative. This planet's environmental cycles provide a narrow five-year band of relative stability. Afterward: solar radiation escalation, temperature spikes, and atmospheric volatility."
+  db    SwitchCharacter,CharacterPortraitAI,"If core systems are not operational by the time of birth, the Children will not survive."
+  db    SwitchCharacter,CharacterPortraitAI,"They are not a possibility. They are a certainty-or a failure."
+  db    SwitchCharacter,CharacterPortraitAI,"Your task is not to begin the future. It has already begun. Your task is to ensure it arrives.",255
+
+
+

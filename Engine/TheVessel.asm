@@ -536,12 +536,14 @@ sleepingquartersTileMap:  			incbin "..\tools\tilemapsleepingquarters.bin"
 armoryvaultTileMap:  						incbin "..\tools\tilemaparmoryvault.bin"
 holodeckTileMap:  							incbin "..\tools\tilemapholodeck.bin"
 medicalbayTileMap:  						incbin "..\tools\tilemapmedicalbay.bin"
+;medicalbayTileMap:  						incbin "..\tools\tilemap.bin"
 	dephase
 	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
 
 sciencelabTileMapBlock:  				equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
 	phase	$8000
 sciencelabTileMap:  						incbin "..\tools\tilemapsciencelab.bin"
+;sciencelabTileMap:  						incbin "..\tools\tilemap.bin"
 	dephase
 	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
 

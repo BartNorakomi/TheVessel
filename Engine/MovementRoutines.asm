@@ -1245,8 +1245,8 @@ holodeckEventRoutine:
   ld    (ChangeRoom?),a
   ret
 
-sciencelabcomputery:   db $54 + 4
-sciencelabcomputerx:   db 128 +16
+sciencelabcomputery:   db $54 + 4 + 4 + 4
+sciencelabcomputerx:   db 128 +16 - 40
 CheckShowPressTrigAIconsciencelab:
   ld    hl,sciencelabcomputery
   call  CheckPlayerNearArcadeMachine
@@ -1335,8 +1335,19 @@ medicalbaybed1y:   db $54 + 4
 medicalbaybed1x:   db 128 - 60
 medicalbaybed2y:   db $54 - 4
 medicalbaybed2x:   db 128 - 60
+medicalbayEmbryosy:db $54 - 4-30 - 8
+medicalbayEmbryosx:db $54 - 4 + 60 - 16
 
 CheckShowPressTrigAIconmedicalbay:
+  ld    hl,medicalbayEmbryosy
+  call  CheckPlayerNearArcadeMachine
+  jr    nz,.PlayerIsNear
+
+  ld    hl,(Radiation)                    ;dont show trig a icon above bed if radiation = 0
+  ld    a,l
+  or    h
+  ret   z
+
   ld    hl,medicalbaybed1y
   call  CheckPlayerNearArcadeMachine
   jr    nz,.PlayerIsNear
@@ -1362,8 +1373,124 @@ medicalbayEventRoutine:
 
   call  PutConversationCloud
   call  CheckShowPressTrigAIconmedicalbay
+  call  .CheckStartEmbryoConversation
+  call  .CheckStartHealingSequence
   call  PutPressTrigAIcon
   call  .HandleExplainerConversation
+  ret
+
+  .CheckStartHealingSequence:
+  ld    a,(object1+y)
+  cp    $3a
+  ret   c
+
+  ld    a,(ShowPressTriggerAIcon?)
+  or    a
+  ret   z
+;
+; bit	7	  6	  5		    4		    3		    2		  1		  0
+;		  0	  0	  trig-b	trig-a	right	  left	down	up	(joystick)
+;		  F5	F1	'M'		  space	  right	  left	down	up	(keyboard)
+;
+	ld		a,(NewPrContr)
+	bit		4,a           ;trig a pressed ?
+  ret   z
+
+  ;we can only heal if Radiation > 25% RadiationMax
+  ld    bc,(RadiationMax)
+  ld    de,4
+  call  DivideBCbyDE                    ; Out: BC = result, HL = rest
+  
+  ld    hl,(Radiation)
+  sbc   hl,bc
+  jr    nc,.LayDownAndGoHeal
+
+  ;set radiation level
+  ld    hl,(Radiation)
+  ld    de,100
+  call  MultiplyHlWithDE      ;HL = result
+  push  hl
+  pop   bc
+  ld    de,(RadiationMax)
+  call  DivideBCbyDE                    ; Out: BC = result, HL = rest
+
+  push  bc
+  pop   hl
+  call  NUM_TO_ASCII
+  ld    hl,Ascii5Byte+3
+  ld    de,TextRadiationLevel
+  ld    bc,2
+  ldir
+
+  ld    a,1
+  ld    (StartConversation?),a
+  ld    a,NPCConv1Block
+  ld    (NPCConvBlock),a
+  ld    hl,NPCConv042
+  ld    (NPCConvAddress),hl
+  ret
+
+  .LayDownAndGoHeal:
+	ld		hl,GoingToSleep
+  ld    (PlayerSpriteStand),hl
+	xor		a
+	ld		(Object1+ObjectPhase),a
+  ld    a,-1
+	ld		(Object1+var1),a
+  ret
+
+
+
+
+
+
+
+
+
+
+  ret
+
+
+  .CheckStartEmbryoConversation:
+  ld    a,(object1+y)
+  cp    $3a
+  ret   nc
+
+  ld    a,(ShowPressTriggerAIcon?)
+  or    a
+  ret   z
+;
+; bit	7	  6	  5		    4		    3		    2		  1		  0
+;		  0	  0	  trig-b	trig-a	right	  left	down	up	(joystick)
+;		  F5	F1	'M'		  space	  right	  left	down	up	(keyboard)
+;
+	ld		a,(NewPrContr)
+	bit		4,a           ;trig a pressed ?
+  ret   z
+
+  ld    hl,ConvEntity
+  bit   6,(hl)
+  set   6,(hl)
+  jr    z,.FirstConversationEmbyos
+  .embryocheckfollowup:
+  ;set remaining incubation period
+  ld    hl,TextRemainingIncubationPeriod
+  ;to do
+  ld    a,1
+  ld    (StartConversation?),a
+  ld    a,NPCConv1Block
+  ld    (NPCConvBlock),a
+  ld    hl,NPCConv041
+  ld    (NPCConvAddress),hl
+  ret
+
+  .FirstConversationEmbyos:
+  ld    a,1
+  ld    (StartConversation?),a
+  ld    a,NPCConv1Block
+  ld    (NPCConvBlock),a
+  ld    hl,NPCConv040
+  ld    (NPCConvAddress),hl
   ret
 
   .HandleExplainerConversation:
@@ -1394,7 +1521,7 @@ medicalbayEventRoutine:
   .sciencelab:
   ld    a,255-20
   ld    (Object1+x),a
-  ld    a,$5a
+  ld    a,$5a+16
   ld    (Object1+y),a
 
   ld    a,11

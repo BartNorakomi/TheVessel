@@ -2615,7 +2615,7 @@ CompareHLwithDE:
   ret
 
 StartSaveGameData:
-CurrentRoom:  db  11                    ;0=arcadehall1, 1=arcadehall2, 2=biopod, 3=hydroponicsbay, 4=hangarbay, 5=trainingdeck, 6=reactorchamber, 7=sleepingquarters, 8=armoryvault, 9=holodeck, 10=medicalbay
+CurrentRoom:  db  10                    ;0=arcadehall1, 1=arcadehall2, 2=biopod, 3=hydroponicsbay, 4=hangarbay, 5=trainingdeck, 6=reactorchamber, 7=sleepingquarters, 8=armoryvault, 9=holodeck, 10=medicalbay
                                         ;11=sciencelab, 12=drillinggame, 13=upgrademenu
 GamesPlayed:  db 9                      ;increases after leaving a game. max=255
 HighScoreTotalAverage: db 00            ;recruiter appears when 80 (%) is reached
@@ -2629,11 +2629,11 @@ ConvGirl: db %0000 0000                 ;conversations handled
 ConvCapGirl: db %0000 0000              ;conversations handled
 ConvGingerBoy: db %0000 0000            ;conversations handled
 ConvHost: db %0000 0001                 ;conversations handled
-ConvEntity: db %1000 0011               ;conversations handled
+ConvEntity: db %1000 0011               ;conversations handled bit 6=embryo check followup
 ConvEntityShipExplanations: db %1111 1111               ;conversations handled
 ;ConvEntityShipExplanations: db %0000 0000               ;conversations handled
 
-DateCurrentLogin: ds 6
+DateCurrentLogin: ds 6 
 DatePreviousLogin: ds 6
 DailyContinuesUsed: db 0                ;bit 0=roadfighter,bit 1=basketball,bit 2=blox,bit 4=bikerace
 
@@ -2677,10 +2677,10 @@ Fuel:                       dw  FuelTankLevel1MaxFuel
 FuelMax:                    dw  FuelTankLevel1MaxFuel
 Storage:                    dw  000
 StorageMax:                 dw  CargoSizeLevel1MaxStorage
-Energy:                     dw  125
+Energy:                     dw  124
 EnergyMax:                  dw  250
 EnergyXP:                   db  0
-Radiation:                  dw  0
+Radiation:                  dw  100
 RadiationMax:               dw  400
 RadiationProtectionLevel:   db  0       ;0=no protection, 1=level 1, 2=level 2,3=level 3, 4=level 4
 ConvSoldier: db %0000 0001              ;conversations handled bit0=intro, bit1=low fuel, bit2=low fuel short, bit3=low energy, bit4=low energy short, bit5=high radiation, bit6=storage full, bit7=storage full short
@@ -2693,6 +2693,8 @@ CargoSizeLevel1MaxStorage:  equ 032
 CargoSizeLevel2MaxStorage:  equ CargoSizeLevel1MaxStorage * 2
 CargoSizeLevel3MaxStorage:  equ CargoSizeLevel2MaxStorage * 2
 CargoSizeLevel4MaxStorage:  equ CargoSizeLevel3MaxStorage * 2
+
+
 
 
 EndSaveGameData:
