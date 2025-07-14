@@ -46,13 +46,13 @@ armoryvault=@{
 reactorchamber=@{
 		all=`
 	@{	name="reactorchamber";
-		imagePath="reactorchamber156x125.bmp";
+		imagePath="reactorchamber156x138.bmp";
 		palettePath="..\grapx\ship\reactorchamber\reactorchamber.PL";
 		destinationPath="";
 		pixelFilePath="reactorchamber.dat";
 		transparentColor=-1;fillcolor=15;
-		canvasX=0;canvasY=0;canvasWidth=3*156;canvasHeight=(1*125);
-		frameWidth=156;frameHeight=125;
+		canvasX=0;canvasY=0;canvasWidth=12*156;canvasHeight=(1*138);
+		frameWidth=156;frameHeight=138;
 		subjectX=0;subjectWidth=156;subjectY=-1;subjectHeight=-1;
 		slices=1;
 	};
@@ -171,7 +171,7 @@ Vesselgettingup=@{
 		destinationPath="";
 		pixelFilePath="Vesselgettingup.dat";
 		transparentColor=-1;fillcolor=15;
-		canvasX=0;canvasY=0;canvasWidth=5*156;canvasHeight=(1*125);
+		canvasX=0;canvasY=0;canvasWidth=11*156;canvasHeight=(1*125);
 		frameWidth=156;frameHeight=125;
 		subjectX=0;subjectWidth=156;subjectY=-1;subjectHeight=-1;
 		slices=1;

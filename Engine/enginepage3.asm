@@ -78,28 +78,33 @@ EventArcadeHall1:					db	1,0,0     | dw 000,000					,000   			| db 255      ,Mov
 EventArcadeHall2: 				db	1,0,0     | dw 000,000					,000        | db 255      ,MovementRoutinesBlock | dw ArcadeHall2EventRoutine		| db 000,000 ,000, 000
 EventSirens: 							db	1,0,0     | dw 000,000					,000        | db 255      ,MovementRoutinesBlock | dw SirensRoutine							| db 000,000 ,000, 000
 
-ObjectBiopod1: 						db  0,050,198 | dw 000,000					,Biopod_0  	| db 001			,MovementRoutinesBlock | dw BioPod1Routine						| db 000,000 ,000, 000
-ObjectBiopod2: 						db  0,050,064 | dw 000,000					,Biopod_1  	| db 001			,MovementRoutinesBlock | dw BioPod2Routine						| db 000,000 ,000, 000
-ObjectBiopod3: 						db  0,022,134 | dw 000,000					,Biopod_2  	| db 001			,MovementRoutinesBlock | dw BioPodBlinkingLightRoutine| db 000,000 ,000, 000
-EventBiopod: 							db	1,$28,$7e | dw 000,000					,000        | db 255      ,MovementRoutinesBlock | dw BiopodEventRoutine				| db 000,000 ,000, 000
+EventBiopod: 							db	1,052,$7e | dw 000,000					,000        | db 255      ,MovementRoutinesBlock | dw BiopodEventRoutine				| db 000,000 ,000, 000
+ObjectBiopod1: 						db  1,050,198 | dw 000,000					,Biopod_0  	| db 001			,MovementRoutinesBlock | dw BioPod1Routine						| db 000,000 ,000, 000
+ObjectBiopod2: 						db  1,050,064 | dw 000,000					,Biopod_1  	| db 001			,MovementRoutinesBlock | dw BioPod2Routine						| db 000,000 ,000, 000
+ObjectBiopod3: 						db  1,029,128 | dw 000,000					,Biopod_2  	| db 001			,MovementRoutinesBlock | dw BioPodBlinkingLightRoutine| db 000,000 ,000, 000
 
 EventHydroponicsbay: 			db	1,$28,$7e | dw 000,000					,000        | db 255      ,MovementRoutinesBlock | dw HydroponicsbayEventRoutine| db 000,000 ,000, 000
-Objecthydroponicsbay1: 		db  0,094,042 | dw 000,000	,hydroponicsbay_0  	| db 001			,MovementRoutinesBlock | dw hydroponicsbay1Routine		| db 000,000 ,000, 000
-Objecthydroponicsbay2: 		db  0,094,178 | dw 000,000	,hydroponicsbay_1  	| db 001			,MovementRoutinesBlock | dw hydroponicsbay2Routine		| db 000,000 ,000, 000
+Objecthydroponicsbay1: 		db  1,094,042 | dw 000,000	,hydroponicsbay_0  	| db 001			,MovementRoutinesBlock | dw hydroponicsbay1Routine		| db 000,000 ,000, 000
+Objecthydroponicsbay2: 		db  1,102,178 | dw 000,000	,hydroponicsbay_1  	| db 001			,MovementRoutinesBlock | dw hydroponicsbay2Routine		| db 000,000 ,000, 000
 
 EventHangarbay: 					db	1,$28,$7e | dw 000,000					,000        | db 255      ,MovementRoutinesBlock | dw HangarbayEventRoutine			| db 000,000 ,000, 000
-Objecthangarbay1: 				db  0,068,114 | dw 000,000	,hangarbay_0  			| db 001			,MovementRoutinesBlock | dw hangarbay1Routine					| db 000,000 ,000, 000
-Objecthangarbay2: 				db  0,068,114 | dw 000,000	,hangarbay_1  			| db 001			,MovementRoutinesBlock | dw hangarbay2Routine					| db 000,000 ,000, 000
+Objecthangarbay1: 				db  1,076,134 | dw 000,000	,hangarbay_0  			| db 001			,MovementRoutinesBlock | dw hangarbay1Routine					| db 000,000 ,000, 000
+Objecthangarbay2: 				db  1,076,134 | dw 000,000	,hangarbay_1  			| db 001			,MovementRoutinesBlock | dw hangarbay2Routine					| db 000,000 ,000, 000
 
 EventTrainingdeck: 				db	1,$28,$7e | dw 000,000					,000        | db 255      ,MovementRoutinesBlock | dw TrainingdeckEventRoutine	| db 000,000 ,000, 000
-Objecttrainingdeck1: 			db  0,099,254 | dw 000,000	,trainingdeck_0  		| db 001			,MovementRoutinesBlock | dw trainingdeck1Routine			| db 000,000 ,000, 000
-Objecttrainingdeck2: 			db  0,087,000 | dw 000,000	,trainingdeck_1  		| db 001			,MovementRoutinesBlock | dw trainingdeck2Routine			| db 000,000 ,000, 000
-Objecttrainingdeck3: 			db  0,104,054 | dw 000,000	,trainingdeck_2  		| db 001			,MovementRoutinesBlock | dw trainingdeck3Routine			| db 000,000 ,000, 000
+Objecttrainingdeck1: 			db  1,099,254 | dw 000,000	,trainingdeck_0  		| db 001			,MovementRoutinesBlock | dw trainingdeck1Routine			| db 000,000 ,000, 000
+Objecttrainingdeck2: 			db  1,087,000 | dw 000,000	,trainingdeck_1  		| db 001			,MovementRoutinesBlock | dw trainingdeck2Routine			| db 000,000 ,000, 000
+Objecttrainingdeck3: 			db  1,104,054 | dw 000,000	,trainingdeck_2  		| db 001			,MovementRoutinesBlock | dw trainingdeck3Routine			| db 000,000 ,000, 000
 
 Eventreactorchamber:			db	1,$28,$7e | dw 000,000					,000        | db 255      ,MovementRoutinesBlock | dw reactorchamberEventRoutine| db 000,000 ,000, 000
-Objectreactorchamber1: 		db  0,083,128 | dw 000,000	,reactorchamber_0  	| db 001			,MovementRoutinesBlock | dw reactorchamber1Routine		| db 000,000 ,000, 000
-Objectreactorchamber2: 		db  0,083,128 | dw 000,000	,reactorchamber_1  	| db 001			,MovementRoutinesBlock | dw reactorchamber2Routine		| db 000,000 ,000, 000
-Objectreactorchamber3: 		db  0,074,248 | dw 000,000	,reactorchamber_2  	| db 001			,MovementRoutinesBlock | dw reactorchamber3Routine		| db 000,000 ,000, 000
+;Objectreactorchamber1: 		db  1,030,128 | dw 000,000	,reactorchamber_0  	| db 001			,MovementRoutinesBlock | dw reactorchamber1Routine		| db 000,000 ,000, 000
+;Objectreactorchamber2: 		db  1,030,128 | dw 000,000	,reactorchamber_1  	| db 001			,MovementRoutinesBlock | dw reactorchamber2Routine		| db 000,000 ,000, 000
+;Objectreactorchamber3: 		db  1,030,128 | dw 000,000	,reactorchamber_2  	| db 001			,MovementRoutinesBlock | dw reactorchamber3Routine		| db 000,000 ,000, 000
+
+Objectreactorchamber1: 		db  1,030,128 | dw 000,000	,reactorchamber_0  	| db 001			,MovementRoutinesBlock | dw reactorchamber1Routine		| db 000,000 ,000, 000
+Objectreactorchamber2: 		db  1,066,128 | dw 000,000	,reactorchamber_1  	| db 001			,MovementRoutinesBlock | dw reactorchamber2Routine		| db 000,000 ,000, 000
+Objectreactorchamber3: 		db  1,066,128 | dw 000,000	,reactorchamber_2  	| db 001			,MovementRoutinesBlock | dw reactorchamber3Routine		| db 000,000 ,000, 000
+
 
 Eventarmoryvault:					db	1,$28,$7e | dw 000,000					,000        | db 255      ,MovementRoutinesBlock | dw armoryvaultEventRoutine		| db 000,000 ,000, 000
 Objectarmoryvault1: 			db  0,098,250 | dw 000,000	,armoryvault_0  		| db 001			,MovementRoutinesBlock | dw armoryvault1Routine				| db 000,000 ,000, 000
@@ -582,6 +587,8 @@ PutObjectsArcadeHall2:
 	cp		100
 	jr		c,.BackRoomGameNotYetFinished
 
+
+;MOVE THIS TO ENTITY ROUTINE
 	ld		a,1
 	ld		(SkipAssignOrder?),a						;we implement a hackjob here. In same cases we don't want to assign order
 	xor		a

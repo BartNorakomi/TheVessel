@@ -1173,7 +1173,7 @@ YLineintOff:                  ds  1
 YCurrentLineint:              ds  1
 PageOnLineInt:                ds  1
 FadeStep:                     ds  1
-FadeIn?:                      ds  1
+;FadeIn?:                      ds  1
 CurrentPortraitPaletteFaded:  ds  32
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 CurrentPortraitPalette:       ds  32
@@ -1703,15 +1703,15 @@ BlinkEyes:
 EnableFadeOutPortrait:                  ;enable fade out portrait
   ld    a,0                             ;palette step (0=normal map palette, 7=completely black)
   ld    (FadeStep),a
-  ld    a,0
-  ld    (FadeIn?),a
+;  ld    a,0
+;  ld    (FadeIn?),a
   ret
 
 EnableFadeInPortrait:                   ;enable fade in portrait
   ld    a,7                             ;palette step (0=normal map palette, 7=completely black)
   ld    (FadeStep),a
-  ld    a,1
-  ld    (FadeIn?),a
+;  ld    a,1
+;  ld    (FadeIn?),a
   ret
 
 FadeInPortrait:                         ;fade in portrait (CurrentPortraitPalette=actual palette, CurrentPortraitPaletteFaded=faded palette)
@@ -2615,7 +2615,7 @@ CompareHLwithDE:
   ret
 
 StartSaveGameData:
-CurrentRoom:  db  04                    ;0=arcadehall1, 1=arcadehall2, 2=biopod, 3=hydroponicsbay, 4=hangarbay, 5=trainingdeck, 6=reactorchamber, 7=sleepingquarters, 8=armoryvault, 9=holodeck, 10=medicalbay
+CurrentRoom:  db  11                    ;0=arcadehall1, 1=arcadehall2, 2=biopod, 3=hydroponicsbay, 4=hangarbay, 5=trainingdeck, 6=reactorchamber, 7=sleepingquarters, 8=armoryvault, 9=holodeck, 10=medicalbay
                                         ;11=sciencelab, 12=drillinggame, 13=upgrademenu
 GamesPlayed:  db 9                      ;increases after leaving a game. max=255
 HighScoreTotalAverage: db 00            ;recruiter appears when 80 (%) is reached
@@ -2677,7 +2677,7 @@ Fuel:                       dw  FuelTankLevel1MaxFuel
 FuelMax:                    dw  FuelTankLevel1MaxFuel
 Storage:                    dw  000
 StorageMax:                 dw  CargoSizeLevel1MaxStorage
-Energy:                     dw  250
+Energy:                     dw  125
 EnergyMax:                  dw  250
 EnergyXP:                   db  0
 Radiation:                  dw  0

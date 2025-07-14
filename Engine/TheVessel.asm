@@ -511,6 +511,7 @@ ArcadeHall1TileMap:  						incbin "..\tools\tilemapArcade1.bin"
 ArcadeHall2TileMap:  						incbin "..\tools\tilemapArcade2.bin"
 ArcadeHall2EntityTileMap:  			incbin "..\tools\tilemapArcade2Entity.bin"
 BiopodTileMap:  								incbin "..\tools\tilemapBiopod.bin"
+;BiopodTileMap:  								incbin "..\tools\tilemap.bin"
 	dephase
 	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
 

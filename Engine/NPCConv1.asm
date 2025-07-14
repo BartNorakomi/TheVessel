@@ -275,3 +275,13 @@ NPCConv037: ;resource offload
 NPCConv038: ;resource offload
   db    SwitchCharacter,CharacterPortraitResourceOffload," ",255
 
+NPCConv039: ;sleeping quarters >50% energy
+  db    SwitchCharacter,CharacterPortraitVessel,"Alright... time to grab some sleep."
+  db    SwitchCharacter,CharacterPortraitAI,"Sleep request denied. Current energy reserves are above 50%."
+  db    SwitchCharacter,CharacterPortraitAI,"While rest is essential, it is not yet necessary. You remain within peak operational thresholds."
+  db    SwitchCharacter,CharacterPortraitVessel,"I was hoping for a short reset. Just to clear my head."
+  db    SwitchCharacter,CharacterPortraitAI,"Understood. But with colony systems still below sustainability benchmarks, resource allocation favors active deployment. Recommendation: return to mission-critical tasks - mining, training, or structural expansion."
+  db    SwitchCharacter,CharacterPortraitVessel,"So rest is off the table for now?"
+  db    SwitchCharacter,CharacterPortraitAI,"Correct. You will be notified when rest becomes mission-appropriate."
+  db    SwitchCharacter,CharacterPortraitAI,"Maintain focus. The colony's success depends on continued forward momentum."
+  db    SwitchCharacter,CharacterPortraitVessel,"Acknowledged. Returning to duty.",255

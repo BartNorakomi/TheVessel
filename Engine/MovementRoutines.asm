@@ -19,10 +19,10 @@
 ;EntitybRoutine
 ;EntitycRoutine
 
+;BiopodEventRoutine
 ;BioPod1Routine
 ;BioPod2Routine
 ;BioPodBlinkingLightRoutine
-;BiopodEventRoutine
 
 ;HydroponicsbayEventRoutine
 ;hydroponicsbay1Routine
@@ -38,11 +38,20 @@
 ;trainingdeck3Routine
 
 ;reactorchamberEventRoutine
+;reactorchamber1Routine
+;reactorchamber2Routine
+;reactorchamber3Routine
 
 ;sleepingquartersEventRoutine
 ;armoryvaultEventRoutine
+
 ;holodeckEventRoutine
+;holodeck1Routine
+;holodeck2Routine
+
 ;medicalbayEventRoutine
+;medicalbay1Routine
+;medicalbay2Routine
 
 ;sciencelabEventRoutine
 
@@ -89,12 +98,156 @@ TheVesselgettingup_2:        db    TheVesselgettingupframelistblock, TheVesselge
 TheVesselgettingup_3:        db    TheVesselgettingupframelistblock, TheVesselgettingupspritedatablock | dw    Vesselgettingup_3_0
 TheVesselgettingup_4:        db    TheVesselgettingupframelistblock, TheVesselgettingupspritedatablock | dw    Vesselgettingup_4_0
 
+TheVesselGoingToSleep:
+TheVesselgettingup_5:        db    TheVesselgettingupframelistblock, TheVesselgettingupspritedatablock | dw    Vesselgettingup_5_0
+TheVesselgettingup_6:        db    TheVesselgettingupframelistblock, TheVesselgettingupspritedatablock | dw    Vesselgettingup_6_0
+TheVesselgettingup_7:        db    TheVesselgettingupframelistblock, TheVesselgettingupspritedatablock | dw    Vesselgettingup_7_0
+TheVesselgettingup_8:        db    TheVesselgettingupframelistblock, TheVesselgettingupspritedatablock | dw    Vesselgettingup_8_0
+TheVesselgettingup_9:        db    TheVesselgettingupframelistblock, TheVesselgettingupspritedatablock | dw    Vesselgettingup_9_0
+TheVesselgettingup_10:        db    TheVesselgettingupframelistblock, TheVesselgettingupspritedatablock | dw    Vesselgettingup_10_0
+
+TheVesselGettingOutOfBed:
+.TheVesselgettingup_10:        db    TheVesselgettingupframelistblock, TheVesselgettingupspritedatablock | dw    Vesselgettingup_10_0
+.TheVesselgettingup_9:        db    TheVesselgettingupframelistblock, TheVesselgettingupspritedatablock | dw    Vesselgettingup_9_0
+.TheVesselgettingup_8:        db    TheVesselgettingupframelistblock, TheVesselgettingupspritedatablock | dw    Vesselgettingup_8_0
+.TheVesselgettingup_7:        db    TheVesselgettingupframelistblock, TheVesselgettingupspritedatablock | dw    Vesselgettingup_7_0
+.TheVesselgettingup_6:        db    TheVesselgettingupframelistblock, TheVesselgettingupspritedatablock | dw    Vesselgettingup_6_0
+.TheVesselgettingup_5:        db    TheVesselgettingupframelistblock, TheVesselgettingupspritedatablock | dw    Vesselgettingup_5_0
+
+
 VesselMovementRoutine:
   ld    a,(framecounter)                    ;at max 4 objects can be put in screen divided over 4 frames
   and   3
   ret   nz
   ld    hl,(PlayerSpriteStand)
   jp    (hl)
+
+GoingToSleep:
+  .HandlePhase:
+  ld    a,(iy+ObjectPhase)
+  or    a
+  jp    z,.Phase0                           ;climb into bed
+  dec   a
+  jp    z,.Phase1                           ;fade out screen
+  dec   a
+  jp    z,.Phase2                           ;wait
+  dec   a
+  jp    z,.Phase3                           ;fade in screen
+  dec   a
+  jp    z,.Phase4                           ;climb out of bed
+  ret
+
+  .Phase4:                                  ;climb out of bed
+  ld    a,(framecounter)                    ;wait timer
+  and   15
+  ret   nz
+
+  ld    hl,TheVesselGettingOutOfBed         ;starting pose
+  ld    b,07                                ;animation steps
+  call  AnimateObject                       ;in hl=starting pose, b=animation steps, uses: var1
+	ld		a,(iy+var1)
+  cp    6
+  ret   nz
+
+  ld    hl,(EnergyMax)                      ;refill energy
+  ld    (Energy),hl
+
+	;set starting coordinates player
+	ld		a,090														;y
+	ld		(Object1+y),a
+	ld		a,060														;x
+	ld		(Object1+x),a
+
+	ld		hl,RStanding
+  ld    (PlayerSpriteStand),hl
+
+  ld    hl,TheVesselrightidle_0
+  jp    PutSpritePose                       ;in hl=spritepose, out writes spritepose to objecttable
+
+  .Phase3:                                  ;fade in screen
+  ld    a,(framecounter)                    ;wait timer
+  and   3
+  ret   nz
+
+  ld    a,(FadeStep)
+  dec   a
+  ld    (FadeStep),a
+  cp    -1
+  jp    z,.EndPhase3
+  ld    d,a                                 ;palette step (0=normal map palette, 7=completely black)
+
+  push  iy
+  ld    iy,CurrentPortraitPaletteFaded  ;faded palette
+  ld    b,16                            ;16 colors
+  ld    hl,CurrentPalette               ;actual palette
+  call  SetPaletteFadeStep.loop2
+  pop   iy
+
+  ld    hl,CurrentPortraitPaletteFaded
+  jp		SetPalette
+
+  .EndPhase3:
+  ld    (iy+ObjectPhase),4
+  ld    a,-1
+	ld		(Object1+var1),a
+  ret
+
+  .Phase2:                                  ;wait
+  ld    a,(framecounter)                    ;wait timer
+  and   127
+  ret   nz
+  ld    (iy+ObjectPhase),3
+  ld    a,7                             ;palette step (0=normal map palette, 7=completely black)
+  ld    (FadeStep),a
+  ret
+
+  .Phase1:                                  ;fade out screen
+  ld    a,(framecounter)                    ;wait timer
+  and   3
+  ret   nz
+
+  ld    a,(FadeStep)
+  inc   a
+  ld    (FadeStep),a
+  cp    8
+  jp    z,.EndPhase1
+  ld    d,a                                 ;palette step (0=normal map palette, 7=completely black)
+
+  push  iy
+  ld    iy,CurrentPortraitPaletteFaded  ;faded palette
+  ld    b,16                            ;16 colors
+  ld    hl,CurrentPalette               ;actual palette
+  call  SetPaletteFadeStep.loop2
+  pop   iy
+
+  ld    hl,CurrentPortraitPaletteFaded
+  jp		SetPalette
+
+  .EndPhase1:
+  ld    (iy+ObjectPhase),2
+  ret
+
+  .Phase0:                                  ;climb into bed
+  ld    a,(framecounter)                    ;wait timer
+  and   15
+  ret   nz
+
+	;set starting coordinates player
+	ld		a,074														;y
+	ld		(Object1+y),a
+	ld		a,060														;x
+	ld		(Object1+x),a
+
+  ld    hl,TheVesselGoingToSleep            ;starting pose
+  ld    b,06                                ;animation steps
+  call  AnimateObject                       ;in hl=starting pose, b=animation steps, uses: var1
+	ld		a,(iy+var1)
+  cp    5
+  ret   nz
+  ld    (iy+ObjectPhase),1
+  ld    a,0                             ;palette step (0=normal map palette, 7=completely black)
+  ld    (FadeStep),a
+  ret
 
 RGettingUp:
   .HandlePhase:
@@ -115,8 +268,12 @@ RGettingUp:
   add   a,5
   ld    (iy+y),a
   cp    100
-  jp    nc,Set_R_stand
+  jr    c,.EndCheckEndPhase2
 
+  ld    (iy+y),102
+  jp    Set_R_stand
+
+  .EndCheckEndPhase2:
   ld    a,(framecounter)                    ;at max 4 objects can be put in screen divided over 4 frames
   and   15
   ret   nz
@@ -1265,6 +1422,16 @@ CheckShowPressTrigAIconsleepingquarters:
   call  CheckPlayerNearArcadeMachine
   ret   z
 
+  ;dont show press trig A icon if Energy > EnergyMAX-3
+  ld    hl,(EnergyMax)
+  dec   hl
+  dec   hl
+  dec   hl
+  ld    de,(Energy)
+  xor   a
+  sbc   hl,de
+  ret   c
+
   .PlayerIsNear:
   ld    a,1
   ld    (ShowPressTriggerAIcon?),a
@@ -1276,11 +1443,50 @@ CheckShowPressTrigAIconsleepingquarters:
 
 sleepingquartersEventRoutine:
   call  .CheckPlayerLeavingRoom             ;when y>116 player enters arcadehall1 
-
   call  PutConversationCloud
   call  CheckShowPressTrigAIconsleepingquarters
+  call  .CheckStartSleepSequence
   call  PutPressTrigAIcon
   call  .HandleExplainerConversation
+  ret
+
+  .CheckStartSleepSequence:
+  ld    a,(ShowPressTriggerAIcon?)
+  or    a
+  ret   z
+;
+; bit	7	  6	  5		    4		    3		    2		  1		  0
+;		  0	  0	  trig-b	trig-a	right	  left	down	up	(joystick)
+;		  F5	F1	'M'		  space	  right	  left	down	up	(keyboard)
+;
+	ld		a,(NewPrContr)
+	bit		4,a           ;trig a pressed ?
+  ret   z
+
+  ;we can only go to sleep if our energy <50% of our max energy
+  ld    bc,(EnergyMax)
+  ld    de,2
+  call  DivideBCbyDE                    ; Out: BC = result, HL = rest
+  
+  ld    hl,(Energy)
+  sbc   hl,bc
+  jr    c,.GoToSleep
+
+  ld    a,1
+  ld    (StartConversation?),a
+  ld    a,NPCConv1Block
+  ld    (NPCConvBlock),a
+  ld    hl,NPCConv039
+  ld    (NPCConvAddress),hl
+  ret
+
+  .GoToSleep:
+	ld		hl,GoingToSleep
+  ld    (PlayerSpriteStand),hl
+	xor		a
+	ld		(Object1+ObjectPhase),a
+  ld    a,-1
+	ld		(Object1+var1),a
   ret
 
   .HandleExplainerConversation:
@@ -1351,6 +1557,51 @@ WaitCenterScreen:
 
   .DontPutConversation:
   pop   af
+  ret
+
+
+
+;slice 1 (top)
+reactorchamber_0:        db    reactorchamberframelistblock, reactorchamberspritedatablock | dw    reactorchamber_0_0
+reactorchamber_3:        db    reactorchamberframelistblock, reactorchamberspritedatablock | dw    reactorchamber_3_0
+reactorchamber_6:        db    reactorchamberframelistblock, reactorchamberspritedatablock | dw    reactorchamber_6_0
+reactorchamber_9:        db    reactorchamberframelistblock, reactorchamberspritedatablock | dw    reactorchamber_9_0
+;slice 2 (middle)
+reactorchamber_1:        db    reactorchamberframelistblock, reactorchamberspritedatablock | dw    reactorchamber_1_0
+reactorchamber_4:        db    reactorchamberframelistblock, reactorchamberspritedatablock | dw    reactorchamber_4_0
+reactorchamber_7:        db    reactorchamberframelistblock, reactorchamberspritedatablock | dw    reactorchamber_7_0
+reactorchamber_10:        db    reactorchamberframelistblock, reactorchamberspritedatablock | dw    reactorchamber_10_0
+;slice 3 (bottom)
+reactorchamber_2:        db    reactorchamberframelistblock, reactorchamberspritedatablock | dw    reactorchamber_2_0
+reactorchamber_5:        db    reactorchamberframelistblock, reactorchamberspritedatablock | dw    reactorchamber_5_0
+reactorchamber_8:        db    reactorchamberframelistblock, reactorchamberspritedatablock | dw    reactorchamber_8_0
+reactorchamber_11:        db    reactorchamberframelistblock, reactorchamberspritedatablock | dw    reactorchamber_11_0
+
+reactorchamber1Routine:
+  ld    a,(framecounter)                    ;at max 4 objects can be put in screen divided over 4 frames
+  and   3
+  ret   nz
+
+  ld    hl,reactorchamber_0                         ;starting pose
+  ld    b,4                                ;animation steps
+  call  AnimateObject                       ;in hl=starting pose, b=animation steps, uses: var1
+
+  .SetSlice2and3:
+  ld    l,(iy+7)                            ;take sprite slice 1
+  ld    h,(iy+8)
+  ld    de,4*04                             ;add 11 sprites (4 bytes per sprite info) to go to slice 2
+  add   hl,de
+  ld    (iy+7+LenghtObject),l
+  ld    (iy+8+LenghtObject),h
+  add   hl,de
+  ld    (iy+7+LenghtObject*2),l
+  ld    (iy+8+LenghtObject*2),h
+  ret
+
+reactorchamber2Routine:
+  ret
+
+reactorchamber3Routine:
   ret
 
 reactorchamberEventRoutine:
@@ -2031,17 +2282,6 @@ trainingdeck_2:        db    trainingdeckframelistblock, trainingdeckspritedatab
 trainingdeck3Routine:
   ret
 
-reactorchamber_0:        db    reactorchamberframelistblock, reactorchamberspritedatablock | dw    reactorchamber_0_0
-reactorchamber1Routine:
-  ret
-
-reactorchamber_1:        db    reactorchamberframelistblock, reactorchamberspritedatablock | dw    reactorchamber_1_0
-reactorchamber2Routine:
-  ret
-
-reactorchamber_2:        db    reactorchamberframelistblock, reactorchamberspritedatablock | dw    reactorchamber_2_0
-reactorchamber3Routine:
-  ret
 
 armoryvault_0:        db    armoryvaultframelistblock, armoryvaultspritedatablock | dw    armoryvault_0_0
 armoryvault1Routine:
