@@ -115,12 +115,164 @@ TheVesselGettingOutOfBed:
 .TheVesselgettingup_5:        db    TheVesselgettingupframelistblock, TheVesselgettingupspritedatablock | dw    Vesselgettingup_5_0
 
 
+TheVesselClimbingIntoMedBed:
+.TheVesselgettingup_5:        db    TheVesselgettingupframelistblock, TheVesselgettingupspritedatablock | dw    Vesselgettingup_5_0
+.TheVesselgettingup_6:        db    TheVesselgettingupframelistblock, TheVesselgettingupspritedatablock | dw    Vesselgettingup_6_0
+.TheVesselgettingup_7:        db    TheVesselgettingupframelistblock, TheVesselgettingupspritedatablock | dw    Vesselgettingup_7_0
+.TheVesselgettingup_13:        db    TheVesselgettingupframelistblock, TheVesselgettingupspritedatablock | dw    Vesselgettingup_13_0
+.TheVesselgettingup_12:        db    TheVesselgettingupframelistblock, TheVesselgettingupspritedatablock | dw    Vesselgettingup_12_0
+.TheVesselgettingup_12b:        db    TheVesselgettingupframelistblock, TheVesselgettingupspritedatablock | dw    Vesselgettingup_12_0
+.TheVesselgettingup_12c:        db    TheVesselgettingupframelistblock, TheVesselgettingupspritedatablock | dw    Vesselgettingup_12_0
+
+TheVesselGettingOutOfMedBed:
+.TheVesselgettingup_12:        db    TheVesselgettingupframelistblock, TheVesselgettingupspritedatablock | dw    Vesselgettingup_12_0
+.TheVesselgettingup_13:        db    TheVesselgettingupframelistblock, TheVesselgettingupspritedatablock | dw    Vesselgettingup_13_0
+.TheVesselgettingup_7:        db    TheVesselgettingupframelistblock, TheVesselgettingupspritedatablock | dw    Vesselgettingup_7_0
+.TheVesselgettingup_6:        db    TheVesselgettingupframelistblock, TheVesselgettingupspritedatablock | dw    Vesselgettingup_6_0
+.TheVesselgettingup_5:        db    TheVesselgettingupframelistblock, TheVesselgettingupspritedatablock | dw    Vesselgettingup_5_0
+
+
 VesselMovementRoutine:
   ld    a,(framecounter)                    ;at max 4 objects can be put in screen divided over 4 frames
   and   3
   ret   nz
   ld    hl,(PlayerSpriteStand)
   jp    (hl)
+
+LayDownAndGoHeal:
+  .HandlePhase:
+  ld    a,(iy+ObjectPhase)
+  or    a
+  jp    z,.Phase0                           ;climb into bed
+  dec   a
+  jp    z,.Phase1                           ;fade out screen
+  dec   a
+  jp    z,.Phase2                           ;wait
+  dec   a
+  jp    z,.Phase3                           ;fade in screen
+  dec   a
+  jp    z,.Phase4                           ;climb out of bed
+  ret
+
+  .Phase4:                                  ;climb out of bed
+  ld    a,(framecounter)                    ;wait timer
+  and   15
+  ret   nz
+
+  ld    hl,TheVesselGettingOutOfMedBed      ;starting pose
+  ld    b,06                                ;animation steps
+  call  AnimateObject                       ;in hl=starting pose, b=animation steps, uses: var1
+	ld		a,(iy+var1)
+  cp    5
+  ret   nz
+
+	;set starting coordinates player
+	ld		a,090														;y
+	ld		(Object1+y),a
+	ld		a,060														;x
+	ld		(Object1+x),a
+
+	ld		hl,RStanding
+  ld    (PlayerSpriteStand),hl
+
+  ld    hl,TheVesselrightidle_0
+  jp    PutSpritePose                       ;in hl=spritepose, out writes spritepose to objecttable
+
+  .Phase3:                                  ;fade in screen
+  ld    a,(framecounter)                    ;wait timer
+  and   3
+  ret   nz
+
+  ld    a,(FadeStep)
+  dec   a
+  ld    (FadeStep),a
+  cp    -1
+  jp    z,.EndPhase3
+  ld    d,a                                 ;palette step (0=normal map palette, 7=completely black)
+
+  push  iy
+  ld    iy,CurrentPortraitPaletteFaded  ;faded palette
+  ld    b,16                            ;16 colors
+  ld    hl,CurrentPalette               ;actual palette
+  call  SetPaletteFadeStep.loop2
+  pop   iy
+
+  ld    hl,CurrentPortraitPaletteFaded
+  jp		SetPalette
+
+  .EndPhase3:
+  ld    (iy+ObjectPhase),4
+  ld    a,-1
+	ld		(Object1+var1),a
+  ret
+
+  .Phase2:                                  ;wait
+  ld    a,(framecounter)                    ;wait timer
+  and   127
+  ret   nz
+  ld    (iy+ObjectPhase),3
+  ld    a,7                             ;palette step (0=normal map palette, 7=completely black)
+  ld    (FadeStep),a
+  ret
+
+  .Phase1:                                  ;fade out screen
+  ld    a,(framecounter)                    ;wait timer
+  and   3
+  ret   nz
+
+  ld    a,(FadeStep)
+  inc   a
+  ld    (FadeStep),a
+  cp    8
+  jp    z,.EndPhase1
+  ld    d,a                                 ;palette step (0=normal map palette, 7=completely black)
+
+  push  iy
+  ld    iy,CurrentPortraitPaletteFaded  ;faded palette
+  ld    b,16                            ;16 colors
+  ld    hl,CurrentPalette               ;actual palette
+  call  SetPaletteFadeStep.loop2
+  pop   iy
+
+  ld    hl,CurrentPortraitPaletteFaded
+  jp		SetPalette
+
+  .EndPhase1:
+  ld    (iy+ObjectPhase),2
+  ret
+
+  .Phase0:                                  ;climb into bed
+  ld    hl,0                                ;reset radiation level
+  ld    (Radiation),hl
+
+  ld    a,(framecounter)                    ;wait timer
+  and   15
+  ret   nz
+
+  xor   a
+  ld    (Object2+on?),a                     ;hackjob, turn off bed
+  ld    (Object3+on?),a                     ;hackjob, turn off bed
+
+	;set starting coordinates player
+	ld		a,074														;y
+	ld		(Object1+y),a
+	ld		a,060+6														;x
+	ld		(Object1+x),a
+
+  ld    hl,TheVesselClimbingIntoMedBed      ;starting pose
+  ld    b,07                                ;animation steps
+  call  AnimateObject                       ;in hl=starting pose, b=animation steps, uses: var1
+	ld		a,(iy+var1)
+  cp    6
+  ret   nz
+  ld    (iy+ObjectPhase),1
+  ld    a,0                             ;palette step (0=normal map palette, 7=completely black)
+  ld    (FadeStep),a
+
+  ld    a,1
+  ld    (Object2+on?),a                     ;hackjob, turn on bed
+  ld    (Object3+on?),a                     ;hackjob, turn on bed
+  ret
 
 GoingToSleep:
   .HandlePhase:
@@ -534,39 +686,177 @@ MovePlayer:
   jp    z,MoveRight
   ret
 
-HorizontalSpeedPlayer:  equ 4
-MoveLeft:
-  ld    a,(iy+2)                            ;x
-  sub   a,HorizontalSpeedPlayer
-  ret   c
-  ld    (iy+2),a                            ;x
+EdgeRoomRight:  equ 254
+EdgeRoomLeft:   equ 2
+EnterRoomRight:  equ 252
+EnterRoomLeft:   equ 4
 
+
+HorizontalSpeedPlayer:  equ 6
+MoveLeft:
+  ;Horizontal movement speed = 6. Since tiles are 4x4, first move 2 pixels left and perform collision checks. If no collision is detected, then move the remaining 4 pixels left
+  ld    a,(iy+x)                            ;x
+  sub   a,2
+  ret   c
+  ld    (iy+x),a                            ;x
   call  CheckCollisionWall                  ;out: nz=collision
-  jr    nz,.Collision
+  jr    z,.NoCollisionCheck1
+
+  ;at this point there is collision, lets check if we can pass throught the top or bottom ?
+  ;Check Pass Through Top
+  ld    a,(iy+y)                            ;y
+  sub   a,4
+  ld    (iy+y),a                            ;y
+  ld    de,-64
+  add   hl,de                               ;check row above
+  bit   0,(hl)                              ;out: nz=collision
+  jr    z,.NoCollisionCheck1
+
+  ld    a,(iy+y)                            ;y
+  add   a,8
+  ld    (iy+y),a                            ;y
+  ld    de,128
+  add   hl,de                               ;check row below
+  bit   0,(hl)                              ;out: nz=collision
+  jr    z,.NoCollisionCheck1
+
+  ;UnableToPass1
+  ld    a,(iy+y)                            ;y
+  sub   a,4
+  ld    (iy+y),a                            ;y
+
+  ld    a,(iy+x)                            ;x
+  add   a,2
+  ld    (iy+x),a                            ;x
+  ret
+
+  .NoCollisionCheck1:
+  ld    a,(iy+x)                            ;x
+  sub   a,4
+  ret   c
+  ld    (iy+x),a                            ;x
+  call  CheckCollisionWall                  ;out: nz=collision
+  jr    z,.NoCollisionCheck2
+
+  ;at this point there is collision, lets check if we can pass throught the top or bottom ?
+  ;Check Pass Through Top
+  ld    a,(iy+y)                            ;y
+  sub   a,4
+  ld    (iy+y),a                            ;y
+  ld    de,-64
+  add   hl,de                               ;check row above
+  bit   0,(hl)                              ;out: nz=collision
+  jr    z,.NoCollisionCheck2
+
+  ld    a,(iy+y)                            ;y
+  add   a,8
+  ld    (iy+y),a                            ;y
+  ld    de,128
+  add   hl,de                               ;check row below
+  bit   0,(hl)                              ;out: nz=collision
+  jr    z,.NoCollisionCheck2
+
+  ;UnableToPass1
+  ld    a,(iy+y)                            ;y
+  sub   a,4
+  ld    (iy+y),a                            ;y
+
+  ld    a,(iy+x)                            ;x
+  add   a,4
+  ld    (iy+x),a                            ;x
+  ret
+
+  .NoCollisionCheck2:
   call  CheckCollisionNPCs                  ;check if player collides with npcs. out ;d=0(no collision), d=1(collision)
   bit   0,d                                 ;d=0(no collision), d=1(collision)
   ret   z
   .Collision:
-  ld    a,(iy+2)                            ;x
-  add   a,HorizontalSpeedPlayer
-  ld    (iy+2),a                            ;x
+  ld    a,(iy+x)                            ;x
+  add   a,6
+  ld    (iy+x),a                            ;x
   ret
 
 MoveRight:
-  ld    a,(iy+2)                            ;x
-  add   a,HorizontalSpeedPlayer
+  ;Horizontal movement speed = 6. Since tiles are 4x4, first move 2 pixels left and perform collision checks. If no collision is detected, then move the remaining 4 pixels left
+  ld    a,(iy+x)                            ;x
+  add   a,2
   ret   c
-  ld    (iy+2),a                            ;x
-
+  ld    (iy+x),a                            ;x
   call  CheckCollisionWall                  ;out: nz=collision
-  jr    nz,.Collision
+  jr    z,.NoCollisionCheck1
+
+  ;at this point there is collision, lets check if we can pass throught the top or bottom ?
+  ;Check Pass Through Top
+  ld    a,(iy+y)                            ;y
+  sub   a,4
+  ld    (iy+y),a                            ;y
+  ld    de,-64
+  add   hl,de                               ;check row above
+  bit   0,(hl)                              ;out: nz=collision
+  jr    z,.NoCollisionCheck1
+
+  ld    a,(iy+y)                            ;y
+  add   a,8
+  ld    (iy+y),a                            ;y
+  ld    de,128
+  add   hl,de                               ;check row below
+  bit   0,(hl)                              ;out: nz=collision
+  jr    z,.NoCollisionCheck1
+
+  ;UnableToPass1
+  ld    a,(iy+y)                            ;y
+  sub   a,4
+  ld    (iy+y),a                            ;y
+
+  ld    a,(iy+x)                            ;x
+  sub   a,2
+  ld    (iy+x),a                            ;x
+  ret
+
+  .NoCollisionCheck1:
+  ld    a,(iy+x)                            ;x
+  add   a,4
+  ret   c  
+  ld    (iy+x),a                            ;x
+  call  CheckCollisionWall                  ;out: nz=collision
+  jr    z,.NoCollisionCheck2
+
+  ;at this point there is collision, lets check if we can pass throught the top or bottom ?
+  ;Check Pass Through Top
+  ld    a,(iy+y)                            ;y
+  sub   a,4
+  ld    (iy+y),a                            ;y
+  ld    de,-64
+  add   hl,de                               ;check row above
+  bit   0,(hl)                              ;out: nz=collision
+  jr    z,.NoCollisionCheck2
+
+  ld    a,(iy+y)                            ;y
+  add   a,8
+  ld    (iy+y),a                            ;y
+  ld    de,128
+  add   hl,de                               ;check row below
+  bit   0,(hl)                              ;out: nz=collision
+  jr    z,.NoCollisionCheck2
+
+  ;UnableToPass1
+  ld    a,(iy+y)                            ;y
+  sub   a,4
+  ld    (iy+y),a                            ;y
+
+  ld    a,(iy+x)                            ;x
+  sub   a,4
+  ld    (iy+x),a                            ;x
+  ret
+
+  .NoCollisionCheck2:
   call  CheckCollisionNPCs                  ;check if player collides with npcs. out ;d=0(no collision), d=1(collision)
   bit   0,d                                 ;d=0(no collision), d=1(collision)
   ret   z
   .Collision:
-  ld    a,(iy+2)                            ;x
-  sub   a,HorizontalSpeedPlayer
-  ld    (iy+2),a                            ;x
+  ld    a,(iy+x)                            ;x
+  sub   a,6
+  ld    (iy+x),a                            ;x
   ret
 
 MoveUp:
@@ -1087,14 +1377,14 @@ HydroponicsbayEventRoutine:
 
   .CheckPlayerLeavingRoom:
   ld    a,(Object1+x)
-  cp    255-10
+  cp    EdgeRoomRight
   jr    nc,.biopod
-  cp    10
+  cp    EdgeRoomLeft+1
   jr    c,.left
   ret
 
   .left:
-  ld    a,255-20
+  ld    a,EnterRoomRight
   ld    (Object1+x),a
 
   ld    a,4
@@ -1104,7 +1394,7 @@ HydroponicsbayEventRoutine:
   ret
 
   .biopod:
-  ld    a,20
+  ld    a,EnterRoomLeft
   ld    (Object1+x),a
 
   ld    a,2
@@ -1139,16 +1429,16 @@ armoryvaultEventRoutine:
 
   .CheckPlayerLeavingRoom:
   ld    a,(Object1+x)
-  cp    255-10
+  cp    EdgeRoomRight
   jr    nc,.sleepingquarters
 
   ld    a,(Object1+x)
-  cp    10
+  cp    EdgeRoomLeft+1
   jr    c,.holodeck
   ret
 
   .holodeck:
-  ld    a,255-20
+  ld    a,EnterRoomRight
   ld    (Object1+x),a
   ld    a,$5a
   ld    (Object1+y),a
@@ -1160,7 +1450,7 @@ armoryvaultEventRoutine:
   ret
 
   .sleepingquarters:
-  ld    a,20
+  ld    a,EnterRoomLeft
   ld    (Object1+x),a
   ld    a,$5a+16
   ld    (Object1+y),a
@@ -1213,16 +1503,16 @@ holodeckEventRoutine:
 
   .CheckPlayerLeavingRoom:
   ld    a,(Object1+x)
-  cp    255-10
+  cp    EdgeRoomRight
   jr    nc,.armoryvault
 
   ld    a,(Object1+x)
-  cp    10
+  cp    EdgeRoomLeft+1
   jr    c,.medicalbay
   ret
 
   .medicalbay:
-  ld    a,255-20
+  ld    a,EnterRoomRight
   ld    (Object1+x),a
   ld    a,$5a
   ld    (Object1+y),a
@@ -1234,7 +1524,7 @@ holodeckEventRoutine:
   ret
 
   .armoryvault:
-  ld    a,20
+  ld    a,EnterRoomLeft
   ld    (Object1+x),a
   ld    a,$5a
   ld    (Object1+y),a
@@ -1299,16 +1589,16 @@ sciencelabEventRoutine:
 
   .CheckPlayerLeavingRoom:
   ld    a,(Object1+x)
-  cp    255-10
+  cp    EdgeRoomRight
   jr    nc,.medicalbay
 
   ld    a,(Object1+x)
-  cp    10
+  cp    EdgeRoomLeft+1
   jr    c,.biopod
   ret
 
   .biopod:
-  ld    a,255-20
+  ld    a,EnterRoomRight
   ld    (Object1+x),a
   ld    a,$5a+16
   ld    (Object1+y),a
@@ -1320,7 +1610,7 @@ sciencelabEventRoutine:
   ret
 
   .medicalbay:
-  ld    a,20
+  ld    a,EnterRoomLeft
   ld    (Object1+x),a
   ld    a,$5a
   ld    (Object1+y),a
@@ -1431,7 +1721,7 @@ medicalbayEventRoutine:
   ret
 
   .LayDownAndGoHeal:
-	ld		hl,GoingToSleep
+	ld		hl,LayDownAndGoHeal
   ld    (PlayerSpriteStand),hl
 	xor		a
 	ld		(Object1+ObjectPhase),a
@@ -1510,16 +1800,16 @@ medicalbayEventRoutine:
 
   .CheckPlayerLeavingRoom:
   ld    a,(Object1+x)
-  cp    255-10
+  cp    EdgeRoomRight
   jr    nc,.holodeck
 
   ld    a,(Object1+x)
-  cp    10
+  cp    EdgeRoomLeft+1
   jr    c,.sciencelab
   ret
 
   .sciencelab:
-  ld    a,255-20
+  ld    a,EnterRoomRight
   ld    (Object1+x),a
   ld    a,$5a+16
   ld    (Object1+y),a
@@ -1531,7 +1821,7 @@ medicalbayEventRoutine:
   ret
 
   .holodeck:
-  ld    a,20
+  ld    a,EnterRoomLeft
   ld    (Object1+x),a
   ld    a,$5a
   ld    (Object1+y),a
@@ -1633,16 +1923,16 @@ sleepingquartersEventRoutine:
 
   .CheckPlayerLeavingRoom:
   ld    a,(Object1+x)
-  cp    255-10
+  cp    EdgeRoomRight
   jr    nc,.reactorchamber
 
   ld    a,(Object1+x)
-  cp    10
+  cp    EdgeRoomLeft+1
   jr    c,.armoryvault
   ret
 
   .armoryvault:
-  ld    a,255-20     - 10 ;?????????????????/BUG ??????????
+  ld    a,EnterRoomRight
   ld    (Object1+x),a
   ld    a,$5a
   ld    (Object1+y),a
@@ -1654,7 +1944,7 @@ sleepingquartersEventRoutine:
   ret
 
   .reactorchamber:
-  ld    a,20
+  ld    a,EnterRoomLeft
   ld    (Object1+x),a
   ld    a,$5a
   ld    (Object1+y),a
@@ -1760,16 +2050,16 @@ reactorchamberEventRoutine:
 
   .CheckPlayerLeavingRoom:
   ld    a,(Object1+x)
-  cp    255-10
+  cp    EdgeRoomRight
   jr    nc,.trainingdeck
 
   ld    a,(Object1+x)
-  cp    10
+  cp    EdgeRoomLeft+1
   jr    c,.sleepingquarters
   ret
 
   .sleepingquarters:
-  ld    a,255-20
+  ld    a,EnterRoomRight
   ld    (Object1+x),a
   ld    a,$5a
   ld    (Object1+y),a
@@ -1781,7 +2071,7 @@ reactorchamberEventRoutine:
   ret
 
   .trainingdeck:
-  ld    a,20
+  ld    a,EnterRoomLeft
   ld    (Object1+x),a
   ld    a,$5a-20
   ld    (Object1+y),a
@@ -1834,16 +2124,16 @@ TrainingdeckEventRoutine:
 
   .CheckPlayerLeavingRoom:
   ld    a,(Object1+x)
-  cp    255-10
+  cp    EdgeRoomRight
   jr    nc,.hangarbay
 
   ld    a,(Object1+x)
-  cp    10
+  cp    EdgeRoomLeft+1
   jr    c,.reactorchamber
   ret
 
   .reactorchamber:
-  ld    a,255-20
+  ld    a,EnterRoomRight
   ld    (Object1+x),a
   ld    a,$5a-20
   ld    (Object1+y),a
@@ -1855,7 +2145,7 @@ TrainingdeckEventRoutine:
   ret
 
   .hangarbay:
-  ld    a,20
+  ld    a,EnterRoomLeft
   ld    (Object1+x),a
   ld    a,$5a
   ld    (Object1+y),a
@@ -1977,16 +2267,16 @@ HangarbayEventRoutine:
 
   .CheckPlayerLeavingRoom:
   ld    a,(Object1+x)
-  cp    255-10
+  cp    EdgeRoomRight
   jr    nc,.hydronponicsbay
 
   ld    a,(Object1+x)
-  cp    10
+  cp    EdgeRoomLeft+1
   jr    c,.trainingdeck
   ret
 
   .trainingdeck:
-  ld    a,255-20
+  ld    a,EnterRoomRight
   ld    (Object1+x),a
   ld    a,$5a
   ld    (Object1+y),a
@@ -1999,7 +2289,7 @@ HangarbayEventRoutine:
 
 
   .hydronponicsbay:
-  ld    a,20
+  ld    a,EnterRoomLeft
   ld    (Object1+x),a
   ld    a,$5a
   ld    (Object1+y),a
@@ -2050,16 +2340,16 @@ BiopodEventRoutine:
 
   .CheckPlayerLeavingRoom:
   ld    a,(Object1+x)
-  cp    10
+  cp    EdgeRoomLeft+1
   jr    c,.hydroponicsbay
 
   ld    a,(Object1+x)
-  cp    255-10
+  cp    EdgeRoomRight
   jr    nc,.sciencelab
   ret
 
   .sciencelab:
-  ld    a,20
+  ld    a,EnterRoomLeft
   ld    (Object1+x),a
   ld    a,$5a+16
   ld    (Object1+y),a
@@ -2071,7 +2361,7 @@ BiopodEventRoutine:
   ret
 
   .hydroponicsbay:
-  ld    a,255-20
+  ld    a,EnterRoomRight
   ld    (Object1+x),a
   ld    a,$5a
   ld    (Object1+y),a
@@ -2386,12 +2676,20 @@ hydroponicsbay_1:        db    hydroponicsbayframelistblock, hydroponicsbaysprit
 hydroponicsbay2Routine:
   ret
 
+hydroponicsbay_2:        db    hydroponicsbayframelistblock, hydroponicsbayspritedatablock | dw    hydroponicsbay_2_0
+hydroponicsbay3Routine:
+  ret
+
 hangarbay_0:        db    hangarbayframelistblock, hangarbayspritedatablock | dw    hangarbay_0_0
 hangarbay1Routine:
   ret
 
 hangarbay_1:        db    hangarbayframelistblock, hangarbayspritedatablock | dw    hangarbay_1_0
 hangarbay2Routine:
+  ret
+
+hangarbay_2:        db    hangarbayframelistblock, hangarbayspritedatablock | dw    hangarbay_2_0
+hangarbay3Routine:
   ret
 
 ;right wall
