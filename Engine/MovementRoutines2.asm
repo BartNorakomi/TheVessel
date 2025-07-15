@@ -1,7 +1,11 @@
 ;UpgradeMenuEventRoutine
+;DrillingLocationsRoutine
 
 Phase MovementRoutinesAddress
 
+
+DrillingLocationsRoutine:
+  ret
 
 UpgradeMenuEventRoutine:
   ld    a,(framecounter2)

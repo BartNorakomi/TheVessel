@@ -130,6 +130,8 @@ EventDrillingGame:				db	1,$28,$7e | dw 000,000					,000        | db 255      ,M
 
 EventUpgradeMenu:					db	1,$28,$7e | dw 000,000					,000        | db 255      ,MovementRoutines2Block| dw UpgradeMenuEventRoutine		| db 000,000 ,000, 000
 
+EventDrillingLocations:		db	1,$28,$7e | dw 000,000					,000        | db 255      ,MovementRoutines2Block| dw DrillingLocationsRoutine	| db 000,000 ,000, 000
+
 
 
 LenghtDoCopyTable:  equ	RestoreBackgroundObject1Page1-RestoreBackgroundObject1Page0
@@ -279,6 +281,11 @@ LoadTileMap:
 	jp		z,.drillinggame
 	dec		a
 	jp		z,.upgrademenu
+	dec		a
+	jp		z,.drillinglocations
+	ret
+
+	.drillinglocations:
 	ret
 
 	.upgrademenu:
@@ -439,7 +446,20 @@ PutObjects:															;put objects and events
 	jp		z,PutObjectsDrillingGame
 	dec		a
 	jp		z,PutObjectsUpgradeMenu
+	dec		a
+	jp		z,PutObjectsDrillingLocations
 	ret
+
+PutObjectsDrillingLocations:
+	xor		a																;turn off main player sprite (we don't use this at the games)
+	ld		(Object1+on?),a
+
+	ld		de,ObjEvent1										;now put events
+
+	ld		hl,EventDrillingLocations				;put drilling locations event
+	call	PutSingleObject
+	ret
+
 
 PutObjectsUpgradeMenu:
 	xor		a																;turn off main player sprite (we don't use this at the games)
@@ -729,6 +749,8 @@ drillinggamePalette:                    			;palette file
   incbin "..\grapx\drillinggame\maps\tileset.SC5",$7680+7,32
 upgrademenuPalette:                    			;palette file
   incbin "..\grapx\ship\sciencelab\upgrademenu2.SC5",$7680+7,32
+DrillingLocationsPalette:
+  incbin "..\grapx\drillinglocations\drillinglocations.SC5",$7680+7,32
 
 LoadRoomGfx:
 	ld		a,(CurrentRoom)									;0=arcadehall1, 1=arcadehall2
@@ -760,7 +782,14 @@ LoadRoomGfx:
 	jp		z,LoadDrillingGameGfx      			;loads the drilling game tiles , and sets palette
 	dec		a
 	jp		z,LoadUpgradeMenuGfx      			;loads the upgrade menu tiles , and sets palette
+	dec		a
+	jp		z,LoadDrillingLocationsGfx 			;loads the drilling locations screen and sets palette
 	ret
+
+LoadDrillingLocationsGfx:
+  ld    hl,DrillingLocationsPalette
+  ld    a,DrillingLocationsGfxBlock     			;block to copy graphics from
+	jp		LoadGfx212High
 
 LoadUpgradeMenuGfx:
   ld    hl,upgrademenuPalette

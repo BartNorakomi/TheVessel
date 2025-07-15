@@ -2429,12 +2429,12 @@ soldierPortraitBlock:             db  soldierPortraitGfxBlock
         dw  $4000 + (048*128) + (102/2) - 128 | dw  $4000 + (063*128) + (102/2) - 128 | dw  $4000 + (078*128) + (102/2) - 128 ;sx,sy
 AIPortraitPalette:                incbin "..\grapx\characters\AI\portraittotal.SC5",$7680+7,32
 AIPortraitBlock:                  db  AIPortraitGfxBlock
-.Eyes:  dw  $0000 + (017*256) + (034/2) ;nx,ny
-        dw  $0000 + (046*128) + ((034+2)/2) - 128 ;dx,dy
-        dw  $4000 + (000*128) + (102/2) - 128 | dw  $4000 + (018*128) + (102/2) - 128 | dw  $4000 + (036*128) + (102/2) - 128 ;sx,sy
-.Mouth: dw  $0000 + (002*256) + (002/2) ;nx,ny
-        dw  $0000 + (046*128) + ((034+2)/2) - 128 ;dx,dy
-        dw  $4000 + (000*128) + (102/2) - 128 | dw  $4000 + (018*128) + (102/2) - 128 | dw  $4000 + (036*128) + (102/2) - 128 ;sx,sy
+.Eyes:  dw  $0000 + (011*256) + (044/2) ;nx,ny
+        dw  $0000 + (038*128) + ((028+2)/2) - 128 ;dx,dy
+        dw  $4000 + (000*128) + (102/2) - 128 | dw  $4000 + (012*128) + (102/2) - 128 | dw  $4000 + (024*128) + (102/2) - 128 ;sx,sy
+.Mouth: dw  $0000 + (001*256) + (002/2) ;nx,ny
+        dw  $0000 + (010*128) + ((000+2)/2) - 128 ;dx,dy
+        dw  $4000 + (000*128) + (010/2) - 128 | dw  $4000 + (000*128) + (010/2) - 128 | dw  $4000 + (000*128) + (010/2) - 128 ;sx,sy
 ResourceOffloadPortraitPalette:                incbin "..\grapx\ship\hangarbay\resourceoffload.SC5",$7680+7,32
 ResourceOffloadPortraitBlock:                  db  ResourceOffloadPortraitGfxBlock
 .Eyes:  dw  $0000 + (001*256) + (002/2) ;nx,ny
@@ -2615,8 +2615,8 @@ CompareHLwithDE:
   ret
 
 StartSaveGameData:
-CurrentRoom:  db  8                    ;0=arcadehall1, 1=arcadehall2, 2=biopod, 3=hydroponicsbay, 4=hangarbay, 5=trainingdeck, 6=reactorchamber, 7=sleepingquarters, 8=armoryvault, 9=holodeck, 10=medicalbay
-                                        ;11=sciencelab, 12=drillinggame, 13=upgrademenu
+CurrentRoom:  db  14                    ;0=arcadehall1, 1=arcadehall2, 2=biopod, 3=hydroponicsbay, 4=hangarbay, 5=trainingdeck, 6=reactorchamber, 7=sleepingquarters, 8=armoryvault, 9=holodeck, 10=medicalbay
+                                        ;11=sciencelab, 12=drillinggame, 13=upgrademenu, 14=drillinglocations
 GamesPlayed:  db 9                      ;increases after leaving a game. max=255
 HighScoreTotalAverage: db 00            ;recruiter appears when 80 (%) is reached
 HighScoreBackroomGame:  db  100
@@ -2649,7 +2649,7 @@ FoodOnShip:                 dw  100
 MaxFoodOnShip:              dw  500
 WaterOnShip:                dw  100
 MaxWaterOnShip:             dw  300
-AmountOfDigSitesUnlocked:   db  1
+AmountOfDigSitesUnlocked:   db  2
 
 TotalCredits:               dw  0000    ;total credits collected from drilled resources converted into credits
 valueLevel1Resources:       equ 02      ;credit per unit collected

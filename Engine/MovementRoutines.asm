@@ -2234,7 +2234,6 @@ HangarbayEventRoutine:
   ld    bc,3
   ldir
 
-
   ld    a,1
   ld    (StartConversation?),a
   ld    a,NPCConv1Block
@@ -2244,7 +2243,17 @@ HangarbayEventRoutine:
   ret
 
   .StartDrillingGame:
+  ld    a,(AmountOfDigSitesUnlocked)
+  dec   a
+  jr    nz,.ChooseDrillingLocation
   ld    a,12                                ;drilling game
+  ld    (CurrentRoom),a
+  ld    a,1
+  ld    (ChangeRoom?),a
+  ret    
+
+  .ChooseDrillingLocation:
+  ld    a,14                                ;choose dig site
   ld    (CurrentRoom),a
   ld    a,1
   ld    (ChangeRoom?),a

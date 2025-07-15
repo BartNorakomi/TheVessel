@@ -3,7 +3,7 @@
         "height": 4300,
         "width": 2
     },
-    "activeFile": "tileset.tsx",
+    "activeFile": "map02.tmx",
     "expandedProjectPaths": [
         "."
     ],
@@ -31,11 +31,11 @@
             }
         },
         "map02.tmx": {
-            "scale": 0.10888671875,
+            "scale": 2,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 128.5739910313896,
-                "y": 3453.1300448430493
+                "x": 60.5,
+                "y": 122.5
             }
         },
         "tileset.tsx": {
@@ -47,13 +47,14 @@
     "map.lastUsedFormat": "tmx",
     "map.width": 8,
     "openFiles": [
-        "tileset.tsx"
+        "tileset.tsx",
+        "map02.tmx"
     ],
     "project": "drillinggame.tiled-project",
     "recentFiles": [
         "tileset.tsx",
-        "map01.tmx",
         "map02.tmx",
+        "map01.tmx",
         "C:/Users/bartf/Documents/GitHub/MSXHeroes/maps/GentleAutumnMap01.tmx"
     ],
     "tileset.lastUsedFormat": "tsx"

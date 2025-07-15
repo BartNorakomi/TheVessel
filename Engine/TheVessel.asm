@@ -502,6 +502,10 @@ DrillingGameMapsBlock:  				equ   ($-RomStartAddress) and (romsize-1) /RomBlockS
   incbin "..\grapx\drillinggame\maps\map01.map"
 	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
 
+DrillingGameMap2Block:  				equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
+  incbin "..\grapx\drillinggame\maps\map02.map"
+	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
+
 ArcadeHall1TileMapBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
 ArcadeHall2TileMapBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
 ArcadeHall2EntityTileMapBlock: 	equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
@@ -617,6 +621,10 @@ DrillingGameGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSiz
 
 DrillingGameHudBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
   incbin "..\grapx\drillinggame\hud.SC5",7,028 * 128      ;032 lines
+	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
+
+DrillingLocationsGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
+  incbin "..\grapx\DrillingLocations\DrillingLocations.SC5",7,212 * 128      ;98 lines
 	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
 
 ResourceOffloadPortraitGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
