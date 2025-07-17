@@ -56,6 +56,9 @@ instead you should find the depth thats still worth it, and then go to a new dig
 
 You should have the option to directly enter science lab (or another room) at the end of drilling...
 
+
+In Super Motherload, chains are formed when you mine three or more of the same ore type consecutively. These chains provide a bonus to the value of the ore, increasing with the length of the chain. Picking up different ores breaks the chain, so it's important to focus on mining the same ore type repeatedly to maximize the bonus
+
 -------------------------------
 
 hydroponics bay

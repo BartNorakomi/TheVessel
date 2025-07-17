@@ -9,20 +9,17 @@ LevelEngine:
 ;  ld    a,23+128
 ;ei
 ;  out   ($99),a
-
-
-
+  call  CheckLeaveRoom
   call  WriteSpatToVram
   call  SetScreenonWithDelay
   call  PopulateControls
-;  call  BackdropGreen
+;  call  BackdropOrange
   call  HandleObjects
 ;  call  BackdropBlack
 
   if ConversationsOn?
   call  HandleConversations             ;handles NPC conversations
   endif
-  call  CheckLeaveRoom
 
   xor   a
   ld    hl,vblankintflag
@@ -31,6 +28,7 @@ LevelEngine:
   jr    z,.checkflag
   ld    (hl),a
   jp    LevelEngine
+
 
 SetScreenonWithDelay:
 	ld		a,(ScreenOnDelay)								;amount of frames until screen turns on (we need some frames to first put all objects in screen)
@@ -45,8 +43,8 @@ CheckLeaveRoom:
   or    a
   ret   z
   pop   af
+;  call  SetTempisr
   jp    InitiateGame
-
 
 vblankintflag:  db  0
 
@@ -2586,6 +2584,9 @@ putlettre:
 	db		16,0,5,0
 	db		0,%0000 0000,$98	
 
+BackdropOrange:
+  ld    a,7
+  jp    SetBackDrop
 BackdropRandom:
   ld    a,r
   jp    SetBackDrop
@@ -2615,11 +2616,11 @@ CompareHLwithDE:
   ret
 
 StartSaveGameData:
-CurrentRoom:  db  14                    ;0=arcadehall1, 1=arcadehall2, 2=biopod, 3=hydroponicsbay, 4=hangarbay, 5=trainingdeck, 6=reactorchamber, 7=sleepingquarters, 8=armoryvault, 9=holodeck, 10=medicalbay
+CurrentRoom:  db  01                    ;0=arcadehall1, 1=arcadehall2, 2=biopod, 3=hydroponicsbay, 4=hangarbay, 5=trainingdeck, 6=reactorchamber, 7=sleepingquarters, 8=armoryvault, 9=holodeck, 10=medicalbay
                                         ;11=sciencelab, 12=drillinggame, 13=upgrademenu, 14=drillinglocations
 GamesPlayed:  db 9                      ;increases after leaving a game. max=255
 HighScoreTotalAverage: db 00            ;recruiter appears when 80 (%) is reached
-HighScoreBackroomGame:  db  100
+HighScoreBackroomGame:  db  000
 
 HighScoreRoadFighter: db 0
 HighScoreBasketball: db 0
@@ -2649,7 +2650,7 @@ FoodOnShip:                 dw  100
 MaxFoodOnShip:              dw  500
 WaterOnShip:                dw  100
 MaxWaterOnShip:             dw  300
-AmountOfDigSitesUnlocked:   db  2
+AmountOfDigSitesUnlocked:   db  5
 
 TotalCredits:               dw  0000    ;total credits collected from drilled resources converted into credits
 valueLevel1Resources:       equ 02      ;credit per unit collected

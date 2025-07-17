@@ -3,7 +3,7 @@
         "height": 4300,
         "width": 2
     },
-    "activeFile": "map02.tmx",
+    "activeFile": "map01.tmx",
     "expandedProjectPaths": [
         "."
     ],
@@ -34,8 +34,32 @@
             "scale": 2,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 60.5,
-                "y": 122.5
+                "x": 128.25,
+                "y": 8192.25
+            }
+        },
+        "map03.tmx": {
+            "scale": 1.5,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 128.33333333333331,
+                "y": 8192.333333333332
+            }
+        },
+        "map04.tmx": {
+            "scale": 1.5,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 128.33333333333331,
+                "y": 8192.333333333332
+            }
+        },
+        "map05.tmx": {
+            "scale": 1,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 127.5,
+                "y": 8192.5
             }
         },
         "tileset.tsx": {
@@ -48,12 +72,19 @@
     "map.width": 8,
     "openFiles": [
         "tileset.tsx",
-        "map02.tmx"
+        "map02.tmx",
+        "map03.tmx",
+        "map04.tmx",
+        "map05.tmx",
+        "map01.tmx"
     ],
     "project": "drillinggame.tiled-project",
     "recentFiles": [
         "tileset.tsx",
         "map02.tmx",
+        "map03.tmx",
+        "map04.tmx",
+        "map05.tmx",
         "map01.tmx",
         "C:/Users/bartf/Documents/GitHub/MSXHeroes/maps/GentleAutumnMap01.tmx"
     ],

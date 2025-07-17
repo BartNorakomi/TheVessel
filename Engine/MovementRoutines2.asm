@@ -4,8 +4,235 @@
 Phase MovementRoutinesAddress
 
 
+DigSite1dx:  equ 152
+DigSite1dy:  equ 049
+DigSite2dx:  equ 183
+DigSite2dy:  equ 095
+DigSite3dx:  equ 039
+DigSite3dy:  equ 063
+DigSite4dx:  equ 099
+DigSite4dy:  equ 011
+DigSite5dx:  equ 013
+DigSite5dy:  equ 136
+
 DrillingLocationsRoutine:
+  ld    a,0*32 + 31                         ;force page 0
+	ld    (PageOnNextVblank),a
+  ld    a,1
+  ld    (framecounter),a                    ;we force framecounter to 1 so that the sf2 object handler doesn't swap page ever (so we always stay on page 2 for the game, and page 0 for the hud)
+
+  ld    a,(framecounter2)
+  inc   a
+  ld    (framecounter2),a
+
+  call  .HandlePhase                        ;used to build up screen and initiate variables
+  call  AnimateSelectedDigSite
+  call  ChooseDigSite
   ret
+
+  .HandlePhase:
+  ld    a,(iy+ObjectPhase)
+  or    a
+  ret   nz
+  ld    (iy+ObjectPhase),1
+
+  call  SetPinPointsInPage1
+
+  ld    a,1
+  ld    (DigSiteSelected),a
+
+  ld    a,000                               ;sx
+  ld    (SetPinPoint+sx),a
+  ld    a,035                               ;sy
+  ld    (SetPinPoint+sy),a
+  
+  ld    a,(AmountOfDigSitesUnlocked)
+  cp    2
+  jr    z,.DigSite2
+  cp    3
+  jr    z,.DigSite3
+  cp    4
+  jr    z,.DigSite4
+
+  .DigSite5:
+  ld    a,DigSite5dx                        ;dx
+  ld    (SetPinPoint+dx),a
+  ld    a,DigSite5dy                        ;dy
+  ld    (SetPinPoint+dy),a
+  ld    hl,SetPinPoint
+  call  DoCopy
+  .DigSite4:
+  ld    a,DigSite4dx                        ;dx
+  ld    (SetPinPoint+dx),a
+  ld    a,DigSite4dy                        ;dy
+  ld    (SetPinPoint+dy),a
+  ld    hl,SetPinPoint
+  call  DoCopy
+  .DigSite3:
+  ld    a,DigSite3dx                        ;dx
+  ld    (SetPinPoint+dx),a
+  ld    a,DigSite3dy                        ;dy
+  ld    (SetPinPoint+dy),a
+  ld    hl,SetPinPoint
+  call  DoCopy
+  .DigSite2:
+  ld    a,DigSite2dx                        ;dx
+  ld    (SetPinPoint+dx),a
+  ld    a,DigSite2dy                        ;dy
+  ld    (SetPinPoint+dy),a
+  ld    hl,SetPinPoint
+  call  DoCopy
+
+  ld    a,DigSite1dx                        ;dx
+  ld    (SetPinPoint+dx),a
+  ld    a,DigSite1dy                        ;dy
+  ld    (SetPinPoint+dy),a
+  ld    hl,SetPinPoint
+  jp    DoCopy
+
+AnimateSelectedDigSite:
+  ld    a,(framecounter2)                   ;used as animation counter
+  and   3
+  ret   nz
+
+  ld    a,(DigSiteSelected)
+  dec   a
+  ld    b,DigSite1dx                        ;dx
+  ld    c,DigSite1dy                        ;dy
+  jr    z,.DigSiteFound
+  dec   a
+  ld    b,DigSite2dx                        ;dx
+  ld    c,DigSite2dy                        ;dy
+  jr    z,.DigSiteFound
+  dec   a
+  ld    b,DigSite3dx                        ;dx
+  ld    c,DigSite3dy                        ;dy
+  jr    z,.DigSiteFound
+  dec   a
+  ld    b,DigSite4dx                        ;dx
+  ld    c,DigSite4dy                        ;dy
+  jr    z,.DigSiteFound
+  ld    b,DigSite5dx                        ;dx
+  ld    c,DigSite5dy                        ;dy
+  .DigSiteFound:
+
+  ld    a,b                                 ;dx
+  ld    (SetPinPoint+dx),a
+  ld    a,c                                 ;dy
+  ld    (SetPinPoint+dy),a
+
+;  ld    a,000                               ;sy
+;  ld    (SetPinPoint+sy),a
+
+  ld    hl,SetPinPoint
+  call  DoCopy
+
+  ld    a,(SetPinPoint+sx)
+  add   a,24
+  ld    (SetPinPoint+sx),a
+  cp    144
+  ret   c
+  xor   a
+  ld    (SetPinPoint+sx),a
+
+  ld    a,(SetPinPoint+sy)
+  xor   35
+  ld    (SetPinPoint+sy),a
+  ret
+
+ChooseDigSite:
+;
+; bit	7	  6	  5		    4		    3		    2		  1		  0
+;		  0	  0	  trig-b	trig-a	right	  left	down	up	(joystick)
+;		  F5	F1	'M'		  space	  right	  left	down	up	(keyboard)
+;
+	ld		a,(NewPrContr)
+	bit		4,a           ;space pressed ?
+  jr    nz,.SpacePressedStartDrillingGame
+	bit		3,a           ;right pressed ?
+  jr    nz,.RightPressed
+	bit		2,a           ;left pressed ?
+  jr    nz,.LeftPressed
+	bit		1,a           ;down pressed ?
+  jr    nz,.DownPressed
+	bit		0,a           ;up pressed ?
+  jr    nz,.UpPressed
+  ret
+
+  .SpacePressedStartDrillingGame:
+  ld    a,12                                ;drilling game
+  ld    (CurrentRoom),a
+  ld    a,1
+  ld    (ChangeRoom?),a
+  ret    
+
+  .UpPressed:
+  ld    hl,.UpPressedDigSiteOrder
+  call  .SetHLtoCurrentDigSite
+  call  .SetNextDigSite
+  ret
+
+  .DownPressed:
+  ld    hl,.DownPressedDigSiteOrder
+  call  .SetHLtoCurrentDigSite
+  call  .SetNextDigSite
+  ret
+
+  .LeftPressed:
+  ld    hl,.LeftPressedDigSiteOrder
+  call  .SetHLtoCurrentDigSite
+  call  .SetNextDigSite
+  ret
+
+  .RightPressed:
+  ld    hl,.RightPressedDigSiteOrder
+  call  .SetHLtoCurrentDigSite
+  call  .SetNextDigSite
+  ret
+
+  .SetNextDigSite:
+  ld    a,(AmountOfDigSitesUnlocked)
+  ld    b,a
+  inc   b
+
+  inc   hl
+  ld    a,(hl)
+  cp    255
+  ret   z
+
+  cp    b
+  jr    nc,.SetNextDigSite
+
+  ld    (DigSiteSelected),a
+  ;remove white outline from previously selected digsite
+  ld    a,35
+  ld    (SetPinPoint+sy),a  
+  ld    hl,SetPinPoint
+  call  DoCopy
+  ret
+
+  .SetHLtoCurrentDigSite:
+  ld    a,(DigSiteSelected)
+  cp    (hl)
+  ret   z
+  inc   hl
+  jr    .SetHLtoCurrentDigSite
+
+  .RightPressedDigSiteOrder:
+  db    5,3,4,1,2, 255
+  .LeftPressedDigSiteOrder:
+  db    2,1,4,3,5, 255
+  .DownPressedDigSiteOrder:
+  db    4,1,3,2,5, 255
+  .UpPressedDigSiteOrder:
+  db    5,2,3,1,4, 255
+
+SetPinPointsInPage1:                       ;set pinpoints at (0,0) page 1
+  ld    hl,$4000 + (000*128) + (000/2) - 128
+  ld    de,$8000 + (000*128) + (000/2) - 128
+  ld    bc,$0000 + (070*256) + (144/2)
+  ld    a,PinPointIconGfxBlock         ;font graphics block
+  jp    CopyRomToVram          ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
 
 UpgradeMenuEventRoutine:
   ld    a,(framecounter2)

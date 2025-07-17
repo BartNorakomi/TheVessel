@@ -41,6 +41,7 @@ ResetVariables:
   ld    (SetLineIntHeightOnVblankDrillingGame?),a
   ld    (NPCConversationsInDrillingGame?),a
   ld    (AlreadyAskedToRefuel?),a
+  ld    (AskRefuelAfterOffLoadResources?),a
   ld    hl,ConvSoldier									;conversations handled bit0=intro, bit1=low fuel, bit2=low fuel short, bit3=low energy, bit4=high radiation, bit5=storage full
   res   2,(hl)
   res   4,(hl)
@@ -69,7 +70,7 @@ ObjectHost:  							db  1,068,108 | dw 000,000					,Host_0     | db 255      ,Mo
 ObjectWall:  							db  1,062,178 | dw 000,000					,Wall_0     | db 255      ,MovementRoutinesBlock | dw WallMovementRoutine				| db 000,000 ,000, 000
 ;ObjectWall:  							db  1,105,048 | dw 000,000					,Wall_0     | db 255      ,MovementRoutinesBlock | dw WallMovementRoutine				| db 000,000 ,000, 000
 
-ObjectBackRoomGame:  			db  1,092,128 | dw 000,000					,BRGame_0   | db 255			,MovementRoutinesBlock | dw BackRoomGameRoutine				| db 000,000 ,000, 000
+ObjectBackRoomGame:  			db  1,095,118 | dw 000,000					,BRGame_0   | db 255			,MovementRoutinesBlock | dw BackRoomGameRoutine				| db 000,000 ,000, 000
 ObjectEntitya: 						db  1,013,128 | dw 000,000					,Entity_a  	| db 001			,MovementRoutinesBlock | dw EntityaRoutine						| db 000,000 ,000, 000
 ObjectEntityb: 						db  1,013,128 | dw 000,000					,Entity_b  	| db 002			,MovementRoutinesBlock | dw EntitybRoutine						| db 000,000 ,000, 000
 ObjectEntityc: 						db  1,013,128 | dw 000,000					,Entity_c  	| db 003			,MovementRoutinesBlock | dw EntitycRoutine						| db 000,000 ,000, 000
@@ -168,7 +169,9 @@ ResetRestoreTables:											;all 4 objects have their own restore tables
 	ld		(Object4+ObjectRestoreTable),hl
 	ret
 
-SectorErase:                          ;erases sector (in hl=pointer to romblock)
+SectorErase4000hto5fffh:                          ;erases sector (in hl=pointer to romblock)
+	ld		hl,$4000
+
   ld    a,$aa
   ld    ($4aaa),a
 
@@ -190,24 +193,85 @@ SectorErase:                          ;erases sector (in hl=pointer to romblock)
 .CheckEraseDone:
 ;  ld    hl,8000H    ; adres in sector die gewist word
 	ld    a,0FFH      ; als het klaar is moet het FFH zijn
-  Erase_Wait:
+  .Erase_Wait:
 	cp    (hl)        ; is de erase klaar?
 	ret   z          ; ja, klaar
-	jr    Erase_Wait  ; nee, nog bezig, wacht
-  ret
+	jr    .Erase_Wait  ; nee, nog bezig, wacht
+
+
+SectorErase6000hto7fffh:           		;erases sector (in hl=pointer to romblock)
+	ld		hl,$7000											;we cant use hl=$6000, cuz this changes the bank selection
+
+  ld    a,$aa
+  ld    ($7aaa),a
+
+  ld    a,$55
+  ld    ($7555),a
+
+  ld    a,$80
+  ld    ($7aaa),a
+
+  ld    a,$aa
+  ld    ($7aaa),a
+
+  ld    a,$55
+  ld    ($7555),a
+
+  ld    a,$30
+  ld    (hl),a
+
+.CheckEraseDone:
+;  ld    hl,8000H    ; adres in sector die gewist word
+	ld    a,0FFH      ; als het klaar is moet het FFH zijn
+  .Erase_Wait:
+	cp    (hl)        ; is de erase klaar?
+	ret   z          ; ja, klaar
+	jr    .Erase_Wait  ; nee, nog bezig, wacht
+
+SectorErase4000hto5fffh_or_6000hto7fffh:
+	ld		hl,$4000
+  call  CompareHLwithDE
+	jr		z,SectorErase4000hto5fffh
+	jr		SectorErase6000hto7fffh
 
 SaveDrillingGameMap:
-  ld    a,(slot.page12rom)            ;all RAM except page 1+2
+  ld    a,(slot.page12rom)            	;all RAM except page 1+2
   out   ($a8),a
 
-  ld    a,DrillingGameMapsBlock       	;drilling game map
+
+  ld    a,(DigSiteSelected)
+	dec		a
+  ld    l,DrillingGameMap01Block       	;drilling game map
+	ld		de,DrillingGameMap01Address			;address in rom we write to
+	ld		bc,DrillingGameMap01Size
+	jr		z,.MapFound
+	dec		a
+  ld    l,DrillingGameMap02Block       	;drilling game map
+	ld		de,DrillingGameMap02Address			;address in rom we write to
+	ld		bc,DrillingGameMap02Size
+	jr		z,.MapFound
+	dec		a
+  ld    l,DrillingGameMap03Block       	;drilling game map
+	ld		de,DrillingGameMap03Address			;address in rom we write to
+	ld		bc,DrillingGameMap03Size
+	jr		z,.MapFound
+	dec		a
+  ld    l,DrillingGameMap04Block       	;drilling game map
+	ld		de,DrillingGameMap04Address			;address in rom we write to
+	ld		bc,DrillingGameMap04Size
+	jr		z,.MapFound
+	dec		a
+  ld    l,DrillingGameMap05Block       	;drilling game map
+	ld		de,DrillingGameMap05Address			;address in rom we write to
+	ld		bc,DrillingGameMap05Size
+	.MapFound:
+
+  ld    a,l											       	;drilling game map
   call  block12                       	;CARE!!! we can only switch block34 if page 1 is in rom  
 
   di                                  ;we keep int disabled when accessing (reading and writing) upper 4MB, because the int. revert changes made to the map switching
 
-  ;erase sector (first 8 sectors are 8kb, all other sectors are 64kb)
-  ld    hl,$4000
-  call  SectorErase                   ;erases sector (in hl=pointer to romblock)
+	call	SectorErase4000hto5fffh_or_6000hto7fffh
 
 	;drilling game map is in ram at $8000
   ld    a,(slot.page1rom)              	;all RAM except page 1+2
@@ -215,14 +279,37 @@ SaveDrillingGameMap:
 
   ;write save data for current game to flashrom
   ld    hl,$8000
-  ld    de,$4000
-  ld    bc,$2000												;8 kb
   call  FlashWrite
 
 	ld		a,MovementRoutinesBlock
   call  block12                             ;CARE!!! we can only switch block34 if page 1 is in rom  
 	ret
 
+FlashWrite6000hto8000h:                           ;in: hl->source, de->destination, bc->amount
+  ld    a,$AA                         ; magic bytes (om per ongeluk schrijven te voorkomen)
+  ld    ($4AAA),a
+  ld    a,$55
+  ld    ($4555),a
+  ld    a,$A0                         ; program commando
+  ld    ($4AAA),a
+
+  ld    a,(hl)
+  ld    (de),a
+
+  .CheckIfWritten:
+  ld    a,(de)
+  cp    (hl)
+  jr    nz,.CheckIfWritten
+
+
+  inc   hl
+  inc   de
+  dec   bc
+
+  ld    a,b
+  or    c
+  jr    nz,FlashWrite
+  ret
 
 FlashWrite:                           ;in: hl->source, de->destination, bc->amount
   ld    a,$AA                         ; magic bytes (om per ongeluk schrijven te voorkomen)
@@ -239,7 +326,6 @@ FlashWrite:                           ;in: hl->source, de->destination, bc->amou
   ld    a,(de)
   cp    (hl)
   jr    nz,.CheckIfWritten
-
 
   inc   hl
   inc   de
@@ -295,10 +381,32 @@ LoadTileMap:
   ld    a,(slot.page1rom)              	;all RAM except page 1+2
   out   ($a8),a      
 
-  ld    a,DrillingGameMapsBlock       	;drilling game map
+  ld    a,(DigSiteSelected)
+	dec		a
+  ld    b,DrillingGameMap01Block       	;drilling game map
+	ld		hl,DrillingGameMap01Address			;address in rom
+	jr		z,.CopyMapToRam
+	dec		a
+  ld    b,DrillingGameMap02Block       	;drilling game map
+	ld		hl,DrillingGameMap02Address			;address in rom
+	jr		z,.CopyMapToRam
+	dec		a
+  ld    b,DrillingGameMap03Block       	;drilling game map
+	ld		hl,DrillingGameMap03Address			;address in rom
+	jr		z,.CopyMapToRam
+	dec		a
+  ld    b,DrillingGameMap04Block       	;drilling game map
+	ld		hl,DrillingGameMap04Address			;address in rom
+	jr		z,.CopyMapToRam
+	dec		a
+  ld    b,DrillingGameMap05Block       	;drilling game map
+	ld		hl,DrillingGameMap05Address			;address in rom
+	.CopyMapToRam:
+
+  ld    a,b											       	;drilling game map
   call  block12                       	;CARE!!! we can only switch block34 if page 1 is in rom  
 
-	ld		hl,$4000
+;	ld		hl,$4000
 	ld		de,$8000
 	ld		bc,$4000
 	ldir																	;copy drilling game tilemap to $8000 in ram
@@ -601,9 +709,9 @@ PutObjectsBiopod:
 
 PutObjectsArcadeHall2:
 	;set starting coordinates player
-	ld		a,116														;y
+	ld		a,118														;y
 	ld		(Object1+y),a
-	ld		a,194														;x
+	ld		a,206														;x
 	ld		(Object1+x),a
 
 	ld		hl,LStanding
@@ -722,9 +830,9 @@ PutObjectsArcadeHall1:
 	ret
 
 ArcadeHall1Palette:                    	;palette file
-  incbin "..\grapx\arcadehall\arcade1.SC5",$7680+7,32
+  incbin "..\grapx\arcadehall1\arcade1.SC5",$7680+7,32
 ArcadeHall2Palette:                    	;palette file
-  incbin "..\grapx\arcadehall\arcade2.SC5",$7680+7,32
+  incbin "..\grapx\arcadehall2\arcade2.SC5",$7680+7,32
 BiopodPalette:                    			;palette file
   incbin "..\grapx\ship\biopod\biopod.SC5",$7680+7,32
 HydroponicsbayPalette:                    			;palette file
@@ -1196,6 +1304,12 @@ AntiRadiationProtectionOrDigSiteBars:
 	db		101,0,081,1
 	db		029,0,009,0
 	db		0,0,$90
+
+SetPinPoint:
+	db		000,0,000,1
+	db		000,0,000,0
+	db		023,0,035,0
+	db		0,0,$98
 
 STOPWAITSPACEPRESSED:
   call  PopulateControls
@@ -1899,11 +2013,11 @@ Ascii5Byte:	db "29993",255
 
 
 
-NPCAniCount:     				db  0,0
-PlayerSpriteStand: 			dw  Rstanding
-StartConversation?:			db	0
-StartWakeUpEvent?:			db	1
-OffloadResources?:			db	0
+NPCAniCount:     									db  0,0
+PlayerSpriteStand: 								dw  Rstanding
+StartConversation?:								db	0
+StartWakeUpEvent?:								db	1
+OffloadResources?:								db	0
 
 
 
@@ -2032,6 +2146,8 @@ ShowScienceLabMenu:					rb	1
 CurrentScienceLabMenu:			rb	1
 ScienceLabMenuItemSelected:	rb	1
 AlreadyAskedToRefuel?:			rb	1
+DigSiteSelected:						rb	1
+AskRefuelAfterOffLoadResources?:	rb	1
 
 
 endenginepage3variables:  equ $+enginepage3length

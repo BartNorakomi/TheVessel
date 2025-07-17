@@ -4,6 +4,7 @@ TheVessel:
 
 ; GLobals
 RomSize: 									equ 8*1024*1024 ;8MB
+RomBlockSize8kb:					equ 08*1024	;8KB
 RomBlockSize:							equ 16*1024	;16KB
 RomStartAddress:					equ $4000
 
@@ -488,7 +489,7 @@ enginepage3:
 	include	"enginepage3.asm"	
 
 ; 
-; block 00 - 01 engine 
+; block 00 (8kb) - 01 (8kb) engine 
 ;	
 engine:
 phase	engaddr
@@ -498,13 +499,38 @@ dephase
 enlength:	Equ	$-engine
 	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
 
-DrillingGameMapsBlock:  				equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
+;The first 8kb blocks can be erased using the ASCII16x sector erase function 
+DrillingGameMap01Block:  				equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
+DrillingGameMap02Block:  				equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
+	phase	$4000
+	DrillingGameMap01Address:
   incbin "..\grapx\drillinggame\maps\map01.map"
-	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
-
-DrillingGameMap2Block:  				equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
+	DrillingGameMap01Size:	equ	$-DrillingGameMap01Address
+	ds	$7000-$,-1
+	DrillingGameMap02Address:
   incbin "..\grapx\drillinggame\maps\map02.map"
-	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
+	DrillingGameMap02Size:	equ	$-DrillingGameMap02Address
+	dephase
+
+DrillingGameMap03Block:  				equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
+DrillingGameMap04Block:  				equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
+	phase	$4000
+	DrillingGameMap03Address:
+  incbin "..\grapx\drillinggame\maps\map03.map"
+	DrillingGameMap03Size:	equ	$-DrillingGameMap03Address
+	ds	$7000-$,-1
+	DrillingGameMap04Address:
+  incbin "..\grapx\drillinggame\maps\map04.map"
+	DrillingGameMap04Size:	equ	$-DrillingGameMap04Address
+	dephase
+
+DrillingGameMap05Block:  				equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
+	phase	$4000
+	DrillingGameMap05Address:
+  incbin "..\grapx\drillinggame\maps\map05.map"
+	DrillingGameMap05Size:	equ	$-DrillingGameMap05Address
+	dephase
+	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of 16kb block
 
 ArcadeHall1TileMapBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
 ArcadeHall2TileMapBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
@@ -555,15 +581,15 @@ sciencelabTileMap:  						incbin "..\tools\tilemapsciencelab.bin"
 	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
 
 ArcadeHall1GfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
-  incbin "..\grapx\arcadehall\arcade1.SC5",7,212 * 128      ;212 lines
+  incbin "..\grapx\arcadehall1\arcade1.SC5",7,212 * 128      ;212 lines
 	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
 
 ArcadeHall1redlightsGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
-  incbin "..\grapx\arcadehall\redlights.SC5",7,030 * 128      ;030 lines
+  incbin "..\grapx\arcadehall1\redlights.SC5",7,030 * 128      ;030 lines
 	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
 
 ArcadeHall2GfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
-  incbin "..\grapx\arcadehall\arcade2.SC5",7,212 * 128      ;212 lines
+  incbin "..\grapx\arcadehall2\arcade2.SC5",7,212 * 128      ;212 lines
 	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
 
 BiopodGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
@@ -627,6 +653,10 @@ DrillingLocationsGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlo
   incbin "..\grapx\DrillingLocations\DrillingLocations.SC5",7,212 * 128      ;98 lines
 	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
 
+PinPointIconGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
+  incbin "..\grapx\DrillingLocations\PinPointIcon.SC5",7,070 * 128      ;98 lines
+	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
+
 ResourceOffloadPortraitGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
   incbin "..\grapx\ship\hangarbay\resourceoffload.SC5",7,099 * 128      ;98 lines
 	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
@@ -636,7 +666,7 @@ UpgradeMenuGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
 	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
 
 OpenDoorGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
-  incbin "..\grapx\arcadehall\opendoor.SC5",7,097 * 128      ;097 lines
+  incbin "..\grapx\arcadehall1\opendoor.SC5",7,097 * 128      ;097 lines
 	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
 
 GirlPortraitGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
@@ -714,11 +744,11 @@ TheVesselgettingupspritedatablock:			equ ($-RomStartAddress) and (romsize-1) /Ro
 ;host
 Hostframelistblock:			equ ($-RomStartAddress) and (romsize-1) /RomBlockSize
 									phase	$8000
-									include "..\..\Usas2\grapx\test\host.asm" 
+									include "..\tools\host.asm" 
 									DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
 									dephase
 Hostspritedatablock:			equ ($-RomStartAddress) and (romsize-1) /RomBlockSize
-									incbin "..\..\Usas2\grapx\test\host.dat"
+									incbin "..\tools\host.dat"
 									DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
 
 ;npcs

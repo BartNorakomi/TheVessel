@@ -575,7 +575,8 @@ PlayerHeight: equ 73
 CheckCollisionWall:                         ;out: nz=collision
 ;xor a
 ;ret
-
+  ld    a,(slot.page12rom)              ;all RAM except page 1+2
+  out   ($a8),a      
   ld    a,(TileMapBlock)
   call  block34                           ;CARE!!! we can only switch block34 if page 1 is in rom  
 
@@ -2170,9 +2171,60 @@ CheckOffLoadResources:
   ld    (NPCConvBlock),a
   ld    hl,NPCConv038
   ld    (NPCConvAddress),hl
+
+  ld    a,1
+  ld    (AskRefuelAfterOffLoadResources?),a
+  ret
+
+AskRefuelAfterOffLoadResources:
+  ld    a,(AskRefuelAfterOffLoadResources?)
+  dec   a
+  ret   m
+  ld    (AskRefuelAfterOffLoadResources?),a
+
+  ;Refuel ?
+  ld    hl,(Fuel)
+  ld    de,(FuelMax)
+  call  CompareHLwithDE
+  ret   z
+
+  ;set total credits
+  ld    hl,(TotalCredits)
+  call  NUM_TO_ASCII
+  ld    hl,Ascii5Byte
+  ld    de,RefuelTotalCreditsText
+  ld    bc,5
+  ldir
+
+  ;set total cost missing fuel
+  ld    hl,(FuelMax)
+  ld    de,(Fuel)
+  xor   a
+  sbc   hl,de                           ;missing fuel in hl
+
+  push  hl
+  pop   bc
+  ld    de,AmoungOfFuelPerCredit
+  call  DivideBCbyDE                    ; Out: BC = result, HL = rest
+  ;cost missing fuel = missing fuel/10
+  push  bc
+  pop   hl
+  call  NUM_TO_ASCII
+  ld    hl,Ascii5Byte+2
+  ld    de,RefuelCostText
+  ld    bc,3
+  ldir
+
+  ld    a,1
+  ld    (StartConversation?),a
+  ld    a,NPCConv1Block
+  ld    (NPCConvBlock),a
+  ld    hl,RefuelConversation
+  ld    (NPCConvAddress),hl
   ret
 
 HangarbayEventRoutine:
+  call  AskRefuelAfterOffLoadResources
   call  CheckOffLoadResources
   call  .CheckPlayerLeavingRoom             ;when y>116 player enters arcadehall1 
   call  PutConversationCloud
@@ -2243,6 +2295,9 @@ HangarbayEventRoutine:
   ret
 
   .StartDrillingGame:
+  ld    a,1
+  ld    (DigSiteSelected),a
+
   ld    a,(AmountOfDigSitesUnlocked)
   dec   a
   jr    nz,.ChooseDrillingLocation
@@ -2414,7 +2469,7 @@ BiopodEventRoutine:
 
 
 ArcadeHall1redlightPalette:                 ;palette file
-  incbin "..\grapx\arcadehall\arcade1redlight.SC5",$7680+7,32
+  incbin "..\grapx\arcadehall1\arcade1redlight.SC5",$7680+7,32
 SirensRoutine:
   ld    a,1
   ld    (freezecontrols?),a

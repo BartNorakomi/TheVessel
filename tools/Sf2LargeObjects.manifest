@@ -122,7 +122,7 @@ entity=@{
 		all=`
 	@{	name="entity";
 		imagePath="Entity156x165.bmp";
-		palettePath="..\grapx\arcadehall\arcadehall2.PL";
+		palettePath="..\grapx\arcadehall2\arcadehall2.PL";
 		destinationPath="";
 		pixelFilePath="entity.dat";
 		transparentColor=-1;fillcolor=15;
@@ -137,7 +137,7 @@ entitypart1=@{
 		all=`
 	@{	name="entitypart1";
 		imagePath="Entity156x183part1.bmp";
-		palettePath="..\grapx\arcadehall\arcadehall2.PL";
+		palettePath="..\grapx\arcadehall2\arcadehall2.PL";
 		destinationPath="";
 		pixelFilePath="entitypart1.dat";
 		transparentColor=-1;fillcolor=15;
@@ -152,7 +152,7 @@ entitypart2=@{
 		all=`
 	@{	name="entitypart2";
 		imagePath="Entity156x183part2.bmp";
-		palettePath="..\grapx\arcadehall\arcadehall2.PL";
+		palettePath="..\grapx\arcadehall2\arcadehall2.PL";
 		destinationPath="";
 		pixelFilePath="entitypart2.dat";
 		transparentColor=-1;fillcolor=15;
@@ -167,7 +167,7 @@ Vesselgettingup=@{
 		all=`
 	@{	name="Vesselgettingup";
 		imagePath="vessel156x125gettingup.bmp";
-		palettePath="..\grapx\arcadehall\arcadehall.PL";
+		palettePath="..\grapx\arcadehall1\arcadehall.PL";
 		destinationPath="";
 		pixelFilePath="Vesselgettingup.dat";
 		transparentColor=-1;fillcolor=15;
@@ -198,7 +198,7 @@ Vesselleft=@{
 		all=`
 	@{	name="Vesselleft";
 		imagePath="vessel156x125left.bmp";
-		palettePath="..\grapx\arcadehall\arcadehall.PL";
+		palettePath="..\grapx\arcadehall1\arcadehall.PL";
 		destinationPath="";
 		pixelFilePath="Vesselleft.dat";
 		transparentColor=-1;fillcolor=15;
@@ -213,7 +213,7 @@ npcs=@{
 		all=`
 	@{	name="npcs";
 		imagePath="npcs156x125.bmp";
-		palettePath="..\grapx\arcadehall\arcadehall.PL";
+		palettePath="..\grapx\arcadehall1\arcadehall.PL";
 		destinationPath="";
 		pixelFilePath="npcs.dat";
 		transparentColor=-1;fillcolor=15;
@@ -226,10 +226,10 @@ npcs=@{
 
 host=@{
 		all=`
-	@{	name="Host";
+	@{	name="host";
 		imagePath="host90x103.bmp";
-		palettePath="..\grapx\arcadehall\arcadehall.PL";
-		destinationPath="sprites";
+		palettePath="..\grapx\arcadehall1\arcadehall.PL";
+		destinationPath="";
 		pixelFilePath="host.dat";
 		transparentColor=-1;fillcolor=15;
 		canvasX=0;canvasY=0;canvasWidth=16*90;canvasHeight=(1*103);
