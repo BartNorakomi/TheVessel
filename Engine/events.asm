@@ -113,6 +113,8 @@ holodeck
 use this to go enter holographic simulation, which brings you back to arcade hall 1 and 2 (from act 1)
 has no function, but you can enjoy playing the games again
 
+maybe playing the games in the holodeck now grants credits (which means you got a bail out of jail card, in case you have no credits and no fuel)
+
 -------------------------------
 
 breeding room

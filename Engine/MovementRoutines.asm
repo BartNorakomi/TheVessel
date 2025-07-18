@@ -473,15 +473,15 @@ LEnterDoor:
   ld    a,(iy+2)                            ;x
   sub   a,HorizontalSpeedPlayer
   ld    (iy+2),a                            ;x
-  cp    130
-  jr    c,.EnterDoor
+  cp    120
+  jr    c,.PlayerHasEnteredDoor
 
   ld    hl,TheVesselleftrunning_0          ;starting pose
   ld    b,11                                ;animation steps
   jp    AnimateObject                       ;in hl=starting pose, b=animation steps, uses: var1
 
-  .EnterDoor:
-	ld		a,062														;y
+  .PlayerHasEnteredDoor:
+	ld		a,058														;y
 	ld		(Object1+y),a
   jp    Set_L_stand
 
@@ -489,7 +489,7 @@ REnterDoor:
   ld    a,(iy+2)                            ;x
   add   a,HorizontalSpeedPlayer
   ld    (iy+2),a                            ;x
-  cp    $90+28
+  cp    182
   jr    nc,.ChangeRoom
 
   ld    hl,TheVesselrightrunning_0          ;starting pose
@@ -996,7 +996,7 @@ HostMovementRoutine:
   ld    a,(iy+2)                            ;x
   add   a,4
   ld    (iy+2),a
-  cp    176
+  cp    174
   ret   c
   ld    (iy+ObjectPhase),6
   ret
@@ -1018,8 +1018,10 @@ HostMovementRoutine:
   sub   a,3
   ld    (iy+1),a
 
-  cp    064
+  cp    054
   ret   nc
+
+  ld    (iy+1),54
   ld    (iy+ObjectPhase),5
   ret
 
@@ -1062,9 +1064,6 @@ HostMovementRoutine:
   ld    (NPCConvBlock),a
   ld    hl,NPCConv007
   ld    (NPCConvAddress),hl
-  xor   a
-  ld    (freezecontrols?),a
-
   ld    hl,Host_8
   jp    PutSpritePose                       ;in hl=spritepose, out writes spritepose to objecttable
 
@@ -1086,6 +1085,9 @@ HostMovementRoutine:
   ret
 
   .Phase0:                                  ;standing still in arcade hall2, ready for conversation
+  ld    (iy+y),068                          ;y
+  ld    (iy+x),108                          ;x
+
   call  CheckStartConversation              ;out: nz=converstaion starts
   ret   z
 
@@ -1284,31 +1286,73 @@ PutPressTrigAIcon:
   ret
 
 ArcadeHall1EventRoutine:
-  call  .CheckPlayerLeavingRoom             ;when y>116 player enters arcadehall1 
+  call  .CheckPlayerEntersArcade2             ;check player enters the door to arcadehall2 
+  call  .CheckPlayerEntersHolodeck            ;check player goes back to holodeck 
   call  PutConversationCloud
   call  CheckShowPressTrigAIconArcadeHall1
   call  PutPressTrigAIcon
+  call  .CheckFirstTimeHolodeck
   ret
 
-  .CheckPlayerLeavingRoom:
+  .CheckFirstTimeHolodeck:
+  ld    hl,ConvEntityShipExplanations
+  bit   0,(hl)
+  ret   z
+
+  ld    hl,ConvEntity
+  bit   5,(hl)
+  ret   nz
+  set   5,(hl)
+  ld    a,1
+  ld    (StartConversation?),a
+  ld    a,NPCConv1Block
+  ld    (NPCConvBlock),a
+  ld    hl,NPCConv043
+  ld    (NPCConvAddress),hl
+  ret
+
+  .CheckPlayerEntersHolodeck:
+  ld    hl,ConvEntityShipExplanations
+  bit   0,(hl)
+  ret   z
+
+  ld    a,(Object1+x)
+  cp    6
+  jr    c,.ReturnToHolodeck
+  ld    a,(Object1+x)
+  cp    250
+  jr    nc,.ReturnToHolodeck
+  ld    a,(Object1+y)
+  cp    122
+  ret   c
+
+  .ReturnToHolodeck:
+  ld    a,$4e
+  ld    (Object1+y),a
+  ld    a,$8e
+  ld    (Object1+x),a
+
+  ld    a,9
+  ld    (CurrentRoom),a
+  ld    a,1
+  ld    (ChangeRoom?),a
+  ret
+
+  .CheckPlayerEntersArcade2:
 	ld		a,(HighScoreTotalAverage)
 	cp		80
   ret   c
 
   ld    a,(Object1+y)
-  cp    $3e
+  cp    54
   ret   nz
-
-  ld    a,(Object1+x)
-  cp    $90
-  ret   c
 
 	ld		hl,(PlayerSpriteStand)
   ld    de,LEnterDoor
   call  CompareHLwithDE
   ret   z
 
-;Set_R_EnterDoor:
+  ;Set_R_EnterDoor:
 	ld		hl,REnterDoor
 	ld		(PlayerSpriteStand),hl
   xor   a
@@ -1336,7 +1380,13 @@ ArcadeHall2EventRoutine:
 	ld		(PlayerSpriteStand),hl
   ld    a,8
 	ld		(object1+var1),a
-  
+
+	;set starting coordinates player (entering through the door)
+	ld		a,054														;y
+	ld		(Object1+y),a
+	ld		a,182														;x
+	ld		(Object1+x),a
+
   xor   a
   ld    (CurrentRoom),a
   ld    a,1
@@ -1462,7 +1512,7 @@ armoryvaultEventRoutine:
   ld    (ChangeRoom?),a
   ret
 
-holodecky:   db 070
+holodecky:   db 070-4
 holodeckx:   db 160
 CheckShowPressTrigAIconholodeck:
   ld    hl,holodecky
@@ -1480,12 +1530,37 @@ CheckShowPressTrigAIconholodeck:
 
 holodeckEventRoutine:
   call  .CheckPlayerLeavingRoom             ;when y>116 player enters arcadehall1 
-
   call  PutConversationCloud
   call  CheckShowPressTrigAIconholodeck
+  call  .CheckStartHolodeckEvent
   call  PutPressTrigAIcon
   call  .HandleExplainerConversation
   ret
+
+  .CheckStartHolodeckEvent:
+  ld    a,(ShowPressTriggerAIcon?)
+  or    a
+  ret   z
+;
+; bit	7	  6	  5		    4		    3		    2		  1		  0
+;		  0	  0	  trig-b	trig-a	right	  left	down	up	(joystick)
+;		  F5	F1	'M'		  space	  right	  left	down	up	(keyboard)
+;
+	ld		a,(NewPrContr)
+	bit		4,a           ;trig a pressed ?
+  ret   z
+
+  .StartHolodeckEvent:
+  ld    a,00                                ;back to arcade hall 1
+  ld    (CurrentRoom),a
+  ld    a,1
+  ld    (ChangeRoom?),a
+
+  ld    a,102
+  ld    (object1+y),a
+  ld    a,130
+  ld    (object1+x),a
+  ret    
 
   .HandleExplainerConversation:
   ld    hl,ConvEntityShipExplanations
@@ -1730,18 +1805,6 @@ medicalbayEventRoutine:
 	ld		(Object1+var1),a
   ret
 
-
-
-
-
-
-
-
-
-
-  ret
-
-
   .CheckStartEmbryoConversation:
   ld    a,(object1+y)
   cp    $3a
@@ -1961,18 +2024,7 @@ WaitCenterScreen:
   cp    256-80
   jp    nc,.DontPutConversation
   cp    80
-  jp    c,.DontPutConversation
-
-  ld    a,1
-  ld    (freezecontrols?),a
-
-  ld    a,(WaitCenterScreenTimer)
-  inc   a
-  and   15
-  ld    (WaitCenterScreenTimer),a
-  jr    nz,.DontPutConversation
-  ret
-
+  ret   nc
   .DontPutConversation:
   pop   af
   ret
@@ -2488,6 +2540,12 @@ SirensRoutine:
   ld    (Object2+on?),a                     ;host on
   ld    (Object3+on?),a                     ;wall on
   ld    (iy+on?),0                          ;object off
+
+	;set starting coordinates host (entering through the door)
+	ld		a,054														;y
+	ld		(Object2+y),a
+	ld		a,182														;x
+	ld		(Object2+x),a
   ret
 
   .Phase0:                                  ;flicker screenpalette between normal and red, open door, remove red light
@@ -2506,7 +2564,7 @@ SirensRoutine:
 
   .OpenDoor:
   ld    hl,$4000 + (000*128) + (000/2) - 128
-  ld    bc,$0000 + (097*256) + (056/2)
+  ld    bc,$0000 + (083*256) + (046/2)
   ld    a,(PageOnNextVblank)                ;set page
   cp    0*32 + 31
   jr    z,.SetOpenDoorPage2
@@ -2519,19 +2577,19 @@ SirensRoutine:
 
   .SetOpenDoorPage0:
   ld    a,OpenDoorGfxBlock         	        ;block to copy graphics from
-  ld    de,$0000 + (066*128) + (100/2) - 128
+  ld    de,$0000 + (072*128) + (104/2) - 128
   jp    CopyRomToVram                       ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
 
   .SetOpenDoorPage1:
   ld    a,OpenDoorGfxBlock         	        ;block to copy graphics from
-  ld    de,$8000 + (066*128) + (100/2) - 128
+  ld    de,$8000 + (072*128) + (104/2) - 128
   jp    CopyRomToVram                       ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
 
   .SetOpenDoorPage2:
   ld    a,1
   ld    (Vdp_Write_HighPage?),a
   ld    a,OpenDoorGfxBlock         	        ;block to copy graphics from
-  ld    de,$0000 + (066*128) + (100/2) - 128
+  ld    de,$0000 + (072*128) + (104/2) - 128
   call  CopyRomToVram                       ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
   xor   a
   ld    (Vdp_Write_HighPage?),a
@@ -2541,7 +2599,7 @@ SirensRoutine:
   ld    a,1
   ld    (Vdp_Write_HighPage?),a
   ld    a,OpenDoorGfxBlock         	        ;block to copy graphics from
-  ld    de,$8000 + (066*128) + (100/2) - 128
+  ld    de,$8000 + (072*128) + (104/2) - 128
   call  CopyRomToVram                       ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
   xor   a
   ld    (Vdp_Write_HighPage?),a
@@ -2594,17 +2652,19 @@ Entity_a:   db    entityframelistblock, entityspritedatablock | dw    Entity_0_0
             db    entityframelistblock, entityspritedatablock | dw    Entity_1_0
             db    entityframelistblock, entityspritedatablock | dw    Entity_2_0
 
-Entity_b:   db    entityframelistblock, entityspritedatablock | dw    Entity_0_1
-            db    entityframelistblock, entityspritedatablock | dw    Entity_2_1
-            db    entityframelistblock, entityspritedatablock | dw    Entity_1_1
-            db    entityframelistblock, entityspritedatablock | dw    Entity_2_1
+Entity_b:   db    entityframelistblock, entityspritedatablock | dw    Entity_3_0
+            db    entityframelistblock, entityspritedatablock | dw    Entity_5_0
+            db    entityframelistblock, entityspritedatablock | dw    Entity_4_0
+            db    entityframelistblock, entityspritedatablock | dw    Entity_5_0
 
-Entity_c:   db    entityframelistblock, entityspritedatablock | dw    Entity_0_2
-            db    entityframelistblock, entityspritedatablock | dw    Entity_2_2
-            db    entityframelistblock, entityspritedatablock | dw    Entity_1_2
-            db    entityframelistblock, entityspritedatablock | dw    Entity_2_2
+Entity_c:   db    entityframelistblock, entityspritedatablock | dw    Entity_6_0
+            db    entityframelistblock, entityspritedatablock | dw    Entity_8_0
+            db    entityframelistblock, entityspritedatablock | dw    Entity_7_0
+            db    entityframelistblock, entityspritedatablock | dw    Entity_8_0
 
 EntityaRoutine:
+  call  .HandlePhase                        ;used to build up hologram table and set palette
+
   ld    hl,Entity_a                         ;starting pose
   call  AnimateEntity
 
@@ -2688,21 +2748,58 @@ EntityaRoutine:
   ld    (InitiateWakeUp?),a
   ret
 
+  .HandlePhase:
+  ld    a,(iy+ObjectPhase)
+  or    a
+  ret   nz
 
+	ld		hl,.ArcadeHall2EntityPalette
+	call	SetPalette
 
+	ld		hl,.ArcadeHall2EntityPalette
+	ld		de,CurrentPalette
+	ld		bc,16*2
+	ldir  
 
+;MOVE THIS TO ENTITY ROUTINE
+	ld		a,1
+	ld		(SkipAssignOrder?),a						;we implement a hackjob here. In some cases we don't want to assign order
+	xor		a
+	ld		(Object1+PutOnFrame),a
 
+  ;change the table to match the entity's hologram
+  ld    hl,$4000 + (000*128) + (000/2) - 128
+  ld    de,$0000 + (164*128) + (078/2) - 128
+  ld    bc,$0000 + (019*256) + (094/2)
+  ld    a,EntityTableGfxBlock         	        ;block to copy graphics from
+  call  CopyRomToVram                       ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
 
+  ld    hl,$4000 + (000*128) + (000/2) - 128
+  ld    de,$8000 + (164*128) + (078/2) - 128
+  ld    bc,$0000 + (019*256) + (094/2)
+  ld    a,EntityTableGfxBlock         	        ;block to copy graphics from
+  call  CopyRomToVram                       ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
 
+  ld    hl,$4000 + (000*128) + (000/2) - 128
+  ld    de,$0000 + (164*128) + (078/2) - 128
+  ld    bc,$0000 + (019*256) + (094/2)
+  ld    a,1
+  ld    (Vdp_Write_HighPage?),a
+  ld    a,EntityTableGfxBlock         	        ;block to copy graphics from
+  call  CopyRomToVram                       ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
 
+  ld    hl,$4000 + (000*128) + (000/2) - 128
+  ld    de,$8000 + (164*128) + (078/2) - 128
+  ld    bc,$0000 + (019*256) + (094/2)
+  ld    a,EntityTableGfxBlock         	        ;block to copy graphics from
+  call  CopyRomToVram                       ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
+  xor   a
+  ld    (Vdp_Write_HighPage?),a
 
-
-
-
-
-
-
-
+  ld    (iy+ObjectPhase),1
+  ret
+	.ArcadeHall2EntityPalette:                    	;palette file
+  incbin "..\grapx\arcadehall2\arcade2entity.SC5",$7680+7,32
 
 EntitybRoutine:
   ld    hl,Entity_b                         ;starting pose

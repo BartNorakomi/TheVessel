@@ -584,9 +584,9 @@ ArcadeHall1GfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
   incbin "..\grapx\arcadehall1\arcade1.SC5",7,212 * 128      ;212 lines
 	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
 
-ArcadeHall1redlightsGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
-  incbin "..\grapx\arcadehall1\redlights.SC5",7,030 * 128      ;030 lines
-	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
+;ArcadeHall1redlightsGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
+;  incbin "..\grapx\arcadehall1\redlights.SC5",7,022 * 128      ;030 lines
+;	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
 
 ArcadeHall2GfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
   incbin "..\grapx\arcadehall2\arcade2.SC5",7,212 * 128      ;212 lines
@@ -666,7 +666,11 @@ UpgradeMenuGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
 	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
 
 OpenDoorGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
-  incbin "..\grapx\arcadehall1\opendoor.SC5",7,097 * 128      ;097 lines
+  incbin "..\grapx\arcadehall1\opendoor.SC5",7,083 * 128      ;097 lines
+	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
+
+EntityTableGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
+  incbin "..\grapx\arcadehall2\EntityTable.SC5",7,019 * 128      ;097 lines
 	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
 
 GirlPortraitGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize

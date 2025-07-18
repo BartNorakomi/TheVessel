@@ -289,5 +289,12 @@ NPCConv040: ;breeding room
   db    SwitchCharacter,CharacterPortraitAI,"They are not a possibility. They are a certainty-or a failure."
   db    SwitchCharacter,CharacterPortraitAI,"Your task is not to begin the future. It has already begun. Your task is to ensure it arrives.",255
 
-
+NPCConv043: ;first time inside holodeck simulation  
+  db    SwitchCharacter,CharacterPortraitVessel,"Wow, this place looks exactly like it did in my dreams."  
+  db    SwitchCharacter,CharacterPortraitAI,"Your memory engrams were highly detailed. The simulation rendered them with 97.4% accuracy."  
+  db    SwitchCharacter,CharacterPortraitVessel,"Even the hum of the machines feels right. I used to lose hours in here."  
+  db    SwitchCharacter,CharacterPortraitAI,"Time spent here is not lost. Familiar spaces promote cognitive resilience and motor recalibration."  
+  db    SwitchCharacter,CharacterPortraitVessel,"Right. Mental tune-up through muscle memory."  
+  db    SwitchCharacter,CharacterPortraitAI,"Proceed when ready. Exiting the boundaries will return you to the present."  
+  db    SwitchCharacter,CharacterPortraitVessel,"Just for a moment... I think I'll stay lost.",255  
 

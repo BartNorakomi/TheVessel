@@ -66,14 +66,14 @@ INCLUDE "RePlayer.asm"
 ObjectGirl:  							db  1,110,050 | dw 000,000					,000        | db 255      ,MovementRoutinesBlock | dw GirlMovementRoutine				| db 000,000 ,000, 000
 ObjectCapGirl:  					db  1,071,100 | dw 000,000					,000        | db 255      ,MovementRoutinesBlock | dw CapGirlMovementRoutine		| db 000,000 ,000, 000
 ObjectRedHeadBoy:  				db  1,102,220 | dw 000,000					,000        | db 255      ,MovementRoutinesBlock | dw RedHeadBoyMovementRoutine	| db 000,000 ,000, 000
-ObjectHost:  							db  1,068,108 | dw 000,000					,Host_0     | db 255      ,MovementRoutinesBlock | dw HostMovementRoutine				| db 000,000 ,000, 000
-ObjectWall:  							db  1,062,178 | dw 000,000					,Wall_0     | db 255      ,MovementRoutinesBlock | dw WallMovementRoutine				| db 000,000 ,000, 000
+ObjectHost:  							db  1,000,000 | dw 000,000					,Host_0     | db 255      ,MovementRoutinesBlock | dw HostMovementRoutine				| db 000,000 ,000, 000
+ObjectWall:  							db  1,055,172 | dw 000,000					,Wall_0     | db 255      ,MovementRoutinesBlock | dw WallMovementRoutine				| db 000,000 ,000, 000
 ;ObjectWall:  							db  1,105,048 | dw 000,000					,Wall_0     | db 255      ,MovementRoutinesBlock | dw WallMovementRoutine				| db 000,000 ,000, 000
 
 ObjectBackRoomGame:  			db  1,095,118 | dw 000,000					,BRGame_0   | db 255			,MovementRoutinesBlock | dw BackRoomGameRoutine				| db 000,000 ,000, 000
-ObjectEntitya: 						db  1,013,128 | dw 000,000					,Entity_a  	| db 001			,MovementRoutinesBlock | dw EntityaRoutine						| db 000,000 ,000, 000
-ObjectEntityb: 						db  1,013,128 | dw 000,000					,Entity_b  	| db 002			,MovementRoutinesBlock | dw EntitybRoutine						| db 000,000 ,000, 000
-ObjectEntityc: 						db  1,013,128 | dw 000,000					,Entity_c  	| db 003			,MovementRoutinesBlock | dw EntitycRoutine						| db 000,000 ,000, 000
+ObjectEntitya: 						db  1,028,132 | dw 000,000					,Entity_a  	| db 001			,MovementRoutinesBlock | dw EntityaRoutine						| db 000,000 ,000, 000
+ObjectEntityb: 						db  1,028,132 | dw 000,000					,Entity_b  	| db 002			,MovementRoutinesBlock | dw EntitybRoutine						| db 000,000 ,000, 000
+ObjectEntityc: 						db  1,028,132 | dw 000,000					,Entity_c  	| db 003			,MovementRoutinesBlock | dw EntitycRoutine						| db 000,000 ,000, 000
 
 EventArcadeHall1:					db	1,0,0     | dw 000,000					,000   			| db 255      ,MovementRoutinesBlock | dw ArcadeHall1EventRoutine		| db 000,000 ,000, 000
 EventArcadeHall2: 				db	1,0,0     | dw 000,000					,000        | db 255      ,MovementRoutinesBlock | dw ArcadeHall2EventRoutine		| db 000,000 ,000, 000
@@ -721,13 +721,6 @@ PutObjectsArcadeHall2:
 	cp		100
 	jr		c,.BackRoomGameNotYetFinished
 
-
-;MOVE THIS TO ENTITY ROUTINE
-	ld		a,1
-	ld		(SkipAssignOrder?),a						;we implement a hackjob here. In same cases we don't want to assign order
-	xor		a
-	ld		(Object1+PutOnFrame),a
-
 	ld		hl,ObjectEntitya								;put entity
 	call	PutSingleObject 
 	ld		hl,ObjectEntityb								;put entity
@@ -740,6 +733,7 @@ PutObjectsArcadeHall2:
 	ld		hl,EventArcadeHall2							;put arcade hall 2 event
 	call	PutSingleObject
 	ret
+
 
 	.BackRoomGameNotYetFinished:
 	ld		hl,ObjectHost										;put host
@@ -771,17 +765,6 @@ PutObjectsArcadeHall1:
 	ld		hl,EventArcadeHall1							;put arcade hall 1 event
 	call	PutSingleObject
 	call  LoadOpenDoorGfx 								;opens the door in all pages
-
-	ld		hl,(PlayerSpriteStand)
-  ld    de,LEnterDoor
-  call  CompareHLwithDE
-  ret   nz
-
-	;set starting coordinates player (entering through the door)
-	ld		a,061														;y
-	ld		(Object1+y),a
-	ld		a,172														;x
-	ld		(Object1+x),a
 	ret
 
 	.HostAppears:
@@ -798,7 +781,7 @@ PutObjectsArcadeHall1:
 	call	PutSingleObject 
 	ld		hl,EventArcadeHall1							;put arcade hall 1 event
 	call	PutSingleObject 
-	call  LoadArcadeHall1redlightsGfx 		;loads the red lights in page and
+;	call  LoadArcadeHall1redlightsGfx 		;loads the red lights in page and
 
 	;set starting coordinates player
 	ld		a,102														;y
@@ -964,11 +947,11 @@ LoadArcadeHall1Gfx:
   ld    a,ArcadeHall1GfxBlock         	;block to copy graphics from
 	jp		LoadGfx212High
 
-LoadArcadeHall1redlightsGfx:
-  ld    a,ArcadeHall1redlightsGfxBlock         	;block to copy graphics from
-  call  SetArcadeRedLightsGfxPage0
-  ld    a,ArcadeHall1redlightsGfxBlock         	;block to copy graphics from
-  jp		SetArcadeRedLightsGfxPage1
+;LoadArcadeHall1redlightsGfx:
+;  ld    a,ArcadeHall1redlightsGfxBlock         	;block to copy graphics from
+;  call  SetArcadeRedLightsGfxPage0
+;  ld    a,ArcadeHall1redlightsGfxBlock         	;block to copy graphics from
+;  jp		SetArcadeRedLightsGfxPage1
 
 LoadArcadeHall2Gfx:
   ld    hl,ArcadeHall2Palette
@@ -1038,17 +1021,17 @@ LoadGfx212HighPage1:
   ld    bc,$0000 + (212*256) + (256/2)
   jp    CopyRomToVram                   ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
 
-SetArcadeRedLightsGfxPage0:
-  ld    hl,$4000 + (000*128) + (000/2) - 128
-  ld    de,$0000 + (005*128) + (000/2) - 128
-  ld    bc,$0000 + (030*256) + (256/2)
-  jp    CopyRomToVram                   ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
+;SetArcadeRedLightsGfxPage0:
+;  ld    hl,$4000 + (000*128) + (000/2) - 128
+;  ld    de,$0000 + (021*128) + (000/2) - 128
+;  ld    bc,$0000 + (022*256) + (256/2)
+;  jp    CopyRomToVram                   ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
 
-SetArcadeRedLightsGfxPage1:
-  ld    hl,$4000 + (000*128) + (000/2) - 128
-  ld    de,$8000 + (005*128) + (000/2) - 128
-  ld    bc,$0000 + (030*256) + (256/2)
-  jp    CopyRomToVram                   ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
+;SetArcadeRedLightsGfxPage1:
+;  ld    hl,$4000 + (000*128) + (000/2) - 128
+;  ld    de,$0000 + (021*128) + (000/2) - 128
+;  ld    bc,$0000 + (022*256) + (256/2)
+;  jp    CopyRomToVram                   ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
 
 SetFontPage1Y212:                       ;set font at (0,212) page 0
   ld    hl,$4000 + (000*128) + (000/2) - 128
@@ -1066,28 +1049,28 @@ SetFontUpgradeMenuThickPage1Y212:     	;set font at (0,212) page 0
 
 LoadOpenDoorGfx:
   ld    hl,$4000 + (000*128) + (000/2) - 128
-  ld    de,$0000 + (066*128) + (100/2) - 128
-  ld    bc,$0000 + (097*256) + (056/2)
+  ld    de,$0000 + (072*128) + (104/2) - 128
+  ld    bc,$0000 + (083*256) + (046/2)
   ld    a,OpenDoorGfxBlock         	        ;block to copy graphics from
   call  CopyRomToVram                       ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
 
   ld    hl,$4000 + (000*128) + (000/2) - 128
-  ld    de,$8000 + (066*128) + (100/2) - 128
-  ld    bc,$0000 + (097*256) + (056/2)
+  ld    de,$8000 + (072*128) + (104/2) - 128
+  ld    bc,$0000 + (083*256) + (046/2)
   ld    a,OpenDoorGfxBlock         	        ;block to copy graphics from
   call  CopyRomToVram                       ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
 
   ld    hl,$4000 + (000*128) + (000/2) - 128
-  ld    de,$0000 + (066*128) + (100/2) - 128
-  ld    bc,$0000 + (097*256) + (056/2)
+  ld    de,$0000 + (072*128) + (104/2) - 128
+  ld    bc,$0000 + (083*256) + (046/2)
   ld    a,1
   ld    (Vdp_Write_HighPage?),a
   ld    a,OpenDoorGfxBlock         	        ;block to copy graphics from
   call  CopyRomToVram                       ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
 
   ld    hl,$4000 + (000*128) + (000/2) - 128
-  ld    de,$8000 + (066*128) + (100/2) - 128
-  ld    bc,$0000 + (097*256) + (056/2)
+  ld    de,$8000 + (072*128) + (104/2) - 128
+  ld    bc,$0000 + (083*256) + (046/2)
   ld    a,OpenDoorGfxBlock         	        ;block to copy graphics from
   call  CopyRomToVram                       ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
   xor   a

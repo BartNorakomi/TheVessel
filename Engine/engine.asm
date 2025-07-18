@@ -13,13 +13,13 @@ LevelEngine:
   call  WriteSpatToVram
   call  SetScreenonWithDelay
   call  PopulateControls
+  if ConversationsOn?
+  call  HandleConversations             ;handles NPC conversations
+  endif
 ;  call  BackdropOrange
   call  HandleObjects
 ;  call  BackdropBlack
 
-  if ConversationsOn?
-  call  HandleConversations             ;handles NPC conversations
-  endif
 
   xor   a
   ld    hl,vblankintflag
@@ -388,6 +388,10 @@ ObjEvent3: db  0,0,0    | dw 0,0,0                                              
 HandleObjects:
   ld    iy,Object1
   call  HandleObjectRoutine
+
+;  call  BackdropRed
+
+
   ld    iy,Object2
   call  HandleObjectRoutine
   ld    iy,Object3
@@ -1186,14 +1190,27 @@ LenghtCharacterData:  equ $-CurrentPortraitPalette
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 HandleConversations:
-	ld    a,(PageOnNextVblank)            ;we only start a conversation when current page=0
-  cp    0*32 + 31
-  ret   nz
   ld    a,(StartConversation?)
   dec   a
   ret   nz
-  ld    (StartConversation?),a
+
+  ld    a,1
   ld    (freezecontrols?),a
+
+	ld    a,(PageOnNextVblank)            ;we only start a conversation when current page=0
+  cp    0*32 + 31
+  ret   nz
+
+  ;wait 4 frames with controls off before starting a conversation, this way the player sprite can go to standing pose
+  ld    a,(WaitCenterScreenTimer)
+  inc   a
+  and   3
+  ld    (WaitCenterScreenTimer),a
+  ret   nz
+
+  xor   a
+  ld    (freezecontrols?),a
+  ld    (StartConversation?),a
   ld    a,(YConversationWindowCentre)
   ld    (Fill2BlackLinesGoingUp+dy),a
   ld    (Fill2BlackLinesGoingDown+dy),a
@@ -2591,7 +2608,7 @@ BackdropRandom:
   ld    a,r
   jp    SetBackDrop
 BackdropRed:
-  ld    a,3
+  ld    a,5
   jp    SetBackDrop
 BackdropYellow:
   ld    a,9
@@ -2616,11 +2633,11 @@ CompareHLwithDE:
   ret
 
 StartSaveGameData:
-CurrentRoom:  db  01                    ;0=arcadehall1, 1=arcadehall2, 2=biopod, 3=hydroponicsbay, 4=hangarbay, 5=trainingdeck, 6=reactorchamber, 7=sleepingquarters, 8=armoryvault, 9=holodeck, 10=medicalbay
+CurrentRoom:  db  09                    ;0=arcadehall1, 1=arcadehall2, 2=biopod, 3=hydroponicsbay, 4=hangarbay, 5=trainingdeck, 6=reactorchamber, 7=sleepingquarters, 8=armoryvault, 9=holodeck, 10=medicalbay
                                         ;11=sciencelab, 12=drillinggame, 13=upgrademenu, 14=drillinglocations
-GamesPlayed:  db 9                      ;increases after leaving a game. max=255
-HighScoreTotalAverage: db 00            ;recruiter appears when 80 (%) is reached
-HighScoreBackroomGame:  db  000
+GamesPlayed:  db 0                      ;increases after leaving a game. max=255
+HighScoreTotalAverage: db 80            ;recruiter appears when 80 (%) is reached
+HighScoreBackroomGame:  db  100
 
 HighScoreRoadFighter: db 0
 HighScoreBasketball: db 0
@@ -2629,8 +2646,8 @@ HighScoreBikeRace: db 0
 ConvGirl: db %0000 0000                 ;conversations handled
 ConvCapGirl: db %0000 0000              ;conversations handled
 ConvGingerBoy: db %0000 0000            ;conversations handled
-ConvHost: db %0000 0001                 ;conversations handled
-ConvEntity: db %1000 0011               ;conversations handled bit 6=embryo check followup
+ConvHost: db %0000 0001                 ;conversations handled bit0=80% achieved 
+ConvEntity: db %1000 0000               ;conversations handled bit 6=embryo check followup, bit 5=holodeck explainer,bit 0+1+2=conversation arcade2
 ConvEntityShipExplanations: db %1111 1111               ;conversations handled
 ;ConvEntityShipExplanations: db %0000 0000               ;conversations handled
 
