@@ -1528,7 +1528,38 @@ CheckShowPressTrigAIconholodeck:
   ld    (TriggerAx),a
   ret
 
+
+
+
+
+
+
+LenghtXYData:
+  ;x, y   (x/2+000 or x/2+128 (for the next line))   (y/2 + write access)
+db  6+2,     050/2+000,050/2 or 64,             119,119,119,119,119,119,            3+2,     100/2+000,100/2 or 64,          119,119,119,         2 ;(2=end)
+VideoReplayer:
+  xor   a
+	out   ($99),a               ;write page instellen (0=page 0 from y=0 to 127, 1=page 0 from y=128 to 255, 2=page 1 from y=0 to 127 etc..)
+	ld    a,14+128
+	out   ($99),a
+  ld    hl,LenghtXYData
+  ld    d,$99                 ;port for writing to registers
+  ld    e,$98                 ;port for writing data to vram
+  .loop:
+  ld    b,(hl)                ;amount of bytes to write +2, because the 2 outi's will decrease this value by 2 (if this amount is 2, the double outi will return zflag and end the replayer
+  inc   hl
+  ld    c,d                   ;port for writing to registers
+  outi                        ;write x
+  outi                        ;write y
+  ret   z                     ;if amount of bytes to write = 2 this is a signal to end the replayer
+  ld    c,e                   ;port for writing data to vram
+  otir
+  jp    .loop
+
 holodeckEventRoutine:
+
+  call  VideoReplayer
+
   call  .CheckPlayerLeavingRoom             ;when y>116 player enters arcadehall1 
   call  PutConversationCloud
   call  CheckShowPressTrigAIconholodeck
