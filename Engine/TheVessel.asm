@@ -653,6 +653,28 @@ DrillingLocationsGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlo
   incbin "..\grapx\DrillingLocations\DrillingLocations.SC5",7,212 * 128      ;98 lines
 	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
 
+;  incbin "..\grapx\RacingGame\nightstriker2Prepared.SR5",7,212 * 128      ;98 lines
+
+RacingGameTrack1GfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
+  incbin "..\grapx\RacingGame\NewTrack1.sc5",7,212 * 128      ;98 lines
+	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
+
+RacingGameTrack2GfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
+  incbin "..\grapx\RacingGame\NewTrack2.sc5",7,212 * 128      ;98 lines
+	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
+
+RacingGameAnimationsVersion2Block:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
+	phase	$8000
+	DataFileRacingGame:
+	ChangedPixels:
+  incbin "..\grapx\RacingGame\changedpixels.bin"
+	Addresses:
+  incbin "..\grapx\RacingGame\addresses.bin"
+	WriteInstructions:
+  incbin "..\grapx\RacingGame\writeinstructions.bin"
+	dephase	
+	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
+
 PinPointIconGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
   incbin "..\grapx\DrillingLocations\PinPointIcon.SC5",7,070 * 128      ;98 lines
 	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block

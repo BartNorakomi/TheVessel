@@ -1,7 +1,82 @@
 ;UpgradeMenuEventRoutine
 ;DrillingLocationsRoutine
+;RacingGameRoutine
 
 Phase MovementRoutinesAddress
+
+
+VideoReplayer:
+  ld    a,RacingGameAnimationsVersion2Block        ;movement routine block
+  ;we can also use only page 1 for this
+  call  block34                             ;CARE!!! we can only switch block34 if page 1 is in rom  
+
+  xor   a
+	out   ($99),a               ;write page instellen (0=page 0 from y=0 to 127, 1=page 0 from y=128 to 255, 2=page 1 from y=0 to 127 etc..)
+	ld    a,14+128
+	out   ($99),a
+
+  ld    hl,ChangedPixels
+  ld    c,$98
+  exx
+  ld    hl,Addresses
+  ld    c,$99
+  jp    WriteInstructions
+
+RacingGameRoutine:
+  ld    a,0*32 + 31                         ;force page 0
+	ld    (PageOnNextVblank),a
+  ld    a,1
+  ld    (framecounter),a                    ;we force framecounter to 1 so that the sf2 object handler doesn't swap page ever (so we always stay on page 2 for the game, and page 0 for the hud)
+
+  ld    a,(framecounter2)
+  inc   a
+  ld    (framecounter2),a
+
+;  call  BackdropOrange
+;  call  VideoReplayer
+;  call  BackdropBlack
+
+  call  .HandlePhase                        ;used to build up screen and initiate variables
+  ret
+
+  .HandlePhase:
+  ld    a,(iy+ObjectPhase)
+  or    a
+  ret   nz
+  ld    (iy+ObjectPhase),1
+
+;  ld    a,1
+;  ld    (SetLineIntHeightOnVblankDrillingGame?),a
+  call  SetInterruptHandlerRacingGame
+  ret
+
+SetInterruptHandlerRacingGame:
+  di
+  ld    hl,InterruptHandlerRacingGame
+  ld    ($38+1),hl          ;set new normal interrupt
+  ld    a,$c3               ;jump command
+  ld    ($38),a
+  ;lineinterrupt on
+  ld    a,(VDP_0)                       ;set ei1
+  or    16                              ;ei1 checks for lineint and vblankint
+  ld    (VDP_0),a                       ;ei0 (which is default at boot) only checks vblankint
+  out   ($99),a
+  ld    a,128
+  out   ($99),a
+
+  ld    a,1
+  ld    (LineIntPartRaceGame),a
+  ld    hl,StraightRoad01Part2
+  ld    (PointerToSwapLines),hl
+  
+  xor   a
+  ld    (LineIntHeightRacingGame),a
+  out   ($99),a
+  ld    a,19+128                        ;set lineinterrupt height
+  ei
+  out   ($99),a 
+  ret
+
 
 
 DigSite1dx:  equ 152

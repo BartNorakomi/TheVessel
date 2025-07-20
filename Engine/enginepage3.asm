@@ -133,6 +133,8 @@ EventUpgradeMenu:					db	1,$28,$7e | dw 000,000					,000        | db 255      ,M
 
 EventDrillingLocations:		db	1,$28,$7e | dw 000,000					,000        | db 255      ,MovementRoutines2Block| dw DrillingLocationsRoutine	| db 000,000 ,000, 000
 
+EventRacingGame:					db	1,$28,$7e | dw 000,000					,000        | db 255      ,MovementRoutines2Block| dw RacingGameRoutine					| db 000,000 ,000, 000
+
 
 
 LenghtDoCopyTable:  equ	RestoreBackgroundObject1Page1-RestoreBackgroundObject1Page0
@@ -369,6 +371,11 @@ LoadTileMap:
 	jp		z,.upgrademenu
 	dec		a
 	jp		z,.drillinglocations
+	dec		a
+	jp		z,.racinggame
+	ret
+
+	.racinggame:
 	ret
 
 	.drillinglocations:
@@ -556,6 +563,18 @@ PutObjects:															;put objects and events
 	jp		z,PutObjectsUpgradeMenu
 	dec		a
 	jp		z,PutObjectsDrillingLocations
+	dec		a
+	jp		z,PutObjectsRacingGame
+	ret
+
+PutObjectsRacingGame:
+	xor		a																;turn off main player sprite (we don't use this at the games)
+	ld		(Object1+on?),a
+
+	ld		de,ObjEvent1										;now put events
+
+	ld		hl,EventRacingGame							;put racing game event
+	call	PutSingleObject
 	ret
 
 PutObjectsDrillingLocations:
@@ -567,7 +586,6 @@ PutObjectsDrillingLocations:
 	ld		hl,EventDrillingLocations				;put drilling locations event
 	call	PutSingleObject
 	ret
-
 
 PutObjectsUpgradeMenu:
 	xor		a																;turn off main player sprite (we don't use this at the games)
@@ -842,6 +860,9 @@ upgrademenuPalette:                    			;palette file
   incbin "..\grapx\ship\sciencelab\upgrademenu2.SC5",$7680+7,32
 DrillingLocationsPalette:
   incbin "..\grapx\drillinglocations\drillinglocations.SC5",$7680+7,32
+RacingGamePalette:
+  incbin "..\grapx\racinggame\newtrack1.SC5",$7680+7,32
+;  incbin "..\grapx\racinggame\nightstriker2Prepared.SC5",$7680+7,32
 
 LoadRoomGfx:
 	ld		a,(CurrentRoom)									;0=arcadehall1, 1=arcadehall2
@@ -875,7 +896,29 @@ LoadRoomGfx:
 	jp		z,LoadUpgradeMenuGfx      			;loads the upgrade menu tiles , and sets palette
 	dec		a
 	jp		z,LoadDrillingLocationsGfx 			;loads the drilling locations screen and sets palette
+	dec		a
+	jp		z,LoadRacingGameGfx 						;loads the racing game screen and sets palette
 	ret
+
+LoadRacingGameGfx:
+  ld    a,RacingGameTrack1GfxBlock     			;block to copy graphics from
+  ld    hl,$4000 + (000*128) + (000/2) - 128
+  ld    de,$0000 + (000*128) + (000/2) - 128
+  ld    bc,$0000 + (212*256) + (256/2)
+  call  CopyRomToVram                   ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
+
+  ld    a,RacingGameTrack2GfxBlock     			;block to copy graphics from
+  ld    hl,$4000 + (000*128) + (000/2) - 128
+  ld    de,$8000 + (000*128) + (000/2) - 128
+  ld    bc,$0000 + (212*256) + (256/2)
+  call  CopyRomToVram                   ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
+
+  ld    hl,RacingGamePalette
+	ld		de,CurrentPalette
+	ld		bc,16*2
+	ldir
+  ld    hl,CurrentPalette
+  jp		SetPalette
 
 LoadDrillingLocationsGfx:
   ld    hl,DrillingLocationsPalette
@@ -2131,6 +2174,7 @@ ScienceLabMenuItemSelected:	rb	1
 AlreadyAskedToRefuel?:			rb	1
 DigSiteSelected:						rb	1
 AskRefuelAfterOffLoadResources?:	rb	1
+CurrentInterruptLineRacingGame:	rb	1
 
 
 endenginepage3variables:  equ $+enginepage3length

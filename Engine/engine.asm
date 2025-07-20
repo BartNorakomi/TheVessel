@@ -176,6 +176,32 @@ vblank:
   out   ($99),a
   .EndSetLineIntHeight:
 
+
+
+
+
+  ld    hl,StraightRoad01Part1
+  ld    (LineIntRacingGame.SelfModifyingcodeStraightRoadxxPart1),hl
+  ld    a,(LenghtStraightRoad01Part1)
+  ld    (LineIntRacingGame.SelfModifyingcodeLenghtStraightRoadxxPart1),a
+  ld    hl,StraightRoad01Part2
+  ld    (PointerToSwapLines),hl
+
+  ld    a,1
+  ld    (LineIntPartRaceGame),a
+
+  xor   a
+  ld    (LineIntHeightRacingGame),a
+  out   ($99),a
+  ld    a,19+128                        ;set lineinterrupt height
+  out   ($99),a 
+
+
+
+
+
+
+
   pop   hl 
   pop   de 
   pop   bc 
@@ -359,6 +385,166 @@ LineIntDrillingGame:
   pop   af 
   ei
   ret  
+
+
+
+InterruptHandlerRacingGame:
+  push  af
+  
+  ld    a,1               ;set s#1
+  out   ($99),a
+  ld    a,15+128
+  out   ($99),a
+  in    a,($99)           ;check and acknowledge line interrupt
+  rrca
+  jp    c,LineIntRacingGame ;palette split
+  
+  xor   a                 ;set s#0
+  out   ($99),a
+  ld    a,15+128
+  out   ($99),a
+  in    a,($99)           ;check and acknowledge vblank interrupt
+  rlca
+  jp    c,vblank          ;vblank detected, so jp to that routine
+ 
+  pop   af 
+  ei
+  ret
+
+
+
+LineIntHeightRacingGame: ds 1
+LineIntPartRaceGame:  ds  1
+CurrentPageOnLineInt: ds  1
+PointerToSwapLines: ds  2
+
+P0:  equ 0*32 + 31
+P1:  equ 1*32 + 31
+
+
+                ;FIRST 3 VALUES ARE SKIPPED
+StraightRoad01Part1:  db  P1, P1, P1, P1, P1, P0, P1, P1, P1, P1, P1, P0, P0, P1, P0, P1, P0, P1, P0, P0, P1, P0, P0, P1, P1, P0, P0, P1, P1, P0, P0, P0, P1, P1, P1, P0
+.Lenght: equ $-StraightRoad01Part1
+LenghtStraightRoad01Part1: db  StraightRoad01Part1.Lenght
+StraightRoad01Part2:  db  42-2, 47-2, 52-2, 59-2, 68-2, 79-2, 94-2, 117-2, 153-2, 10
+
+StraightRoad02Part1:  db  P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P0, P1, P0, P0, P1, P0, P0, P1, P1, P0, P0, P1, P1, P0, P0, P0, P1, P1, P1, P0
+.Lenght: equ $-StraightRoad02Part1
+LenghtStraightRoad02Part1: db  StraightRoad02Part1.Lenght
+StraightRoad02Part2:  db  42-2, 47-2, 52-2, 59-2, 68-2, 79-2, 94-2, 98-2, 153-2, 10
+
+
+
+
+
+
+
+;INFO ABOUT CONVERTING THE IMAGES 
+;we start at
+;    var position      = 960;                       // current camera Z position (add playerZ to get player's absolute Z position)
+;and end at
+;    var position      = 1560;                       // current camera Z position (add playerZ to get player's absolute Z position)
+
+;total distance is 600
+;if we work with 30 steps, then each step is 20 in size
+
+SetRaceTrackPage:
+  .Waitline1:
+	in    a,($99)           ;Read Status register #2
+	and   %0010 0000        ;bit to check for HBlank detection
+	jr    nz,.Waitline1
+
+
+nop |nop |nop |nop |nop |nop |nop |nop |nop |nop |nop |			;RM:why?
+nop |nop |nop |nop |nop |nop |nop |nop |nop |nop |
+
+  ld    a,(hl)            ;page
+  ld    (CurrentPageOnLineInt),a
+  inc   hl
+	out   ($99),a			;RM: outi perhaps? as E is always 23+128
+  ld    a,2+128                         ;reg 2, used to set page
+	out   ($99),a			;RM: outi perhaps? as E is always 23+128
+  djnz  SetRaceTrackPage
+  ret
+
+LineIntRacingGame:
+  ld    a,(LineIntPartRaceGame)
+  dec   a
+  jp    z,.Part1
+
+
+
+
+  .Part2:
+  push  bc
+  push  hl
+
+  ld    a,(CurrentPageOnLineInt)
+  xor   32
+  ld    (CurrentPageOnLineInt),a
+	out   ($99),a			;RM: outi perhaps? as E is always 23+128
+  ld    a,2+128                         ;reg 2, used to set page
+	out   ($99),a			;RM: outi perhaps? as E is always 23+128
+
+  ld    hl,(PointerToSwapLines)
+  ld    a,(hl)
+  inc   hl
+  ld    (PointerToSwapLines),hl
+  ld    (LineIntHeightRacingGame),a
+  out   ($99),a
+  ld    a,19+128                        ;set lineinterrupt height
+  out   ($99),a 
+
+  pop   hl
+  pop   bc
+  pop   af 
+  ei
+  ret  
+
+
+
+
+
+
+  .Part1:
+  push  bc
+  push  hl
+
+  ld    a,2               ;Set Status register #2
+  out   ($99),a
+  ld    a,15+128          ;we are about to check for HR
+  out   ($99),a
+
+  .Waitline1:
+	in    a,($99)           ;Read Status register #2
+	and   %0010 0000        ;bit to check for HBlank detection
+	jr    z,.Waitline1
+
+  .SelfModifyingcodeStraightRoadxxPart1: equ $+1
+  ld    hl,StraightRoad01Part1
+  .SelfModifyingcodeLenghtStraightRoadxxPart1: equ $+1
+  ld    b,000
+  call  SetRaceTrackPage
+
+  ld    a,2
+  ld    (LineIntPartRaceGame),a
+
+  ld    hl,(PointerToSwapLines)
+  ld    a,(hl)
+  inc   hl
+  ld    (PointerToSwapLines),hl
+  ld    (LineIntHeightRacingGame),a
+  out   ($99),a
+  ld    a,19+128                        ;set lineinterrupt height
+  out   ($99),a 
+
+  pop   hl
+  pop   bc
+  pop   af 
+  ei
+  ret  
+
+
 
 on?:                    equ 0
 y:                      equ 1
@@ -2633,8 +2819,8 @@ CompareHLwithDE:
   ret
 
 StartSaveGameData:
-CurrentRoom:  db  09                    ;0=arcadehall1, 1=arcadehall2, 2=biopod, 3=hydroponicsbay, 4=hangarbay, 5=trainingdeck, 6=reactorchamber, 7=sleepingquarters, 8=armoryvault, 9=holodeck, 10=medicalbay
-                                        ;11=sciencelab, 12=drillinggame, 13=upgrademenu, 14=drillinglocations
+CurrentRoom:  db  15                    ;0=arcadehall1, 1=arcadehall2, 2=biopod, 3=hydroponicsbay, 4=hangarbay, 5=trainingdeck, 6=reactorchamber, 7=sleepingquarters, 8=armoryvault, 9=holodeck, 10=medicalbay
+                                        ;11=sciencelab, 12=drillinggame, 13=upgrademenu, 14=drillinglocations, 15=racinggame
 GamesPlayed:  db 0                      ;increases after leaving a game. max=255
 HighScoreTotalAverage: db 80            ;recruiter appears when 80 (%) is reached
 HighScoreBackroomGame:  db  100
