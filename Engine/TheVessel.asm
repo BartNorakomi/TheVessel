@@ -656,11 +656,11 @@ DrillingLocationsGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlo
 ;  incbin "..\grapx\RacingGame\nightstriker2Prepared.SR5",7,212 * 128      ;98 lines
 
 RacingGameTrack1GfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
-  incbin "..\grapx\RacingGame\NewTrack1.sc5",7,212 * 128      ;98 lines
+  incbin "..\grapx\RacingGame\RoadMSXSize\1a.sc5",7,212 * 128      ;98 lines
 	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
 
 RacingGameTrack2GfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
-  incbin "..\grapx\RacingGame\NewTrack2.sc5",7,212 * 128      ;98 lines
+  incbin "..\grapx\RacingGame\RoadMSXSize\1b.sc5",7,212 * 128      ;98 lines
 	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
 
 RacingGameAnimationsVersion2Block:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize

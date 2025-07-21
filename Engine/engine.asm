@@ -180,23 +180,82 @@ vblank:
 
 
 
-  ld    hl,StraightRoad01Part1
-  ld    (LineIntRacingGame.SelfModifyingcodeStraightRoadxxPart1),hl
-  ld    a,(LenghtStraightRoad01Part1)
+
+
+  ld    a,(CurrentRoom)
+  cp    15
+  jr    nz,.EndCheckRacingGame
+
+  ld    a,(RoadAnimationStep)
+  inc   a
+  cp    60
+  jr    nz,.EndCheckLoop
+  xor   a
+  .EndCheckLoop:
+  ld    (RoadAnimationStep),a
+
+  ld    d,0
+  ld    e,a
+
+  add   a,a                           ;*2
+  add   a,a                           ;*4
+  ld    l,a
+  ld    h,0
+
+  add   hl,de
+  ld    de,RoadAnimationAddresses
+  add   hl,de
+
+  ld    e,(hl)
+  inc   hl
+  ld    d,(hl)
+
+  ld    (LineIntRacingGame.SelfModifyingcodeStraightRoadxxPart1),de
+
+push hl
+ld hl,StartRacingGameLineInt
+add hl,de
+ld (LineIntRacingGame.SelfModifyingcodeStraightRoadxxPart1),hl
+pop hl
+
+  inc   hl
+  ld    a,(hl)
+
+sub StartRacingGameLineInt
+
   ld    (LineIntRacingGame.SelfModifyingcodeLenghtStraightRoadxxPart1),a
-  ld    hl,StraightRoad01Part2
-  ld    (PointerToSwapLines),hl
+  inc   hl
+  ld    e,(hl)
+  inc   hl
+  ld    d,(hl)  
+  ld    (PointerToSwapLines),de
+
+;  ld    hl,StraightRoad02Part1
+;  ld    (LineIntRacingGame.SelfModifyingcodeStraightRoadxxPart1),hl
+;  ld    a,(LenghtStraightRoad01Part1)
+;  ld    (LineIntRacingGame.SelfModifyingcodeLenghtStraightRoadxxPart1),a
+;  ld    hl,StraightRoad01Part2
+;  ld    (PointerToSwapLines),hl
 
   ld    a,1
   ld    (LineIntPartRaceGame),a
 
   xor   a
+
+ld a,StartRacingGameLineInt
+
   ld    (LineIntHeightRacingGame),a
   out   ($99),a
   ld    a,19+128                        ;set lineinterrupt height
   out   ($99),a 
 
+;  ld    a,-50
+;  out   ($99),a
+;  ld    a,23+128                        ;r#23 vertical screen offset
+;  out   ($99),a 
 
+
+  .EndCheckRacingGame:
 
 
 
@@ -216,6 +275,78 @@ vblank:
   pop   af 
   ei
   ret
+
+;The road animation starts to look good from y=15 and onwards. the animation starts at y=3, so we can skip the first 12 lines ???
+StartRacingGameLineInt: equ 12
+
+
+RoadAnimationStep:  db  -1
+RoadAnimationAddressesPointer:  dw  RoadAnimationAddresses
+
+RoadAnimationAddresses:
+dw  StraightRoad01Part1 | db StraightRoad01Part1.Lenght | dw StraightRoad01Part2
+dw  StraightRoad02Part1 | db StraightRoad02Part1.Lenght | dw StraightRoad02Part2
+dw  StraightRoad03Part1 | db StraightRoad03Part1.Lenght | dw StraightRoad03Part2
+dw  StraightRoad04Part1 | db StraightRoad04Part1.Lenght | dw StraightRoad04Part2
+dw  StraightRoad05Part1 | db StraightRoad05Part1.Lenght | dw StraightRoad05Part2
+dw  StraightRoad06Part1 | db StraightRoad06Part1.Lenght | dw StraightRoad06Part2
+dw  StraightRoad07Part1 | db StraightRoad07Part1.Lenght | dw StraightRoad07Part2
+dw  StraightRoad08Part1 | db StraightRoad08Part1.Lenght | dw StraightRoad08Part2
+dw  StraightRoad09Part1 | db StraightRoad09Part1.Lenght | dw StraightRoad09Part2
+dw  StraightRoad10Part1 | db StraightRoad10Part1.Lenght | dw StraightRoad10Part2
+dw  StraightRoad11Part1 | db StraightRoad11Part1.Lenght | dw StraightRoad11Part2
+dw  StraightRoad12Part1 | db StraightRoad12Part1.Lenght | dw StraightRoad12Part2
+dw  StraightRoad13Part1 | db StraightRoad13Part1.Lenght | dw StraightRoad13Part2
+dw  StraightRoad14Part1 | db StraightRoad14Part1.Lenght | dw StraightRoad14Part2
+dw  StraightRoad15Part1 | db StraightRoad15Part1.Lenght | dw StraightRoad15Part2
+dw  StraightRoad16Part1 | db StraightRoad16Part1.Lenght | dw StraightRoad16Part2
+dw  StraightRoad17Part1 | db StraightRoad17Part1.Lenght | dw StraightRoad17Part2
+dw  StraightRoad18Part1 | db StraightRoad18Part1.Lenght | dw StraightRoad18Part2
+dw  StraightRoad19Part1 | db StraightRoad19Part1.Lenght | dw StraightRoad19Part2
+dw  StraightRoad20Part1 | db StraightRoad20Part1.Lenght | dw StraightRoad20Part2
+dw  StraightRoad21Part1 | db StraightRoad21Part1.Lenght | dw StraightRoad21Part2
+dw  StraightRoad22Part1 | db StraightRoad22Part1.Lenght | dw StraightRoad22Part2
+dw  StraightRoad23Part1 | db StraightRoad23Part1.Lenght | dw StraightRoad23Part2
+dw  StraightRoad24Part1 | db StraightRoad24Part1.Lenght | dw StraightRoad24Part2
+dw  StraightRoad25Part1 | db StraightRoad25Part1.Lenght | dw StraightRoad25Part2
+dw  StraightRoad26Part1 | db StraightRoad26Part1.Lenght | dw StraightRoad26Part2
+dw  StraightRoad27Part1 | db StraightRoad27Part1.Lenght | dw StraightRoad27Part2
+dw  StraightRoad28Part1 | db StraightRoad28Part1.Lenght | dw StraightRoad28Part2
+dw  StraightRoad29Part1 | db StraightRoad29Part1.Lenght | dw StraightRoad29Part2
+dw  StraightRoad30Part1 | db StraightRoad30Part1.Lenght | dw StraightRoad30Part2
+
+dw  StraightRoad2ndPart01Part1 | db StraightRoad2ndPart01Part1.Lenght | dw StraightRoad2ndPart01Part2
+dw  StraightRoad2ndPart02Part1 | db StraightRoad2ndPart02Part1.Lenght | dw StraightRoad2ndPart02Part2
+dw  StraightRoad2ndPart03Part1 | db StraightRoad2ndPart03Part1.Lenght | dw StraightRoad2ndPart03Part2
+dw  StraightRoad2ndPart04Part1 | db StraightRoad2ndPart04Part1.Lenght | dw StraightRoad2ndPart04Part2
+dw  StraightRoad2ndPart05Part1 | db StraightRoad2ndPart05Part1.Lenght | dw StraightRoad2ndPart05Part2
+dw  StraightRoad2ndPart06Part1 | db StraightRoad2ndPart06Part1.Lenght | dw StraightRoad2ndPart06Part2
+dw  StraightRoad2ndPart07Part1 | db StraightRoad2ndPart07Part1.Lenght | dw StraightRoad2ndPart07Part2
+dw  StraightRoad2ndPart08Part1 | db StraightRoad2ndPart08Part1.Lenght | dw StraightRoad2ndPart08Part2
+dw  StraightRoad2ndPart09Part1 | db StraightRoad2ndPart09Part1.Lenght | dw StraightRoad2ndPart09Part2
+dw  StraightRoad2ndPart10Part1 | db StraightRoad2ndPart10Part1.Lenght | dw StraightRoad2ndPart10Part2
+dw  StraightRoad2ndPart11Part1 | db StraightRoad2ndPart11Part1.Lenght | dw StraightRoad2ndPart11Part2
+dw  StraightRoad2ndPart12Part1 | db StraightRoad2ndPart12Part1.Lenght | dw StraightRoad2ndPart12Part2
+dw  StraightRoad2ndPart13Part1 | db StraightRoad2ndPart13Part1.Lenght | dw StraightRoad2ndPart13Part2
+dw  StraightRoad2ndPart14Part1 | db StraightRoad2ndPart14Part1.Lenght | dw StraightRoad2ndPart14Part2
+dw  StraightRoad2ndPart15Part1 | db StraightRoad2ndPart15Part1.Lenght | dw StraightRoad2ndPart15Part2
+dw  StraightRoad2ndPart16Part1 | db StraightRoad2ndPart16Part1.Lenght | dw StraightRoad2ndPart16Part2
+dw  StraightRoad2ndPart17Part1 | db StraightRoad2ndPart17Part1.Lenght | dw StraightRoad2ndPart17Part2
+dw  StraightRoad2ndPart18Part1 | db StraightRoad2ndPart18Part1.Lenght | dw StraightRoad2ndPart18Part2
+dw  StraightRoad2ndPart19Part1 | db StraightRoad2ndPart19Part1.Lenght | dw StraightRoad2ndPart19Part2
+dw  StraightRoad2ndPart20Part1 | db StraightRoad2ndPart20Part1.Lenght | dw StraightRoad2ndPart20Part2
+dw  StraightRoad2ndPart21Part1 | db StraightRoad2ndPart21Part1.Lenght | dw StraightRoad2ndPart21Part2
+dw  StraightRoad2ndPart22Part1 | db StraightRoad2ndPart22Part1.Lenght | dw StraightRoad2ndPart22Part2
+dw  StraightRoad2ndPart23Part1 | db StraightRoad2ndPart23Part1.Lenght | dw StraightRoad2ndPart23Part2
+dw  StraightRoad2ndPart24Part1 | db StraightRoad2ndPart24Part1.Lenght | dw StraightRoad2ndPart24Part2
+dw  StraightRoad2ndPart25Part1 | db StraightRoad2ndPart25Part1.Lenght | dw StraightRoad2ndPart25Part2
+dw  StraightRoad2ndPart26Part1 | db StraightRoad2ndPart26Part1.Lenght | dw StraightRoad2ndPart26Part2
+dw  StraightRoad2ndPart27Part1 | db StraightRoad2ndPart27Part1.Lenght | dw StraightRoad2ndPart27Part2
+dw  StraightRoad2ndPart28Part1 | db StraightRoad2ndPart28Part1.Lenght | dw StraightRoad2ndPart28Part2
+dw  StraightRoad2ndPart29Part1 | db StraightRoad2ndPart29Part1.Lenght | dw StraightRoad2ndPart29Part2
+dw  StraightRoad2ndPart30Part1 | db StraightRoad2ndPart30Part1.Lenght | dw StraightRoad2ndPart30Part2
+
+
 
 LineInt:
   push  bc
@@ -423,20 +554,470 @@ P1:  equ 1*32 + 31
 
 
                 ;FIRST 3 VALUES ARE SKIPPED
+
+;    var position      = 960;                       // current camera Z position (add playerZ to get player's absolute Z position)
 StraightRoad01Part1:  db  P1, P1, P1, P1, P1, P0, P1, P1, P1, P1, P1, P0, P0, P1, P0, P1, P0, P1, P0, P0, P1, P0, P0, P1, P1, P0, P0, P1, P1, P0, P0, P0, P1, P1, P1, P0
+
 .Lenght: equ $-StraightRoad01Part1
 LenghtStraightRoad01Part1: db  StraightRoad01Part1.Lenght
 StraightRoad01Part2:  db  42-2, 47-2, 52-2, 59-2, 68-2, 79-2, 94-2, 117-2, 153-2, 10
 
-StraightRoad02Part1:  db  P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P1, P0, P1, P0, P0, P1, P0, P0, P1, P1, P0, P0, P1, P1, P0, P0, P0, P1, P1, P1, P0
+;    var position      = 980;                       // current camera Z position (add playerZ to get player's absolute Z position)
+StraightRoad02Part1:  db  P1, P1, P1, P1, P1, P0, P1, P1, P1, P1, P1, P0, P0, P1, P0, P1, P0, P1, P0, P0, P1, P0, P0, P1, P1, P0, P0, P1, P1, P0, P0, P0, P1, P1, P1, P0
+
 .Lenght: equ $-StraightRoad02Part1
 LenghtStraightRoad02Part1: db  StraightRoad02Part1.Lenght
-StraightRoad02Part2:  db  42-2, 47-2, 52-2, 59-2, 68-2, 79-2, 94-2, 98-2, 153-2, 10
+StraightRoad02Part2:  db  42-2, 47-2, 52-2, 59-2, 68-2, 79-2, 95-2, 118-2, 155-2, 10
+
+;    var position      = 1000;                       // current camera Z position (add playerZ to get player's absolute Z position)
+StraightRoad03Part1:  db  P1, P1, P1, P1, P1, P0, P1, P1, P1, P1, P1, P0, P0, P1, P0, P1, P0, P1, P0, P0, P1, P0, P0, P1, P1, P0, P0, P1, P1, P0, P0, P0, P1, P1, P1, P1, P0, P0, P0, P1
+
+.Lenght: equ $-StraightRoad03Part1
+LenghtStraightRoad03Part1: db  StraightRoad03Part1.Lenght
+StraightRoad03Part2:  db  47-2, 53-2, 59-2, 68-2, 80-2, 96-2, 119-2, 156-2, 10
+
+;    var position      = 1020;                       // current camera Z position (add playerZ to get player's absolute Z position)
+StraightRoad04Part1:  db  P1, P1, P1, P1, P1, P0, P1, P1, P1, P1, P1, P0, P0, P1, P0, P1, P0, P1, P0, P0, P1, P0, P0, P1, P1, P0, P0, P1, P1, P1, P0, P0, P1
+
+.Lenght: equ $-StraightRoad04Part1
+LenghtStraightRoad04Part1: db  StraightRoad04Part1.Lenght
+StraightRoad04Part2:  db  39-2, 43-2, 47-2, 53-2, 60-2, 69-2, 80-2, 96-2, 120-2, 158-2, 10
+
+;    var position      = 1040;                       // current camera Z position (add playerZ to get player's absolute Z position)
+StraightRoad05Part1:  db  P1, P1, P1, P1, P1, P0, P1, P1, P1, P1, P1, P0, P0, P1, P0, P1, P0, P1, P0, P0, P1, P0, P0, P1, P1, P0, P0, P1, P1, P1, P0, P0, P1
+
+.Lenght: equ $-StraightRoad05Part1
+LenghtStraightRoad05Part1: db  StraightRoad05Part1.Lenght
+StraightRoad05Part2:  db  39-2, 43-2, 47-2, 53-2, 60-2, 69-2, 81-2, 97-2, 121-2, 159-2, 10
+
+;    var position      = 1060;
+StraightRoad06Part1:  db P1, P1, P1, P1, P1, P0, P1, P1, P1, P1, P1, P0, P0, P1, P0, P1, P0, P1, P1, P0, P1, P0, P0, P1, P1, P0, P0, P1, P1, P1, P0, P0, P0, P1, P1, P1, P0
+
+.Lenght: equ $-StraightRoad06Part1
+LenghtStraightRoad06Part1: db  StraightRoad06Part1.Lenght
+StraightRoad06Part2:  db 43-2, 47-2, 53-2, 60-2, 69-2, 81-2, 98-2, 122-2, 161-2, 10  
+
+;    var position      = 1080;
+StraightRoad07Part1:  db P1, P1, P1, P1, P1, P0, P1, P1, P1, P1, P1, P0, P0, P1, P0, P1, P0, P1, P1, P0, P1, P1, P0, P1, P1, P0, P0, P1, P1, P1, P0, P0, P0, P1, P1, P1, P0
+
+.Lenght: equ $-StraightRoad07Part1
+LenghtStraightRoad07Part1: db  StraightRoad07Part1.Lenght
+StraightRoad07Part2:  db 43-2, 48-2, 53-2, 60-2, 70-2, 82-2, 98-2, 123-2, 163-2, 10
+
+;    var position      = 1100;
+StraightRoad08Part1:  db P0, P1, P1, P1, P1, P0, P1, P1, P1, P1, P1, P0, P1, P1, P0, P1, P0, P1, P1, P0, P1, P1, P0, P1, P1, P0, P0, P1, P1, P1, P0, P0, P0, P1, P1, P1, P0
+
+.Lenght: equ $-StraightRoad08Part1
+LenghtStraightRoad08Part1: db  StraightRoad08Part1.Lenght
+StraightRoad08Part2:  db 43-2, 48-2, 54-2, 61-2, 70-2, 82-2, 99-2, 124-2, 165-2  , 10
+
+;    var position      = 1120;
+StraightRoad09Part1:  db P0, P1, P0, P1, P1, P0, P1, P1, P1, P1, P1, P0, P1, P1, P0, P1, P0, P1, P1, P0, P1, P1, P0, P1, P1, P0, P0, P1, P1, P1, P0, P0, P0, P1, P1, P1, P0
+
+.Lenght: equ $-StraightRoad09Part1
+LenghtStraightRoad09Part1: db  StraightRoad09Part1.Lenght
+StraightRoad09Part2:  db 43-2, 48-2, 54-2, 61-2, 70-2, 83-2, 100-2, 125-2, 166-2  , 10
+
+;    var position      = 1140;
+StraightRoad10Part1:  db P0, P1, P0, P1, P1, P0, P1, P1, P1, P1, P1, P0, P1, P1, P0, P1, P0, P1, P1, P0, P1, P1, P0, P1, P1, P0, P0, P0, P1, P1, P0, P0, P0, P1, P1, P1, P0
+
+.Lenght: equ $-StraightRoad10Part1
+LenghtStraightRoad10Part1: db  StraightRoad10Part1.Lenght
+StraightRoad10Part2:  db 43-2, 48-2, 54-2, 61-2, 71-2, 83-2, 100-2, 126-2, 168-2  , 10
+
+;    var position      = 1160;
+StraightRoad11Part1:  db P0, P1, P0, P1, P1, P0, P1, P1, P1, P1, P1, P0, P1, P1, P0, P1, P0, P1, P1, P0, P1, P1, P0, P1, P1, P0, P0, P0, P1, P1, P0, P0, P0, P1
+
+.Lenght: equ $-StraightRoad11Part1
+LenghtStraightRoad11Part1: db  StraightRoad11Part1.Lenght
+StraightRoad11Part2:  db 40-2, 44-2, 48-2, 54-2, 62-2, 71-2, 84-2, 101-2, 127-2, 170-2  , 10
+
+;    var position      = 1180;
+StraightRoad12Part1:  db P0, P1, P0, P1, P1, P0, P0, P1, P1, P1, P1, P0, P1, P1, P0, P1, P0, P0, P1, P0, P1, P1, P0, P0, P1, P0, P0, P0, P1, P1, P0, P0, P0, P1
+
+.Lenght: equ $-StraightRoad12Part1
+LenghtStraightRoad12Part1: db  StraightRoad12Part1.Lenght
+StraightRoad12Part2:  db 40-2, 44-2, 49-2, 54-2, 62-2, 71-2, 84-2, 102-2, 128-2, 172-2, 10  
+
+;    var position      = 1200;
+StraightRoad13Part1:  db P0, P1, P0, P1, P1, P0, P0, P1, P1, P1, P0, P0, P1, P1, P0, P1, P0, P0, P1, P0, P1, P1, P0, P0, P1, P1, P0, P0, P1, P1, P0, P0, P0, P1
+
+.Lenght: equ $-StraightRoad13Part1
+LenghtStraightRoad13Part1: db  StraightRoad13Part1.Lenght
+StraightRoad13Part2:  db 40-2, 44-2, 49-2, 55-2, 62-2, 72-2, 85-2, 102-2, 129-2, 174-2, 10 
+
+;    var position      = 1220;
+StraightRoad14Part1:  db P0, P1, P0, P1, P1, P0, P0, P1, P1, P1, P0, P0, P1, P0, P0, P1, P0, P0, P1, P0, P1, P1, P0, P0, P1, P1, P0, P0, P1, P1, P0, P0, P0, P1
+
+.Lenght: equ $-StraightRoad14Part1
+LenghtStraightRoad14Part1: db  StraightRoad14Part1.Lenght
+StraightRoad14Part2:  db 40-2, 44-2, 49-2, 55-2, 62-2, 72-2, 85-2, 103-2, 130-2, 176-2, 10 
+
+;    var position      = 1240;
+StraightRoad15Part1:  db P0, P1, P0, P1, P0, P0, P0, P1, P1, P1, P0, P0, P1, P0, P0, P1, P0, P0, P1, P0, P1, P1, P0, P0, P1, P1, P0, P0, P1, P1, P1, P0, P0, P0, P1, P1, P1, P0
+
+.Lenght: equ $-StraightRoad15Part1
+LenghtStraightRoad15Part1: db  StraightRoad15Part1.Lenght
+StraightRoad15Part2:  db 44-2, 49-2, 55-2, 63-2, 72-2, 86-2, 104-2, 132-2, 178-2, 10 
+
+;    var position      = 1260;
+StraightRoad16Part1:  db P0, P1, P0, P1, P0, P0, P0, P1, P1, P1, P0, P0, P1, P0, P0, P1, P1, P0, P1, P0, P1, P1, P0, P0, P1, P1, P0, P0, P1, P1, P1, P0, P0, P0, P1, P1, P1, P0
+
+.Lenght: equ $-StraightRoad16Part1
+LenghtStraightRoad16Part1: db  StraightRoad16Part1.Lenght
+StraightRoad16Part2:  db 44-2, 49-2, 55-2, 63-2, 73-2, 86-2, 105-2, 133-2, 180-2, 10 
+
+;    var position      = 1280;
+StraightRoad17Part1:  db P0, P1, P0, P1, P0, P0, P0, P1, P1, P1, P0, P0, P1, P0, P1, P1, P1, P0, P1, P0, P1, P1, P0, P0, P1, P1, P0, P0, P1, P1, P1, P0, P0, P0, P1, P1, P1, P0
+
+.Lenght: equ $-StraightRoad17Part1
+LenghtStraightRoad17Part1: db  StraightRoad17Part1.Lenght
+StraightRoad17Part2:  db 44-2, 49-2, 56-2, 63-2, 73-2, 87-2, 105-2, 134-2, 182-2, 10 
+
+;    var position      = 1300;
+StraightRoad18Part1:  db P0, P1, P0, P1, P0, P0, P0, P1, P1, P1, P0, P0, P1, P0, P1, P0, P1, P0, P1, P0, P0, P1, P0, P0, P1, P1, P0, P0, P1, P1, P1, P0, P0, P0, P1, P1, P1, P0
+
+.Lenght: equ $-StraightRoad18Part1
+LenghtStraightRoad18Part1: db  StraightRoad18Part1.Lenght
+StraightRoad18Part2:  db 45-2, 50-2, 56-2, 64-2, 74-2, 87-2, 106-2, 135-2, 185-2, 10  
+
+;    var position      = 1320;
+StraightRoad19Part1:  db P0, P1, P0, P1, P0, P0, P0, P1, P1, P1, P0, P0, P1, P0, P1, P0, P1, P0, P1, P0, P0, P1, P0, P0, P1, P1, P0, P0, P1, P1, P1, P0, P0, P0, P1
+
+.Lenght: equ $-StraightRoad19Part1
+LenghtStraightRoad19Part1: db  StraightRoad19Part1.Lenght
+StraightRoad19Part2:  db 41-2, 45-2, 50-2, 56-2, 64-2, 74-2, 88-2, 107-2, 136-2, 187-2, 10  
+
+;    var position      = 1340;
+StraightRoad20Part1:  db P0, P1, P0, P1, P0, P1, P0, P1, P1, P1, P0, P0, P1, P0, P1, P0, P1, P0, P1, P0, P0, P1, P0, P0, P1, P1, P0, P0, P1, P1, P1, P0, P0, P0, P1
+
+.Lenght: equ $-StraightRoad20Part1
+LenghtStraightRoad20Part1: db  StraightRoad20Part1.Lenght
+StraightRoad20Part2:  db 41-2, 45-2, 50-2, 56-2, 64-2, 74-2, 88-2, 108-2, 138-2, 189-2, 10
+
+;    var position      = 1360;
+StraightRoad21Part1:  db P0, P1, P0, P1, P0, P1, P0, P1, P1, P1, P0, P0, P1, P0, P1, P0, P1, P0, P1, P0, P0, P1, P0, P0, P1, P1, P0, P0, P1, P1, P1, P0, P0, P0, P1
+
+.Lenght: equ $-StraightRoad21Part1
+LenghtStraightRoad21Part1: db  StraightRoad21Part1.Lenght
+StraightRoad21Part2:  db 41-2, 45-2, 50-2, 56-2, 64-2, 75-2, 89-2, 108-2, 139-2, 191-2, 10  
+
+;    var position      = 1380;
+StraightRoad22Part1:  db P0, P1, P0, P1, P0, P1, P0, P1, P1, P1, P0, P0, P1, P0, P1, P0, P1, P0, P1, P0, P0, P1, P0, P0, P1, P1, P0, P0, P0, P1, P1, P0, P0, P0, P1
+
+.Lenght: equ $-StraightRoad22Part1
+LenghtStraightRoad22Part1: db  StraightRoad22Part1.Lenght
+StraightRoad22Part2:  db 41-2, 45-2, 50-2, 57-2, 65-2, 75-2, 89-2, 109-2, 140-2, 194-2, 10 
+
+;    var position      = 1400;
+StraightRoad23Part1:  db P0, P1, P0, P0, P0, P1, P0, P1, P1, P0, P0, P0, P1, P0, P1, P0, P1, P0, P1, P0, P0, P1, P0, P0, P1, P1, P0, P0, P0, P1, P1, P0, P0, P0, P1
+
+.Lenght: equ $-StraightRoad23Part1
+LenghtStraightRoad23Part1: db  StraightRoad23Part1.Lenght
+StraightRoad23Part2:  db 41-2, 45-2, 51-2, 57-2, 65-2, 76-2, 90-2, 110-2, 141-2, 196-2, 10 
+
+;    var position      = 1420;
+StraightRoad24Part1:  db P0, P1, P0, P0, P0, P1, P0, P0, P1, P0, P0, P0, P1, P0, P1, P0, P1, P0, P1, P0, P0, P1, P0, P0, P1, P1, P0, P0, P0, P1, P1, P0, P0, P0, P0, P1, P1, P1, P0
+
+.Lenght: equ $-StraightRoad24Part1
+LenghtStraightRoad24Part1: db  StraightRoad24Part1.Lenght
+StraightRoad24Part2:  db 46-2, 51-2, 57-2, 65-2, 76-2, 90-2, 111-2, 143-2, 199-2, 10 
+
+;    var position      = 1440;
+StraightRoad25Part1:  db P0, P1, P0, P0, P0, P1, P0, P0, P1, P0, P0, P0, P1, P0, P1, P0, P1, P0, P1, P0, P0, P1, P1, P0, P1, P1, P0, P0, P0, P1, P1, P0, P0, P0, P0, P1, P1, P1, P0
+
+.Lenght: equ $-StraightRoad25Part1
+LenghtStraightRoad25Part1: db  StraightRoad25Part1.Lenght
+StraightRoad25Part2:  db 46-2, 51-2, 57-2, 66-2, 76-2, 91-2, 112-2, 144-2, 10  
+
+;    var position      = 1460;
+StraightRoad26Part1:  db P0, P1, P0, P0, P0, P1, P0, P0, P1, P0, P0, P0, P1, P0, P1, P0, P1, P0, P1, P0, P0, P1, P1, P0, P1, P1, P0, P0, P0, P1, P1, P1, P0, P0, P0, P1, P1, P1, P0
+
+.Lenght: equ $-StraightRoad26Part1
+LenghtStraightRoad26Part1: db  StraightRoad26Part1.Lenght
+StraightRoad26Part2:  db 46-2, 51-2, 58-2, 66-2, 77-2, 91-2, 113-2, 146-2, 204-2  
+
+;    var position      = 1480;
+StraightRoad27Part1:  db P0, P1, P0, P0, P0, P1, P0, P0, P0, P0, P0, P1, P1, P0, P1, P0, P1, P0, P1, P0, P0, P1, P1, P0, P1, P1, P1, P0, P0, P1, P1, P1, P0, P0, P0, P1
+
+.Lenght: equ $-StraightRoad27Part1
+LenghtStraightRoad27Part1: db  StraightRoad27Part1.Lenght
+StraightRoad27Part2:  db 42-2, 46-2, 51-2, 58-2, 66-2, 77-2, 92-2, 113-2, 147-2, 207-2, 10  
+
+;    var position      = 1500;
+StraightRoad28Part1:  db P0, P0, P0, P0, P0, P1, P0, P0, P0, P0, P0, P1, P1, P0, P1, P0, P1, P0, P1, P1, P0, P1, P1, P0, P0, P1, P1, P0, P0, P1, P1, P1, P0, P0, P0, P1
+
+.Lenght: equ $-StraightRoad28Part1
+LenghtStraightRoad28Part1: db  StraightRoad28Part1.Lenght
+StraightRoad28Part2:  db 42-2, 46-2, 52-2, 58-2, 67-2, 78-2, 93-2, 114-2, 148-2, 210-2, 10 
+
+;    var position      = 1520;
+StraightRoad29Part1:  db P0, P0, P0, P0, P0, P1, P0, P0, P0, P0, P0, P1, P1, P0, P1, P0, P1, P0, P1, P1, P0, P1, P1, P0, P0, P1, P1, P0, P0, P1, P1, P1, P0, P0, P0, P1
+
+.Lenght: equ $-StraightRoad29Part1
+LenghtStraightRoad29Part1: db  StraightRoad29Part1.Lenght
+StraightRoad29Part2:  db 42-2, 46-2, 52-2, 58-2, 67-2, 78-2, 93-2, 115-2, 150-2, 213-2  , 10 
+
+;    var position      = 1540;
+StraightRoad30Part1:  db P0, P0, P0, P0, P0, P1, P0, P0, P0, P0, P0, P1, P1, P0, P1, P0, P1, P0, P1, P1, P0, P1, P1, P0, P0, P1, P1, P0, P0, P1, P1, P1, P0, P0, P0, P1
+
+
+.Lenght: equ $-StraightRoad30Part1
+LenghtStraightRoad30Part1: db  StraightRoad30Part1.Lenght
+StraightRoad30Part2:  db 42-2, 46-2, 52-2, 59-2, 67-2, 78-2, 94-2, 116-2, 151-2, 216-2, 10  
 
 
 
 
+;    var position      = 960;                       // current camera Z position (add playerZ to get player's absolute Z position)
+StraightRoad2ndPart01Part1:   db  P0, P0, P0, P0, P0, P1, P0, P0, P0, P0, P0, P1, P1, P0, P1, P0, P1, P0, P1, P1, P0, P1, P1, P0, P0, P1, P1, P0, P0, P1, P1, P1, P0, P0, P0, P1
 
+.Lenght: equ $-StraightRoad2ndPart01Part1
+LenghtStraightRoad2ndPart01Part1: db  StraightRoad2ndPart01Part1.Lenght
+StraightRoad2ndPart01Part2:  db  42-2, 47-2, 52-2, 59-2, 68-2, 79-2, 94-2, 117-2, 153-2, 10
+
+;    var position      = 980;                       // current camera Z position (add playerZ to get player's absolute Z position)
+StraightRoad2ndPart02Part1:  db  P0, P0, P0, P0, P0, P1, P0, P0, P0, P0, P0, P1, P1, P0, P1, P0, P1, P0, P1, P1, P0, P1, P1, P0, P0, P1, P1, P0, P0, P1, P1, P1, P0, P0, P0, P1
+
+.Lenght: equ $-StraightRoad2ndPart02Part1
+LenghtStraightRoad2ndPart02Part1: db  StraightRoad2ndPart02Part1.Lenght
+StraightRoad2ndPart02Part2:  db  42-2, 47-2, 52-2, 59-2, 68-2, 79-2, 95-2, 118-2, 155-2, 10
+
+;    var position      = 1000;                       // current camera Z position (add playerZ to get player's absolute Z position)
+StraightRoad2ndPart03Part1:  db  P0, P0, P0, P0, P0, P1, P0, P0, P0, P0, P0, P1, P1, P0, P1, P0, P1, P0, P1, P1, P0, P1, P1, P0, P0, P1, P1, P0, P0, P1, P1, P1, P0, P0, P0, P0, P1, P1, P1, P0
+
+.Lenght: equ $-StraightRoad2ndPart03Part1
+LenghtStraightRoad2ndPart03Part1: db  StraightRoad2ndPart03Part1.Lenght
+StraightRoad2ndPart03Part2:  db  47-2, 53-2, 59-2, 68-2, 80-2, 96-2, 119-2, 156-2, 10
+
+;    var position      = 1020;                       // current camera Z position (add playerZ to get player's absolute Z position)
+StraightRoad2ndPart04Part1:  db  P0, P0, P0, P0, P0, P1, P0, P0, P0, P0, P0, P1, P1, P0, P1, P0, P1, P0, P1, P1, P0, P1, P1, P0, P0, P1, P1, P0, P0, P0, P1, P1, P0
+
+.Lenght: equ $-StraightRoad2ndPart04Part1
+LenghtStraightRoad2ndPart04Part1: db  StraightRoad2ndPart04Part1.Lenght
+StraightRoad2ndPart04Part2:  db  39-2, 43-2, 47-2, 53-2, 60-2, 69-2, 80-2, 96-2, 120-2, 158-2, 10
+
+;    var position      = 1040;                       // current camera Z position (add playerZ to get player's absolute Z position)
+StraightRoad2ndPart05Part1:  db  P0, P0, P0, P0, P0, P1, P0, P0, P0, P0, P0, P1, P1, P0, P1, P0, P1, P0, P1, P1, P0, P1, P1, P0, P0, P1, P1, P0, P0, P0, P1, P1, P0
+
+.Lenght: equ $-StraightRoad2ndPart05Part1
+LenghtStraightRoad2ndPart05Part1: db  StraightRoad2ndPart05Part1.Lenght
+StraightRoad2ndPart05Part2:  db  39-2, 43-2, 47-2, 53-2, 60-2, 69-2, 81-2, 97-2, 121-2, 159-2, 10
+
+;    var position      = 1060;
+StraightRoad2ndPart06Part1:  db P0, P0, P0, P0, P0, P1, P0, P0, P0, P0, P0, P1, P1, P0, P1, P0, P1, P0, P0, P1, P0, P1, P1, P0, P0, P1, P1, P0, P0, P0, P1, P1, P1, P0, P0, P0, P1
+
+.Lenght: equ $-StraightRoad2ndPart06Part1
+LenghtStraightRoad2ndPart06Part1: db  StraightRoad2ndPart06Part1.Lenght
+StraightRoad2ndPart06Part2:  db 43-2, 47-2, 53-2, 60-2, 69-2, 81-2, 98-2, 122-2, 161-2, 10  
+
+;    var position      = 1080;
+StraightRoad2ndPart07Part1:  db P0, P0, P0, P0, P0, P1, P0, P0, P0, P0, P0, P1, P1, P0, P1, P0, P1, P0, P0, P1, P0, P0, P1, P0, P0, P1, P1, P0, P0, P0, P1, P1, P1, P0, P0, P0, P1
+
+.Lenght: equ $-StraightRoad2ndPart07Part1
+LenghtStraightRoad2ndPart07Part1: db  StraightRoad2ndPart07Part1.Lenght
+StraightRoad2ndPart07Part2:  db 43-2, 48-2, 53-2, 60-2, 70-2, 82-2, 98-2, 123-2, 163-2, 10
+
+;    var position      = 1100;
+StraightRoad2ndPart08Part1:  db P1, P0, P0, P0, P0, P1, P0, P0, P0, P0, P0, P1, P0, P0, P1, P0, P1, P0, P0, P1, P0, P0, P1, P0, P0, P1, P1, P0, P0, P0, P1, P1, P1, P0, P0, P0, P1
+
+.Lenght: equ $-StraightRoad2ndPart08Part1
+LenghtStraightRoad2ndPart08Part1: db  StraightRoad2ndPart08Part1.Lenght
+StraightRoad2ndPart08Part2:  db 43-2, 48-2, 54-2, 61-2, 70-2, 82-2, 99-2, 124-2, 165-2  , 10
+
+;    var position      = 1120;
+StraightRoad2ndPart09Part1:  db P1, P0, P1, P0, P0, P1, P0, P0, P0, P0, P0, P1, P0, P0, P1, P0, P1, P0, P0, P1, P0, P0, P1, P0, P0, P1, P1, P0, P0, P0, P1, P1, P1, P0, P0, P0, P1
+
+.Lenght: equ $-StraightRoad2ndPart09Part1
+LenghtStraightRoad2ndPart09Part1: db  StraightRoad2ndPart09Part1.Lenght
+StraightRoad2ndPart09Part2:  db 43-2, 48-2, 54-2, 61-2, 70-2, 83-2, 100-2, 125-2, 166-2  , 10
+
+;    var position      = 1140;
+StraightRoad2ndPart10Part1:  db P1, P0, P1, P0, P0, P1, P0, P0, P0, P0, P0, P1, P0, P0, P1, P0, P1, P0, P0, P1, P0, P0, P1, P0, P0, P1, P1, P1, P0, P0, P1, P1, P1, P0, P0, P0, P1
+
+.Lenght: equ $-StraightRoad2ndPart10Part1
+LenghtStraightRoad2ndPart10Part1: db  StraightRoad2ndPart10Part1.Lenght
+StraightRoad2ndPart10Part2:  db 43-2, 48-2, 54-2, 61-2, 71-2, 83-2, 100-2, 126-2, 168-2  , 10
+
+;    var position      = 1160;
+StraightRoad2ndPart11Part1:  db P1, P0, P1, P0, P0, P1, P0, P0, P0, P0, P0, P1, P0, P0, P1, P0, P1, P0, P0, P1, P0, P0, P1, P0, P0, P1, P1, P1, P0, P0, P1, P1, P1, P0
+
+.Lenght: equ $-StraightRoad2ndPart11Part1
+LenghtStraightRoad2ndPart11Part1: db  StraightRoad2ndPart11Part1.Lenght
+StraightRoad2ndPart11Part2:  db 40-2, 44-2, 48-2, 54-2, 62-2, 71-2, 84-2, 101-2, 127-2, 170-2  , 10
+
+;    var position      = 1180;
+StraightRoad2ndPart12Part1:  db P1, P0, P1, P0, P0, P1, P1, P0, P0, P0, P0, P1, P0, P0, P1, P0, P1, P1, P0, P1, P0, P0, P1, P1, P0, P1, P1, P1, P0, P0, P1, P1, P1, P0
+
+.Lenght: equ $-StraightRoad2ndPart12Part1
+LenghtStraightRoad2ndPart12Part1: db  StraightRoad2ndPart12Part1.Lenght
+StraightRoad2ndPart12Part2:  db 40-2, 44-2, 49-2, 54-2, 62-2, 71-2, 84-2, 102-2, 128-2, 172-2, 10  
+
+;    var position      = 1200;
+StraightRoad2ndPart13Part1:  db P1, P0, P1, P0, P0, P1, P1, P0, P0, P0, P1, P1, P0, P0, P1, P0, P1, P1, P0, P1, P0, P0, P1, P1, P0, P0, P1, P1, P0, P0, P1, P1, P1, P0
+
+.Lenght: equ $-StraightRoad2ndPart13Part1
+LenghtStraightRoad2ndPart13Part1: db  StraightRoad2ndPart13Part1.Lenght
+StraightRoad2ndPart13Part2:  db 40-2, 44-2, 49-2, 55-2, 62-2, 72-2, 85-2, 102-2, 129-2, 174-2, 10 
+
+;    var position      = 1220;
+StraightRoad2ndPart14Part1:  db P1, P0, P1, P0, P0, P1, P1, P0, P0, P0, P1, P1, P0, P1, P1, P0, P1, P1, P0, P1, P0, P0, P1, P1, P0, P0, P1, P1, P0, P0, P1, P1, P1, P0
+
+.Lenght: equ $-StraightRoad2ndPart14Part1
+LenghtStraightRoad2ndPart14Part1: db  StraightRoad2ndPart14Part1.Lenght
+StraightRoad2ndPart14Part2:  db 40-2, 44-2, 49-2, 55-2, 62-2, 72-2, 85-2, 103-2, 130-2, 176-2, 10 
+
+;    var position      = 1240;
+StraightRoad2ndPart15Part1:  db P1, P0, P1, P0, P1, P1, P1, P0, P0, P0, P1, P1, P0, P1, P1, P0, P1, P1, P0, P1, P0, P0, P1, P1, P0, P0, P1, P1, P0, P0, P0, P1, P1, P1, P0, P0, P0, P1
+
+.Lenght: equ $-StraightRoad2ndPart15Part1
+LenghtStraightRoad2ndPart15Part1: db  StraightRoad2ndPart15Part1.Lenght
+StraightRoad2ndPart15Part2:  db 44-2, 49-2, 55-2, 63-2, 72-2, 86-2, 104-2, 132-2, 178-2, 10 
+
+;    var position      = 1260;
+StraightRoad2ndPart16Part1:  db P1, P0, P1, P0, P1, P1, P1, P0, P0, P0, P1, P1, P0, P1, P1, P0, P0, P1, P0, P1, P0, P0, P1, P1, P0, P0, P1, P1, P0, P0, P0, P1, P1, P1, P0, P0, P0, P1
+
+.Lenght: equ $-StraightRoad2ndPart16Part1
+LenghtStraightRoad2ndPart16Part1: db  StraightRoad2ndPart16Part1.Lenght
+StraightRoad2ndPart16Part2:  db 44-2, 49-2, 55-2, 63-2, 73-2, 86-2, 105-2, 133-2, 180-2, 10 
+
+;    var position      = 1280;
+StraightRoad2ndPart17Part1:  db P1, P0, P1, P0, P1, P1, P1, P0, P0, P0, P1, P1, P0, P1, P0, P0, P0, P1, P0, P1, P0, P0, P1, P1, P0, P0, P1, P1, P0, P0, P0, P1, P1, P1, P0, P0, P0, P1
+
+.Lenght: equ $-StraightRoad2ndPart17Part1
+LenghtStraightRoad2ndPart17Part1: db  StraightRoad2ndPart17Part1.Lenght
+StraightRoad2ndPart17Part2:  db 44-2, 49-2, 56-2, 63-2, 73-2, 87-2, 105-2, 134-2, 182-2, 10 
+
+;    var position      = 1300;
+StraightRoad2ndPart18Part1:  db P1, P0, P1, P0, P1, P1, P1, P0, P0, P0, P1, P1, P0, P1, P0, P1, P0, P1, P0, P1, P1, P0, P1, P1, P0, P0, P1, P1, P0, P0, P0, P1, P1, P1, P0, P0, P0, P1
+
+.Lenght: equ $-StraightRoad2ndPart18Part1
+LenghtStraightRoad2ndPart18Part1: db  StraightRoad2ndPart18Part1.Lenght
+StraightRoad2ndPart18Part2:  db 45-2, 50-2, 56-2, 64-2, 74-2, 87-2, 106-2, 135-2, 185-2, 10  
+
+;    var position      = 1320;
+StraightRoad2ndPart19Part1:  db P1, P0, P1, P0, P1, P1, P1, P0, P0, P0, P1, P1, P0, P1, P0, P1, P0, P1, P0, P1, P1, P0, P1, P1, P0, P0, P1, P1, P0, P0, P0, P1, P1, P1, P0
+
+.Lenght: equ $-StraightRoad2ndPart19Part1
+LenghtStraightRoad2ndPart19Part1: db  StraightRoad2ndPart19Part1.Lenght
+StraightRoad2ndPart19Part2:  db 41-2, 45-2, 50-2, 56-2, 64-2, 74-2, 88-2, 107-2, 136-2, 187-2, 10  
+
+;    var position      = 1340;
+StraightRoad2ndPart20Part1:  db P1, P0, P1, P0, P1, P0, P1, P0, P0, P0, P1, P1, P0, P1, P0, P1, P0, P1, P0, P1, P1, P0, P1, P1, P0, P0, P1, P1, P0, P0, P0, P1, P1, P1, P0
+
+.Lenght: equ $-StraightRoad2ndPart20Part1
+LenghtStraightRoad2ndPart20Part1: db  StraightRoad2ndPart20Part1.Lenght
+StraightRoad2ndPart20Part2:  db 41-2, 45-2, 50-2, 56-2, 64-2, 74-2, 88-2, 108-2, 138-2, 189-2, 10
+
+;    var position      = 1360;
+StraightRoad2ndPart21Part1:  db P1, P0, P1, P0, P1, P0, P1, P0, P0, P0, P1, P1, P0, P1, P0, P1, P0, P1, P0, P1, P1, P0, P1, P1, P0, P0, P1, P1, P0, P0, P0, P1, P1, P1, P0
+
+.Lenght: equ $-StraightRoad2ndPart21Part1
+LenghtStraightRoad2ndPart21Part1: db  StraightRoad2ndPart21Part1.Lenght
+StraightRoad2ndPart21Part2:  db 41-2, 45-2, 50-2, 56-2, 64-2, 75-2, 89-2, 108-2, 139-2, 191-2, 10  
+
+;    var position      = 1380;
+StraightRoad2ndPart22Part1:  db P1, P0, P1, P0, P1, P0, P1, P0, P0, P0, P1, P1, P0, P1, P0, P1, P0, P1, P0, P1, P1, P0, P1, P1, P0, P0, P1, P1, P1, P0, P0, P1, P1, P1, P0
+
+.Lenght: equ $-StraightRoad2ndPart22Part1
+LenghtStraightRoad2ndPart22Part1: db  StraightRoad2ndPart22Part1.Lenght
+StraightRoad2ndPart22Part2:  db 41-2, 45-2, 50-2, 57-2, 65-2, 75-2, 89-2, 109-2, 140-2, 194-2, 10 
+
+;    var position      = 1400;
+StraightRoad2ndPart23Part1:  db P1, P0, P1, P1, P1, P0, P1, P0, P0, P1, P1, P1, P0, P1, P0, P1, P0, P1, P0, P1, P1, P0, P1, P1, P0, P0, P1, P1, P1, P0, P0, P1, P1, P1, P0
+
+.Lenght: equ $-StraightRoad2ndPart23Part1
+LenghtStraightRoad2ndPart23Part1: db  StraightRoad2ndPart23Part1.Lenght
+StraightRoad2ndPart23Part2:  db 41-2, 45-2, 51-2, 57-2, 65-2, 76-2, 90-2, 110-2, 141-2, 196-2, 10 
+
+;    var position      = 1420;
+StraightRoad2ndPart24Part1:  db P1, P0, P1, P1, P1, P0, P1, P1, P0, P1, P1, P1, P0, P1, P0, P1, P0, P1, P0, P1, P1, P0, P1, P1, P0, P0, P1, P1, P1, P0, P0, P1, P1, P1, P1, P0, P0, P0, P1
+
+.Lenght: equ $-StraightRoad2ndPart24Part1
+LenghtStraightRoad2ndPart24Part1: db  StraightRoad2ndPart24Part1.Lenght
+StraightRoad2ndPart24Part2:  db 46-2, 51-2, 57-2, 65-2, 76-2, 90-2, 111-2, 143-2, 199-2, 10 
+
+;    var position      = 1440;
+StraightRoad2ndPart25Part1:  db P1, P0, P1, P1, P1, P0, P1, P1, P0, P1, P1, P1, P0, P1, P0, P1, P0, P1, P0, P1, P1, P0, P0, P1, P0, P0, P1, P1, P1, P0, P0, P1, P1, P1, P1, P0, P0, P0, P1
+
+.Lenght: equ $-StraightRoad2ndPart25Part1
+LenghtStraightRoad2ndPart25Part1: db  StraightRoad2ndPart25Part1.Lenght
+StraightRoad2ndPart25Part2:  db 46-2, 51-2, 57-2, 66-2, 76-2, 91-2, 112-2, 144-2, 10  
+
+;    var position      = 1460;
+StraightRoad2ndPart26Part1:  db P1, P0, P1, P1, P1, P0, P1, P1, P0, P1, P1, P1, P0, P1, P0, P1, P0, P1, P0, P1, P1, P0, P0, P1, P0, P0, P1, P1, P1, P0, P0, P0, P1, P1, P1, P0, P0, P0, P1
+
+.Lenght: equ $-StraightRoad2ndPart26Part1
+LenghtStraightRoad2ndPart26Part1: db  StraightRoad2ndPart26Part1.Lenght
+StraightRoad2ndPart26Part2:  db 46-2, 51-2, 58-2, 66-2, 77-2, 91-2, 113-2, 146-2, 204-2  
+
+;    var position      = 1480;
+StraightRoad2ndPart27Part1:  db P1, P0, P1, P1, P1, P0, P1, P1, P1, P1, P1, P0, P0, P1, P0, P1, P0, P1, P0, P1, P1, P0, P0, P1, P0, P0, P0, P1, P1, P0, P0, P0, P1, P1, P1, P0
+
+.Lenght: equ $-StraightRoad2ndPart27Part1
+LenghtStraightRoad2ndPart27Part1: db  StraightRoad2ndPart27Part1.Lenght
+StraightRoad2ndPart27Part2:  db 42-2, 46-2, 51-2, 58-2, 66-2, 77-2, 92-2, 113-2, 147-2, 207-2, 10  
+
+;    var position      = 1500;
+StraightRoad2ndPart28Part1:  db P1, P1, P1, P1, P1, P0, P1, P1, P1, P1, P1, P0, P0, P1, P0, P1, P0, P1, P0, P0, P1, P0, P0, P1, P1, P0, P0, P1, P1, P0, P0, P0, P1, P1, P1, P0
+
+.Lenght: equ $-StraightRoad2ndPart28Part1
+LenghtStraightRoad2ndPart28Part1: db  StraightRoad2ndPart28Part1.Lenght
+StraightRoad2ndPart28Part2:  db 42-2, 46-2, 52-2, 58-2, 67-2, 78-2, 93-2, 114-2, 148-2, 210-2, 10 
+
+;    var position      = 1520;
+StraightRoad2ndPart29Part1:  db P1, P1, P1, P1, P1, P0, P1, P1, P1, P1, P1, P0, P0, P1, P0, P1, P0, P1, P0, P0, P1, P0, P0, P1, P1, P0, P0, P1, P1, P0, P0, P0, P1, P1, P1, P0
+
+.Lenght: equ $-StraightRoad2ndPart29Part1
+LenghtStraightRoad2ndPart29Part1: db  StraightRoad2ndPart29Part1.Lenght
+StraightRoad2ndPart29Part2:  db 42-2, 46-2, 52-2, 58-2, 67-2, 78-2, 93-2, 115-2, 150-2, 213-2  , 10 
+
+;    var position      = 1540;
+StraightRoad2ndPart30Part1:  db P1, P1, P1, P1, P1, P0, P1, P1, P1, P1, P1, P0, P0, P1, P0, P1, P0, P1, P0, P0, P1, P0, P0, P1, P1, P0, P0, P1, P1, P0, P0, P0, P1, P1, P1, P0
+
+.Lenght: equ $-StraightRoad2ndPart30Part1
+LenghtStraightRoad2ndPart30Part1: db  StraightRoad2ndPart30Part1.Lenght
+StraightRoad2ndPart30Part2:  db 42-2, 46-2, 52-2, 59-2, 67-2, 78-2, 94-2, 116-2, 151-2, 216-2, 10 
+
+
+
+
+;curves go from:
+;198.000 - 219.000, lets take 1 frame every 7000, so
+;198.000
+;205.000
+;212.000
+;219.000
+
+
+
+
+;431 - 389 = 42 car = 980
+;436 - 389 = 47 var = 1000
+;428 - 389 = 39 var = 1020
+;428 - 389 = 39 var = 1040
+;432 - 389 = 43 var = 1060
+;432 - 389 = 43 var = 1080
+;432 - 389 = 43 var = 1100
+;432 - 389 = 43 var = 1120
+;432 - 389 = 43 var = 1140
+;429 - 389 = 40 var = 1160
+;429 - 389 = 40 var = 1180
+;429 - 389 = 40 var = 1200
+;429 - 389 = 40 var = 1220
+;433 - 389 = 44 var = 1240
+;433 - 389 = 44 var = 1260
+;433 - 389 = 44 var = 1280
+;434 - 389 = 45 var = 1300
+;430 - 389 = 41 var = 1320
+;430 - 389 = 41 var = 1340
+;430 - 389 = 41 var = 1360
+;430 - 389 = 41 var = 1380
+;430 - 389 = 41 var = 1400
+;435 - 389 = 46 var = 1420
+;435 - 389 = 46 var = 1440
+;435 - 389 = 46 var = 1460
+;431 - 389 = 42 var = 1480
 
 
 ;INFO ABOUT CONVERTING THE IMAGES 
@@ -448,24 +1029,11 @@ StraightRoad02Part2:  db  42-2, 47-2, 52-2, 59-2, 68-2, 79-2, 94-2, 98-2, 153-2,
 ;total distance is 600
 ;if we work with 30 steps, then each step is 20 in size
 
-SetRaceTrackPage:
-  .Waitline1:
-	in    a,($99)           ;Read Status register #2
-	and   %0010 0000        ;bit to check for HBlank detection
-	jr    nz,.Waitline1
 
 
-nop |nop |nop |nop |nop |nop |nop |nop |nop |nop |nop |			;RM:why?
-nop |nop |nop |nop |nop |nop |nop |nop |nop |nop |
 
-  ld    a,(hl)            ;page
-  ld    (CurrentPageOnLineInt),a
-  inc   hl
-	out   ($99),a			;RM: outi perhaps? as E is always 23+128
-  ld    a,2+128                         ;reg 2, used to set page
-	out   ($99),a			;RM: outi perhaps? as E is always 23+128
-  djnz  SetRaceTrackPage
-  ret
+
+
 
 LineIntRacingGame:
   ld    a,(LineIntPartRaceGame)
@@ -482,9 +1050,9 @@ LineIntRacingGame:
   ld    a,(CurrentPageOnLineInt)
   xor   32
   ld    (CurrentPageOnLineInt),a
-	out   ($99),a			;RM: outi perhaps? as E is always 23+128
+	out   ($99),a			
   ld    a,2+128                         ;reg 2, used to set page
-	out   ($99),a			;RM: outi perhaps? as E is always 23+128
+	out   ($99),a			
 
   ld    hl,(PointerToSwapLines)
   ld    a,(hl)
@@ -524,7 +1092,35 @@ LineIntRacingGame:
   ld    hl,StraightRoad01Part1
   .SelfModifyingcodeLenghtStraightRoadxxPart1: equ $+1
   ld    b,000
-  call  SetRaceTrackPage
+;  call  SetRaceTrackPage
+
+
+
+
+
+  SetRaceTrackPage:
+  .Waitline1:
+	in    a,($99)           ;Read Status register #2
+	and   %0010 0000        ;bit to check for HBlank detection
+	jr    nz,.Waitline1
+
+
+nop |nop |nop |nop |nop |nop |nop |nop |nop |nop |nop |			;RM:why?
+nop |nop |nop |nop |nop |nop |nop |nop |nop |nop |
+
+  ld    a,(hl)            ;page
+  ld    (CurrentPageOnLineInt),a
+  inc   hl
+	out   ($99),a			;RM: outi perhaps? as E is always 23+128
+  ld    a,2+128                         ;reg 2, used to set page
+	out   ($99),a			;RM: outi perhaps? as E is always 23+128
+  djnz  SetRaceTrackPage
+
+
+
+
+
+
 
   ld    a,2
   ld    (LineIntPartRaceGame),a

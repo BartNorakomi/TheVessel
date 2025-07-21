@@ -861,8 +861,10 @@ upgrademenuPalette:                    			;palette file
 DrillingLocationsPalette:
   incbin "..\grapx\drillinglocations\drillinglocations.SC5",$7680+7,32
 RacingGamePalette:
-  incbin "..\grapx\racinggame\newtrack1.SC5",$7680+7,32
+  incbin "..\grapx\racinggame\RoadMSXSize\RoadForPalette.SC5",$7680+7,32
 ;  incbin "..\grapx\racinggame\nightstriker2Prepared.SC5",$7680+7,32
+
+
 
 LoadRoomGfx:
 	ld		a,(CurrentRoom)									;0=arcadehall1, 1=arcadehall2
@@ -903,14 +905,14 @@ LoadRoomGfx:
 LoadRacingGameGfx:
   ld    a,RacingGameTrack1GfxBlock     			;block to copy graphics from
   ld    hl,$4000 + (000*128) + (000/2) - 128
-  ld    de,$0000 + (000*128) + (000/2) - 128
-  ld    bc,$0000 + (212*256) + (256/2)
+  ld    de,$0000 + ((3+StartRacingGameLineInt)*128) + (000/2) - 128
+  ld    bc,$0000 + (196*256) + (256/2)
   call  CopyRomToVram                   ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
 
   ld    a,RacingGameTrack2GfxBlock     			;block to copy graphics from
   ld    hl,$4000 + (000*128) + (000/2) - 128
-  ld    de,$8000 + (000*128) + (000/2) - 128
-  ld    bc,$0000 + (212*256) + (256/2)
+  ld    de,$8000 + ((3+StartRacingGameLineInt)*128) + (000/2) - 128
+  ld    bc,$0000 + (196*256) + (256/2)
   call  CopyRomToVram                   ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
 
   ld    hl,RacingGamePalette
