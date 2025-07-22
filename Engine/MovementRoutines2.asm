@@ -4,23 +4,60 @@
 
 Phase MovementRoutinesAddress
 
+CurveRightDataFiles:
+db RacingGameRoadCurveRightBlock1,0 | dw  ChangedPixels1a2a, Addresses1a2a, WriteInstructions1a2a
+db RacingGameRoadCurveRightBlock1,2 | dw  ChangedPixels1b2b, Addresses1b2b, WriteInstructions1b2b
+db RacingGameRoadCurveRightBlock1,0 | dw  ChangedPixels2a3a, Addresses2a3a, WriteInstructions2a3a
+db RacingGameRoadCurveRightBlock1,2 | dw  ChangedPixels2b3b, Addresses2b3b, WriteInstructions2b3b
+db RacingGameRoadCurveRightBlock1,0 | dw  ChangedPixels3a4a, Addresses3a4a, WriteInstructions3a4a
+db RacingGameRoadCurveRightBlock1,2 | dw  ChangedPixels3b4b, Addresses3b4b, WriteInstructions3b4b
+db RacingGameRoadCurveRightBlock1,0 | dw  ChangedPixels4a5a, Addresses4a5a, WriteInstructions4a5a
+db RacingGameRoadCurveRightBlock1,2 | dw  ChangedPixels4b5b, Addresses4b5b, WriteInstructions4b5b
+db RacingGameRoadCurveRightBlock1,0 | dw  ChangedPixels5a6a, Addresses5a6a, WriteInstructions5a6a
+db RacingGameRoadCurveRightBlock1,2 | dw  ChangedPixels5b6b, Addresses5b6b, WriteInstructions5b6b
+db RacingGameRoadCurveRightBlock1,0 | dw  ChangedPixels6a7a, Addresses6a7a, WriteInstructions6a7a
+db RacingGameRoadCurveRightBlock1,2 | dw  ChangedPixels6b7b, Addresses6b7b, WriteInstructions6b7b
+db RacingGameRoadCurveRightBlock1,0 | dw  ChangedPixels7a8a, Addresses7a8a, WriteInstructions7a8a
+db RacingGameRoadCurveRightBlock1,2 | dw  ChangedPixels7b8b, Addresses7b8b, WriteInstructions7b8b
+db RacingGameRoadCurveRightBlock1,0 | dw  ChangedPixels8a9a, Addresses8a9a, WriteInstructions8a9a
+db RacingGameRoadCurveRightBlock2,2 | dw  ChangedPixels8b9b, Addresses8b9b, WriteInstructions8b9b
+db RacingGameRoadCurveRightBlock1,0 | dw  ChangedPixels9a10a, Addresses9a10a, WriteInstructions9a10a
+db RacingGameRoadCurveRightBlock2,2 | dw  ChangedPixels9b10b, Addresses9b10b, WriteInstructions9b10b
+db RacingGameRoadCurveRightBlock1,0 | dw  ChangedPixels10a11a, Addresses10a11a, WriteInstructions10a11a
+db RacingGameRoadCurveRightBlock2,2 | dw  ChangedPixels10b11b, Addresses10b11b, WriteInstructions10b11b
+db RacingGameRoadCurveRightBlock1,0 | dw  ChangedPixels11a12a, Addresses11a12a, WriteInstructions11a12a
+db RacingGameRoadCurveRightBlock2,2 | dw  ChangedPixels11b12b, Addresses11b12b, WriteInstructions11b12b
 
 VideoReplayer:
-  ld    a,RacingGameAnimationsVersion2Block        ;movement routine block
+  ld    ix,(RoadCurvatureAnimationPointer)
+
+  ld    a,(ix+0)            ;movement routine block
   ;we can also use only page 1 for this
   call  block34                             ;CARE!!! we can only switch block34 if page 1 is in rom  
 
-  xor   a
+  ld    a,(ix+1)            ;movement routine block
 	out   ($99),a               ;write page instellen (0=page 0 from y=0 to 127, 1=page 0 from y=128 to 255, 2=page 1 from y=0 to 127 etc..)
 	ld    a,14+128
 	out   ($99),a
 
-  ld    hl,ChangedPixels
+  ld    l,(ix+2)
+  ld    h,(ix+3)
   ld    c,$98
   exx
-  ld    hl,Addresses
+  ld    l,(ix+4)
+  ld    h,(ix+5)
   ld    c,$99
-  jp    WriteInstructions
+
+  ld    e,(ix+6)
+  ld    d,(ix+7)
+  push  de
+
+  ld    de,8
+  add   ix,de
+;  ld    (RoadCurvatureAnimationPointer),ix
+
+  pop   ix
+  jp    (ix)
 
 RacingGameRoutine:
   ld    a,0*32 + 31                         ;force page 0
@@ -31,10 +68,6 @@ RacingGameRoutine:
   ld    a,(framecounter2)
   inc   a
   ld    (framecounter2),a
-
-;  call  BackdropOrange
-;  call  VideoReplayer
-;  call  BackdropBlack
 
   call  .HandlePhase                        ;used to build up screen and initiate variables
   ret

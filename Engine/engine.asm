@@ -10,7 +10,13 @@ LevelEngine:
 ;ei
 ;  out   ($99),a
   call  CheckLeaveRoom
+
+
+;  call  BackdropGreen
   call  WriteSpatToVram
+;  call  BackdropBlack
+
+
   call  SetScreenonWithDelay
   call  PopulateControls
   if ConversationsOn?
@@ -19,6 +25,13 @@ LevelEngine:
 ;  call  BackdropOrange
   call  HandleObjects
 ;  call  BackdropBlack
+
+
+
+  ld    a,(CurrentRoom)                 ;racing game has music outside the interrupt
+  cp    15
+  call  z,RePlayer_Tick                 ;initialise, load samples
+
 
 
   xor   a
@@ -111,7 +124,9 @@ vblank:
 
   in	  a,($a8)
   push	af					      ;store current RAM/ROM state
-  call  RePlayer_Tick                 ;initialise, load samples
+  ld    a,(CurrentRoom)
+  cp    15
+  call  nz,RePlayer_Tick                 ;initialise, load samples
   pop   af
   out   ($a8),a                         ;restore ram/rom page settings     
 
@@ -180,11 +195,14 @@ vblank:
 
 
 
-
-
   ld    a,(CurrentRoom)
+;xor a
   cp    15
   jr    nz,.EndCheckRacingGame
+
+  call  BackdropRandom
+  call  VideoReplayer
+  call  BackdropBlack
 
   ld    a,(RoadAnimationStep)
   inc   a
@@ -275,6 +293,9 @@ ld a,StartRacingGameLineInt
   pop   af 
   ei
   ret
+
+
+
 
 ;The road animation starts to look good from y=15 and onwards. the animation starts at y=3, so we can skip the first 12 lines ???
 StartRacingGameLineInt: equ 12
@@ -756,7 +777,7 @@ StraightRoad29Part1:  db P0, P0, P0, P0, P0, P1, P0, P0, P0, P0, P0, P1, P1, P0,
 
 .Lenght: equ $-StraightRoad29Part1
 LenghtStraightRoad29Part1: db  StraightRoad29Part1.Lenght
-StraightRoad29Part2:  db 42-2, 46-2, 52-2, 58-2, 67-2, 78-2, 93-2, 115-2, 150-2, 213-2  , 10 
+StraightRoad29Part2:  db 42-2, 46-2, 52-2, 58-2, 67-2, 78-2, 93-2, 115-2, 150-2  , 10 
 
 ;    var position      = 1540;
 StraightRoad30Part1:  db P0, P0, P0, P0, P0, P1, P0, P0, P0, P0, P0, P1, P1, P0, P1, P0, P1, P0, P1, P1, P0, P1, P1, P0, P0, P1, P1, P0, P0, P1, P1, P1, P0, P0, P0, P1
@@ -764,7 +785,7 @@ StraightRoad30Part1:  db P0, P0, P0, P0, P0, P1, P0, P0, P0, P0, P0, P1, P1, P0,
 
 .Lenght: equ $-StraightRoad30Part1
 LenghtStraightRoad30Part1: db  StraightRoad30Part1.Lenght
-StraightRoad30Part2:  db 42-2, 46-2, 52-2, 59-2, 67-2, 78-2, 94-2, 116-2, 151-2, 216-2, 10  
+StraightRoad30Part2:  db 42-2, 46-2, 52-2, 59-2, 67-2, 78-2, 94-2, 116-2, 151-2, 10  
 
 
 

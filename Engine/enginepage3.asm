@@ -21,6 +21,9 @@ InitiateGame:
   ld    a,r
 	and		7
 	inc		a
+
+;ld a,5
+
   ld    (ChangeSong?),a
   call  SetInterruptHandler           	;sets Vblank
 	call	SpritesOn
@@ -861,7 +864,8 @@ upgrademenuPalette:                    			;palette file
 DrillingLocationsPalette:
   incbin "..\grapx\drillinglocations\drillinglocations.SC5",$7680+7,32
 RacingGamePalette:
-  incbin "..\grapx\racinggame\RoadMSXSize\RoadForPalette.SC5",$7680+7,32
+;  incbin "..\grapx\racinggame\RoadMSXSize\RoadForPalette.SC5",$7680+7,32
+  incbin "..\grapx\racinggame\RoadMSXSize\RoadForPaletteWithBackdrop.SC5",$7680+7,32
 ;  incbin "..\grapx\racinggame\nightstriker2Prepared.SC5",$7680+7,32
 
 
@@ -905,15 +909,27 @@ LoadRoomGfx:
 LoadRacingGameGfx:
   ld    a,RacingGameTrack1GfxBlock     			;block to copy graphics from
   ld    hl,$4000 + (000*128) + (000/2) - 128
-  ld    de,$0000 + ((3+StartRacingGameLineInt)*128) + (000/2) - 128
-  ld    bc,$0000 + (196*256) + (256/2)
+  ld    de,$0000 + (0*128) + (000/2) - 128
+  ld    bc,$0000 + (212*256) + (256/2)
   call  CopyRomToVram                   ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
 
   ld    a,RacingGameTrack2GfxBlock     			;block to copy graphics from
   ld    hl,$4000 + (000*128) + (000/2) - 128
-  ld    de,$8000 + ((3+StartRacingGameLineInt)*128) + (000/2) - 128
-  ld    bc,$0000 + (196*256) + (256/2)
+  ld    de,$8000 + (0*128) + (000/2) - 128
+  ld    bc,$0000 + (212*256) + (256/2)
   call  CopyRomToVram                   ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
+
+  ld    a,RacingGameBackdropGfxBlock     			;block to copy graphics from
+  ld    hl,$4000 + (000*128) + (000/2) - 128
+  ld    de,$0000 + (0*128) + (000/2) - 128
+  ld    bc,$0000 + (015*256) + (256/2)
+;  call  CopyRomToVram                   ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
+
+  ld    a,RacingGameBackdropGfxBlock     			;block to copy graphics from
+  ld    hl,$4000 + (000*128) + (000/2) - 128
+  ld    de,$8000 + (0*128) + (000/2) - 128
+  ld    bc,$0000 + (015*256) + (256/2)
+;  call  CopyRomToVram                   ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
 
   ld    hl,RacingGamePalette
 	ld		de,CurrentPalette
@@ -2047,6 +2063,7 @@ StartConversation?:								db	0
 StartWakeUpEvent?:								db	1
 OffloadResources?:								db	0
 
+RoadCurvatureAnimationPointer:	dw	CurveRightDataFiles
 
 
 
