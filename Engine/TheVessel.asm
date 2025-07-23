@@ -655,6 +655,12 @@ DrillingLocationsGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlo
 
 ;  incbin "..\grapx\RacingGame\nightstriker2Prepared.SR5",7,212 * 128      ;98 lines
 
+RacingGameTrackAGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
+  incbin "..\grapx\RacingGame\CurveLeftAnimation\0a.sc5",7,211 * 128      ;98 lines
+	ds	128,255
+	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
+
+
 RacingGameTrack1GfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
   incbin "..\grapx\RacingGame\RoadMSXSize\1a.sc5",7,211 * 128      ;98 lines
 	ds	128,255
@@ -830,8 +836,520 @@ RacingGameRoadCurveRightBlock2:  			equ   ($-RomStartAddress) and (romsize-1) /R
 	WriteInstructions11b12b:
 	incbin "..\grapx\RacingGame\RoadMsxSize\writeinstructions11b12b.bin"
 
+	ChangedPixels12a13a:
+	incbin "..\grapx\RacingGame\RoadMsxSize\changedpixels12a13a.bin"
+	Addresses12a13a:
+	incbin "..\grapx\RacingGame\RoadMsxSize\addresses12a13a.bin"
+	WriteInstructions12a13a:
+	incbin "..\grapx\RacingGame\RoadMsxSize\writeinstructions12a13a.bin"
+
+	ChangedPixels13a14a:
+	incbin "..\grapx\RacingGame\RoadMsxSize\changedpixels13a14a.bin"
+	Addresses13a14a:
+	incbin "..\grapx\RacingGame\RoadMsxSize\addresses13a14a.bin"
+	WriteInstructions13a14a:
+	incbin "..\grapx\RacingGame\RoadMsxSize\writeinstructions13a14a.bin"
+
+	ChangedPixels14a15a:
+	incbin "..\grapx\RacingGame\RoadMsxSize\changedpixels14a15a.bin"
+	Addresses14a15a:
+	incbin "..\grapx\RacingGame\RoadMsxSize\addresses14a15a.bin"
+	WriteInstructions14a15a:
+	incbin "..\grapx\RacingGame\RoadMsxSize\writeinstructions14a15a.bin"
+
+	ChangedPixels15a16a:
+	incbin "..\grapx\RacingGame\RoadMsxSize\changedpixels15a16a.bin"
+	Addresses15a16a:
+	incbin "..\grapx\RacingGame\RoadMsxSize\addresses15a16a.bin"
+	WriteInstructions15a16a:
+	incbin "..\grapx\RacingGame\RoadMsxSize\writeinstructions15a16a.bin"
+
+	ChangedPixels16a17a:
+	incbin "..\grapx\RacingGame\RoadMsxSize\changedpixels16a17a.bin"
+	Addresses16a17a:
+	incbin "..\grapx\RacingGame\RoadMsxSize\addresses16a17a.bin"
+	WriteInstructions16a17a:
+	incbin "..\grapx\RacingGame\RoadMsxSize\writeinstructions16a17a.bin"
+
+	ChangedPixels17a18a:
+	incbin "..\grapx\RacingGame\RoadMsxSize\changedpixels17a18a.bin"
+	Addresses17a18a:
+	incbin "..\grapx\RacingGame\RoadMsxSize\addresses17a18a.bin"
+	WriteInstructions17a18a:
+	incbin "..\grapx\RacingGame\RoadMsxSize\writeinstructions17a18a.bin"
+
+	ChangedPixels18a19a:
+	incbin "..\grapx\RacingGame\RoadMsxSize\changedpixels18a19a.bin"
+	Addresses18a19a:
+	incbin "..\grapx\RacingGame\RoadMsxSize\addresses18a19a.bin"
+	WriteInstructions18a19a:
+	incbin "..\grapx\RacingGame\RoadMsxSize\writeinstructions18a19a.bin"
+
+	ChangedPixels19a20a:
+	incbin "..\grapx\RacingGame\RoadMsxSize\changedpixels19a20a.bin"
+	Addresses19a20a:
+	incbin "..\grapx\RacingGame\RoadMsxSize\addresses19a20a.bin"
+	WriteInstructions19a20a:
+	incbin "..\grapx\RacingGame\RoadMsxSize\writeinstructions19a20a.bin"
+
 	dephase	
 	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
+
+RacingGameRoadCurveRightBlock3:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
+	phase	$8000
+	ChangedPixels20a21a:
+	incbin "..\grapx\RacingGame\RoadMsxSize\changedpixels20a21a.bin"
+	Addresses20a21a:
+	incbin "..\grapx\RacingGame\RoadMsxSize\addresses20a21a.bin"
+	WriteInstructions20a21a:
+	incbin "..\grapx\RacingGame\RoadMsxSize\writeinstructions20a21a.bin"
+
+	ChangedPixels21a22a:
+	incbin "..\grapx\RacingGame\RoadMsxSize\changedpixels21a22a.bin"
+	Addresses21a22a:
+	incbin "..\grapx\RacingGame\RoadMsxSize\addresses21a22a.bin"
+	WriteInstructions21a22a:
+	incbin "..\grapx\RacingGame\RoadMsxSize\writeinstructions21a22a.bin"
+
+	ChangedPixels22a23a:
+	incbin "..\grapx\RacingGame\RoadMsxSize\changedpixels22a23a.bin"
+	Addresses22a23a:
+	incbin "..\grapx\RacingGame\RoadMsxSize\addresses22a23a.bin"
+	WriteInstructions22a23a:
+	incbin "..\grapx\RacingGame\RoadMsxSize\writeinstructions22a23a.bin"
+
+	ChangedPixels12b13b:
+	incbin "..\grapx\RacingGame\RoadMsxSize\changedpixels12b13b.bin"
+	Addresses12b13b:
+	incbin "..\grapx\RacingGame\RoadMsxSize\addresses12b13b.bin"
+	WriteInstructions12b13b:
+	incbin "..\grapx\RacingGame\RoadMsxSize\writeinstructions12b13b.bin"
+
+	ChangedPixels13b14b:
+	incbin "..\grapx\RacingGame\RoadMsxSize\changedpixels13b14b.bin"
+	Addresses13b14b:
+	incbin "..\grapx\RacingGame\RoadMsxSize\addresses13b14b.bin"
+	WriteInstructions13b14b:
+	incbin "..\grapx\RacingGame\RoadMsxSize\writeinstructions13b14b.bin"
+
+	ChangedPixels14b15b:
+	incbin "..\grapx\RacingGame\RoadMsxSize\changedpixels14b15b.bin"
+	Addresses14b15b:
+	incbin "..\grapx\RacingGame\RoadMsxSize\addresses14b15b.bin"
+	WriteInstructions14b15b:
+	incbin "..\grapx\RacingGame\RoadMsxSize\writeinstructions14b15b.bin"
+
+	ChangedPixels15b16b:
+	incbin "..\grapx\RacingGame\RoadMsxSize\changedpixels15b16b.bin"
+	Addresses15b16b:
+	incbin "..\grapx\RacingGame\RoadMsxSize\addresses15b16b.bin"
+	WriteInstructions15b16b:
+	incbin "..\grapx\RacingGame\RoadMsxSize\writeinstructions15b16b.bin"
+
+	ChangedPixels16b17b:
+	incbin "..\grapx\RacingGame\RoadMsxSize\changedpixels16b17b.bin"
+	Addresses16b17b:
+	incbin "..\grapx\RacingGame\RoadMsxSize\addresses16b17b.bin"
+	WriteInstructions16b17b:
+	incbin "..\grapx\RacingGame\RoadMsxSize\writeinstructions16b17b.bin"
+
+	ChangedPixels17b18b:
+	incbin "..\grapx\RacingGame\RoadMsxSize\changedpixels17b18b.bin"
+	Addresses17b18b:
+	incbin "..\grapx\RacingGame\RoadMsxSize\addresses17b18b.bin"
+	WriteInstructions17b18b:
+	incbin "..\grapx\RacingGame\RoadMsxSize\writeinstructions17b18b.bin"
+
+	ChangedPixels18b19b:
+	incbin "..\grapx\RacingGame\RoadMsxSize\changedpixels18b19b.bin"
+	Addresses18b19b:
+	incbin "..\grapx\RacingGame\RoadMsxSize\addresses18b19b.bin"
+	WriteInstructions18b19b:
+	incbin "..\grapx\RacingGame\RoadMsxSize\writeinstructions18b19b.bin"
+
+	ChangedPixels19b20b:
+	incbin "..\grapx\RacingGame\RoadMsxSize\changedpixels19b20b.bin"
+	Addresses19b20b:
+	incbin "..\grapx\RacingGame\RoadMsxSize\addresses19b20b.bin"
+	WriteInstructions19b20b:
+	incbin "..\grapx\RacingGame\RoadMsxSize\writeinstructions19b20b.bin"
+
+	ChangedPixels20b21b:
+	incbin "..\grapx\RacingGame\RoadMsxSize\changedpixels20b21b.bin"
+	Addresses20b21b:
+	incbin "..\grapx\RacingGame\RoadMsxSize\addresses20b21b.bin"
+	WriteInstructions20b21b:
+	incbin "..\grapx\RacingGame\RoadMsxSize\writeinstructions20b21b.bin"
+
+	ChangedPixels21b22b:
+	incbin "..\grapx\RacingGame\RoadMsxSize\changedpixels21b22b.bin"
+	Addresses21b22b:
+	incbin "..\grapx\RacingGame\RoadMsxSize\addresses21b22b.bin"
+	WriteInstructions21b22b:
+	incbin "..\grapx\RacingGame\RoadMsxSize\writeinstructions21b22b.bin"
+
+	ChangedPixels22b23b:
+	incbin "..\grapx\RacingGame\RoadMsxSize\changedpixels22b23b.bin"
+	Addresses22b23b:
+	incbin "..\grapx\RacingGame\RoadMsxSize\addresses22b23b.bin"
+	WriteInstructions22b23b:
+	incbin "..\grapx\RacingGame\RoadMsxSize\writeinstructions22b23b.bin"
+
+	ChangedPixels23a22a:
+	incbin "..\grapx\RacingGame\RoadMsxSize\changedpixels23a22a.bin"
+	Addresses23a22a:
+	incbin "..\grapx\RacingGame\RoadMsxSize\addresses23a22a.bin"
+	WriteInstructions23a22a:
+	incbin "..\grapx\RacingGame\RoadMsxSize\writeinstructions23a22a.bin"
+
+	dephase	
+	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
+
+
+
+
+
+
+
+
+
+RacingGameRoadCurveRightBlock4:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
+	phase	$8000
+
+	ChangedPixels22a21a:
+	incbin "..\grapx\RacingGame\RoadMsxSize\changedpixels22a21a.bin"
+	Addresses22a21a:
+	incbin "..\grapx\RacingGame\RoadMsxSize\addresses22a21a.bin"
+	WriteInstructions22a21a:
+	incbin "..\grapx\RacingGame\RoadMsxSize\writeinstructions22a21a.bin"
+
+	ChangedPixels21a20a:
+	incbin "..\grapx\RacingGame\RoadMsxSize\changedpixels21a20a.bin"
+	Addresses21a20a:
+	incbin "..\grapx\RacingGame\RoadMsxSize\addresses21a20a.bin"
+	WriteInstructions21a20a:
+	incbin "..\grapx\RacingGame\RoadMsxSize\writeinstructions21a20a.bin"
+
+	ChangedPixels20a19a:
+	incbin "..\grapx\RacingGame\RoadMsxSize\changedpixels20a19a.bin"
+	Addresses20a19a:
+	incbin "..\grapx\RacingGame\RoadMsxSize\addresses20a19a.bin"
+	WriteInstructions20a19a:
+	incbin "..\grapx\RacingGame\RoadMsxSize\writeinstructions20a19a.bin"
+
+	ChangedPixels19a18a:
+	incbin "..\grapx\RacingGame\RoadMsxSize\changedpixels19a18a.bin"
+	Addresses19a18a:
+	incbin "..\grapx\RacingGame\RoadMsxSize\addresses19a18a.bin"
+	WriteInstructions19a18a:
+	incbin "..\grapx\RacingGame\RoadMsxSize\writeinstructions19a18a.bin"
+
+	ChangedPixels18a17a:
+	incbin "..\grapx\RacingGame\RoadMsxSize\changedpixels18a17a.bin"
+	Addresses18a17a:
+	incbin "..\grapx\RacingGame\RoadMsxSize\addresses18a17a.bin"
+	WriteInstructions18a17a:
+	incbin "..\grapx\RacingGame\RoadMsxSize\writeinstructions18a17a.bin"
+
+	ChangedPixels17a16a:
+	incbin "..\grapx\RacingGame\RoadMsxSize\changedpixels17a16a.bin"
+	Addresses17a16a:
+	incbin "..\grapx\RacingGame\RoadMsxSize\addresses17a16a.bin"
+	WriteInstructions17a16a:
+	incbin "..\grapx\RacingGame\RoadMsxSize\writeinstructions17a16a.bin"
+
+	ChangedPixels16a15a:
+	incbin "..\grapx\RacingGame\RoadMsxSize\changedpixels16a15a.bin"
+	Addresses16a15a:
+	incbin "..\grapx\RacingGame\RoadMsxSize\addresses16a15a.bin"
+	WriteInstructions16a15a:
+	incbin "..\grapx\RacingGame\RoadMsxSize\writeinstructions16a15a.bin"
+
+	ChangedPixels15a14a:
+	incbin "..\grapx\RacingGame\RoadMsxSize\changedpixels15a14a.bin"
+	Addresses15a14a:
+	incbin "..\grapx\RacingGame\RoadMsxSize\addresses15a14a.bin"
+	WriteInstructions15a14a:
+	incbin "..\grapx\RacingGame\RoadMsxSize\writeinstructions15a14a.bin"
+
+	ChangedPixels14a13a:
+	incbin "..\grapx\RacingGame\RoadMsxSize\changedpixels14a13a.bin"
+	Addresses14a13a:
+	incbin "..\grapx\RacingGame\RoadMsxSize\addresses14a13a.bin"
+	WriteInstructions14a13a:
+	incbin "..\grapx\RacingGame\RoadMsxSize\writeinstructions14a13a.bin"
+
+	ChangedPixels13a12a:
+	incbin "..\grapx\RacingGame\RoadMsxSize\changedpixels13a12a.bin"
+	Addresses13a12a:
+	incbin "..\grapx\RacingGame\RoadMsxSize\addresses13a12a.bin"
+	WriteInstructions13a12a:
+	incbin "..\grapx\RacingGame\RoadMsxSize\writeinstructions13a12a.bin"
+
+	ChangedPixels12a11a:
+	incbin "..\grapx\RacingGame\RoadMsxSize\changedpixels12a11a.bin"
+	Addresses12a11a:
+	incbin "..\grapx\RacingGame\RoadMsxSize\addresses12a11a.bin"
+	WriteInstructions12a11a:
+	incbin "..\grapx\RacingGame\RoadMsxSize\writeinstructions12a11a.bin"
+
+	dephase	
+	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
+
+
+
+
+
+
+
+
+
+RacingGameRoadCurveRightBlock5:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
+	phase	$8000
+
+	ChangedPixels11a10a:
+	incbin "..\grapx\RacingGame\RoadMsxSize\changedpixels11a10a.bin"
+	Addresses11a10a:
+	incbin "..\grapx\RacingGame\RoadMsxSize\addresses11a10a.bin"
+	WriteInstructions11a10a:
+	incbin "..\grapx\RacingGame\RoadMsxSize\writeinstructions11a10a.bin"
+
+	ChangedPixels10a9a:
+	incbin "..\grapx\RacingGame\RoadMsxSize\changedpixels10a9a.bin"
+	Addresses10a9a:
+	incbin "..\grapx\RacingGame\RoadMsxSize\addresses10a9a.bin"
+	WriteInstructions10a9a:
+	incbin "..\grapx\RacingGame\RoadMsxSize\writeinstructions10a9a.bin"
+
+	ChangedPixels9a8a:
+	incbin "..\grapx\RacingGame\RoadMsxSize\changedpixels9a8a.bin"
+	Addresses9a8a:
+	incbin "..\grapx\RacingGame\RoadMsxSize\addresses9a8a.bin"
+	WriteInstructions9a8a:
+	incbin "..\grapx\RacingGame\RoadMsxSize\writeinstructions9a8a.bin"
+
+	ChangedPixels8a7a:
+	incbin "..\grapx\RacingGame\RoadMsxSize\changedpixels8a7a.bin"
+	Addresses8a7a:
+	incbin "..\grapx\RacingGame\RoadMsxSize\addresses8a7a.bin"
+	WriteInstructions8a7a:
+	incbin "..\grapx\RacingGame\RoadMsxSize\writeinstructions8a7a.bin"
+
+	ChangedPixels7a6a:
+	incbin "..\grapx\RacingGame\RoadMsxSize\changedpixels7a6a.bin"
+	Addresses7a6a:
+	incbin "..\grapx\RacingGame\RoadMsxSize\addresses7a6a.bin"
+	WriteInstructions7a6a:
+	incbin "..\grapx\RacingGame\RoadMsxSize\writeinstructions7a6a.bin"
+
+	ChangedPixels6a5a:
+	incbin "..\grapx\RacingGame\RoadMsxSize\changedpixels6a5a.bin"
+	Addresses6a5a:
+	incbin "..\grapx\RacingGame\RoadMsxSize\addresses6a5a.bin"
+	WriteInstructions6a5a:
+	incbin "..\grapx\RacingGame\RoadMsxSize\writeinstructions6a5a.bin"
+
+	ChangedPixels5a4a:
+	incbin "..\grapx\RacingGame\RoadMsxSize\changedpixels5a4a.bin"
+	Addresses5a4a:
+	incbin "..\grapx\RacingGame\RoadMsxSize\addresses5a4a.bin"
+	WriteInstructions5a4a:
+	incbin "..\grapx\RacingGame\RoadMsxSize\writeinstructions5a4a.bin"
+
+	ChangedPixels4a3a:
+	incbin "..\grapx\RacingGame\RoadMsxSize\changedpixels4a3a.bin"
+	Addresses4a3a:
+	incbin "..\grapx\RacingGame\RoadMsxSize\addresses4a3a.bin"
+	WriteInstructions4a3a:
+	incbin "..\grapx\RacingGame\RoadMsxSize\writeinstructions4a3a.bin"
+
+	ChangedPixels3a2a:
+	incbin "..\grapx\RacingGame\RoadMsxSize\changedpixels3a2a.bin"
+	Addresses3a2a:
+	incbin "..\grapx\RacingGame\RoadMsxSize\addresses3a2a.bin"
+	WriteInstructions3a2a:
+	incbin "..\grapx\RacingGame\RoadMsxSize\writeinstructions3a2a.bin"
+
+	ChangedPixels2a1a:
+	incbin "..\grapx\RacingGame\RoadMsxSize\changedpixels2a1a.bin"
+	Addresses2a1a:
+	incbin "..\grapx\RacingGame\RoadMsxSize\addresses2a1a.bin"
+	WriteInstructions2a1a:
+	incbin "..\grapx\RacingGame\RoadMsxSize\writeinstructions2a1a.bin"
+
+	ChangedPixels23b22b:
+	incbin "..\grapx\RacingGame\RoadMsxSize\changedpixels23b22b.bin"
+	Addresses23b22b:
+	incbin "..\grapx\RacingGame\RoadMsxSize\addresses23b22b.bin"
+	WriteInstructions23b22b:
+	incbin "..\grapx\RacingGame\RoadMsxSize\writeinstructions23b22b.bin"
+
+	ChangedPixels22b21b:
+	incbin "..\grapx\RacingGame\RoadMsxSize\changedpixels22b21b.bin"
+	Addresses22b21b:
+	incbin "..\grapx\RacingGame\RoadMsxSize\addresses22b21b.bin"
+	WriteInstructions22b21b:
+	incbin "..\grapx\RacingGame\RoadMsxSize\writeinstructions22b21b.bin"
+
+	ChangedPixels21b20b:
+	incbin "..\grapx\RacingGame\RoadMsxSize\changedpixels21b20b.bin"
+	Addresses21b20b:
+	incbin "..\grapx\RacingGame\RoadMsxSize\addresses21b20b.bin"
+	WriteInstructions21b20b:
+	incbin "..\grapx\RacingGame\RoadMsxSize\writeinstructions21b20b.bin"
+
+	ChangedPixels20b19b:
+	incbin "..\grapx\RacingGame\RoadMsxSize\changedpixels20b19b.bin"
+	Addresses20b19b:
+	incbin "..\grapx\RacingGame\RoadMsxSize\addresses20b19b.bin"
+	WriteInstructions20b19b:
+	incbin "..\grapx\RacingGame\RoadMsxSize\writeinstructions20b19b.bin"
+
+	ChangedPixels19b18b:
+	incbin "..\grapx\RacingGame\RoadMsxSize\changedpixels19b18b.bin"
+	Addresses19b18b:
+	incbin "..\grapx\RacingGame\RoadMsxSize\addresses19b18b.bin"
+	WriteInstructions19b18b:
+	incbin "..\grapx\RacingGame\RoadMsxSize\writeinstructions19b18b.bin"
+
+	ChangedPixels18b17b:
+	incbin "..\grapx\RacingGame\RoadMsxSize\changedpixels18b17b.bin"
+	Addresses18b17b:
+	incbin "..\grapx\RacingGame\RoadMsxSize\addresses18b17b.bin"
+	WriteInstructions18b17b:
+	incbin "..\grapx\RacingGame\RoadMsxSize\writeinstructions18b17b.bin"
+
+	ChangedPixels17b16b:
+	incbin "..\grapx\RacingGame\RoadMsxSize\changedpixels17b16b.bin"
+	Addresses17b16b:
+	incbin "..\grapx\RacingGame\RoadMsxSize\addresses17b16b.bin"
+	WriteInstructions17b16b:
+	incbin "..\grapx\RacingGame\RoadMsxSize\writeinstructions17b16b.bin"
+
+	dephase	
+	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
+
+
+
+
+
+
+
+RacingGameRoadCurveRightBlock6:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
+	phase	$8000
+
+	ChangedPixels16b15b:
+	incbin "..\grapx\RacingGame\RoadMsxSize\changedpixels16b15b.bin"
+	Addresses16b15b:
+	incbin "..\grapx\RacingGame\RoadMsxSize\addresses16b15b.bin"
+	WriteInstructions16b15b:
+	incbin "..\grapx\RacingGame\RoadMsxSize\writeinstructions16b15b.bin"
+
+	ChangedPixels15b14b:
+	incbin "..\grapx\RacingGame\RoadMsxSize\changedpixels15b14b.bin"
+	Addresses15b14b:
+	incbin "..\grapx\RacingGame\RoadMsxSize\addresses15b14b.bin"
+	WriteInstructions15b14b:
+	incbin "..\grapx\RacingGame\RoadMsxSize\writeinstructions15b14b.bin"
+
+	ChangedPixels14b13b:
+	incbin "..\grapx\RacingGame\RoadMsxSize\changedpixels14b13b.bin"
+	Addresses14b13b:
+	incbin "..\grapx\RacingGame\RoadMsxSize\addresses14b13b.bin"
+	WriteInstructions14b13b:
+	incbin "..\grapx\RacingGame\RoadMsxSize\writeinstructions14b13b.bin"
+
+	ChangedPixels13b12b:
+	incbin "..\grapx\RacingGame\RoadMsxSize\changedpixels13b12b.bin"
+	Addresses13b12b:
+	incbin "..\grapx\RacingGame\RoadMsxSize\addresses13b12b.bin"
+	WriteInstructions13b12b:
+	incbin "..\grapx\RacingGame\RoadMsxSize\writeinstructions13b12b.bin"
+
+	ChangedPixels12b11b:
+	incbin "..\grapx\RacingGame\RoadMsxSize\changedpixels12b11b.bin"
+	Addresses12b11b:
+	incbin "..\grapx\RacingGame\RoadMsxSize\addresses12b11b.bin"
+	WriteInstructions12b11b:
+	incbin "..\grapx\RacingGame\RoadMsxSize\writeinstructions12b11b.bin"
+
+	ChangedPixels11b10b:
+	incbin "..\grapx\RacingGame\RoadMsxSize\changedpixels11b10b.bin"
+	Addresses11b10b:
+	incbin "..\grapx\RacingGame\RoadMsxSize\addresses11b10b.bin"
+	WriteInstructions11b10b:
+	incbin "..\grapx\RacingGame\RoadMsxSize\writeinstructions11b10b.bin"
+
+	ChangedPixels10b9b:
+	incbin "..\grapx\RacingGame\RoadMsxSize\changedpixels10b9b.bin"
+	Addresses10b9b:
+	incbin "..\grapx\RacingGame\RoadMsxSize\addresses10b9b.bin"
+	WriteInstructions10b9b:
+	incbin "..\grapx\RacingGame\RoadMsxSize\writeinstructions10b9b.bin"
+
+	ChangedPixels9b8b:
+	incbin "..\grapx\RacingGame\RoadMsxSize\changedpixels9b8b.bin"
+	Addresses9b8b:
+	incbin "..\grapx\RacingGame\RoadMsxSize\addresses9b8b.bin"
+	WriteInstructions9b8b:
+	incbin "..\grapx\RacingGame\RoadMsxSize\writeinstructions9b8b.bin"
+
+	ChangedPixels8b7b:
+	incbin "..\grapx\RacingGame\RoadMsxSize\changedpixels8b7b.bin"
+	Addresses8b7b:
+	incbin "..\grapx\RacingGame\RoadMsxSize\addresses8b7b.bin"
+	WriteInstructions8b7b:
+	incbin "..\grapx\RacingGame\RoadMsxSize\writeinstructions8b7b.bin"
+
+	ChangedPixels7b6b:
+	incbin "..\grapx\RacingGame\RoadMsxSize\changedpixels7b6b.bin"
+	Addresses7b6b:
+	incbin "..\grapx\RacingGame\RoadMsxSize\addresses7b6b.bin"
+	WriteInstructions7b6b:
+	incbin "..\grapx\RacingGame\RoadMsxSize\writeinstructions7b6b.bin"
+
+	ChangedPixels6b5b:
+	incbin "..\grapx\RacingGame\RoadMsxSize\changedpixels6b5b.bin"
+	Addresses6b5b:
+	incbin "..\grapx\RacingGame\RoadMsxSize\addresses6b5b.bin"
+	WriteInstructions6b5b:
+	incbin "..\grapx\RacingGame\RoadMsxSize\writeinstructions6b5b.bin"
+
+	ChangedPixels5b4b:
+	incbin "..\grapx\RacingGame\RoadMsxSize\changedpixels5b4b.bin"
+	Addresses5b4b:
+	incbin "..\grapx\RacingGame\RoadMsxSize\addresses5b4b.bin"
+	WriteInstructions5b4b:
+	incbin "..\grapx\RacingGame\RoadMsxSize\writeinstructions5b4b.bin"
+
+	ChangedPixels4b3b:
+	incbin "..\grapx\RacingGame\RoadMsxSize\changedpixels4b3b.bin"
+	Addresses4b3b:
+	incbin "..\grapx\RacingGame\RoadMsxSize\addresses4b3b.bin"
+	WriteInstructions4b3b:
+	incbin "..\grapx\RacingGame\RoadMsxSize\writeinstructions4b3b.bin"
+
+	ChangedPixels3b2b:
+	incbin "..\grapx\RacingGame\RoadMsxSize\changedpixels3b2b.bin"
+	Addresses3b2b:
+	incbin "..\grapx\RacingGame\RoadMsxSize\addresses3b2b.bin"
+	WriteInstructions3b2b:
+	incbin "..\grapx\RacingGame\RoadMsxSize\writeinstructions3b2b.bin"
+
+	ChangedPixels2b1b:
+	incbin "..\grapx\RacingGame\RoadMsxSize\changedpixels2b1b.bin"
+	Addresses2b1b:
+	incbin "..\grapx\RacingGame\RoadMsxSize\addresses2b1b.bin"
+	WriteInstructions2b1b:
+	incbin "..\grapx\RacingGame\RoadMsxSize\writeinstructions2b1b.bin"
+
+	dephase	
+	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
+
+
+
+
+
 
 
 

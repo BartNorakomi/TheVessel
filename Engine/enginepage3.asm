@@ -865,9 +865,9 @@ DrillingLocationsPalette:
   incbin "..\grapx\drillinglocations\drillinglocations.SC5",$7680+7,32
 RacingGamePalette:
 ;  incbin "..\grapx\racinggame\RoadMSXSize\RoadForPalette.SC5",$7680+7,32
-  incbin "..\grapx\racinggame\RoadMSXSize\RoadForPaletteWithBackdrop.SC5",$7680+7,32
+;  incbin "..\grapx\racinggame\RoadMSXSize\RoadForPaletteWithBackdrop.SC5",$7680+7,32
+  incbin "..\grapx\RacingGame\CurveLeftAnimation\0a.SC5",$7680+7,32
 ;  incbin "..\grapx\racinggame\nightstriker2Prepared.SC5",$7680+7,32
-
 
 
 LoadRoomGfx:
@@ -907,7 +907,7 @@ LoadRoomGfx:
 	ret
 
 LoadRacingGameGfx:
-  ld    a,RacingGameTrack1GfxBlock     			;block to copy graphics from
+  ld    a,RacingGameTrackAGfxBlock     			;block to copy graphics from
   ld    hl,$4000 + (000*128) + (000/2) - 128
   ld    de,$0000 + (0*128) + (000/2) - 128
   ld    bc,$0000 + (212*256) + (256/2)

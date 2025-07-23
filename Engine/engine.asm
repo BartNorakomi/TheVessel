@@ -200,9 +200,9 @@ vblank:
   cp    15
   jr    nz,.EndCheckRacingGame
 
-  call  BackdropRandom
+;  call  BackdropRandom
   call  VideoReplayer
-  call  BackdropBlack
+;  call  BackdropBlack
 
   ld    a,(RoadAnimationStep)
   inc   a
