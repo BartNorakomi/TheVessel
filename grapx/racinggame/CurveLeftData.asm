@@ -1,0 +1,44 @@
+CurveLeftBlock1:              equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
+	phase $8000
+	db BlockCurveLeftPage0TOPfrom0to1, 0 | dw Page0TOPChangedPixelsfrom0to1, Page0TOPAddressesfrom0to1, Page0TOPWriteInstructionsfrom0to1
+	db BlockCurveLeftPage0BOTTOMfrom0to1, 1 | dw Page0BOTTOMChangedPixelsfrom0to1, Page0BOTTOMAddressesfrom0to1, Page0BOTTOMWriteInstructionsfrom0to1
+	db BlockCurveLeftPage1TOPfrom0to1, 0 | dw Page1TOPChangedPixelsfrom0to1, Page1TOPAddressesfrom0to1, Page1TOPWriteInstructionsfrom0to1
+	db BlockCurveLeftPage1BOTTOMfrom0to1, 1 | dw Page1BOTTOMChangedPixelsfrom0to1, Page1BOTTOMAddressesfrom0to1, Page1BOTTOMWriteInstructionsfrom0to1
+	db BlockCurveLeftPage0TOPfrom1to2, 0 | dw Page0TOPChangedPixelsfrom1to2, Page0TOPAddressesfrom1to2, Page0TOPWriteInstructionsfrom1to2
+	db BlockCurveLeftPage0BOTTOMfrom1to2, 1 | dw Page0BOTTOMChangedPixelsfrom1to2, Page0BOTTOMAddressesfrom1to2, Page0BOTTOMWriteInstructionsfrom1to2
+	db BlockCurveLeftPage1TOPfrom1to2, 0 | dw Page1TOPChangedPixelsfrom1to2, Page1TOPAddressesfrom1to2, Page1TOPWriteInstructionsfrom1to2
+	db BlockCurveLeftPage1BOTTOMfrom1to2, 1 | dw Page1BOTTOMChangedPixelsfrom1to2, Page1BOTTOMAddressesfrom1to2, Page1BOTTOMWriteInstructionsfrom1to2
+	db BlockCurveLeftPage0TOPfrom2to3, 0 | dw Page0TOPChangedPixelsfrom2to3, Page0TOPAddressesfrom2to3, Page0TOPWriteInstructionsfrom2to3
+	db BlockCurveLeftPage0BOTTOMfrom2to3, 1 | dw Page0BOTTOMChangedPixelsfrom2to3, Page0BOTTOMAddressesfrom2to3, Page0BOTTOMWriteInstructionsfrom2to3
+	db BlockCurveLeftPage1TOPfrom2to3, 0 | dw Page1TOPChangedPixelsfrom2to3, Page1TOPAddressesfrom2to3, Page1TOPWriteInstructionsfrom2to3
+	db BlockCurveLeftPage1BOTTOMfrom2to3, 1 | dw Page1BOTTOMChangedPixelsfrom2to3, Page1BOTTOMAddressesfrom2to3, Page1BOTTOMWriteInstructionsfrom2to3
+	db BlockCurveLeftPage0TOPfrom3to4, 0 | dw Page0TOPChangedPixelsfrom3to4, Page0TOPAddressesfrom3to4, Page0TOPWriteInstructionsfrom3to4
+	db BlockCurveLeftPage0BOTTOMfrom3to4, 1 | dw Page0BOTTOMChangedPixelsfrom3to4, Page0BOTTOMAddressesfrom3to4, Page0BOTTOMWriteInstructionsfrom3to4
+	db BlockCurveLeftPage1TOPfrom3to4, 0 | dw Page1TOPChangedPixelsfrom3to4, Page1TOPAddressesfrom3to4, Page1TOPWriteInstructionsfrom3to4
+	db BlockCurveLeftPage1BOTTOMfrom3to4, 1 | dw Page1BOTTOMChangedPixelsfrom3to4, Page1BOTTOMAddressesfrom3to4, Page1BOTTOMWriteInstructionsfrom3to4
+	db BlockCurveLeftPage0TOPfrom4to5, 0 | dw Page0TOPChangedPixelsfrom4to5, Page0TOPAddressesfrom4to5, Page0TOPWriteInstructionsfrom4to5
+	db BlockCurveLeftPage0BOTTOMfrom4to5, 1 | dw Page0BOTTOMChangedPixelsfrom4to5, Page0BOTTOMAddressesfrom4to5, Page0BOTTOMWriteInstructionsfrom4to5
+	db BlockCurveLeftPage1TOPfrom4to5, 0 | dw Page1TOPChangedPixelsfrom4to5, Page1TOPAddressesfrom4to5, Page1TOPWriteInstructionsfrom4to5
+	db BlockCurveLeftPage1BOTTOMfrom4to5, 1 | dw Page1BOTTOMChangedPixelsfrom4to5, Page1BOTTOMAddressesfrom4to5, Page1BOTTOMWriteInstructionsfrom4to5
+	db BlockCurveLeftPage0TOPfrom5to6, 0 | dw Page0TOPChangedPixelsfrom5to6, Page0TOPAddressesfrom5to6, Page0TOPWriteInstructionsfrom5to6
+	db BlockCurveLeftPage0BOTTOMfrom5to6, 1 | dw Page0BOTTOMChangedPixelsfrom5to6, Page0BOTTOMAddressesfrom5to6, Page0BOTTOMWriteInstructionsfrom5to6
+	db BlockCurveLeftPage1TOPfrom5to6, 0 | dw Page1TOPChangedPixelsfrom5to6, Page1TOPAddressesfrom5to6, Page1TOPWriteInstructionsfrom5to6
+	db BlockCurveLeftPage1BOTTOMfrom5to6, 1 | dw Page1BOTTOMChangedPixelsfrom5to6, Page1BOTTOMAddressesfrom5to6, Page1BOTTOMWriteInstructionsfrom5to6
+	db BlockCurveLeftPage0TOPfrom6to7, 0 | dw Page0TOPChangedPixelsfrom6to7, Page0TOPAddressesfrom6to7, Page0TOPWriteInstructionsfrom6to7
+	db BlockCurveLeftPage0BOTTOMfrom6to7, 1 | dw Page0BOTTOMChangedPixelsfrom6to7, Page0BOTTOMAddressesfrom6to7, Page0BOTTOMWriteInstructionsfrom6to7
+	db BlockCurveLeftPage1TOPfrom6to7, 0 | dw Page1TOPChangedPixelsfrom6to7, Page1TOPAddressesfrom6to7, Page1TOPWriteInstructionsfrom6to7
+	db BlockCurveLeftPage1BOTTOMfrom6to7, 1 | dw Page1BOTTOMChangedPixelsfrom6to7, Page1BOTTOMAddressesfrom6to7, Page1BOTTOMWriteInstructionsfrom6to7
+	db BlockCurveLeftPage0TOPfrom7to8, 0 | dw Page0TOPChangedPixelsfrom7to8, Page0TOPAddressesfrom7to8, Page0TOPWriteInstructionsfrom7to8
+	db BlockCurveLeftPage0BOTTOMfrom7to8, 1 | dw Page0BOTTOMChangedPixelsfrom7to8, Page0BOTTOMAddressesfrom7to8, Page0BOTTOMWriteInstructionsfrom7to8
+	db BlockCurveLeftPage1TOPfrom7to8, 0 | dw Page1TOPChangedPixelsfrom7to8, Page1TOPAddressesfrom7to8, Page1TOPWriteInstructionsfrom7to8
+	db BlockCurveLeftPage1BOTTOMfrom7to8, 1 | dw Page1BOTTOMChangedPixelsfrom7to8, Page1BOTTOMAddressesfrom7to8, Page1BOTTOMWriteInstructionsfrom7to8
+	db BlockCurveLeftPage0TOPfrom8to9, 0 | dw Page0TOPChangedPixelsfrom8to9, Page0TOPAddressesfrom8to9, Page0TOPWriteInstructionsfrom8to9
+	db BlockCurveLeftPage0BOTTOMfrom8to9, 1 | dw Page0BOTTOMChangedPixelsfrom8to9, Page0BOTTOMAddressesfrom8to9, Page0BOTTOMWriteInstructionsfrom8to9
+	db BlockCurveLeftPage1TOPfrom8to9, 0 | dw Page1TOPChangedPixelsfrom8to9, Page1TOPAddressesfrom8to9, Page1TOPWriteInstructionsfrom8to9
+	db BlockCurveLeftPage1BOTTOMfrom8to9, 1 | dw Page1BOTTOMChangedPixelsfrom8to9, Page1BOTTOMAddressesfrom8to9, Page1BOTTOMWriteInstructionsfrom8to9
+	db BlockCurveLeftPage0TOPfrom9to10, 0 | dw Page0TOPChangedPixelsfrom9to10, Page0TOPAddressesfrom9to10, Page0TOPWriteInstructionsfrom9to10
+	db BlockCurveLeftPage0BOTTOMfrom9to10, 1 | dw Page0BOTTOMChangedPixelsfrom9to10, Page0BOTTOMAddressesfrom9to10, Page0BOTTOMWriteInstructionsfrom9to10
+	db BlockCurveLeftPage1TOPfrom9to10, 0 | dw Page1TOPChangedPixelsfrom9to10, Page1TOPAddressesfrom9to10, Page1TOPWriteInstructionsfrom9to10
+	db BlockCurveLeftPage1BOTTOMfrom9to10, 1 | dw Page1BOTTOMChangedPixelsfrom9to10, Page1BOTTOMAddressesfrom9to10, Page1BOTTOMWriteInstructionsfrom9to10
+	dephase
+	DS RomBlockSize - $ and (RomBlockSize-1), -1 ; fill remainder of block

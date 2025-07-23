@@ -4,130 +4,9 @@
 
 Phase MovementRoutinesAddress
 
-CurveRightDataFiles:
-db RacingGameRoadCurveRightBlock1,0 | dw  ChangedPixels1a2a, Addresses1a2a, WriteInstructions1a2a
-db RacingGameRoadCurveRightBlock1,2 | dw  ChangedPixels1b2b, Addresses1b2b, WriteInstructions1b2b
-db RacingGameRoadCurveRightBlock1,0 | dw  ChangedPixels2a3a, Addresses2a3a, WriteInstructions2a3a
-db RacingGameRoadCurveRightBlock1,2 | dw  ChangedPixels2b3b, Addresses2b3b, WriteInstructions2b3b
-db RacingGameRoadCurveRightBlock1,0 | dw  ChangedPixels3a4a, Addresses3a4a, WriteInstructions3a4a
-db RacingGameRoadCurveRightBlock1,2 | dw  ChangedPixels3b4b, Addresses3b4b, WriteInstructions3b4b
-db RacingGameRoadCurveRightBlock1,0 | dw  ChangedPixels4a5a, Addresses4a5a, WriteInstructions4a5a
-db RacingGameRoadCurveRightBlock1,2 | dw  ChangedPixels4b5b, Addresses4b5b, WriteInstructions4b5b
-db RacingGameRoadCurveRightBlock1,0 | dw  ChangedPixels5a6a, Addresses5a6a, WriteInstructions5a6a
-db RacingGameRoadCurveRightBlock1,2 | dw  ChangedPixels5b6b, Addresses5b6b, WriteInstructions5b6b
-db RacingGameRoadCurveRightBlock1,0 | dw  ChangedPixels6a7a, Addresses6a7a, WriteInstructions6a7a
-db RacingGameRoadCurveRightBlock1,2 | dw  ChangedPixels6b7b, Addresses6b7b, WriteInstructions6b7b
-db RacingGameRoadCurveRightBlock1,0 | dw  ChangedPixels7a8a, Addresses7a8a, WriteInstructions7a8a
-db RacingGameRoadCurveRightBlock1,2 | dw  ChangedPixels7b8b, Addresses7b8b, WriteInstructions7b8b
-db RacingGameRoadCurveRightBlock1,0 | dw  ChangedPixels8a9a, Addresses8a9a, WriteInstructions8a9a
-db RacingGameRoadCurveRightBlock2,2 | dw  ChangedPixels8b9b, Addresses8b9b, WriteInstructions8b9b
-db RacingGameRoadCurveRightBlock1,0 | dw  ChangedPixels9a10a, Addresses9a10a, WriteInstructions9a10a
-db RacingGameRoadCurveRightBlock2,2 | dw  ChangedPixels9b10b, Addresses9b10b, WriteInstructions9b10b
-db RacingGameRoadCurveRightBlock1,0 | dw  ChangedPixels10a11a, Addresses10a11a, WriteInstructions10a11a
-db RacingGameRoadCurveRightBlock2,2 | dw  ChangedPixels10b11b, Addresses10b11b, WriteInstructions10b11b
-db RacingGameRoadCurveRightBlock1,0 | dw  ChangedPixels11a12a, Addresses11a12a, WriteInstructions11a12a
-db RacingGameRoadCurveRightBlock2,2 | dw  ChangedPixels11b12b, Addresses11b12b, WriteInstructions11b12b
-db RacingGameRoadCurveRightBlock2,0 | dw  ChangedPixels12a13a, Addresses12a13a, WriteInstructions12a13a
-db RacingGameRoadCurveRightBlock3,2 | dw  ChangedPixels12b13b, Addresses12b13b, WriteInstructions12b13b
-db RacingGameRoadCurveRightBlock2,0 | dw  ChangedPixels13a14a, Addresses13a14a, WriteInstructions13a14a
-db RacingGameRoadCurveRightBlock3,2 | dw  ChangedPixels13b14b, Addresses13b14b, WriteInstructions13b14b
-db RacingGameRoadCurveRightBlock2,0 | dw  ChangedPixels14a15a, Addresses14a15a, WriteInstructions14a15a
-db RacingGameRoadCurveRightBlock3,2 | dw  ChangedPixels14b15b, Addresses14b15b, WriteInstructions14b15b
-db RacingGameRoadCurveRightBlock2,0 | dw  ChangedPixels15a16a, Addresses15a16a, WriteInstructions15a16a
-db RacingGameRoadCurveRightBlock3,2 | dw  ChangedPixels15b16b, Addresses15b16b, WriteInstructions15b16b
-db RacingGameRoadCurveRightBlock2,0 | dw  ChangedPixels16a17a, Addresses16a17a, WriteInstructions16a17a
-db RacingGameRoadCurveRightBlock3,2 | dw  ChangedPixels16b17b, Addresses16b17b, WriteInstructions16b17b
-db RacingGameRoadCurveRightBlock2,0 | dw  ChangedPixels17a18a, Addresses17a18a, WriteInstructions17a18a
-db RacingGameRoadCurveRightBlock3,2 | dw  ChangedPixels17b18b, Addresses17b18b, WriteInstructions17b18b
-db RacingGameRoadCurveRightBlock2,0 | dw  ChangedPixels18a19a, Addresses18a19a, WriteInstructions18a19a
-db RacingGameRoadCurveRightBlock3,2 | dw  ChangedPixels18b19b, Addresses18b19b, WriteInstructions18b19b
-db RacingGameRoadCurveRightBlock2,0 | dw  ChangedPixels19a20a, Addresses19a20a, WriteInstructions19a20a
-db RacingGameRoadCurveRightBlock3,2 | dw  ChangedPixels19b20b, Addresses19b20b, WriteInstructions19b20b
-
-db RacingGameRoadCurveRightBlock2,0 | dw  ChangedPixels19a20a, Addresses19a20a, WriteInstructions19a20a
-db RacingGameRoadCurveRightBlock3,2 | dw  ChangedPixels19b20b, Addresses19b20b, WriteInstructions19b20b
-db RacingGameRoadCurveRightBlock2,0 | dw  ChangedPixels19a20a, Addresses19a20a, WriteInstructions19a20a
-db RacingGameRoadCurveRightBlock3,2 | dw  ChangedPixels19b20b, Addresses19b20b, WriteInstructions19b20b
-
-
-db RacingGameRoadCurveRightBlock3,0 | dw  ChangedPixels20a21a, Addresses20a21a, WriteInstructions20a21a
-db RacingGameRoadCurveRightBlock3,2 | dw  ChangedPixels20b21b, Addresses20b21b, WriteInstructions20b21b
-
-db RacingGameRoadCurveRightBlock3,0 | dw  ChangedPixels20a21a, Addresses20a21a, WriteInstructions20a21a
-db RacingGameRoadCurveRightBlock3,2 | dw  ChangedPixels20b21b, Addresses20b21b, WriteInstructions20b21b
-db RacingGameRoadCurveRightBlock3,0 | dw  ChangedPixels20a21a, Addresses20a21a, WriteInstructions20a21a
-db RacingGameRoadCurveRightBlock3,2 | dw  ChangedPixels20b21b, Addresses20b21b, WriteInstructions20b21b
-
-
-db RacingGameRoadCurveRightBlock3,0 | dw  ChangedPixels21a22a, Addresses21a22a, WriteInstructions21a22a
-db RacingGameRoadCurveRightBlock3,2 | dw  ChangedPixels21b22b, Addresses21b22b, WriteInstructions21b22b
-
-db RacingGameRoadCurveRightBlock3,0 | dw  ChangedPixels21a22a, Addresses21a22a, WriteInstructions21a22a
-db RacingGameRoadCurveRightBlock3,2 | dw  ChangedPixels21b22b, Addresses21b22b, WriteInstructions21b22b
-db RacingGameRoadCurveRightBlock3,0 | dw  ChangedPixels21a22a, Addresses21a22a, WriteInstructions21a22a
-db RacingGameRoadCurveRightBlock3,2 | dw  ChangedPixels21b22b, Addresses21b22b, WriteInstructions21b22b
-
-
-db RacingGameRoadCurveRightBlock3,0 | dw  ChangedPixels22a23a, Addresses22a23a, WriteInstructions22a23a
-db RacingGameRoadCurveRightBlock3,2 | dw  ChangedPixels22b23b, Addresses22b23b, WriteInstructions22b23b
-
-db RacingGameRoadCurveRightBlock3,0 | dw  ChangedPixels22a23a, Addresses22a23a, WriteInstructions22a23a
-db RacingGameRoadCurveRightBlock3,2 | dw  ChangedPixels22b23b, Addresses22b23b, WriteInstructions22b23b
-db RacingGameRoadCurveRightBlock3,0 | dw  ChangedPixels22a23a, Addresses22a23a, WriteInstructions22a23a
-db RacingGameRoadCurveRightBlock3,2 | dw  ChangedPixels22b23b, Addresses22b23b, WriteInstructions22b23b
-
-
-;db  0,0
-
-
-CurveRightBackDataFiles:
-db RacingGameRoadCurveRightBlock3,0 | dw  ChangedPixels23a22a, Addresses23a22a, WriteInstructions23a22a
-db RacingGameRoadCurveRightBlock5,2 | dw  ChangedPixels23b22b, Addresses23b22b, WriteInstructions23b22b
-db RacingGameRoadCurveRightBlock4,0 | dw  ChangedPixels22a21a, Addresses22a21a, WriteInstructions22a21a
-db RacingGameRoadCurveRightBlock5,2 | dw  ChangedPixels22b21b, Addresses22b21b, WriteInstructions22b21b
-db RacingGameRoadCurveRightBlock4,0 | dw  ChangedPixels21a20a, Addresses21a20a, WriteInstructions21a20a
-db RacingGameRoadCurveRightBlock5,2 | dw  ChangedPixels21b20b, Addresses21b20b, WriteInstructions21b20b
-db RacingGameRoadCurveRightBlock4,0 | dw  ChangedPixels20a19a, Addresses20a19a, WriteInstructions20a19a
-db RacingGameRoadCurveRightBlock5,2 | dw  ChangedPixels20b19b, Addresses20b19b, WriteInstructions20b19b
-db RacingGameRoadCurveRightBlock4,0 | dw  ChangedPixels19a18a, Addresses19a18a, WriteInstructions19a18a
-db RacingGameRoadCurveRightBlock5,2 | dw  ChangedPixels19b18b, Addresses19b18b, WriteInstructions19b18b
-db RacingGameRoadCurveRightBlock4,0 | dw  ChangedPixels18a17a, Addresses18a17a, WriteInstructions18a17a
-db RacingGameRoadCurveRightBlock5,2 | dw  ChangedPixels18b17b, Addresses18b17b, WriteInstructions18b17b
-db RacingGameRoadCurveRightBlock4,0 | dw  ChangedPixels17a16a, Addresses17a16a, WriteInstructions17a16a
-db RacingGameRoadCurveRightBlock5,2 | dw  ChangedPixels17b16b, Addresses17b16b, WriteInstructions17b16b
-db RacingGameRoadCurveRightBlock4,0 | dw  ChangedPixels16a15a, Addresses16a15a, WriteInstructions16a15a
-db RacingGameRoadCurveRightBlock6,2 | dw  ChangedPixels16b15b, Addresses16b15b, WriteInstructions16b15b
-db RacingGameRoadCurveRightBlock4,0 | dw  ChangedPixels15a14a, Addresses15a14a, WriteInstructions15a14a
-db RacingGameRoadCurveRightBlock6,2 | dw  ChangedPixels15b14b, Addresses15b14b, WriteInstructions15b14b
-db RacingGameRoadCurveRightBlock4,0 | dw  ChangedPixels14a13a, Addresses14a13a, WriteInstructions14a13a
-db RacingGameRoadCurveRightBlock6,2 | dw  ChangedPixels14b13b, Addresses14b13b, WriteInstructions14b13b
-db RacingGameRoadCurveRightBlock4,0 | dw  ChangedPixels13a12a, Addresses13a12a, WriteInstructions13a12a
-db RacingGameRoadCurveRightBlock6,2 | dw  ChangedPixels13b12b, Addresses13b12b, WriteInstructions13b12b
-db RacingGameRoadCurveRightBlock4,0 | dw  ChangedPixels12a11a, Addresses12a11a, WriteInstructions12a11a
-db RacingGameRoadCurveRightBlock6,2 | dw  ChangedPixels12b11b, Addresses12b11b, WriteInstructions12b11b
-db RacingGameRoadCurveRightBlock5,0 | dw  ChangedPixels11a10a, Addresses11a10a, WriteInstructions11a10a
-db RacingGameRoadCurveRightBlock6,2 | dw  ChangedPixels11b10b, Addresses11b10b, WriteInstructions11b10b
-db RacingGameRoadCurveRightBlock5,0 | dw  ChangedPixels10a9a, Addresses10a9a, WriteInstructions10a9a
-db RacingGameRoadCurveRightBlock6,2 | dw  ChangedPixels10b9b, Addresses10b9b, WriteInstructions10b9b
-db RacingGameRoadCurveRightBlock5,0 | dw  ChangedPixels9a8a, Addresses9a8a, WriteInstructions9a8a
-db RacingGameRoadCurveRightBlock6,2 | dw  ChangedPixels9b8b, Addresses9b8b, WriteInstructions9b8b
-db RacingGameRoadCurveRightBlock5,0 | dw  ChangedPixels8a7a, Addresses8a7a, WriteInstructions8a7a
-db RacingGameRoadCurveRightBlock6,2 | dw  ChangedPixels8b7b, Addresses8b7b, WriteInstructions8b7b
-db RacingGameRoadCurveRightBlock5,0 | dw  ChangedPixels7a6a, Addresses7a6a, WriteInstructions7a6a
-db RacingGameRoadCurveRightBlock6,2 | dw  ChangedPixels7b6b, Addresses7b6b, WriteInstructions7b6b
-db RacingGameRoadCurveRightBlock5,0 | dw  ChangedPixels6a5a, Addresses6a5a, WriteInstructions6a5a
-db RacingGameRoadCurveRightBlock6,2 | dw  ChangedPixels6b5b, Addresses6b5b, WriteInstructions6b5b
-db RacingGameRoadCurveRightBlock5,0 | dw  ChangedPixels5a4a, Addresses5a4a, WriteInstructions5a4a
-db RacingGameRoadCurveRightBlock6,2 | dw  ChangedPixels5b4b, Addresses5b4b, WriteInstructions5b4b
-db RacingGameRoadCurveRightBlock5,0 | dw  ChangedPixels4a3a, Addresses4a3a, WriteInstructions4a3a
-db RacingGameRoadCurveRightBlock6,2 | dw  ChangedPixels4b3b, Addresses4b3b, WriteInstructions4b3b
-db RacingGameRoadCurveRightBlock5,0 | dw  ChangedPixels3a2a, Addresses3a2a, WriteInstructions3a2a
-db RacingGameRoadCurveRightBlock6,2 | dw  ChangedPixels3b2b, Addresses3b2b, WriteInstructions3b2b
-db RacingGameRoadCurveRightBlock5,0 | dw  ChangedPixels2a1a, Addresses2a1a, WriteInstructions2a1a
-db RacingGameRoadCurveRightBlock6,2 | dw  ChangedPixels2b1b, Addresses2b1b, WriteInstructions2b1b
+CurveLeftDataFiles:
+	include	"..\grapx\RacingGame\CurveLeftDataIndex.asm"
 db 0,0
-
-
 
 VideoReplayer:
   ld    ix,(RoadCurvatureAnimationPointer)
@@ -149,6 +28,7 @@ VideoReplayer:
   ld    h,(ix+5)
   ld    c,$99
 
+
   ld    e,(ix+6)
   ld    d,(ix+7)
   push  de
@@ -160,10 +40,10 @@ VideoReplayer:
   or    (ix+1)
 
 
-jr nz,.notzero
-ld ix,CurveRightDataFiles
-  ld    (RoadCurvatureAnimationPointer),ix
-.notzero:
+;jr nz,.notzero
+;ld ix,CurveRightDataFiles
+;  ld    (RoadCurvatureAnimationPointer),ix
+;.notzero:
 
 
 

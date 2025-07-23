@@ -866,9 +866,8 @@ DrillingLocationsPalette:
 RacingGamePalette:
 ;  incbin "..\grapx\racinggame\RoadMSXSize\RoadForPalette.SC5",$7680+7,32
 ;  incbin "..\grapx\racinggame\RoadMSXSize\RoadForPaletteWithBackdrop.SC5",$7680+7,32
-  incbin "..\grapx\RacingGame\CurveLeftAnimation\0a.SC5",$7680+7,32
+  incbin "..\grapx\RacingGame\0a.SC5",$7680+7,32
 ;  incbin "..\grapx\racinggame\nightstriker2Prepared.SC5",$7680+7,32
-
 
 LoadRoomGfx:
 	ld		a,(CurrentRoom)									;0=arcadehall1, 1=arcadehall2
@@ -2063,7 +2062,7 @@ StartConversation?:								db	0
 StartWakeUpEvent?:								db	1
 OffloadResources?:								db	0
 
-RoadCurvatureAnimationPointer:	dw	CurveRightDataFiles
+RoadCurvatureAnimationPointer:	dw	CurveLeftDataFiles
 
 
 
