@@ -866,7 +866,7 @@ DrillingLocationsPalette:
 RacingGamePalette:
 ;  incbin "..\grapx\racinggame\RoadMSXSize\RoadForPalette.SC5",$7680+7,32
 ;  incbin "..\grapx\racinggame\RoadMSXSize\RoadForPaletteWithBackdrop.SC5",$7680+7,32
-  incbin "..\grapx\RacingGame\0a.SC5",$7680+7,32
+  incbin "..\grapx\RacingGame\0.SC5",$7680+7,32
 ;  incbin "..\grapx\racinggame\nightstriker2Prepared.SC5",$7680+7,32
 
 LoadRoomGfx:

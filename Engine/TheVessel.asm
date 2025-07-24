@@ -656,7 +656,7 @@ DrillingLocationsGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlo
 ;  incbin "..\grapx\RacingGame\nightstriker2Prepared.SR5",7,212 * 128      ;98 lines
 
 RacingGameTrackAGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
-  incbin "..\grapx\RacingGame\0a.sc5",7,211 * 128      ;98 lines
+  incbin "..\grapx\RacingGame\0.sc5",7,211 * 128      ;98 lines
 	ds	128,255
 	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
 
@@ -683,6 +683,9 @@ RacingGameBackdropGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBl
 
 
 	include	"..\grapx\RacingGame\CurveLeftDataFiles.asm"
+	include	"..\grapx\RacingGame\CurveLeftEndDataFiles.asm"
+	include	"..\grapx\RacingGame\CurveRightDataFiles.asm"
+	include	"..\grapx\RacingGame\CurveRightEndDataFiles.asm"
 
 
 

@@ -1,14 +1,14 @@
 ﻿$outputFile = "CurveLeftDataFiles.asm"
 $startFrame = 0
-$endFrame = 15  # Adjust as needed
-$RomBlockSize = 16KB  # 16 * 1024
+$endFrame = 75
+$RomBlockSize = 16KB
+$romBaseAddress = 0x8000
 
 # Helper to get file size safely
 function Get-FileSize($path) {
     if (Test-Path $path) {
         return (Get-Item $path).Length
     } else {
-        Write-Warning "File not found: $path"
         return 0
     }
 }
@@ -17,7 +17,7 @@ function Get-FileSize($path) {
 Set-Content -Path $outputFile -Value "" -Encoding ascii
 
 $blockNum = 1
-$currentBlockSize = 0
+$script:currentBlockSize = 0
 
 # Write new block header function
 function Write-BlockHeader($blockNum) {
@@ -26,15 +26,15 @@ CurveLeftBlock${blockNum}:  			equ   (`$-RomStartAddress) and (romsize-1) / RomB
 	phase 0x8000
 
 "@ | Add-Content -Path $outputFile -Encoding ascii
-    $global:currentBlockSize = 0
+
+    $script:currentBlockSize = 0
 }
 
-# Write new block footer function
+# Write block footer
 function Write-BlockFooter() {
     @"
 	dephase	
-	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
-
+	DS RomBlockSize - $ and (RomBlockSize - 1), -1	; fill remainder of block
 
 "@ | Add-Content -Path $outputFile -Encoding ascii
 }
@@ -46,49 +46,49 @@ for ($i = $startFrame; $i -lt $endFrame; $i++) {
     $j = $i + 1
     foreach ($page in 0, 1) {
         foreach ($region in "TOP", "BOTTOM") {
-            # Build file paths for size check (actual relative paths on disk)
+            # Build file paths
             $changedPixelsFile = ".\CurveLeftAnimationPage${page}\${region}changedpixelsfrom${i}to${j}.bin"
-            $addressesFile = ".\CurveLeftAnimationPage${page}\${region}addressesfrom${i}to${j}.bin"
-            $writeInstrFile = ".\CurveLeftAnimationPage${page}\${region}writeinstructionsfrom${i}to${j}.bin"
+            $addressesFile     = ".\CurveLeftAnimationPage${page}\${region}addressesfrom${i}to${j}.bin"
+            $writeInstrFile    = ".\CurveLeftAnimationPage${page}\${region}writeinstructionsfrom${i}to${j}.bin"
 
-            # Get sizes
+            # Get file sizes
             $sizeChanged = Get-FileSize $changedPixelsFile
-            $sizeAddr = Get-FileSize $addressesFile
-            $sizeInstr = Get-FileSize $writeInstrFile
+            $sizeAddr    = Get-FileSize $addressesFile
+            $sizeInstr   = Get-FileSize $writeInstrFile
 
-            # Approximate overhead for labels and equ lines (in bytes)
-            $overhead = 60
+            $realDataSize = $sizeChanged + $sizeAddr + $sizeInstr
 
-            # Total bytes to add for this block
-            $totalSize = $sizeChanged + $sizeAddr + $sizeInstr + $overhead
-
-            # If adding this block exceeds RomBlockSize, close current block and start a new one
-            if (($currentBlockSize + $totalSize) -gt $RomBlockSize) {
+            # Check if this fits in current ROM block
+            if (($script:currentBlockSize + $realDataSize) -gt $RomBlockSize) {
                 Write-BlockFooter
                 $blockNum++
                 Write-BlockHeader $blockNum
             }
 
-            # Write block equ label
+            # Labels and data block
             $blockLabel = "BlockCurveLeftPage${page}${region}from${i}to${j}"
-            $prefix = "Page${page}${region}ChangedPixelsfrom${i}to${j}"
-            $addr = "Page${page}${region}Addressesfrom${i}to${j}"
-            $instr = "Page${page}${region}WriteInstructionsfrom${i}to${j}"
+            $prefix     = "CurveLeftPage${page}${region}ChangedPixelsfrom${i}to${j}"
+            $addr       = "CurveLeftPage${page}${region}Addressesfrom${i}to${j}"
+            $instr      = "CurveLeftPage${page}${region}WriteInstructionsfrom${i}to${j}"
 
-            # Write to output file with original incbin relative paths (as assembler expects)
-            Add-Content -Path $outputFile -Encoding ascii -Value "	${blockLabel}:	equ CurveLeftBlock${blockNum}"
-            Add-Content -Path $outputFile -Encoding ascii -Value "	${prefix}:"
-            Add-Content -Path $outputFile -Encoding ascii -Value "	incbin ""..\grapx\RacingGame\CurveLeftAnimationPage${page}\${region}changedpixelsfrom${i}to${j}.bin"""
-            Add-Content -Path $outputFile -Encoding ascii -Value "	${addr}:"
-            Add-Content -Path $outputFile -Encoding ascii -Value "	incbin ""..\grapx\RacingGame\CurveLeftAnimationPage${page}\${region}addressesfrom${i}to${j}.bin"""
-            Add-Content -Path $outputFile -Encoding ascii -Value "	${instr}:"
-            Add-Content -Path $outputFile -Encoding ascii -Value "	incbin ""..\grapx\RacingGame\CurveLeftAnimationPage${page}\${region}writeinstructionsfrom${i}to${j}.bin"""
-            Add-Content -Path $outputFile -Encoding ascii -Value ""
+            Add-Content -Path $outputFile -Encoding ascii -Value "`t${blockLabel}:	equ CurveLeftBlock${blockNum}"
+            Add-Content -Path $outputFile -Encoding ascii -Value "`t${prefix}:"
+            Add-Content -Path $outputFile -Encoding ascii -Value "`tincbin ""..\grapx\RacingGame\CurveLeftAnimationPage${page}\${region}changedpixelsfrom${i}to${j}.bin"""
+            Add-Content -Path $outputFile -Encoding ascii -Value "`t${addr}:"
+            Add-Content -Path $outputFile -Encoding ascii -Value "`tincbin ""..\grapx\RacingGame\CurveLeftAnimationPage${page}\${region}addressesfrom${i}to${j}.bin"""
+            Add-Content -Path $outputFile -Encoding ascii -Value "`t${instr}:"
+            Add-Content -Path $outputFile -Encoding ascii -Value "`tincbin ""..\grapx\RacingGame\CurveLeftAnimationPage${page}\${region}writeinstructionsfrom${i}to${j}.bin"""
 
-            $currentBlockSize += $totalSize
+            # ✅ Correct: Update ROM usage before computing address comment
+            $script:currentBlockSize += $realDataSize
+
+            # Calculate ROM address after this entry
+            $romAddress = $romBaseAddress + $script:currentBlockSize
+            $romAddressHex = '{0:X4}' -f $romAddress
+            Add-Content -Path $outputFile -Encoding ascii -Value "`n;$$${romAddressHex}`n"
         }
     }
 }
 
-# Close last block
+# Final block close
 Write-BlockFooter

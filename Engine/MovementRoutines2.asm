@@ -6,6 +6,12 @@ Phase MovementRoutinesAddress
 
 CurveLeftDataFiles:
 	include	"..\grapx\RacingGame\CurveLeftDataIndex.asm"
+	include	"..\grapx\RacingGame\CurveLeftEndDataIndex.asm"
+;db 0,0
+
+CurveRightDataFiles:
+	include	"..\grapx\RacingGame\CurveRightDataIndex.asm"
+	include	"..\grapx\RacingGame\CurveRightEndDataIndex.asm"
 db 0,0
 
 VideoReplayer:
@@ -15,7 +21,7 @@ VideoReplayer:
   ;we can also use only page 1 for this
   call  block34                             ;CARE!!! we can only switch block34 if page 1 is in rom  
 
-  ld    a,(ix+1)            ;movement routine block
+  ld    a,(ix+1)            ;write page
 	out   ($99),a               ;write page instellen (0=page 0 from y=0 to 127, 1=page 0 from y=128 to 255, 2=page 1 from y=0 to 127 etc..)
 	ld    a,14+128
 	out   ($99),a
