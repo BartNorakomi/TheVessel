@@ -1088,7 +1088,6 @@ armoryvaultGfxBlock: equ 01Ah ; last def. pass 3
 CurveRightEndPage1BOTTOMChangedPixelsfrom73to72: equ 0AA6Ch ; last def. pass 3
 CurveRightEndPage1BOTTOMChangedPixelsfrom65to64: equ 099F5h ; last def. pass 3
 BlockCurveRightEndPage0TOPfrom39to38: equ 07Bh ; last def. pass 3
-kut: equ 0D0000h ; last def. pass 3
 SetText.RowFound: equ 01C4Bh ; last def. pass 3
 LoadUpgradeMenuGfx: equ 0D055h ; last def. pass 3
 CurveLeftPage1TOPChangedPixelsfrom20to21: equ 0A2FFh ; last def. pass 3
@@ -2806,7 +2805,6 @@ CurveRightEndPage1TOPChangedPixelsfrom51to50: equ 09D0Dh ; last def. pass 3
 CurveLeftPage0BOTTOMAddressesfrom21to22: equ 0AC92h ; last def. pass 3
 CurveRightPage0BOTTOMChangedPixelsfrom46to47: equ 08781h ; last def. pass 3
 CurveRightPage1TOPWriteInstructionsfrom68to69: equ 0A082h ; last def. pass 3
-kut2: equ 0150000h ; last def. pass 3
 BlockCurveLeftEndPage0BOTTOMfrom14to13: equ 04Bh ; last def. pass 3
 CurveRightPage0TOPWriteInstructionsfrom18to19: equ 08848h ; last def. pass 3
 CurveRightPage1BOTTOMAddressesfrom71to72: equ 09BE1h ; last def. pass 3
