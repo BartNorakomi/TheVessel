@@ -7,32 +7,35 @@ $extraHeight = 128
 $totalHeight = $height + $extraHeight
 
 # Color palette indices
-$COLOR_GREEN = 0
-$COLOR_ROAD  = 1
-$COLOR_EDGE  = 2
-$COLOR_WHITE = 3
+$COLOR_GREEN = 8
+$COLOR_ROAD  = 9
+$COLOR_EDGE  = 10
+$COLOR_WHITE = 11
 
 # Road dimensions
 $roadWidthBottom = 250
 $roadWidthTop = 20
 $edgeLineWidthBottom = 10
-$centerLineWidth = 12
-$centerStripeWidthBottom = [math]::Floor($centerLineWidth / 2)
-$centerStripeWidthTop = 1
 
 # Define palette colors
 $palette = @(
+    [System.Drawing.Color]::FromArgb(0, 0, 0),       # 0 (Unused)
+    [System.Drawing.Color]::FromArgb(0, 0, 0),       # 1 (Unused)
+    [System.Drawing.Color]::FromArgb(0, 0, 0),       # 2 (Unused)
+    [System.Drawing.Color]::FromArgb(0, 0, 0),       # 3 (Unused)
+    [System.Drawing.Color]::FromArgb(0, 0, 0),       # 4 (Unused)
+    [System.Drawing.Color]::FromArgb(0, 0, 0),       # 5 (Unused)
+    [System.Drawing.Color]::FromArgb(0, 0, 0),       # 6 (Unused)
+    [System.Drawing.Color]::FromArgb(0, 0, 0),       # 7 (Unused)
     [System.Drawing.Color]::FromArgb(30, 200, 30),    # GREEN
-    [System.Drawing.Color]::DarkGray,                 # ROAD
-    [System.Drawing.Color]::LightGray,                # EDGE
-    [System.Drawing.Color]::White                     # WHITE
+    [System.Drawing.Color]::DarkGray,                # ROAD
+    [System.Drawing.Color]::LightGray,               # EDGE
+    [System.Drawing.Color]::White                    # WHITE
 )
 
-$steps = 20
+$steps = 60
 for ($step = 0; $step -lt $steps; $step++) {
-    # - 50 for going up, +50 for going down
-    #$hillHeight = -50 * ($step / ($steps - 1))  # From 0 to -20 in 10 steps
-    $hillHeight = 20 * ($step / ($steps - 1))  # From 0 to -20 in 10 steps
+    $hillHeight = -30 * ($step / ($steps - 1))
 
     # Pixel buffer and filled lines tracker
     $pixels = New-Object 'Byte[]' ($width * $totalHeight)
@@ -46,7 +49,7 @@ for ($step = 0; $step -lt $steps; $step++) {
     # Calculate vertical offsets per road line
     for ($line = 0; $line -lt $height; $line++) {
         $t = $line / ($height - 1)
-        $easeT = [math]::Pow($t, 2)  # easing
+        $easeT = [math]::Pow($t, 2)
         $yOffset[$line] = [math]::Round($hillHeight * $easeT)
         $centerX[$line] = $width / 2
         $roadWidth[$line] = $roadWidthBottom + ($roadWidthTop - $roadWidthBottom) * $t
@@ -74,7 +77,7 @@ for ($step = 0; $step -lt $steps; $step++) {
 
     # Keep track of which output lines we drew on
     $drawnLines = @()
-    $drawnParams = @()  # Store parameters for each drawn line
+    $drawnParams = @()
 
     # Draw road lines shifted by vertical offset
     for ($line = 0; $line -lt $height; $line++) {
@@ -112,26 +115,6 @@ for ($step = 0; $step -lt $steps; $step++) {
         for ($x = ($rightEdge - $edgeLineWidth + 1); $x -le $rightEdge; $x++) {
             if ($x -ge 0 -and $x -lt $width) {
                 $pixels[$y * $width + $x] = $COLOR_EDGE
-            }
-        }
-
-        # Center stripes
-        $centerStripeWidth = $centerStripeWidthBottom + ($centerStripeWidthTop - $centerStripeWidthBottom) * $line / ($height - 1)
-        if ($centerStripeWidth -lt 1) { $centerStripeWidth = 1 }
-        $centerStripeWidth = [math]::Floor($centerStripeWidth)
-
-        $centerStripeOffset = [math]::Floor($rw / 4)
-        $centerStripeLeftX = $cx - $centerStripeOffset - [math]::Floor($centerStripeWidth / 2)
-        $centerStripeRightX = $cx + $centerStripeOffset - [math]::Floor($centerStripeWidth / 2)
-
-        for ($x = $centerStripeLeftX; $x -lt ($centerStripeLeftX + $centerStripeWidth); $x++) {
-            if ($x -ge 0 -and $x -lt $width) {
-                $pixels[$y * $width + $x] = $COLOR_WHITE
-            }
-        }
-        for ($x = $centerStripeRightX; $x -lt ($centerStripeRightX + $centerStripeWidth); $x++) {
-            if ($x -ge 0 -and $x -lt $width) {
-                $pixels[$y * $width + $x] = $COLOR_WHITE
             }
         }
     }
@@ -177,26 +160,6 @@ for ($step = 0; $step -lt $steps; $step++) {
             for ($x = ($rightEdge - $edgeLineWidth + 1); $x -le $rightEdge; $x++) {
                 if ($x -ge 0 -and $x -lt $width) {
                     $pixels[$yFill * $width + $x] = $COLOR_EDGE
-                }
-            }
-
-            # Center stripes
-            $centerStripeWidth = $centerStripeWidthBottom + ($centerStripeWidthTop - $centerStripeWidthBottom) * ($startParam.LineIdx + ($endParam.LineIdx - $startParam.LineIdx) * $t) / ($height - 1)
-            if ($centerStripeWidth -lt 1) { $centerStripeWidth = 1 }
-            $centerStripeWidth = [math]::Floor($centerStripeWidth)
-
-            $centerStripeOffset = [math]::Floor($rw / 4)
-            $centerStripeLeftX = $cx - $centerStripeOffset - [math]::Floor($centerStripeWidth / 2)
-            $centerStripeRightX = $cx + $centerStripeOffset - [math]::Floor($centerStripeWidth / 2)
-
-            for ($x = $centerStripeLeftX; $x -lt ($centerStripeLeftX + $centerStripeWidth); $x++) {
-                if ($x -ge 0 -and $x -lt $width) {
-                    $pixels[$yFill * $width + $x] = $COLOR_WHITE
-                }
-            }
-            for ($x = $centerStripeRightX; $x -lt ($centerStripeRightX + $centerStripeWidth); $x++) {
-                if ($x -ge 0 -and $x -lt $width) {
-                    $pixels[$yFill * $width + $x] = $COLOR_WHITE
                 }
             }
         }

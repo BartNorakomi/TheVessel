@@ -7,25 +7,30 @@ $extraHeight = 128
 $totalHeight = $height + $extraHeight
 
 # Color palette indices
-$COLOR_GREEN = 0
-$COLOR_ROAD  = 1
-$COLOR_EDGE  = 2
-$COLOR_WHITE = 3
+$COLOR_GREEN = 8
+$COLOR_ROAD  = 9
+$COLOR_EDGE  = 10
+$COLOR_WHITE = 11
 
 # Road dimensions
 $roadWidthBottom = 250
 $roadWidthTop = 20
 $edgeLineWidthBottom = 10
-$centerLineWidth = 12
-$centerStripeWidthBottom = [math]::Floor($centerLineWidth / 2)
-$centerStripeWidthTop = 1
 
 # Define palette colors
 $palette = @(
+    [System.Drawing.Color]::FromArgb(0, 0, 0),       # 0 (Unused)
+    [System.Drawing.Color]::FromArgb(0, 0, 0),       # 1 (Unused)
+    [System.Drawing.Color]::FromArgb(0, 0, 0),       # 2 (Unused)
+    [System.Drawing.Color]::FromArgb(0, 0, 0),       # 3 (Unused)
+    [System.Drawing.Color]::FromArgb(0, 0, 0),       # 4 (Unused)
+    [System.Drawing.Color]::FromArgb(0, 0, 0),       # 5 (Unused)
+    [System.Drawing.Color]::FromArgb(0, 0, 0),       # 6 (Unused)
+    [System.Drawing.Color]::FromArgb(0, 0, 0),       # 7 (Unused)
     [System.Drawing.Color]::FromArgb(30, 200, 30),    # GREEN
-    [System.Drawing.Color]::DarkGray,                 # ROAD
-    [System.Drawing.Color]::LightGray,                # EDGE
-    [System.Drawing.Color]::White                     # WHITE
+    [System.Drawing.Color]::DarkGray,                # ROAD
+    [System.Drawing.Color]::LightGray,               # EDGE
+    [System.Drawing.Color]::White                    # WHITE
 )
 
 function GenerateRoadPixels([int]$curveAmount) {
@@ -86,26 +91,6 @@ function GenerateRoadPixels([int]$curveAmount) {
         for ($x = ($rightEdge - $edgeLineWidth + 1); $x -le $rightEdge; $x++) {
             if ($x -ge 0 -and $x -lt $width) {
                 $pixels[$y * $width + $x] = $COLOR_EDGE
-            }
-        }
-
-        # Center stripes
-        $centerStripeWidth = $centerStripeWidthBottom + ($centerStripeWidthTop - $centerStripeWidthBottom) * $line / ($height - 1)
-        if ($centerStripeWidth -lt 1) { $centerStripeWidth = 1 }
-        $centerStripeWidth = [math]::Floor($centerStripeWidth)
-
-        $centerStripeOffset = [math]::Floor($rw / 4)
-        $centerStripeLeftX = $cx - $centerStripeOffset - [math]::Floor($centerStripeWidth / 2)
-        $centerStripeRightX = $cx + $centerStripeOffset - [math]::Floor($centerStripeWidth / 2)
-
-        for ($x = $centerStripeLeftX; $x -lt ($centerStripeLeftX + $centerStripeWidth); $x++) {
-            if ($x -ge 0 -and $x -lt $width) {
-                $pixels[$y * $width + $x] = $COLOR_WHITE
-            }
-        }
-        for ($x = $centerStripeRightX; $x -lt ($centerStripeRightX + $centerStripeWidth); $x++) {
-            if ($x -ge 0 -and $x -lt $width) {
-                $pixels[$y * $width + $x] = $COLOR_WHITE
             }
         }
     }

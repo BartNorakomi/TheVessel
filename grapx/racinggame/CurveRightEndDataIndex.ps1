@@ -11,7 +11,12 @@ for ($i = 75; $i -ge 1; $i--) {
             $changed = "CurveRightEndPage${page}${region}ChangedPixelsfrom${i}to${j}"
             $addr = "CurveRightEndPage${page}${region}Addressesfrom${i}to${j}"
             $instr = "CurveRightEndPage${page}${region}WriteInstructionsfrom${i}to${j}"
-            $flag = if ($region -eq "TOP") { 0 } else { 1 }
+            # Final flag formula
+            if ($region -eq "TOP") {
+                $flag = $page * 2
+            } else {
+                $flag = $page * 2 + 1
+            }
 
             $line = "db $block, $flag | dw $changed, $addr, $instr"
             Add-Content -Path $outputFile -Encoding ascii -Value $line

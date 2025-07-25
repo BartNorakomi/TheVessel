@@ -4,11 +4,11 @@ $width = 256
 $height = 106
 $totalPixels = $width * $height
 
-for ($index = 0; $index -lt 19; $index++) {
-    $next = $index + 1
+for ($index = 59; $index -gt 0; $index--) {
+    $prev = $index - 1
 
     $image1Path = "{0}.SR5" -f $index
-    $image2Path = "{0}.SR5" -f $next
+    $image2Path = "{0}.SR5" -f $prev
 
     $data1 = [System.IO.File]::ReadAllBytes($image1Path)
     $data2 = [System.IO.File]::ReadAllBytes($image2Path)
@@ -99,10 +99,9 @@ for ($index = 0; $index -lt 19; $index++) {
         }
 
         # Output paths
-        $changedPixelsPath = "${region}changedpixelsfrom${index}to${next}.bin"
-        $addressesPath = "${region}addressesfrom${index}to${next}.bin"
-        $outputInstructionsPath = "${region}writeinstructionsfrom${index}to${next}.bin"
-
+        $changedPixelsPath = "${region}changedpixelsfrom${index}to${prev}.bin"
+        $addressesPath = "${region}addressesfrom${index}to${prev}.bin"
+        $outputInstructionsPath = "${region}writeinstructionsfrom${index}to${prev}.bin"
 
         # Always write changed bytes and addresses, even if empty
         [System.IO.File]::WriteAllBytes($changedPixelsPath, $changedBytes.ToArray())

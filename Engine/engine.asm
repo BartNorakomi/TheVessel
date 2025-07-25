@@ -191,15 +191,30 @@ vblank:
   out   ($99),a
   .EndSetLineIntHeight:
 
-
-
-
-
   ld    a,(CurrentRoom)
-;xor a
   cp    15
-  jr    nz,.EndCheckRacingGame
+  call  z,.RacingGame
 
+  pop   hl 
+  pop   de 
+  pop   bc 
+  pop   af 
+  ex    af,af'  
+  exx
+  pop   iy 
+  pop   ix 
+  pop   hl 
+  pop   de 
+  pop   bc 
+  pop   af 
+  ei
+  ret
+
+
+
+
+
+  .RacingGame:
   call  BackdropRandom
   call  VideoReplayer
   call  BackdropBlack
@@ -258,9 +273,12 @@ sub StartRacingGameLineInt
   ld    a,1
   ld    (LineIntPartRaceGame),a
 
-  xor   a
+;  xor   a
 
-ld a,StartRacingGameLineInt
+  ld    a,(RacingGameLineIntOffset)
+  add   a,StartRacingGameLineInt
+
+;ld a,StartRacingGameLineInt+RacingGameLineIntOffset
 
   ld    (LineIntHeightRacingGame),a
   out   ($99),a
@@ -271,31 +289,11 @@ ld a,StartRacingGameLineInt
 ;  out   ($99),a
 ;  ld    a,23+128                        ;r#23 vertical screen offset
 ;  out   ($99),a 
-
-
-  .EndCheckRacingGame:
-
-
-
-
-
-  pop   hl 
-  pop   de 
-  pop   bc 
-  pop   af 
-  ex    af,af'  
-  exx
-  pop   iy 
-  pop   ix 
-  pop   hl 
-  pop   de 
-  pop   bc 
-  pop   af 
-  ei
   ret
 
 
 
+RacingGameLineIntOffset:  db 113     ;113 is the standard, 083 is perfect for the road all the way curved up
 
 ;The road animation starts to look good from y=15 and onwards. the animation starts at y=3, so we can skip the first 12 lines ???
 StartRacingGameLineInt: equ 12
@@ -1061,9 +1059,6 @@ LineIntRacingGame:
   dec   a
   jp    z,.Part1
 
-
-
-
   .Part2:
   push  bc
   push  hl
@@ -1075,25 +1070,30 @@ LineIntRacingGame:
   ld    a,2+128                         ;reg 2, used to set page
 	out   ($99),a			
 
+  ld    a,(RacingGameLineIntOffset)
+  ld    b,a
+
   ld    hl,(PointerToSwapLines)
   ld    a,(hl)
   inc   hl
   ld    (PointerToSwapLines),hl
+
+  add   a,b                             ;RacingGameLineIntOffset
+  cp    210
+  jr    nc,.VblankReachedPart2
+
   ld    (LineIntHeightRacingGame),a
   out   ($99),a
   ld    a,19+128                        ;set lineinterrupt height
   out   ($99),a 
+
+  .VblankReachedPart2:
 
   pop   hl
   pop   bc
   pop   af 
   ei
   ret  
-
-
-
-
-
 
   .Part1:
   push  bc
@@ -1115,10 +1115,6 @@ LineIntRacingGame:
   ld    b,000
 ;  call  SetRaceTrackPage
 
-
-
-
-
   SetRaceTrackPage:
   .Waitline1:
 	in    a,($99)           ;Read Status register #2
@@ -1137,23 +1133,30 @@ nop |nop |nop |nop |nop |nop |nop |nop |nop |nop |
 	out   ($99),a			;RM: outi perhaps? as E is always 23+128
   djnz  SetRaceTrackPage
 
-
-
-
-
-
-
   ld    a,2
   ld    (LineIntPartRaceGame),a
+
+  ld    a,(RacingGameLineIntOffset)
+  ld    b,a
 
   ld    hl,(PointerToSwapLines)
   ld    a,(hl)
   inc   hl
   ld    (PointerToSwapLines),hl
+
+
+  add   a,b                             ;RacingGameLineIntOffset
+  cp    210
+  jr    nc,.VblankReachedPart1
+
+
+
   ld    (LineIntHeightRacingGame),a
   out   ($99),a
   ld    a,19+128                        ;set lineinterrupt height
   out   ($99),a 
+
+  .VblankReachedPart1:
 
   pop   hl
   pop   bc

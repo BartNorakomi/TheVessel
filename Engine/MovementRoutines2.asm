@@ -4,62 +4,7 @@
 
 Phase MovementRoutinesAddress
 
-CurveLeftDataFiles:
-	include	"..\grapx\RacingGame\CurveLeftDataIndex.asm"
-	include	"..\grapx\RacingGame\CurveLeftEndDataIndex.asm"
-;db 0,0
 
-CurveRightDataFiles:
-	include	"..\grapx\RacingGame\CurveRightDataIndex.asm"
-	include	"..\grapx\RacingGame\CurveRightEndDataIndex.asm"
-db 0,0
-
-VideoReplayer:
-  ld    ix,(RoadCurvatureAnimationPointer)
-
-  ld    a,(ix+0)            ;movement routine block
-  ;we can also use only page 1 for this
-  call  block34                             ;CARE!!! we can only switch block34 if page 1 is in rom  
-
-  ld    a,(ix+1)            ;write page
-	out   ($99),a               ;write page instellen (0=page 0 from y=0 to 127, 1=page 0 from y=128 to 255, 2=page 1 from y=0 to 127 etc..)
-	ld    a,14+128
-	out   ($99),a
-
-  ld    l,(ix+2)
-  ld    h,(ix+3)
-  ld    c,$98
-  exx
-  ld    l,(ix+4)
-  ld    h,(ix+5)
-  ld    c,$99
-
-
-  ld    e,(ix+6)
-  ld    d,(ix+7)
-  push  de
-
-  ld    de,8
-  add   ix,de
-
-  ld    a,(ix)
-  or    (ix+1)
-
-
-;jr nz,.notzero
-;ld ix,CurveRightDataFiles
-;  ld    (RoadCurvatureAnimationPointer),ix
-;.notzero:
-
-
-
-  jr    z,.EndOfAnimation
-  ld    (RoadCurvatureAnimationPointer),ix
-  .EndOfAnimation:
-
-  pop   ix
-
-  jp    (ix)
 
 RacingGameRoutine:
   ld    a,0*32 + 31                         ;force page 0
@@ -71,6 +16,7 @@ RacingGameRoutine:
   inc   a
   ld    (framecounter2),a
 
+  call  AnimateRoad
   call  .HandlePhase                        ;used to build up screen and initiate variables
   ret
 
@@ -80,10 +26,129 @@ RacingGameRoutine:
   ret   nz
   ld    (iy+ObjectPhase),1
 
+;  ld    a,32
+;  ld    (r23onVblank),a
+
 ;  ld    a,1
 ;  ld    (SetLineIntHeightOnVblankDrillingGame?),a
-;  call  SetInterruptHandlerRacingGame
+  call  SetInterruptHandlerRacingGame
   ret
+
+AnimateRoad:
+;
+; bit	7	  6	  5		    4		    3		    2		  1		  0
+;		  0	  0	  trig-b	trig-a	right	  left	down	up	(joystick)
+;		  F5	F1	'M'		  space	  right	  left	down	up	(keyboard)
+;
+	ld		a,(NewPrContr)
+	bit		4,a           ;space pressed ?
+  jp    nz,.CurveEnd
+	bit		3,a           ;right pressed ?
+  jp    nz,.RightPressed
+	bit		2,a           ;left pressed ?
+  jp    nz,.LeftPressed
+	bit		1,a           ;down pressed ?
+  jp    nz,.DownPressed
+	bit		0,a           ;up pressed ?
+  jp    nz,.UpPressed
+  ret
+
+  .CurveEnd:
+;
+; bit	7	  6	  5		    4		    3		    2		  1		  0
+;		  0	  0	  trig-b	trig-a	right	  left	down	up	(joystick)
+;		  F5	F1	'M'		  space	  right	  left	down	up	(keyboard)
+;
+	ld		a,(Controls)
+	bit		3,a           ;right pressed ?
+  jp    nz,.CurveRightEnd
+	bit		2,a           ;left pressed ?
+  jp    nz,.CurveLeftEnd
+	bit		1,a           ;down pressed ?
+  jp    nz,.CurveDownEnd
+	bit		0,a           ;up pressed ?
+  jp    nz,.CurveUpEnd
+
+  .CurveDownEnd:
+  ld    a,1
+  ld    (AnimateRoad?),a
+  ld    hl,CurveDownEndDataFiles
+  ld    (RoadCurvatureAnimationPointer),hl
+  ld    a,RoadAnimationIndexesBlockCurveDownEnd
+	ld		(RoadAnimationIndexesBlock),a
+  ret
+
+  .CurveLeftEnd:
+  ld    a,1
+  ld    (AnimateRoad?),a
+  ld    hl,CurveLeftEndDataFiles
+  ld    (RoadCurvatureAnimationPointer),hl
+  ld    a,RoadAnimationIndexesBlockCurveLeftEnd
+	ld		(RoadAnimationIndexesBlock),a
+  ret
+
+  .CurveRightEnd:
+  ld    a,1
+  ld    (AnimateRoad?),a
+  ld    hl,CurveRightEndDataFiles
+  ld    (RoadCurvatureAnimationPointer),hl
+  ld    a,RoadAnimationIndexesBlockCurveRightEnd
+	ld		(RoadAnimationIndexesBlock),a
+  ret
+
+  .CurveUpEnd:
+  ld    a,1
+  ld    (AnimateRoad?),a
+  ld    hl,CurveUpEndDataFiles
+  ld    (RoadCurvatureAnimationPointer),hl
+  ld    a,RoadAnimationIndexesBlockCurveUpEnd
+	ld		(RoadAnimationIndexesBlock),a
+  ret
+
+  .UpPressed:
+  ld    a,1
+  ld    (AnimateRoad?),a
+  ld    hl,CurveUpDataFiles
+  ld    (RoadCurvatureAnimationPointer),hl
+  ld    a,RoadAnimationIndexesBlockCurveUp
+	ld		(RoadAnimationIndexesBlock),a
+  ret
+
+  .DownPressed:
+  ld    a,1
+  ld    (AnimateRoad?),a
+  ld    hl,CurveDownDataFiles
+  ld    (RoadCurvatureAnimationPointer),hl
+  ld    a,RoadAnimationIndexesBlockCurveDown
+	ld		(RoadAnimationIndexesBlock),a
+  ret
+
+  .LeftPressed:
+  ld    a,1
+  ld    (AnimateRoad?),a
+  ld    hl,CurveLeftDataFiles
+  ld    (RoadCurvatureAnimationPointer),hl
+  ld    a,RoadAnimationIndexesBlockCurveLeft
+	ld		(RoadAnimationIndexesBlock),a
+  ret
+
+  .RightPressed:
+  ld    a,1
+  ld    (AnimateRoad?),a
+  ld    hl,CurveRightDataFiles
+  ld    (RoadCurvatureAnimationPointer),hl
+  ld    a,RoadAnimationIndexesBlockCurveRight
+	ld		(RoadAnimationIndexesBlock),a
+  ret
+
+
+
+
+
+
+
+
+
 
 SetInterruptHandlerRacingGame:
   di

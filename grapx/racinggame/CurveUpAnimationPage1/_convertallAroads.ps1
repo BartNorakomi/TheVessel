@@ -4,7 +4,7 @@ $width = 256
 $height = 106
 $totalPixels = $width * $height
 
-for ($index = 0; $index -lt 19; $index++) {
+for ($index = 0; $index -lt 59; $index++) {
     $next = $index + 1
 
     $image1Path = "{0}.SR5" -f $index

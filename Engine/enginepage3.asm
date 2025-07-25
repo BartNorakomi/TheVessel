@@ -45,6 +45,7 @@ ResetVariables:
   ld    (NPCConversationsInDrillingGame?),a
   ld    (AlreadyAskedToRefuel?),a
   ld    (AskRefuelAfterOffLoadResources?),a
+  ld    (AnimateRoad?),a
   ld    hl,ConvSoldier									;conversations handled bit0=intro, bit1=low fuel, bit2=low fuel short, bit3=low energy, bit4=high radiation, bit5=storage full
   res   2,(hl)
   res   4,(hl)
@@ -864,10 +865,7 @@ upgrademenuPalette:                    			;palette file
 DrillingLocationsPalette:
   incbin "..\grapx\drillinglocations\drillinglocations.SC5",$7680+7,32
 RacingGamePalette:
-;  incbin "..\grapx\racinggame\RoadMSXSize\RoadForPalette.SC5",$7680+7,32
-;  incbin "..\grapx\racinggame\RoadMSXSize\RoadForPaletteWithBackdrop.SC5",$7680+7,32
-  incbin "..\grapx\RacingGame\0.SC5",$7680+7,32
-;  incbin "..\grapx\racinggame\nightstriker2Prepared.SC5",$7680+7,32
+  incbin "..\grapx\RacingGame\TrackStraightPalette.SC5",$7680+7,32
 
 LoadRoomGfx:
 	ld		a,(CurrentRoom)									;0=arcadehall1, 1=arcadehall2
@@ -906,13 +904,13 @@ LoadRoomGfx:
 	ret
 
 LoadRacingGameGfx:
-  ld    a,RacingGameTrackAGfxBlock     			;block to copy graphics from
+  ld    a,RacingGameTrackStraightPage0GfxBlock     			;block to copy graphics from
   ld    hl,$4000 + (000*128) + (000/2) - 128
   ld    de,$0000 + (0*128) + (000/2) - 128
   ld    bc,$0000 + (212*256) + (256/2)
   call  CopyRomToVram                   ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
 
-  ld    a,RacingGameTrack2GfxBlock     			;block to copy graphics from
+  ld    a,RacingGameTrackStraightPage1GfxBlock     			;block to copy graphics from
   ld    hl,$4000 + (000*128) + (000/2) - 128
   ld    de,$8000 + (0*128) + (000/2) - 128
   ld    bc,$0000 + (212*256) + (256/2)
@@ -1479,6 +1477,54 @@ SetPage:                                ;in a->x*32+31 (x=page)
   ei
   out   ($99),a
   ret
+
+VideoReplayer:
+  ld    a,(AnimateRoad?)
+  or    a
+  ret   z
+
+  ld    ix,(RoadCurvatureAnimationPointer)
+	ld		a,(RoadAnimationIndexesBlock)
+  call  block12                             ;CARE!!! we can only switch block34 if page 1 is in rom  
+
+  ld    a,(ix+0)            ;block with pixels to change, addresses and write instructions
+  call  block34                             ;CARE!!! we can only switch block34 if page 1 is in rom  
+
+  ld    a,(ix+1)            ;write page
+	out   ($99),a               ;write page instellen (0=page 0 from y=0 to 127, 1=page 0 from y=128 to 255, 2=page 1 from y=0 to 127 etc..)
+	ld    a,14+128
+	out   ($99),a
+
+  ld    l,(ix+2)
+  ld    h,(ix+3)
+  ld    c,$98
+  exx
+  ld    l,(ix+4)
+  ld    h,(ix+5)
+  ld    c,$99
+
+  ld    e,(ix+6)
+  ld    d,(ix+7)
+  push  de
+
+  ld    de,8
+  add   ix,de
+
+  ld    a,(ix)
+  or    (ix+1)
+
+  jr    z,.EndOfAnimation
+  ld    (RoadCurvatureAnimationPointer),ix
+  pop   ix
+  jp    (ix)
+
+  .EndOfAnimation:
+	xor		a
+  ld    (AnimateRoad?),a
+  pop   ix
+  jp    (ix)
+
+
 
 
 
@@ -2062,7 +2108,7 @@ StartConversation?:								db	0
 StartWakeUpEvent?:								db	1
 OffloadResources?:								db	0
 
-RoadCurvatureAnimationPointer:	dw	CurveLeftDataFiles
+
 
 
 
@@ -2193,6 +2239,9 @@ AlreadyAskedToRefuel?:			rb	1
 DigSiteSelected:						rb	1
 AskRefuelAfterOffLoadResources?:	rb	1
 CurrentInterruptLineRacingGame:	rb	1
+AnimateRoad?:								rb	1
+RoadCurvatureAnimationPointer:	rb	2
+RoadAnimationIndexesBlock:	rb	1
 
 
 endenginepage3variables:  equ $+enginepage3length
