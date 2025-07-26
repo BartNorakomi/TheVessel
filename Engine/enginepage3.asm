@@ -2109,6 +2109,7 @@ StartWakeUpEvent?:								db	1
 OffloadResources?:								db	0
 
 
+CurrentRacingGamePalette:	db	0 ; can be removed later
 
 
 
@@ -2242,6 +2243,8 @@ CurrentInterruptLineRacingGame:	rb	1
 AnimateRoad?:								rb	1
 RoadCurvatureAnimationPointer:	rb	2
 RoadAnimationIndexesBlock:	rb	1
+
+
 
 
 endenginepage3variables:  equ $+enginepage3length

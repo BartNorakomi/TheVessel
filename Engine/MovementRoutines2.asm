@@ -41,6 +41,8 @@ AnimateRoad:
 ;		  F5	F1	'M'		  space	  right	  left	down	up	(keyboard)
 ;
 	ld		a,(NewPrContr)
+	bit		5,a           ;trig b pressed ?
+  jp    nz,.ChangePalette
 	bit		4,a           ;space pressed ?
   jp    nz,.CurveEnd
 	bit		3,a           ;right pressed ?
@@ -52,6 +54,35 @@ AnimateRoad:
 	bit		0,a           ;up pressed ?
   jp    nz,.UpPressed
   ret
+
+  .ChangePalette:
+  ld    a,(CurrentRacingGamePalette)
+  add   a,32
+  cp    6*32
+  jr    nz,.notzero
+  xor   a
+  .notzero:
+  ld    (CurrentRacingGamePalette),a
+  ld    e,a
+  ld    d,0
+  ld    hl,.PaletteOriginal
+  add   hl,de
+  call  SetPalette
+  ret
+  .PaletteOriginal:
+  incbin "..\grapx\RacingGame\TrackStraightPalette.SC5",$7680+7,32
+  .Palette1:
+  incbin "..\grapx\RacingGame\Palette1.SC5",$7680+7,32
+  .Palette2:
+  incbin "..\grapx\RacingGame\Palette2.SC5",$7680+7,32
+  .Palette3:
+  incbin "..\grapx\RacingGame\Palette3.SC5",$7680+7,32
+  .Palette4:
+  incbin "..\grapx\RacingGame\Palette4.SC5",$7680+7,32
+  .Palette5:
+  incbin "..\grapx\RacingGame\Palette5.SC5",$7680+7,32
+
+
 
   .CurveEnd:
 ;
