@@ -7,10 +7,10 @@ $extraHeight = 128
 $totalHeight = $height + $extraHeight
 
 # Color palette indices
-$COLOR_GREEN = 8
-$COLOR_ROAD  = 9
-$COLOR_EDGE  = 10
-$COLOR_WHITE = 11
+$COLOR_GRASS = 4    # Grass (previously Ground)
+$COLOR_ROAD  = 11   # Road
+$COLOR_EDGE  = 1    # Road Edges
+$COLOR_BLUE  = 6    # Sky
 
 # Road dimensions
 $roadWidthBottom = 250
@@ -19,18 +19,18 @@ $edgeLineWidthBottom = 10
 
 # Define palette colors
 $palette = @(
-    [System.Drawing.Color]::FromArgb(0, 0, 0),       # 0 (Unused)
-    [System.Drawing.Color]::FromArgb(0, 0, 0),       # 1 (Unused)
-    [System.Drawing.Color]::FromArgb(0, 0, 0),       # 2 (Unused)
-    [System.Drawing.Color]::FromArgb(0, 0, 0),       # 3 (Unused)
-    [System.Drawing.Color]::FromArgb(0, 0, 0),       # 4 (Unused)
-    [System.Drawing.Color]::FromArgb(0, 0, 0),       # 5 (Unused)
-    [System.Drawing.Color]::FromArgb(0, 0, 0),       # 6 (Unused)
-    [System.Drawing.Color]::FromArgb(0, 0, 0),       # 7 (Unused)
-    [System.Drawing.Color]::FromArgb(30, 200, 30),    # GREEN
-    [System.Drawing.Color]::DarkGray,                # ROAD
-    [System.Drawing.Color]::LightGray,               # EDGE
-    [System.Drawing.Color]::White                    # WHITE
+    [System.Drawing.Color]::FromArgb(0, 0, 0),        # 0 (Unused)
+    [System.Drawing.Color]::FromArgb(255, 255, 0),    # 1 (Road Edges - Yellow)
+    [System.Drawing.Color]::FromArgb(0, 0, 0),        # 2 (Unused)
+    [System.Drawing.Color]::FromArgb(0, 0, 0),        # 3 (Unused)
+    [System.Drawing.Color]::FromArgb(30, 200, 30),    # 4 (Grass - Green)
+    [System.Drawing.Color]::FromArgb(0, 0, 0),        # 5 (Unused)
+    [System.Drawing.Color]::FromArgb(100, 180, 255),  # 6 (Sky - Blue)
+    [System.Drawing.Color]::FromArgb(0, 0, 0),        # 7 (Unused)
+    [System.Drawing.Color]::FromArgb(0, 0, 0),        # 8 (Unused)
+    [System.Drawing.Color]::FromArgb(0, 0, 0),        # 9 (Unused)
+    [System.Drawing.Color]::FromArgb(0, 0, 0),        # 10 (Unused)
+    [System.Drawing.Color]::FromArgb(128, 128, 128)   # 11 (Road - Grey)
 )
 
 function GenerateRoadPixels([int]$curveAmount) {
@@ -51,10 +51,10 @@ function GenerateRoadPixels([int]$curveAmount) {
         $roadWidth[$line] = $roadWidthBottom + ($roadWidthTop - $roadWidthBottom) * $t
     }
 
-    # Fill top white bar
+    # Fill top blue bar
     for ($y = 0; $y -lt $extraHeight; $y++) {
         for ($x = 0; $x -lt $width; $x++) {
-            $pixels[$y * $width + $x] = $COLOR_WHITE
+            $pixels[$y * $width + $x] = $COLOR_BLUE
         }
     }
 
@@ -66,9 +66,9 @@ function GenerateRoadPixels([int]$curveAmount) {
         $leftEdge = $cx - [math]::Floor($rw / 2)
         $rightEdge = $cx + [math]::Floor($rw / 2)
 
-        # Green background
+        # Grass background
         for ($x = 0; $x -lt $width; $x++) {
-            $pixels[$y * $width + $x] = $COLOR_GREEN
+            $pixels[$y * $width + $x] = $COLOR_GRASS
         }
 
         # Road fill

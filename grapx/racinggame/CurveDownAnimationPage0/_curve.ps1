@@ -7,11 +7,11 @@ $extraHeight = 128
 $totalHeight = $height + $extraHeight
 
 # Color palette indices
-$COLOR_GREEN = 0
-$COLOR_ROAD  = 1
-$COLOR_EDGE  = 2
-$COLOR_WHITE = 3
-$COLOR_BLUE  = 4
+$COLOR_GRASS = 0    # Grass
+$COLOR_ROAD  = 2    # Road
+$COLOR_EDGE  = 14   # Road Edges
+$COLOR_LINEINROAD = 1   # Lines in Road
+$COLOR_BLUE  = 6    # Sky
 
 # Road dimensions
 $roadWidthBottom = 250
@@ -23,11 +23,21 @@ $centerStripeWidthTop = 1
 
 # Define palette colors
 $palette = @(
-    [System.Drawing.Color]::FromArgb(30, 200, 30),    # GREEN
-    [System.Drawing.Color]::DarkGray,                 # ROAD
-    [System.Drawing.Color]::LightGray,                # EDGE
-    [System.Drawing.Color]::White,                    # WHITE
-    [System.Drawing.Color]::FromArgb(100, 180, 255)   # BLUE (Sky)
+    [System.Drawing.Color]::FromArgb(30, 200, 30),    # 0 (Grass - Green)
+    [System.Drawing.Color]::FromArgb(255, 255, 0),    # 1 (Lines in Road - Yellow)
+    [System.Drawing.Color]::FromArgb(128, 128, 128),  # 2 (Road - Grey)
+    [System.Drawing.Color]::FromArgb(0, 0, 0),        # 3 (Unused)
+    [System.Drawing.Color]::FromArgb(0, 0, 0),        # 4 (Unused)
+    [System.Drawing.Color]::FromArgb(0, 0, 0),        # 5 (Unused)
+    [System.Drawing.Color]::FromArgb(100, 180, 255),  # 6 (Sky - Blue)
+    [System.Drawing.Color]::FromArgb(0, 0, 0),        # 7 (Unused)
+    [System.Drawing.Color]::FromArgb(0, 0, 0),        # 8 (Unused)
+    [System.Drawing.Color]::FromArgb(0, 0, 0),        # 9 (Unused)
+    [System.Drawing.Color]::FromArgb(0, 0, 0),        # 10 (Unused)
+    [System.Drawing.Color]::FromArgb(0, 0, 0),        # 11 (Unused)
+    [System.Drawing.Color]::FromArgb(0, 0, 0),        # 12 (Unused)
+    [System.Drawing.Color]::FromArgb(0, 0, 0),        # 13 (Unused)
+    [System.Drawing.Color]::FromArgb(255, 165, 0)     # 14 (Road Edges - Orange)
 )
 
 $steps = 60
@@ -55,10 +65,10 @@ for ($step = 0; $step -lt $steps; $step++) {
     $minY = $totalHeight - 1 - ($height - 1) + $yOffset[$height - 1]
     if ($minY -lt 0) { $minY = 0 }
 
-    # Fill ground
+    # Fill grass
     for ($y = 0; $y -lt $totalHeight; $y++) {
         for ($x = 0; $x -lt $width; $x++) {
-            $pixels[$y * $width + $x] = $COLOR_GREEN
+            $pixels[$y * $width + $x] = $COLOR_GRASS
         }
         $filled[$y] = $true
     }
@@ -119,12 +129,12 @@ for ($step = 0; $step -lt $steps; $step++) {
 
         for ($x = $centerStripeLeftX; $x -lt ($centerStripeLeftX + $centerStripeWidth); $x++) {
             if ($x -ge 0 -and $x -lt $width) {
-                $pixels[$y * $width + $x] = $COLOR_WHITE
+                $pixels[$y * $width + $x] = $COLOR_LINEINROAD
             }
         }
         for ($x = $centerStripeRightX; $x -lt ($centerStripeRightX + $centerStripeWidth); $x++) {
             if ($x -ge 0 -and $x -lt $width) {
-                $pixels[$y * $width + $x] = $COLOR_WHITE
+                $pixels[$y * $width + $x] = $COLOR_LINEINROAD
             }
         }
     }
@@ -178,12 +188,12 @@ for ($step = 0; $step -lt $steps; $step++) {
 
             for ($x = $centerStripeLeftX; $x -lt ($centerStripeLeftX + $centerStripeWidth); $x++) {
                 if ($x -ge 0 -and $x -lt $width) {
-                    $pixels[$yFill * $width + $x] = $COLOR_WHITE
+                    $pixels[$yFill * $width + $x] = $COLOR_LINEINROAD
                 }
             }
             for ($x = $centerStripeRightX; $x -lt ($centerStripeRightX + $centerStripeWidth); $x++) {
                 if ($x -ge 0 -and $x -lt $width) {
-                    $pixels[$yFill * $width + $x] = $COLOR_WHITE
+                    $pixels[$yFill * $width + $x] = $COLOR_LINEINROAD
                 }
             }
         }

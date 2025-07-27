@@ -7,10 +7,11 @@ $extraHeight = 128
 $totalHeight = $height + $extraHeight
 
 # Color palette indices
-$COLOR_GREEN = 0
-$COLOR_ROAD  = 1
-$COLOR_EDGE  = 2
-$COLOR_WHITE = 3
+$COLOR_GRASS = 0    # Grass
+$COLOR_ROAD  = 2    # Road
+$COLOR_EDGE  = 14   # Road Edges
+$COLOR_LINEINROAD = 1   # Lines in Road
+$COLOR_BLUE  = 6    # Sky
 
 # Road dimensions
 $roadWidthBottom = 250
@@ -22,10 +23,21 @@ $centerStripeWidthTop = 1
 
 # Define palette colors
 $palette = @(
-    [System.Drawing.Color]::FromArgb(30, 200, 30),    # GREEN
-    [System.Drawing.Color]::DarkGray,                 # ROAD
-    [System.Drawing.Color]::LightGray,                # EDGE
-    [System.Drawing.Color]::White                     # WHITE
+    [System.Drawing.Color]::FromArgb(30, 200, 30),    # 0 (Grass - Green)
+    [System.Drawing.Color]::FromArgb(255, 255, 0),    # 1 (Lines in Road - Yellow)
+    [System.Drawing.Color]::FromArgb(128, 128, 128),  # 2 (Road - Grey)
+    [System.Drawing.Color]::FromArgb(0, 0, 0),        # 3 (Unused)
+    [System.Drawing.Color]::FromArgb(0, 0, 0),        # 4 (Unused)
+    [System.Drawing.Color]::FromArgb(0, 0, 0),        # 5 (Unused)
+    [System.Drawing.Color]::FromArgb(100, 180, 255),  # 6 (Sky - Blue)
+    [System.Drawing.Color]::FromArgb(0, 0, 0),        # 7 (Unused)
+    [System.Drawing.Color]::FromArgb(0, 0, 0),        # 8 (Unused)
+    [System.Drawing.Color]::FromArgb(0, 0, 0),        # 9 (Unused)
+    [System.Drawing.Color]::FromArgb(0, 0, 0),        # 10 (Unused)
+    [System.Drawing.Color]::FromArgb(0, 0, 0),        # 11 (Unused)
+    [System.Drawing.Color]::FromArgb(0, 0, 0),        # 12 (Unused)
+    [System.Drawing.Color]::FromArgb(0, 0, 0),        # 13 (Unused)
+    [System.Drawing.Color]::FromArgb(255, 165, 0)     # 14 (Road Edges - Orange)
 )
 
 function GenerateRoadPixels([int]$curveAmount) {
@@ -44,12 +56,14 @@ function GenerateRoadPixels([int]$curveAmount) {
         $roadWidth[$line] = $roadWidthBottom + ($roadWidthTop - $roadWidthBottom) * $t
     }
 
+    # Fill top blue bar
     for ($y = 0; $y -lt $extraHeight; $y++) {
         for ($x = 0; $x -lt $width; $x++) {
-            $pixels[$y * $width + $x] = $COLOR_WHITE
+            $pixels[$y * $width + $x] = $COLOR_BLUE
         }
     }
 
+    # Draw road
     for ($line = 0; $line -lt $height; $line++) {
         $y = $totalHeight - 1 - $line
         $cx = [math]::Floor($centerX[$line])
@@ -57,16 +71,19 @@ function GenerateRoadPixels([int]$curveAmount) {
         $leftEdge = $cx - [math]::Floor($rw / 2)
         $rightEdge = $cx + [math]::Floor($rw / 2)
 
+        # Grass background
         for ($x = 0; $x -lt $width; $x++) {
-            $pixels[$y * $width + $x] = $COLOR_GREEN
+            $pixels[$y * $width + $x] = $COLOR_GRASS
         }
 
+        # Road fill
         for ($x = $leftEdge; $x -le $rightEdge; $x++) {
             if ($x -ge 0 -and $x -lt $width) {
                 $pixels[$y * $width + $x] = $COLOR_ROAD
             }
         }
 
+        # Edges
         $edgeLineWidth = $edgeLineWidthBottom + (2 - $edgeLineWidthBottom) * $line / ($height - 1)
         if ($edgeLineWidth -lt 2) { $edgeLineWidth = 2 }
         $edgeLineWidth = [math]::Floor($edgeLineWidth)
@@ -82,6 +99,7 @@ function GenerateRoadPixels([int]$curveAmount) {
             }
         }
 
+        # Center stripes
         $centerStripeWidth = $centerStripeWidthBottom + ($centerStripeWidthTop - $centerStripeWidthBottom) * $line / ($height - 1)
         if ($centerStripeWidth -lt 1) { $centerStripeWidth = 1 }
         $centerStripeWidth = [math]::Floor($centerStripeWidth)
@@ -92,12 +110,12 @@ function GenerateRoadPixels([int]$curveAmount) {
 
         for ($x = $centerStripeLeftX; $x -lt ($centerStripeLeftX + $centerStripeWidth); $x++) {
             if ($x -ge 0 -and $x -lt $width) {
-                $pixels[$y * $width + $x] = $COLOR_WHITE
+                $pixels[$y * $width + $x] = $COLOR_LINEINROAD
             }
         }
         for ($x = $centerStripeRightX; $x -lt ($centerStripeRightX + $centerStripeWidth); $x++) {
             if ($x -ge 0 -and $x -lt $width) {
-                $pixels[$y * $width + $x] = $COLOR_WHITE
+                $pixels[$y * $width + $x] = $COLOR_LINEINROAD
             }
         }
     }
@@ -136,7 +154,7 @@ $index = 0
 SaveFrame $pixelsStraight $index
 $index++
 
-# Generate curved version with small curveAmount (6)
+# Generate curved version with small curveAmount (2)
 $pixelsCurve6 = GenerateRoadPixels 2
 
 # Define vertical segments to reveal

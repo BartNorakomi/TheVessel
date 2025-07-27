@@ -7,10 +7,11 @@ $extraHeight = 128
 $totalHeight = $height + $extraHeight
 
 # Color palette indices
-$COLOR_GREEN = 0
-$COLOR_ROAD  = 1
-$COLOR_EDGE  = 2
-$COLOR_WHITE = 3
+$COLOR_GRASS = 0    # Grass
+$COLOR_ROAD  = 2    # Road
+$COLOR_EDGE  = 14   # Road Edges
+$COLOR_LINEINROAD = 1   # Lines in Road
+$COLOR_BLUE  = 6    # Sky
 
 # Road dimensions
 $roadWidthBottom = 250
@@ -22,17 +23,27 @@ $centerStripeWidthTop = 1
 
 # Define palette colors
 $palette = @(
-    [System.Drawing.Color]::FromArgb(30, 200, 30),    # GREEN
-    [System.Drawing.Color]::DarkGray,                 # ROAD
-    [System.Drawing.Color]::LightGray,                # EDGE
-    [System.Drawing.Color]::White                     # WHITE
+    [System.Drawing.Color]::FromArgb(30, 200, 30),    # 0 (Grass - Green)
+    [System.Drawing.Color]::FromArgb(255, 255, 0),    # 1 (Lines in Road - Yellow)
+    [System.Drawing.Color]::FromArgb(128, 128, 128),  # 2 (Road - Grey)
+    [System.Drawing.Color]::FromArgb(0, 0, 0),        # 3 (Unused)
+    [System.Drawing.Color]::FromArgb(0, 0, 0),        # 4 (Unused)
+    [System.Drawing.Color]::FromArgb(0, 0, 0),        # 5 (Unused)
+    [System.Drawing.Color]::FromArgb(100, 180, 255),  # 6 (Sky - Blue)
+    [System.Drawing.Color]::FromArgb(0, 0, 0),        # 7 (Unused)
+    [System.Drawing.Color]::FromArgb(0, 0, 0),        # 8 (Unused)
+    [System.Drawing.Color]::FromArgb(0, 0, 0),        # 9 (Unused)
+    [System.Drawing.Color]::FromArgb(0, 0, 0),        # 10 (Unused)
+    [System.Drawing.Color]::FromArgb(0, 0, 0),        # 11 (Unused)
+    [System.Drawing.Color]::FromArgb(0, 0, 0),        # 12 (Unused)
+    [System.Drawing.Color]::FromArgb(0, 0, 0),        # 13 (Unused)
+    [System.Drawing.Color]::FromArgb(255, 165, 0)     # 14 (Road Edges - Orange)
 )
 
 $steps = 60
 for ($step = 0; $step -lt $steps; $step++) {
     # - 30 for going up, +30 for going down
-    #$hillHeight = -30 * ($step / ($steps - 1))  # From 0 to -20 in 10 steps
-    $hillHeight = 30 * ($step / ($steps - 1))  # From 0 to -20 in 10 steps
+    $hillHeight = 30 * ($step / ($steps - 1))  # From 0 to 30 in 60 steps
 
     # Pixel buffer and filled lines tracker
     $pixels = New-Object 'Byte[]' ($width * $totalHeight)
@@ -56,18 +67,18 @@ for ($step = 0; $step -lt $steps; $step++) {
     $minY = $totalHeight - 1 - ($height - 1) + $yOffset[$height - 1]
     if ($minY -lt 0) { $minY = 0 }
 
-    # Fill the entire pixel buffer with green by default (ground)
+    # Fill the entire pixel buffer with grass by default
     for ($y = 0; $y -lt $totalHeight; $y++) {
         for ($x = 0; $x -lt $width; $x++) {
-            $pixels[$y * $width + $x] = $COLOR_GREEN
+            $pixels[$y * $width + $x] = $COLOR_GRASS
         }
         $filled[$y] = $true
     }
 
-    # Fill the top white bar dynamically from y=0 down to minY (exclusive)
+    # Fill the top blue bar dynamically from y=0 down to minY (exclusive)
     for ($y = 0; $y -lt $minY; $y++) {
         for ($x = 0; $x -lt $width; $x++) {
-            $pixels[$y * $width + $x] = $COLOR_WHITE
+            $pixels[$y * $width + $x] = $COLOR_BLUE
         }
         $filled[$y] = $true
     }
@@ -126,12 +137,12 @@ for ($step = 0; $step -lt $steps; $step++) {
 
         for ($x = $centerStripeLeftX; $x -lt ($centerStripeLeftX + $centerStripeWidth); $x++) {
             if ($x -ge 0 -and $x -lt $width) {
-                $pixels[$y * $width + $x] = $COLOR_WHITE
+                $pixels[$y * $width + $x] = $COLOR_LINEINROAD
             }
         }
         for ($x = $centerStripeRightX; $x -lt ($centerStripeRightX + $centerStripeWidth); $x++) {
             if ($x -ge 0 -and $x -lt $width) {
-                $pixels[$y * $width + $x] = $COLOR_WHITE
+                $pixels[$y * $width + $x] = $COLOR_LINEINROAD
             }
         }
     }
@@ -191,12 +202,12 @@ for ($step = 0; $step -lt $steps; $step++) {
 
             for ($x = $centerStripeLeftX; $x -lt ($centerStripeLeftX + $centerStripeWidth); $x++) {
                 if ($x -ge 0 -and $x -lt $width) {
-                    $pixels[$yFill * $width + $x] = $COLOR_WHITE
+                    $pixels[$yFill * $width + $x] = $COLOR_LINEINROAD
                 }
             }
             for ($x = $centerStripeRightX; $x -lt ($centerStripeRightX + $centerStripeWidth); $x++) {
                 if ($x -ge 0 -and $x -lt $width) {
-                    $pixels[$yFill * $width + $x] = $COLOR_WHITE
+                    $pixels[$yFill * $width + $x] = $COLOR_LINEINROAD
                 }
             }
         }

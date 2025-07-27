@@ -2244,6 +2244,10 @@ AnimateRoad?:								rb	1
 RoadCurvatureAnimationPointer:	rb	2
 RoadAnimationIndexesBlock:	rb	1
 
+;RacingGamePlayerY:					rb	1
+RacingGamePlayerX:					rb	1
+RacingGameHorMoveSpeed:			rb	1
+RacingGameHorScreenPosition:		rb	2
 
 
 

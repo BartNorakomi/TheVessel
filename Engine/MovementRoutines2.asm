@@ -5,7 +5,7 @@
 Phase MovementRoutinesAddress
 
 
-
+RacingGamePlayerY:  equ 161                 ;y never changes ?
 RacingGameRoutine:
   ld    a,0*32 + 31                         ;force page 0
 	ld    (PageOnNextVblank),a
@@ -18,6 +18,8 @@ RacingGameRoutine:
 
   call  AnimateRoad
   call  .HandlePhase                        ;used to build up screen and initiate variables
+  call  .SetPlayerSprite
+  call  .MovePlayer
   ret
 
   .HandlePhase:
@@ -32,7 +34,133 @@ RacingGameRoutine:
 ;  ld    a,1
 ;  ld    (SetLineIntHeightOnVblankDrillingGame?),a
   call  SetInterruptHandlerRacingGame
+
+  ld    a,RacingGamePlayerY
+  ld    (spat+0+(00*4)),a                 ;y sprite 0
+  ld    (spat+0+(01*4)),a                 ;y sprite 1
+  ld    (spat+0+(02*4)),a                 ;y sprite 2
+  ld    (spat+0+(03*4)),a                 ;y sprite 3
+  add   a,16
+  ld    (spat+0+(04*4)),a                 ;y sprite 4
+  ld    (spat+0+(05*4)),a                 ;y sprite 5
+  ld    (spat+0+(06*4)),a                 ;y sprite 6
+  ld    (spat+0+(07*4)),a                 ;y sprite 7
+  add   a,16
+  ld    (spat+0+(08*4)),a                 ;y sprite 8
+  ld    (spat+0+(09*4)),a                 ;y sprite 9
+  ld    (spat+0+(10*4)),a                 ;y sprite 10
+  ld    (spat+0+(11*4)),a                 ;y sprite 11
+
+  ld    a,21                              ;value from 0-41 where 21 is center (not moving) 0-20 is moving left, 22-41 is moving right
+  ld    (RacingGameHorMoveSpeed),a
+  ld    hl,0
+  ld    (RacingGameHorScreenPosition),hl
+  ld    a,112
+  ld    (RacingGamePlayerX),a
   ret
+
+  .MovePlayer:
+;
+; bit	7	  6	  5		    4		    3		    2		  1		  0
+;		  0	  0	  trig-b	trig-a	right	  left	down	up	(joystick)
+;		  F5	F1	'M'		  space	  right	  left	down	up	(keyboard)
+;
+	ld		a,(Controls)
+  and   %0000 1100                        ;left and right
+  jr    z,.NotMovingLeftOrRight
+  cp    %0000 1100
+  jr    z,.NotMovingLeftOrRight
+	bit		3,a           ;right pressed ?
+  jr    nz,.MoveRight
+
+  .MoveLeft:
+  ld    a,(RacingGameHorMoveSpeed)
+  dec   a
+  ret   m
+  ld    (RacingGameHorMoveSpeed),a
+  ret
+
+  .MoveRight:
+  ld    a,(RacingGameHorMoveSpeed)
+  inc   a
+  cp    42
+  ret   z
+  ld    (RacingGameHorMoveSpeed),a
+  ret
+
+  .NotMovingLeftOrRight:
+  ret
+
+  .SetPlayerSprite:
+  ld    a,(RacingGamePlayerX)
+
+  ld    (spat+1+(00*4)),a                 ;x sprite 0
+  ld    (spat+1+(01*4)),a                 ;x sprite 1
+  add   a,16
+  ld    (spat+1+(02*4)),a                 ;x sprite 2
+  ld    (spat+1+(03*4)),a                 ;x sprite 3
+  sub   a,16
+  ld    (spat+1+(04*4)),a                 ;x sprite 4
+  ld    (spat+1+(05*4)),a                 ;x sprite 5
+  add   a,16
+  ld    (spat+1+(06*4)),a                 ;x sprite 6
+  ld    (spat+1+(07*4)),a                 ;x sprite 7
+  sub   a,16
+  ld    (spat+1+(08*4)),a                 ;x sprite 8
+  ld    (spat+1+(09*4)),a                 ;x sprite 9
+  add   a,16
+  ld    (spat+1+(10*4)),a                 ;x sprite 10
+  ld    (spat+1+(11*4)),a                 ;x sprite 11
+
+;load sprites data
+	xor		a				;page 0/1
+	ld		hl,sprcharaddr	;sprite 0 character table in VRAM
+	call	SetVdp_Write
+
+  ld    a,(RacingGameHorMoveSpeed)        ;value between 00-41
+  res   0,a
+  add   a,a
+  ld    e,a
+  ld    d,0
+  ld    ix,.SpriteOffSets                 ;21 offset * 4 bytes per offset = 84 bytes
+  add   ix,de
+
+  .SetSprite:
+  ld    l,(ix+0)
+  ld    h,(ix+1)
+	ld		c,$98
+	call	outix128		;write sprite character to vram
+  ld    de,6*128
+  add   hl,de
+	call	outix128		;write sprite character to vram
+  add   hl,de
+	call	outix128		;write sprite character to vram
+	xor		a				;page 0/1
+	ld		hl,sprcoladdr	;sprite 0 color table in VRAM
+	call	SetVdp_Write
+  exx
+  ld    l,(ix+2)
+  ld    h,(ix+3)
+	ld		c,$98
+	call	outix64		;write sprite color of pointer and hand to vram
+  ld    de,6*64
+  add   hl,de
+	call	outix64		;write sprite color of pointer and hand to vram
+  add   hl,de
+	call	outix64		;write sprite color of pointer and hand to vram
+  ret
+
+  ;offset character, color
+.SpriteOffSets: dw  .PlayerSpritesCharacters+00*128,.PlayerSpriteColors+00*064,  .PlayerSpritesCharacters+01*128,.PlayerSpriteColors+01*064,  .PlayerSpritesCharacters+02*128,.PlayerSpriteColors+02*064,  .PlayerSpritesCharacters+03*128,.PlayerSpriteColors+03*064,  .PlayerSpritesCharacters+04*128,.PlayerSpriteColors+04*064,  .PlayerSpritesCharacters+05*128,.PlayerSpriteColors+05*064,  .PlayerSpritesCharacters+06*128,.PlayerSpriteColors+06*064 
+                dw  .PlayerSpritesCharacters+21*128,.PlayerSpriteColors+21*064,  .PlayerSpritesCharacters+22*128,.PlayerSpriteColors+22*064,  .PlayerSpritesCharacters+23*128,.PlayerSpriteColors+23*064,  .PlayerSpritesCharacters+24*128,.PlayerSpriteColors+24*064,  .PlayerSpritesCharacters+25*128,.PlayerSpriteColors+25*064,  .PlayerSpritesCharacters+26*128,.PlayerSpriteColors+26*064,  .PlayerSpritesCharacters+27*128,.PlayerSpriteColors+27*064 
+                dw  .PlayerSpritesCharacters+42*128,.PlayerSpriteColors+42*064,  .PlayerSpritesCharacters+43*128,.PlayerSpriteColors+43*064,  .PlayerSpritesCharacters+44*128,.PlayerSpriteColors+44*064,  .PlayerSpritesCharacters+45*128,.PlayerSpriteColors+45*064,  .PlayerSpritesCharacters+46*128,.PlayerSpriteColors+46*064,  .PlayerSpritesCharacters+47*128,.PlayerSpriteColors+47*064,  .PlayerSpritesCharacters+48*128,.PlayerSpriteColors+48*064 
+
+.PlayerSpritesCharacters:	
+include "..\grapx\racinggame\sprites\Sprites.tgs.gen"
+.PlayerSpriteColors:	
+include "..\grapx\racinggame\sprites\Sprites.tcs.gen"
+
+
 
 AnimateRoad:
 ;

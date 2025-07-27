@@ -7,11 +7,10 @@ $extraHeight = 128
 $totalHeight = $height + $extraHeight
 
 # Color palette indices
-$COLOR_GREEN = 8
-$COLOR_ROAD  = 9
-$COLOR_EDGE  = 10
-$COLOR_WHITE = 11
-$COLOR_BLUE  = 12
+$COLOR_GRASS = 4    # Grass
+$COLOR_ROAD  = 11   # Road
+$COLOR_EDGE  = 1    # Road Edges
+$COLOR_BLUE  = 6    # Sky
 
 # Road dimensions
 $roadWidthBottom = 250
@@ -20,19 +19,21 @@ $edgeLineWidthBottom = 10
 
 # Define palette colors
 $palette = @(
-    [System.Drawing.Color]::FromArgb(0, 0, 0),       # 0 (Unused)
-    [System.Drawing.Color]::FromArgb(0, 0, 0),       # 1 (Unused)
-    [System.Drawing.Color]::FromArgb(0, 0, 0),       # 2 (Unused)
-    [System.Drawing.Color]::FromArgb(0, 0, 0),       # 3 (Unused)
-    [System.Drawing.Color]::FromArgb(0, 0, 0),       # 4 (Unused)
-    [System.Drawing.Color]::FromArgb(0, 0, 0),       # 5 (Unused)
-    [System.Drawing.Color]::FromArgb(0, 0, 0),       # 6 (Unused)
-    [System.Drawing.Color]::FromArgb(0, 0, 0),       # 7 (Unused)
-    [System.Drawing.Color]::FromArgb(30, 200, 30),    # GREEN
-    [System.Drawing.Color]::DarkGray,                # ROAD
-    [System.Drawing.Color]::LightGray,               # EDGE
-    [System.Drawing.Color]::White,                   # WHITE
-    [System.Drawing.Color]::FromArgb(100, 180, 255)   # BLUE (sky)
+    [System.Drawing.Color]::FromArgb(0, 0, 0),        # 0 (Unused)
+    [System.Drawing.Color]::FromArgb(255, 255, 0),    # 1 (Road Edges - Yellow)
+    [System.Drawing.Color]::FromArgb(0, 0, 0),        # 2 (Unused)
+    [System.Drawing.Color]::FromArgb(0, 0, 0),        # 3 (Unused)
+    [System.Drawing.Color]::FromArgb(30, 200, 30),    # 4 (Grass - Green)
+    [System.Drawing.Color]::FromArgb(0, 0, 0),        # 5 (Unused)
+    [System.Drawing.Color]::FromArgb(100, 180, 255),  # 6 (Sky - Blue)
+    [System.Drawing.Color]::FromArgb(0, 0, 0),        # 7 (Unused)
+    [System.Drawing.Color]::FromArgb(0, 0, 0),        # 8 (Unused)
+    [System.Drawing.Color]::FromArgb(0, 0, 0),        # 9 (Unused)
+    [System.Drawing.Color]::FromArgb(0, 0, 0),        # 10 (Unused)
+    [System.Drawing.Color]::FromArgb(128, 128, 128),  # 11 (Road - Grey)
+    [System.Drawing.Color]::FromArgb(0, 0, 0),        # 12 (Unused)
+    [System.Drawing.Color]::FromArgb(0, 0, 0),        # 13 (Unused)
+    [System.Drawing.Color]::FromArgb(0, 0, 0)         # 14 (Unused)
 )
 
 $steps = 60
@@ -59,12 +60,12 @@ for ($step = 0; $step -lt $steps; $step++) {
 
     for ($y = 0; $y -lt $totalHeight; $y++) {
         for ($x = 0; $x -lt $width; $x++) {
-            $pixels[$y * $width + $x] = $COLOR_GREEN
+            $pixels[$y * $width + $x] = $COLOR_GRASS
         }
         $filled[$y] = $true
     }
 
-    # Fill top with blue sky instead of white
+    # Fill top with blue sky
     for ($y = 0; $y -lt $minY; $y++) {
         for ($x = 0; $x -lt $width; $x++) {
             $pixels[$y * $width + $x] = $COLOR_BLUE
