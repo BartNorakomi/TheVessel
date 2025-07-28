@@ -20,7 +20,7 @@ CurveUpEndBlock1:  			equ   ($-RomStartAddress) and (romsize-1) / RomBlockSize
 	CurveUpEndPage0BOTTOMWriteInstructionsfrom1to0:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\BOTTOMwriteinstructionsfrom1to0.bin"
 
-;8189
+;8377
 
 	BlockCurveUpEndPage1TOPfrom1to0:	equ CurveUpEndBlock1
 	CurveUpEndPage1TOPChangedPixelsfrom1to0:
@@ -30,7 +30,7 @@ CurveUpEndBlock1:  			equ   ($-RomStartAddress) and (romsize-1) / RomBlockSize
 	CurveUpEndPage1TOPWriteInstructionsfrom1to0:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\TOPwriteinstructionsfrom1to0.bin"
 
-;8311
+;84FF
 
 	BlockCurveUpEndPage1BOTTOMfrom1to0:	equ CurveUpEndBlock1
 	CurveUpEndPage1BOTTOMChangedPixelsfrom1to0:
@@ -40,7 +40,7 @@ CurveUpEndBlock1:  			equ   ($-RomStartAddress) and (romsize-1) / RomBlockSize
 	CurveUpEndPage1BOTTOMWriteInstructionsfrom1to0:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\BOTTOMwriteinstructionsfrom1to0.bin"
 
-;8312
+;863F
 
 	BlockCurveUpEndPage0TOPfrom2to1:	equ CurveUpEndBlock1
 	CurveUpEndPage0TOPChangedPixelsfrom2to1:
@@ -50,7 +50,7 @@ CurveUpEndBlock1:  			equ   ($-RomStartAddress) and (romsize-1) / RomBlockSize
 	CurveUpEndPage0TOPWriteInstructionsfrom2to1:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\TOPwriteinstructionsfrom2to1.bin"
 
-;8313
+;8640
 
 	BlockCurveUpEndPage0BOTTOMfrom2to1:	equ CurveUpEndBlock1
 	CurveUpEndPage0BOTTOMChangedPixelsfrom2to1:
@@ -60,7 +60,7 @@ CurveUpEndBlock1:  			equ   ($-RomStartAddress) and (romsize-1) / RomBlockSize
 	CurveUpEndPage0BOTTOMWriteInstructionsfrom2to1:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\BOTTOMwriteinstructionsfrom2to1.bin"
 
-;87EF
+;8B34
 
 	BlockCurveUpEndPage1TOPfrom2to1:	equ CurveUpEndBlock1
 	CurveUpEndPage1TOPChangedPixelsfrom2to1:
@@ -70,7 +70,7 @@ CurveUpEndBlock1:  			equ   ($-RomStartAddress) and (romsize-1) / RomBlockSize
 	CurveUpEndPage1TOPWriteInstructionsfrom2to1:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\TOPwriteinstructionsfrom2to1.bin"
 
-;87F0
+;8B35
 
 	BlockCurveUpEndPage1BOTTOMfrom2to1:	equ CurveUpEndBlock1
 	CurveUpEndPage1BOTTOMChangedPixelsfrom2to1:
@@ -80,7 +80,7 @@ CurveUpEndBlock1:  			equ   ($-RomStartAddress) and (romsize-1) / RomBlockSize
 	CurveUpEndPage1BOTTOMWriteInstructionsfrom2to1:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\BOTTOMwriteinstructionsfrom2to1.bin"
 
-;8CCC
+;8E7B
 
 	BlockCurveUpEndPage0TOPfrom3to2:	equ CurveUpEndBlock1
 	CurveUpEndPage0TOPChangedPixelsfrom3to2:
@@ -90,7 +90,7 @@ CurveUpEndBlock1:  			equ   ($-RomStartAddress) and (romsize-1) / RomBlockSize
 	CurveUpEndPage0TOPWriteInstructionsfrom3to2:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\TOPwriteinstructionsfrom3to2.bin"
 
-;8E54
+;901F
 
 	BlockCurveUpEndPage0BOTTOMfrom3to2:	equ CurveUpEndBlock1
 	CurveUpEndPage0BOTTOMChangedPixelsfrom3to2:
@@ -100,7 +100,7 @@ CurveUpEndBlock1:  			equ   ($-RomStartAddress) and (romsize-1) / RomBlockSize
 	CurveUpEndPage0BOTTOMWriteInstructionsfrom3to2:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\BOTTOMwriteinstructionsfrom3to2.bin"
 
-;9122
+;9473
 
 	BlockCurveUpEndPage1TOPfrom3to2:	equ CurveUpEndBlock1
 	CurveUpEndPage1TOPChangedPixelsfrom3to2:
@@ -110,7 +110,7 @@ CurveUpEndBlock1:  			equ   ($-RomStartAddress) and (romsize-1) / RomBlockSize
 	CurveUpEndPage1TOPWriteInstructionsfrom3to2:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\TOPwriteinstructionsfrom3to2.bin"
 
-;92AA
+;9617
 
 	BlockCurveUpEndPage1BOTTOMfrom3to2:	equ CurveUpEndBlock1
 	CurveUpEndPage1BOTTOMChangedPixelsfrom3to2:
@@ -120,7 +120,7 @@ CurveUpEndBlock1:  			equ   ($-RomStartAddress) and (romsize-1) / RomBlockSize
 	CurveUpEndPage1BOTTOMWriteInstructionsfrom3to2:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\BOTTOMwriteinstructionsfrom3to2.bin"
 
-;9578
+;98EF
 
 	BlockCurveUpEndPage0TOPfrom4to3:	equ CurveUpEndBlock1
 	CurveUpEndPage0TOPChangedPixelsfrom4to3:
@@ -130,7 +130,7 @@ CurveUpEndBlock1:  			equ   ($-RomStartAddress) and (romsize-1) / RomBlockSize
 	CurveUpEndPage0TOPWriteInstructionsfrom4to3:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\TOPwriteinstructionsfrom4to3.bin"
 
-;9594
+;9AC8
 
 	BlockCurveUpEndPage0BOTTOMfrom4to3:	equ CurveUpEndBlock1
 	CurveUpEndPage0BOTTOMChangedPixelsfrom4to3:
@@ -140,7 +140,7 @@ CurveUpEndBlock1:  			equ   ($-RomStartAddress) and (romsize-1) / RomBlockSize
 	CurveUpEndPage0BOTTOMWriteInstructionsfrom4to3:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\BOTTOMwriteinstructionsfrom4to3.bin"
 
-;9921
+;9ED7
 
 	BlockCurveUpEndPage1TOPfrom4to3:	equ CurveUpEndBlock1
 	CurveUpEndPage1TOPChangedPixelsfrom4to3:
@@ -150,7 +150,7 @@ CurveUpEndBlock1:  			equ   ($-RomStartAddress) and (romsize-1) / RomBlockSize
 	CurveUpEndPage1TOPWriteInstructionsfrom4to3:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\TOPwriteinstructionsfrom4to3.bin"
 
-;993D
+;A097
 
 	BlockCurveUpEndPage1BOTTOMfrom4to3:	equ CurveUpEndBlock1
 	CurveUpEndPage1BOTTOMChangedPixelsfrom4to3:
@@ -160,7 +160,7 @@ CurveUpEndBlock1:  			equ   ($-RomStartAddress) and (romsize-1) / RomBlockSize
 	CurveUpEndPage1BOTTOMWriteInstructionsfrom4to3:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\BOTTOMwriteinstructionsfrom4to3.bin"
 
-;9CCA
+;A32F
 
 	BlockCurveUpEndPage0TOPfrom5to4:	equ CurveUpEndBlock1
 	CurveUpEndPage0TOPChangedPixelsfrom5to4:
@@ -170,7 +170,7 @@ CurveUpEndBlock1:  			equ   ($-RomStartAddress) and (romsize-1) / RomBlockSize
 	CurveUpEndPage0TOPWriteInstructionsfrom5to4:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\TOPwriteinstructionsfrom5to4.bin"
 
-;9E52
+;A330
 
 	BlockCurveUpEndPage0BOTTOMfrom5to4:	equ CurveUpEndBlock1
 	CurveUpEndPage0BOTTOMChangedPixelsfrom5to4:
@@ -180,7 +180,7 @@ CurveUpEndBlock1:  			equ   ($-RomStartAddress) and (romsize-1) / RomBlockSize
 	CurveUpEndPage0BOTTOMWriteInstructionsfrom5to4:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\BOTTOMwriteinstructionsfrom5to4.bin"
 
-;A1BC
+;A758
 
 	BlockCurveUpEndPage1TOPfrom5to4:	equ CurveUpEndBlock1
 	CurveUpEndPage1TOPChangedPixelsfrom5to4:
@@ -190,7 +190,7 @@ CurveUpEndBlock1:  			equ   ($-RomStartAddress) and (romsize-1) / RomBlockSize
 	CurveUpEndPage1TOPWriteInstructionsfrom5to4:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\TOPwriteinstructionsfrom5to4.bin"
 
-;A344
+;A759
 
 	BlockCurveUpEndPage1BOTTOMfrom5to4:	equ CurveUpEndBlock1
 	CurveUpEndPage1BOTTOMChangedPixelsfrom5to4:
@@ -200,7 +200,7 @@ CurveUpEndBlock1:  			equ   ($-RomStartAddress) and (romsize-1) / RomBlockSize
 	CurveUpEndPage1BOTTOMWriteInstructionsfrom5to4:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\BOTTOMwriteinstructionsfrom5to4.bin"
 
-;A6AE
+;AA28
 
 	BlockCurveUpEndPage0TOPfrom6to5:	equ CurveUpEndBlock1
 	CurveUpEndPage0TOPChangedPixelsfrom6to5:
@@ -210,7 +210,7 @@ CurveUpEndBlock1:  			equ   ($-RomStartAddress) and (romsize-1) / RomBlockSize
 	CurveUpEndPage0TOPWriteInstructionsfrom6to5:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\TOPwriteinstructionsfrom6to5.bin"
 
-;A6FF
+;AC39
 
 	BlockCurveUpEndPage0BOTTOMfrom6to5:	equ CurveUpEndBlock1
 	CurveUpEndPage0BOTTOMChangedPixelsfrom6to5:
@@ -220,7 +220,7 @@ CurveUpEndBlock1:  			equ   ($-RomStartAddress) and (romsize-1) / RomBlockSize
 	CurveUpEndPage0BOTTOMWriteInstructionsfrom6to5:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\BOTTOMwriteinstructionsfrom6to5.bin"
 
-;AA2A
+;B00B
 
 	BlockCurveUpEndPage1TOPfrom6to5:	equ CurveUpEndBlock1
 	CurveUpEndPage1TOPChangedPixelsfrom6to5:
@@ -230,7 +230,7 @@ CurveUpEndBlock1:  			equ   ($-RomStartAddress) and (romsize-1) / RomBlockSize
 	CurveUpEndPage1TOPWriteInstructionsfrom6to5:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\TOPwriteinstructionsfrom6to5.bin"
 
-;AA7B
+;B1EA
 
 	BlockCurveUpEndPage1BOTTOMfrom6to5:	equ CurveUpEndBlock1
 	CurveUpEndPage1BOTTOMChangedPixelsfrom6to5:
@@ -240,7 +240,7 @@ CurveUpEndBlock1:  			equ   ($-RomStartAddress) and (romsize-1) / RomBlockSize
 	CurveUpEndPage1BOTTOMWriteInstructionsfrom6to5:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\BOTTOMwriteinstructionsfrom6to5.bin"
 
-;ADA6
+;B458
 
 	BlockCurveUpEndPage0TOPfrom7to6:	equ CurveUpEndBlock1
 	CurveUpEndPage0TOPChangedPixelsfrom7to6:
@@ -250,7 +250,7 @@ CurveUpEndBlock1:  			equ   ($-RomStartAddress) and (romsize-1) / RomBlockSize
 	CurveUpEndPage0TOPWriteInstructionsfrom7to6:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\TOPwriteinstructionsfrom7to6.bin"
 
-;AF2E
+;B64D
 
 	BlockCurveUpEndPage0BOTTOMfrom7to6:	equ CurveUpEndBlock1
 	CurveUpEndPage0BOTTOMChangedPixelsfrom7to6:
@@ -260,7 +260,7 @@ CurveUpEndBlock1:  			equ   ($-RomStartAddress) and (romsize-1) / RomBlockSize
 	CurveUpEndPage0BOTTOMWriteInstructionsfrom7to6:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\BOTTOMwriteinstructionsfrom7to6.bin"
 
-;B259
+;BA94
 
 	BlockCurveUpEndPage1TOPfrom7to6:	equ CurveUpEndBlock1
 	CurveUpEndPage1TOPChangedPixelsfrom7to6:
@@ -270,7 +270,7 @@ CurveUpEndBlock1:  			equ   ($-RomStartAddress) and (romsize-1) / RomBlockSize
 	CurveUpEndPage1TOPWriteInstructionsfrom7to6:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\TOPwriteinstructionsfrom7to6.bin"
 
-;B3E1
+;BC70
 
 	BlockCurveUpEndPage1BOTTOMfrom7to6:	equ CurveUpEndBlock1
 	CurveUpEndPage1BOTTOMChangedPixelsfrom7to6:
@@ -280,7 +280,7 @@ CurveUpEndBlock1:  			equ   ($-RomStartAddress) and (romsize-1) / RomBlockSize
 	CurveUpEndPage1BOTTOMWriteInstructionsfrom7to6:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\BOTTOMwriteinstructionsfrom7to6.bin"
 
-;B70C
+;BF33
 
 	BlockCurveUpEndPage0TOPfrom8to7:	equ CurveUpEndBlock1
 	CurveUpEndPage0TOPChangedPixelsfrom8to7:
@@ -290,9 +290,15 @@ CurveUpEndBlock1:  			equ   ($-RomStartAddress) and (romsize-1) / RomBlockSize
 	CurveUpEndPage0TOPWriteInstructionsfrom8to7:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\TOPwriteinstructionsfrom8to7.bin"
 
-;B795
+;BF84
 
-	BlockCurveUpEndPage0BOTTOMfrom8to7:	equ CurveUpEndBlock1
+	dephase	
+	DS RomBlockSize - $ and (RomBlockSize - 1), -1	; fill remainder of block
+
+CurveUpEndBlock2:  			equ   ($-RomStartAddress) and (romsize-1) / RomBlockSize
+	phase 0x8000
+
+	BlockCurveUpEndPage0BOTTOMfrom8to7:	equ CurveUpEndBlock2
 	CurveUpEndPage0BOTTOMChangedPixelsfrom8to7:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\BOTTOMchangedpixelsfrom8to7.bin"
 	CurveUpEndPage0BOTTOMAddressesfrom8to7:
@@ -300,9 +306,9 @@ CurveUpEndBlock1:  			equ   ($-RomStartAddress) and (romsize-1) / RomBlockSize
 	CurveUpEndPage0BOTTOMWriteInstructionsfrom8to7:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\BOTTOMwriteinstructionsfrom8to7.bin"
 
-;BA61
+;83D0
 
-	BlockCurveUpEndPage1TOPfrom8to7:	equ CurveUpEndBlock1
+	BlockCurveUpEndPage1TOPfrom8to7:	equ CurveUpEndBlock2
 	CurveUpEndPage1TOPChangedPixelsfrom8to7:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\TOPchangedpixelsfrom8to7.bin"
 	CurveUpEndPage1TOPAddressesfrom8to7:
@@ -310,9 +316,9 @@ CurveUpEndBlock1:  			equ   ($-RomStartAddress) and (romsize-1) / RomBlockSize
 	CurveUpEndPage1TOPWriteInstructionsfrom8to7:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\TOPwriteinstructionsfrom8to7.bin"
 
-;BAEA
+;8408
 
-	BlockCurveUpEndPage1BOTTOMfrom8to7:	equ CurveUpEndBlock1
+	BlockCurveUpEndPage1BOTTOMfrom8to7:	equ CurveUpEndBlock2
 	CurveUpEndPage1BOTTOMChangedPixelsfrom8to7:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\BOTTOMchangedpixelsfrom8to7.bin"
 	CurveUpEndPage1BOTTOMAddressesfrom8to7:
@@ -320,9 +326,9 @@ CurveUpEndBlock1:  			equ   ($-RomStartAddress) and (romsize-1) / RomBlockSize
 	CurveUpEndPage1BOTTOMWriteInstructionsfrom8to7:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\BOTTOMwriteinstructionsfrom8to7.bin"
 
-;BDB6
+;868D
 
-	BlockCurveUpEndPage0TOPfrom9to8:	equ CurveUpEndBlock1
+	BlockCurveUpEndPage0TOPfrom9to8:	equ CurveUpEndBlock2
 	CurveUpEndPage0TOPChangedPixelsfrom9to8:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\TOPchangedpixelsfrom9to8.bin"
 	CurveUpEndPage0TOPAddressesfrom9to8:
@@ -330,13 +336,7 @@ CurveUpEndBlock1:  			equ   ($-RomStartAddress) and (romsize-1) / RomBlockSize
 	CurveUpEndPage0TOPWriteInstructionsfrom9to8:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\TOPwriteinstructionsfrom9to8.bin"
 
-;BF3E
-
-	dephase	
-	DS RomBlockSize - $ and (RomBlockSize - 1), -1	; fill remainder of block
-
-CurveUpEndBlock2:  			equ   ($-RomStartAddress) and (romsize-1) / RomBlockSize
-	phase 0x8000
+;88EF
 
 	BlockCurveUpEndPage0BOTTOMfrom9to8:	equ CurveUpEndBlock2
 	CurveUpEndPage0BOTTOMChangedPixelsfrom9to8:
@@ -346,7 +346,7 @@ CurveUpEndBlock2:  			equ   ($-RomStartAddress) and (romsize-1) / RomBlockSize
 	CurveUpEndPage0BOTTOMWriteInstructionsfrom9to8:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\BOTTOMwriteinstructionsfrom9to8.bin"
 
-;82F6
+;8CD8
 
 	BlockCurveUpEndPage1TOPfrom9to8:	equ CurveUpEndBlock2
 	CurveUpEndPage1TOPChangedPixelsfrom9to8:
@@ -356,7 +356,7 @@ CurveUpEndBlock2:  			equ   ($-RomStartAddress) and (romsize-1) / RomBlockSize
 	CurveUpEndPage1TOPWriteInstructionsfrom9to8:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\TOPwriteinstructionsfrom9to8.bin"
 
-;847E
+;8EEF
 
 	BlockCurveUpEndPage1BOTTOMfrom9to8:	equ CurveUpEndBlock2
 	CurveUpEndPage1BOTTOMChangedPixelsfrom9to8:
@@ -366,7 +366,7 @@ CurveUpEndBlock2:  			equ   ($-RomStartAddress) and (romsize-1) / RomBlockSize
 	CurveUpEndPage1BOTTOMWriteInstructionsfrom9to8:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\BOTTOMwriteinstructionsfrom9to8.bin"
 
-;8774
+;9188
 
 	BlockCurveUpEndPage0TOPfrom10to9:	equ CurveUpEndBlock2
 	CurveUpEndPage0TOPChangedPixelsfrom10to9:
@@ -376,7 +376,7 @@ CurveUpEndBlock2:  			equ   ($-RomStartAddress) and (romsize-1) / RomBlockSize
 	CurveUpEndPage0TOPWriteInstructionsfrom10to9:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\TOPwriteinstructionsfrom10to9.bin"
 
-;8819
+;932C
 
 	BlockCurveUpEndPage0BOTTOMfrom10to9:	equ CurveUpEndBlock2
 	CurveUpEndPage0BOTTOMChangedPixelsfrom10to9:
@@ -386,7 +386,7 @@ CurveUpEndBlock2:  			equ   ($-RomStartAddress) and (romsize-1) / RomBlockSize
 	CurveUpEndPage0BOTTOMWriteInstructionsfrom10to9:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\BOTTOMwriteinstructionsfrom10to9.bin"
 
-;8ACE
+;973E
 
 	BlockCurveUpEndPage1TOPfrom10to9:	equ CurveUpEndBlock2
 	CurveUpEndPage1TOPChangedPixelsfrom10to9:
@@ -396,7 +396,7 @@ CurveUpEndBlock2:  			equ   ($-RomStartAddress) and (romsize-1) / RomBlockSize
 	CurveUpEndPage1TOPWriteInstructionsfrom10to9:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\TOPwriteinstructionsfrom10to9.bin"
 
-;8B73
+;98E2
 
 	BlockCurveUpEndPage1BOTTOMfrom10to9:	equ CurveUpEndBlock2
 	CurveUpEndPage1BOTTOMChangedPixelsfrom10to9:
@@ -406,7 +406,7 @@ CurveUpEndBlock2:  			equ   ($-RomStartAddress) and (romsize-1) / RomBlockSize
 	CurveUpEndPage1BOTTOMWriteInstructionsfrom10to9:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\BOTTOMwriteinstructionsfrom10to9.bin"
 
-;8E28
+;9BBF
 
 	BlockCurveUpEndPage0TOPfrom11to10:	equ CurveUpEndBlock2
 	CurveUpEndPage0TOPChangedPixelsfrom11to10:
@@ -416,7 +416,7 @@ CurveUpEndBlock2:  			equ   ($-RomStartAddress) and (romsize-1) / RomBlockSize
 	CurveUpEndPage0TOPWriteInstructionsfrom11to10:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\TOPwriteinstructionsfrom11to10.bin"
 
-;8FB0
+;9C99
 
 	BlockCurveUpEndPage0BOTTOMfrom11to10:	equ CurveUpEndBlock2
 	CurveUpEndPage0BOTTOMChangedPixelsfrom11to10:
@@ -426,7 +426,7 @@ CurveUpEndBlock2:  			equ   ($-RomStartAddress) and (romsize-1) / RomBlockSize
 	CurveUpEndPage0BOTTOMWriteInstructionsfrom11to10:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\BOTTOMwriteinstructionsfrom11to10.bin"
 
-;9318
+;A008
 
 	BlockCurveUpEndPage1TOPfrom11to10:	equ CurveUpEndBlock2
 	CurveUpEndPage1TOPChangedPixelsfrom11to10:
@@ -436,7 +436,7 @@ CurveUpEndBlock2:  			equ   ($-RomStartAddress) and (romsize-1) / RomBlockSize
 	CurveUpEndPage1TOPWriteInstructionsfrom11to10:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\TOPwriteinstructionsfrom11to10.bin"
 
-;94A0
+;A097
 
 	BlockCurveUpEndPage1BOTTOMfrom11to10:	equ CurveUpEndBlock2
 	CurveUpEndPage1BOTTOMChangedPixelsfrom11to10:
@@ -446,7 +446,7 @@ CurveUpEndBlock2:  			equ   ($-RomStartAddress) and (romsize-1) / RomBlockSize
 	CurveUpEndPage1BOTTOMWriteInstructionsfrom11to10:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\BOTTOMwriteinstructionsfrom11to10.bin"
 
-;9808
+;A2E8
 
 	BlockCurveUpEndPage0TOPfrom12to11:	equ CurveUpEndBlock2
 	CurveUpEndPage0TOPChangedPixelsfrom12to11:
@@ -456,7 +456,7 @@ CurveUpEndBlock2:  			equ   ($-RomStartAddress) and (romsize-1) / RomBlockSize
 	CurveUpEndPage0TOPWriteInstructionsfrom12to11:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\TOPwriteinstructionsfrom12to11.bin"
 
-;98E2
+;A52E
 
 	BlockCurveUpEndPage0BOTTOMfrom12to11:	equ CurveUpEndBlock2
 	CurveUpEndPage0BOTTOMChangedPixelsfrom12to11:
@@ -466,7 +466,7 @@ CurveUpEndBlock2:  			equ   ($-RomStartAddress) and (romsize-1) / RomBlockSize
 	CurveUpEndPage0BOTTOMWriteInstructionsfrom12to11:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\BOTTOMwriteinstructionsfrom12to11.bin"
 
-;9B85
+;A8F5
 
 	BlockCurveUpEndPage1TOPfrom12to11:	equ CurveUpEndBlock2
 	CurveUpEndPage1TOPChangedPixelsfrom12to11:
@@ -476,7 +476,7 @@ CurveUpEndBlock2:  			equ   ($-RomStartAddress) and (romsize-1) / RomBlockSize
 	CurveUpEndPage1TOPWriteInstructionsfrom12to11:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\TOPwriteinstructionsfrom12to11.bin"
 
-;9C5F
+;AAF0
 
 	BlockCurveUpEndPage1BOTTOMfrom12to11:	equ CurveUpEndBlock2
 	CurveUpEndPage1BOTTOMChangedPixelsfrom12to11:
@@ -486,7 +486,7 @@ CurveUpEndBlock2:  			equ   ($-RomStartAddress) and (romsize-1) / RomBlockSize
 	CurveUpEndPage1BOTTOMWriteInstructionsfrom12to11:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\BOTTOMwriteinstructionsfrom12to11.bin"
 
-;9F02
+;AD80
 
 	BlockCurveUpEndPage0TOPfrom13to12:	equ CurveUpEndBlock2
 	CurveUpEndPage0TOPChangedPixelsfrom13to12:
@@ -496,7 +496,7 @@ CurveUpEndBlock2:  			equ   ($-RomStartAddress) and (romsize-1) / RomBlockSize
 	CurveUpEndPage0TOPWriteInstructionsfrom13to12:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\TOPwriteinstructionsfrom13to12.bin"
 
-;A08A
+;AFAD
 
 	BlockCurveUpEndPage0BOTTOMfrom13to12:	equ CurveUpEndBlock2
 	CurveUpEndPage0BOTTOMChangedPixelsfrom13to12:
@@ -506,7 +506,7 @@ CurveUpEndBlock2:  			equ   ($-RomStartAddress) and (romsize-1) / RomBlockSize
 	CurveUpEndPage0BOTTOMWriteInstructionsfrom13to12:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\BOTTOMwriteinstructionsfrom13to12.bin"
 
-;A38F
+;B3F0
 
 	BlockCurveUpEndPage1TOPfrom13to12:	equ CurveUpEndBlock2
 	CurveUpEndPage1TOPChangedPixelsfrom13to12:
@@ -516,7 +516,7 @@ CurveUpEndBlock2:  			equ   ($-RomStartAddress) and (romsize-1) / RomBlockSize
 	CurveUpEndPage1TOPWriteInstructionsfrom13to12:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\TOPwriteinstructionsfrom13to12.bin"
 
-;A517
+;B5EB
 
 	BlockCurveUpEndPage1BOTTOMfrom13to12:	equ CurveUpEndBlock2
 	CurveUpEndPage1BOTTOMChangedPixelsfrom13to12:
@@ -526,7 +526,7 @@ CurveUpEndBlock2:  			equ   ($-RomStartAddress) and (romsize-1) / RomBlockSize
 	CurveUpEndPage1BOTTOMWriteInstructionsfrom13to12:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\BOTTOMwriteinstructionsfrom13to12.bin"
 
-;A81C
+;B8E0
 
 	BlockCurveUpEndPage0TOPfrom14to13:	equ CurveUpEndBlock2
 	CurveUpEndPage0TOPChangedPixelsfrom14to13:
@@ -536,7 +536,7 @@ CurveUpEndBlock2:  			equ   ($-RomStartAddress) and (romsize-1) / RomBlockSize
 	CurveUpEndPage0TOPWriteInstructionsfrom14to13:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\TOPwriteinstructionsfrom14to13.bin"
 
-;A8A5
+;B9BA
 
 	BlockCurveUpEndPage0BOTTOMfrom14to13:	equ CurveUpEndBlock2
 	CurveUpEndPage0BOTTOMChangedPixelsfrom14to13:
@@ -546,7 +546,7 @@ CurveUpEndBlock2:  			equ   ($-RomStartAddress) and (romsize-1) / RomBlockSize
 	CurveUpEndPage0BOTTOMWriteInstructionsfrom14to13:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\BOTTOMwriteinstructionsfrom14to13.bin"
 
-;AC0E
+;BCB6
 
 	BlockCurveUpEndPage1TOPfrom14to13:	equ CurveUpEndBlock2
 	CurveUpEndPage1TOPChangedPixelsfrom14to13:
@@ -556,7 +556,7 @@ CurveUpEndBlock2:  			equ   ($-RomStartAddress) and (romsize-1) / RomBlockSize
 	CurveUpEndPage1TOPWriteInstructionsfrom14to13:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\TOPwriteinstructionsfrom14to13.bin"
 
-;AC97
+;BD45
 
 	BlockCurveUpEndPage1BOTTOMfrom14to13:	equ CurveUpEndBlock2
 	CurveUpEndPage1BOTTOMChangedPixelsfrom14to13:
@@ -566,9 +566,15 @@ CurveUpEndBlock2:  			equ   ($-RomStartAddress) and (romsize-1) / RomBlockSize
 	CurveUpEndPage1BOTTOMWriteInstructionsfrom14to13:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\BOTTOMwriteinstructionsfrom14to13.bin"
 
-;B000
+;BF49
 
-	BlockCurveUpEndPage0TOPfrom15to14:	equ CurveUpEndBlock2
+	dephase	
+	DS RomBlockSize - $ and (RomBlockSize - 1), -1	; fill remainder of block
+
+CurveUpEndBlock3:  			equ   ($-RomStartAddress) and (romsize-1) / RomBlockSize
+	phase 0x8000
+
+	BlockCurveUpEndPage0TOPfrom15to14:	equ CurveUpEndBlock3
 	CurveUpEndPage0TOPChangedPixelsfrom15to14:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\TOPchangedpixelsfrom15to14.bin"
 	CurveUpEndPage0TOPAddressesfrom15to14:
@@ -576,9 +582,9 @@ CurveUpEndBlock2:  			equ   ($-RomStartAddress) and (romsize-1) / RomBlockSize
 	CurveUpEndPage0TOPWriteInstructionsfrom15to14:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\TOPwriteinstructionsfrom15to14.bin"
 
-;B211
+;827E
 
-	BlockCurveUpEndPage0BOTTOMfrom15to14:	equ CurveUpEndBlock2
+	BlockCurveUpEndPage0BOTTOMfrom15to14:	equ CurveUpEndBlock3
 	CurveUpEndPage0BOTTOMChangedPixelsfrom15to14:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\BOTTOMchangedpixelsfrom15to14.bin"
 	CurveUpEndPage0BOTTOMAddressesfrom15to14:
@@ -586,9 +592,9 @@ CurveUpEndBlock2:  			equ   ($-RomStartAddress) and (romsize-1) / RomBlockSize
 	CurveUpEndPage0BOTTOMWriteInstructionsfrom15to14:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\BOTTOMwriteinstructionsfrom15to14.bin"
 
-;B4AA
+;860A
 
-	BlockCurveUpEndPage1TOPfrom15to14:	equ CurveUpEndBlock2
+	BlockCurveUpEndPage1TOPfrom15to14:	equ CurveUpEndBlock3
 	CurveUpEndPage1TOPChangedPixelsfrom15to14:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\TOPchangedpixelsfrom15to14.bin"
 	CurveUpEndPage1TOPAddressesfrom15to14:
@@ -596,9 +602,9 @@ CurveUpEndBlock2:  			equ   ($-RomStartAddress) and (romsize-1) / RomBlockSize
 	CurveUpEndPage1TOPWriteInstructionsfrom15to14:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\TOPwriteinstructionsfrom15to14.bin"
 
-;B6BB
+;883D
 
-	BlockCurveUpEndPage1BOTTOMfrom15to14:	equ CurveUpEndBlock2
+	BlockCurveUpEndPage1BOTTOMfrom15to14:	equ CurveUpEndBlock3
 	CurveUpEndPage1BOTTOMChangedPixelsfrom15to14:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\BOTTOMchangedpixelsfrom15to14.bin"
 	CurveUpEndPage1BOTTOMAddressesfrom15to14:
@@ -606,9 +612,9 @@ CurveUpEndBlock2:  			equ   ($-RomStartAddress) and (romsize-1) / RomBlockSize
 	CurveUpEndPage1BOTTOMWriteInstructionsfrom15to14:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\BOTTOMwriteinstructionsfrom15to14.bin"
 
-;B954
+;8AB1
 
-	BlockCurveUpEndPage0TOPfrom16to15:	equ CurveUpEndBlock2
+	BlockCurveUpEndPage0TOPfrom16to15:	equ CurveUpEndBlock3
 	CurveUpEndPage0TOPChangedPixelsfrom16to15:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\TOPchangedpixelsfrom16to15.bin"
 	CurveUpEndPage0TOPAddressesfrom16to15:
@@ -616,9 +622,9 @@ CurveUpEndBlock2:  			equ   ($-RomStartAddress) and (romsize-1) / RomBlockSize
 	CurveUpEndPage0TOPWriteInstructionsfrom16to15:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\TOPwriteinstructionsfrom16to15.bin"
 
-;B9DD
+;8D13
 
-	BlockCurveUpEndPage0BOTTOMfrom16to15:	equ CurveUpEndBlock2
+	BlockCurveUpEndPage0BOTTOMfrom16to15:	equ CurveUpEndBlock3
 	CurveUpEndPage0BOTTOMChangedPixelsfrom16to15:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\BOTTOMchangedpixelsfrom16to15.bin"
 	CurveUpEndPage0BOTTOMAddressesfrom16to15:
@@ -626,9 +632,9 @@ CurveUpEndBlock2:  			equ   ($-RomStartAddress) and (romsize-1) / RomBlockSize
 	CurveUpEndPage0BOTTOMWriteInstructionsfrom16to15:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\BOTTOMwriteinstructionsfrom16to15.bin"
 
-;BC83
+;915E
 
-	BlockCurveUpEndPage1TOPfrom16to15:	equ CurveUpEndBlock2
+	BlockCurveUpEndPage1TOPfrom16to15:	equ CurveUpEndBlock3
 	CurveUpEndPage1TOPChangedPixelsfrom16to15:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\TOPchangedpixelsfrom16to15.bin"
 	CurveUpEndPage1TOPAddressesfrom16to15:
@@ -636,9 +642,9 @@ CurveUpEndBlock2:  			equ   ($-RomStartAddress) and (romsize-1) / RomBlockSize
 	CurveUpEndPage1TOPWriteInstructionsfrom16to15:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\TOPwriteinstructionsfrom16to15.bin"
 
-;BD0C
+;938E
 
-	BlockCurveUpEndPage1BOTTOMfrom16to15:	equ CurveUpEndBlock2
+	BlockCurveUpEndPage1BOTTOMfrom16to15:	equ CurveUpEndBlock3
 	CurveUpEndPage1BOTTOMChangedPixelsfrom16to15:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\BOTTOMchangedpixelsfrom16to15.bin"
 	CurveUpEndPage1BOTTOMAddressesfrom16to15:
@@ -646,13 +652,7 @@ CurveUpEndBlock2:  			equ   ($-RomStartAddress) and (romsize-1) / RomBlockSize
 	CurveUpEndPage1BOTTOMWriteInstructionsfrom16to15:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\BOTTOMwriteinstructionsfrom16to15.bin"
 
-;BFB2
-
-	dephase	
-	DS RomBlockSize - $ and (RomBlockSize - 1), -1	; fill remainder of block
-
-CurveUpEndBlock3:  			equ   ($-RomStartAddress) and (romsize-1) / RomBlockSize
-	phase 0x8000
+;9628
 
 	BlockCurveUpEndPage0TOPfrom17to16:	equ CurveUpEndBlock3
 	CurveUpEndPage0TOPChangedPixelsfrom17to16:
@@ -662,7 +662,7 @@ CurveUpEndBlock3:  			equ   ($-RomStartAddress) and (romsize-1) / RomBlockSize
 	CurveUpEndPage0TOPWriteInstructionsfrom17to16:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\TOPwriteinstructionsfrom17to16.bin"
 
-;81F5
+;98A3
 
 	BlockCurveUpEndPage0BOTTOMfrom17to16:	equ CurveUpEndBlock3
 	CurveUpEndPage0BOTTOMChangedPixelsfrom17to16:
@@ -672,7 +672,7 @@ CurveUpEndBlock3:  			equ   ($-RomStartAddress) and (romsize-1) / RomBlockSize
 	CurveUpEndPage0BOTTOMWriteInstructionsfrom17to16:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\BOTTOMwriteinstructionsfrom17to16.bin"
 
-;85BE
+;9C3B
 
 	BlockCurveUpEndPage1TOPfrom17to16:	equ CurveUpEndBlock3
 	CurveUpEndPage1TOPChangedPixelsfrom17to16:
@@ -682,7 +682,7 @@ CurveUpEndBlock3:  			equ   ($-RomStartAddress) and (romsize-1) / RomBlockSize
 	CurveUpEndPage1TOPWriteInstructionsfrom17to16:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\TOPwriteinstructionsfrom17to16.bin"
 
-;87B3
+;9E52
 
 	BlockCurveUpEndPage1BOTTOMfrom17to16:	equ CurveUpEndBlock3
 	CurveUpEndPage1BOTTOMChangedPixelsfrom17to16:
@@ -692,7 +692,7 @@ CurveUpEndBlock3:  			equ   ($-RomStartAddress) and (romsize-1) / RomBlockSize
 	CurveUpEndPage1BOTTOMWriteInstructionsfrom17to16:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\BOTTOMwriteinstructionsfrom17to16.bin"
 
-;8B7C
+;A10B
 
 	BlockCurveUpEndPage0TOPfrom18to17:	equ CurveUpEndBlock3
 	CurveUpEndPage0TOPChangedPixelsfrom18to17:
@@ -702,7 +702,7 @@ CurveUpEndBlock3:  			equ   ($-RomStartAddress) and (romsize-1) / RomBlockSize
 	CurveUpEndPage0TOPWriteInstructionsfrom18to17:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\TOPwriteinstructionsfrom18to17.bin"
 
-;8C56
+;A252
 
 	BlockCurveUpEndPage0BOTTOMfrom18to17:	equ CurveUpEndBlock3
 	CurveUpEndPage0BOTTOMChangedPixelsfrom18to17:
@@ -712,7 +712,7 @@ CurveUpEndBlock3:  			equ   ($-RomStartAddress) and (romsize-1) / RomBlockSize
 	CurveUpEndPage0BOTTOMWriteInstructionsfrom18to17:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\BOTTOMwriteinstructionsfrom18to17.bin"
 
-;8E83
+;A56C
 
 	BlockCurveUpEndPage1TOPfrom18to17:	equ CurveUpEndBlock3
 	CurveUpEndPage1TOPChangedPixelsfrom18to17:
@@ -722,7 +722,7 @@ CurveUpEndBlock3:  			equ   ($-RomStartAddress) and (romsize-1) / RomBlockSize
 	CurveUpEndPage1TOPWriteInstructionsfrom18to17:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\TOPwriteinstructionsfrom18to17.bin"
 
-;8F5D
+;A64F
 
 	BlockCurveUpEndPage1BOTTOMfrom18to17:	equ CurveUpEndBlock3
 	CurveUpEndPage1BOTTOMChangedPixelsfrom18to17:
@@ -732,7 +732,7 @@ CurveUpEndBlock3:  			equ   ($-RomStartAddress) and (romsize-1) / RomBlockSize
 	CurveUpEndPage1BOTTOMWriteInstructionsfrom18to17:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\BOTTOMwriteinstructionsfrom18to17.bin"
 
-;918A
+;A853
 
 	BlockCurveUpEndPage0TOPfrom19to18:	equ CurveUpEndBlock3
 	CurveUpEndPage0TOPChangedPixelsfrom19to18:
@@ -742,7 +742,7 @@ CurveUpEndBlock3:  			equ   ($-RomStartAddress) and (romsize-1) / RomBlockSize
 	CurveUpEndPage0TOPWriteInstructionsfrom19to18:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\TOPwriteinstructionsfrom19to18.bin"
 
-;937F
+;AAD1
 
 	BlockCurveUpEndPage0BOTTOMfrom19to18:	equ CurveUpEndBlock3
 	CurveUpEndPage0BOTTOMChangedPixelsfrom19to18:
@@ -752,7 +752,7 @@ CurveUpEndBlock3:  			equ   ($-RomStartAddress) and (romsize-1) / RomBlockSize
 	CurveUpEndPage0BOTTOMWriteInstructionsfrom19to18:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\BOTTOMwriteinstructionsfrom19to18.bin"
 
-;96D1
+;AE8F
 
 	BlockCurveUpEndPage1TOPfrom19to18:	equ CurveUpEndBlock3
 	CurveUpEndPage1TOPChangedPixelsfrom19to18:
@@ -762,7 +762,7 @@ CurveUpEndBlock3:  			equ   ($-RomStartAddress) and (romsize-1) / RomBlockSize
 	CurveUpEndPage1TOPWriteInstructionsfrom19to18:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\TOPwriteinstructionsfrom19to18.bin"
 
-;98C6
+;B0C2
 
 	BlockCurveUpEndPage1BOTTOMfrom19to18:	equ CurveUpEndBlock3
 	CurveUpEndPage1BOTTOMChangedPixelsfrom19to18:
@@ -772,7 +772,7 @@ CurveUpEndBlock3:  			equ   ($-RomStartAddress) and (romsize-1) / RomBlockSize
 	CurveUpEndPage1BOTTOMWriteInstructionsfrom19to18:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\BOTTOMwriteinstructionsfrom19to18.bin"
 
-;9C18
+;B36D
 
 	BlockCurveUpEndPage0TOPfrom20to19:	equ CurveUpEndBlock3
 	CurveUpEndPage0TOPChangedPixelsfrom20to19:
@@ -782,7 +782,7 @@ CurveUpEndBlock3:  			equ   ($-RomStartAddress) and (romsize-1) / RomBlockSize
 	CurveUpEndPage0TOPWriteInstructionsfrom20to19:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\TOPwriteinstructionsfrom20to19.bin"
 
-;9D0B
+;B5CF
 
 	BlockCurveUpEndPage0BOTTOMfrom20to19:	equ CurveUpEndBlock3
 	CurveUpEndPage0BOTTOMChangedPixelsfrom20to19:
@@ -792,7 +792,7 @@ CurveUpEndBlock3:  			equ   ($-RomStartAddress) and (romsize-1) / RomBlockSize
 	CurveUpEndPage0BOTTOMWriteInstructionsfrom20to19:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\BOTTOMwriteinstructionsfrom20to19.bin"
 
-;9F2F
+;BA45
 
 	BlockCurveUpEndPage1TOPfrom20to19:	equ CurveUpEndBlock3
 	CurveUpEndPage1TOPChangedPixelsfrom20to19:
@@ -802,7 +802,7 @@ CurveUpEndBlock3:  			equ   ($-RomStartAddress) and (romsize-1) / RomBlockSize
 	CurveUpEndPage1TOPWriteInstructionsfrom20to19:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\TOPwriteinstructionsfrom20to19.bin"
 
-;A022
+;BC43
 
 	BlockCurveUpEndPage1BOTTOMfrom20to19:	equ CurveUpEndBlock3
 	CurveUpEndPage1BOTTOMChangedPixelsfrom20to19:
@@ -812,9 +812,15 @@ CurveUpEndBlock3:  			equ   ($-RomStartAddress) and (romsize-1) / RomBlockSize
 	CurveUpEndPage1BOTTOMWriteInstructionsfrom20to19:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\BOTTOMwriteinstructionsfrom20to19.bin"
 
-;A246
+;BF50
 
-	BlockCurveUpEndPage0TOPfrom21to20:	equ CurveUpEndBlock3
+	dephase	
+	DS RomBlockSize - $ and (RomBlockSize - 1), -1	; fill remainder of block
+
+CurveUpEndBlock4:  			equ   ($-RomStartAddress) and (romsize-1) / RomBlockSize
+	phase 0x8000
+
+	BlockCurveUpEndPage0TOPfrom21to20:	equ CurveUpEndBlock4
 	CurveUpEndPage0TOPChangedPixelsfrom21to20:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\TOPchangedpixelsfrom21to20.bin"
 	CurveUpEndPage0TOPAddressesfrom21to20:
@@ -822,9 +828,9 @@ CurveUpEndBlock3:  			equ   ($-RomStartAddress) and (romsize-1) / RomBlockSize
 	CurveUpEndPage0TOPWriteInstructionsfrom21to20:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\TOPwriteinstructionsfrom21to20.bin"
 
-;A470
+;814A
 
-	BlockCurveUpEndPage0BOTTOMfrom21to20:	equ CurveUpEndBlock3
+	BlockCurveUpEndPage0BOTTOMfrom21to20:	equ CurveUpEndBlock4
 	CurveUpEndPage0BOTTOMChangedPixelsfrom21to20:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\BOTTOMchangedpixelsfrom21to20.bin"
 	CurveUpEndPage0BOTTOMAddressesfrom21to20:
@@ -832,9 +838,9 @@ CurveUpEndBlock3:  			equ   ($-RomStartAddress) and (romsize-1) / RomBlockSize
 	CurveUpEndPage0BOTTOMWriteInstructionsfrom21to20:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\BOTTOMwriteinstructionsfrom21to20.bin"
 
-;A7C8
+;84B3
 
-	BlockCurveUpEndPage1TOPfrom21to20:	equ CurveUpEndBlock3
+	BlockCurveUpEndPage1TOPfrom21to20:	equ CurveUpEndBlock4
 	CurveUpEndPage1TOPChangedPixelsfrom21to20:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\TOPchangedpixelsfrom21to20.bin"
 	CurveUpEndPage1TOPAddressesfrom21to20:
@@ -842,9 +848,9 @@ CurveUpEndBlock3:  			equ   ($-RomStartAddress) and (romsize-1) / RomBlockSize
 	CurveUpEndPage1TOPWriteInstructionsfrom21to20:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\TOPwriteinstructionsfrom21to20.bin"
 
-;A9F2
+;85B2
 
-	BlockCurveUpEndPage1BOTTOMfrom21to20:	equ CurveUpEndBlock3
+	BlockCurveUpEndPage1BOTTOMfrom21to20:	equ CurveUpEndBlock4
 	CurveUpEndPage1BOTTOMChangedPixelsfrom21to20:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\BOTTOMchangedpixelsfrom21to20.bin"
 	CurveUpEndPage1BOTTOMAddressesfrom21to20:
@@ -852,9 +858,9 @@ CurveUpEndBlock3:  			equ   ($-RomStartAddress) and (romsize-1) / RomBlockSize
 	CurveUpEndPage1BOTTOMWriteInstructionsfrom21to20:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\BOTTOMwriteinstructionsfrom21to20.bin"
 
-;AD4A
+;8819
 
-	BlockCurveUpEndPage0TOPfrom22to21:	equ CurveUpEndBlock3
+	BlockCurveUpEndPage0TOPfrom22to21:	equ CurveUpEndBlock4
 	CurveUpEndPage0TOPChangedPixelsfrom22to21:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\TOPchangedpixelsfrom22to21.bin"
 	CurveUpEndPage0TOPAddressesfrom22to21:
@@ -862,9 +868,9 @@ CurveUpEndBlock3:  			equ   ($-RomStartAddress) and (romsize-1) / RomBlockSize
 	CurveUpEndPage0TOPWriteInstructionsfrom22to21:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\TOPwriteinstructionsfrom22to21.bin"
 
-;ADEF
+;8B49
 
-	BlockCurveUpEndPage0BOTTOMfrom22to21:	equ CurveUpEndBlock3
+	BlockCurveUpEndPage0BOTTOMfrom22to21:	equ CurveUpEndBlock4
 	CurveUpEndPage0BOTTOMChangedPixelsfrom22to21:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\BOTTOMchangedpixelsfrom22to21.bin"
 	CurveUpEndPage0BOTTOMAddressesfrom22to21:
@@ -872,9 +878,9 @@ CurveUpEndBlock3:  			equ   ($-RomStartAddress) and (romsize-1) / RomBlockSize
 	CurveUpEndPage0BOTTOMWriteInstructionsfrom22to21:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\BOTTOMwriteinstructionsfrom22to21.bin"
 
-;B10E
+;8EC8
 
-	BlockCurveUpEndPage1TOPfrom22to21:	equ CurveUpEndBlock3
+	BlockCurveUpEndPage1TOPfrom22to21:	equ CurveUpEndBlock4
 	CurveUpEndPage1TOPChangedPixelsfrom22to21:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\TOPchangedpixelsfrom22to21.bin"
 	CurveUpEndPage1TOPAddressesfrom22to21:
@@ -882,9 +888,9 @@ CurveUpEndBlock3:  			equ   ($-RomStartAddress) and (romsize-1) / RomBlockSize
 	CurveUpEndPage1TOPWriteInstructionsfrom22to21:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\TOPwriteinstructionsfrom22to21.bin"
 
-;B1B3
+;9162
 
-	BlockCurveUpEndPage1BOTTOMfrom22to21:	equ CurveUpEndBlock3
+	BlockCurveUpEndPage1BOTTOMfrom22to21:	equ CurveUpEndBlock4
 	CurveUpEndPage1BOTTOMChangedPixelsfrom22to21:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\BOTTOMchangedpixelsfrom22to21.bin"
 	CurveUpEndPage1BOTTOMAddressesfrom22to21:
@@ -892,9 +898,9 @@ CurveUpEndBlock3:  			equ   ($-RomStartAddress) and (romsize-1) / RomBlockSize
 	CurveUpEndPage1BOTTOMWriteInstructionsfrom22to21:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\BOTTOMwriteinstructionsfrom22to21.bin"
 
-;B4D2
+;93C2
 
-	BlockCurveUpEndPage0TOPfrom23to22:	equ CurveUpEndBlock3
+	BlockCurveUpEndPage0TOPfrom23to22:	equ CurveUpEndBlock4
 	CurveUpEndPage0TOPChangedPixelsfrom23to22:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\TOPchangedpixelsfrom23to22.bin"
 	CurveUpEndPage0TOPAddressesfrom23to22:
@@ -902,9 +908,9 @@ CurveUpEndBlock3:  			equ   ($-RomStartAddress) and (romsize-1) / RomBlockSize
 	CurveUpEndPage0TOPWriteInstructionsfrom23to22:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\TOPwriteinstructionsfrom23to22.bin"
 
-;B734
+;95F7
 
-	BlockCurveUpEndPage0BOTTOMfrom23to22:	equ CurveUpEndBlock3
+	BlockCurveUpEndPage0BOTTOMfrom23to22:	equ CurveUpEndBlock4
 	CurveUpEndPage0BOTTOMChangedPixelsfrom23to22:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\BOTTOMchangedpixelsfrom23to22.bin"
 	CurveUpEndPage0BOTTOMAddressesfrom23to22:
@@ -912,9 +918,9 @@ CurveUpEndBlock3:  			equ   ($-RomStartAddress) and (romsize-1) / RomBlockSize
 	CurveUpEndPage0BOTTOMWriteInstructionsfrom23to22:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\BOTTOMwriteinstructionsfrom23to22.bin"
 
-;B985
+;9978
 
-	BlockCurveUpEndPage1TOPfrom23to22:	equ CurveUpEndBlock3
+	BlockCurveUpEndPage1TOPfrom23to22:	equ CurveUpEndBlock4
 	CurveUpEndPage1TOPChangedPixelsfrom23to22:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\TOPchangedpixelsfrom23to22.bin"
 	CurveUpEndPage1TOPAddressesfrom23to22:
@@ -922,9 +928,9 @@ CurveUpEndBlock3:  			equ   ($-RomStartAddress) and (romsize-1) / RomBlockSize
 	CurveUpEndPage1TOPWriteInstructionsfrom23to22:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\TOPwriteinstructionsfrom23to22.bin"
 
-;BBE7
+;9B94
 
-	BlockCurveUpEndPage1BOTTOMfrom23to22:	equ CurveUpEndBlock3
+	BlockCurveUpEndPage1BOTTOMfrom23to22:	equ CurveUpEndBlock4
 	CurveUpEndPage1BOTTOMChangedPixelsfrom23to22:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\BOTTOMchangedpixelsfrom23to22.bin"
 	CurveUpEndPage1BOTTOMAddressesfrom23to22:
@@ -932,9 +938,9 @@ CurveUpEndBlock3:  			equ   ($-RomStartAddress) and (romsize-1) / RomBlockSize
 	CurveUpEndPage1BOTTOMWriteInstructionsfrom23to22:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\BOTTOMwriteinstructionsfrom23to22.bin"
 
-;BE38
+;9E1E
 
-	BlockCurveUpEndPage0TOPfrom24to23:	equ CurveUpEndBlock3
+	BlockCurveUpEndPage0TOPfrom24to23:	equ CurveUpEndBlock4
 	CurveUpEndPage0TOPChangedPixelsfrom24to23:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\TOPchangedpixelsfrom24to23.bin"
 	CurveUpEndPage0TOPAddressesfrom24to23:
@@ -942,13 +948,7 @@ CurveUpEndBlock3:  			equ   ($-RomStartAddress) and (romsize-1) / RomBlockSize
 	CurveUpEndPage0TOPWriteInstructionsfrom24to23:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\TOPwriteinstructionsfrom24to23.bin"
 
-;BF12
-
-	dephase	
-	DS RomBlockSize - $ and (RomBlockSize - 1), -1	; fill remainder of block
-
-CurveUpEndBlock4:  			equ   ($-RomStartAddress) and (romsize-1) / RomBlockSize
-	phase 0x8000
+;9FC6
 
 	BlockCurveUpEndPage0BOTTOMfrom24to23:	equ CurveUpEndBlock4
 	CurveUpEndPage0BOTTOMChangedPixelsfrom24to23:
@@ -958,7 +958,7 @@ CurveUpEndBlock4:  			equ   ($-RomStartAddress) and (romsize-1) / RomBlockSize
 	CurveUpEndPage0BOTTOMWriteInstructionsfrom24to23:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\BOTTOMwriteinstructionsfrom24to23.bin"
 
-;8281
+;A358
 
 	BlockCurveUpEndPage1TOPfrom24to23:	equ CurveUpEndBlock4
 	CurveUpEndPage1TOPChangedPixelsfrom24to23:
@@ -968,7 +968,7 @@ CurveUpEndBlock4:  			equ   ($-RomStartAddress) and (romsize-1) / RomBlockSize
 	CurveUpEndPage1TOPWriteInstructionsfrom24to23:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\TOPwriteinstructionsfrom24to23.bin"
 
-;835B
+;A46A
 
 	BlockCurveUpEndPage1BOTTOMfrom24to23:	equ CurveUpEndBlock4
 	CurveUpEndPage1BOTTOMChangedPixelsfrom24to23:
@@ -978,7 +978,7 @@ CurveUpEndBlock4:  			equ   ($-RomStartAddress) and (romsize-1) / RomBlockSize
 	CurveUpEndPage1BOTTOMWriteInstructionsfrom24to23:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\BOTTOMwriteinstructionsfrom24to23.bin"
 
-;85DC
+;A6D2
 
 	BlockCurveUpEndPage0TOPfrom25to24:	equ CurveUpEndBlock4
 	CurveUpEndPage0TOPChangedPixelsfrom25to24:
@@ -988,7 +988,7 @@ CurveUpEndBlock4:  			equ   ($-RomStartAddress) and (romsize-1) / RomBlockSize
 	CurveUpEndPage0TOPWriteInstructionsfrom25to24:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\TOPwriteinstructionsfrom25to24.bin"
 
-;883B
+;A95B
 
 	BlockCurveUpEndPage0BOTTOMfrom25to24:	equ CurveUpEndBlock4
 	CurveUpEndPage0BOTTOMChangedPixelsfrom25to24:
@@ -998,7 +998,7 @@ CurveUpEndBlock4:  			equ   ($-RomStartAddress) and (romsize-1) / RomBlockSize
 	CurveUpEndPage0BOTTOMWriteInstructionsfrom25to24:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\BOTTOMwriteinstructionsfrom25to24.bin"
 
-;8BFB
+;AC73
 
 	BlockCurveUpEndPage1TOPfrom25to24:	equ CurveUpEndBlock4
 	CurveUpEndPage1TOPChangedPixelsfrom25to24:
@@ -1008,7 +1008,7 @@ CurveUpEndBlock4:  			equ   ($-RomStartAddress) and (romsize-1) / RomBlockSize
 	CurveUpEndPage1TOPWriteInstructionsfrom25to24:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\TOPwriteinstructionsfrom25to24.bin"
 
-;8E5A
+;AEB1
 
 	BlockCurveUpEndPage1BOTTOMfrom25to24:	equ CurveUpEndBlock4
 	CurveUpEndPage1BOTTOMChangedPixelsfrom25to24:
@@ -1018,7 +1018,7 @@ CurveUpEndBlock4:  			equ   ($-RomStartAddress) and (romsize-1) / RomBlockSize
 	CurveUpEndPage1BOTTOMWriteInstructionsfrom25to24:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\BOTTOMwriteinstructionsfrom25to24.bin"
 
-;921A
+;B0DB
 
 	BlockCurveUpEndPage0TOPfrom26to25:	equ CurveUpEndBlock4
 	CurveUpEndPage0TOPChangedPixelsfrom26to25:
@@ -1028,7 +1028,7 @@ CurveUpEndBlock4:  			equ   ($-RomStartAddress) and (romsize-1) / RomBlockSize
 	CurveUpEndPage0TOPWriteInstructionsfrom26to25:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\TOPwriteinstructionsfrom26to25.bin"
 
-;92F4
+;B42F
 
 	BlockCurveUpEndPage0BOTTOMfrom26to25:	equ CurveUpEndBlock4
 	CurveUpEndPage0BOTTOMChangedPixelsfrom26to25:
@@ -1038,7 +1038,7 @@ CurveUpEndBlock4:  			equ   ($-RomStartAddress) and (romsize-1) / RomBlockSize
 	CurveUpEndPage0BOTTOMWriteInstructionsfrom26to25:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\BOTTOMwriteinstructionsfrom26to25.bin"
 
-;951A
+;B85F
 
 	BlockCurveUpEndPage1TOPfrom26to25:	equ CurveUpEndBlock4
 	CurveUpEndPage1TOPChangedPixelsfrom26to25:
@@ -1048,7 +1048,7 @@ CurveUpEndBlock4:  			equ   ($-RomStartAddress) and (romsize-1) / RomBlockSize
 	CurveUpEndPage1TOPWriteInstructionsfrom26to25:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\TOPwriteinstructionsfrom26to25.bin"
 
-;95F4
+;BB1D
 
 	BlockCurveUpEndPage1BOTTOMfrom26to25:	equ CurveUpEndBlock4
 	CurveUpEndPage1BOTTOMChangedPixelsfrom26to25:
@@ -1058,7 +1058,7 @@ CurveUpEndBlock4:  			equ   ($-RomStartAddress) and (romsize-1) / RomBlockSize
 	CurveUpEndPage1BOTTOMWriteInstructionsfrom26to25:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\BOTTOMwriteinstructionsfrom26to25.bin"
 
-;981A
+;BE13
 
 	BlockCurveUpEndPage0TOPfrom27to26:	equ CurveUpEndBlock4
 	CurveUpEndPage0TOPChangedPixelsfrom27to26:
@@ -1068,9 +1068,15 @@ CurveUpEndBlock4:  			equ   ($-RomStartAddress) and (romsize-1) / RomBlockSize
 	CurveUpEndPage0TOPWriteInstructionsfrom27to26:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\TOPwriteinstructionsfrom27to26.bin"
 
-;9A79
+;BF5F
 
-	BlockCurveUpEndPage0BOTTOMfrom27to26:	equ CurveUpEndBlock4
+	dephase	
+	DS RomBlockSize - $ and (RomBlockSize - 1), -1	; fill remainder of block
+
+CurveUpEndBlock5:  			equ   ($-RomStartAddress) and (romsize-1) / RomBlockSize
+	phase 0x8000
+
+	BlockCurveUpEndPage0BOTTOMfrom27to26:	equ CurveUpEndBlock5
 	CurveUpEndPage0BOTTOMChangedPixelsfrom27to26:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\BOTTOMchangedpixelsfrom27to26.bin"
 	CurveUpEndPage0BOTTOMAddressesfrom27to26:
@@ -1078,9 +1084,9 @@ CurveUpEndBlock4:  			equ   ($-RomStartAddress) and (romsize-1) / RomBlockSize
 	CurveUpEndPage0BOTTOMWriteInstructionsfrom27to26:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\BOTTOMwriteinstructionsfrom27to26.bin"
 
-;9DC3
+;83E6
 
-	BlockCurveUpEndPage1TOPfrom27to26:	equ CurveUpEndBlock4
+	BlockCurveUpEndPage1TOPfrom27to26:	equ CurveUpEndBlock5
 	CurveUpEndPage1TOPChangedPixelsfrom27to26:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\TOPchangedpixelsfrom27to26.bin"
 	CurveUpEndPage1TOPAddressesfrom27to26:
@@ -1088,9 +1094,9 @@ CurveUpEndBlock4:  			equ   ($-RomStartAddress) and (romsize-1) / RomBlockSize
 	CurveUpEndPage1TOPWriteInstructionsfrom27to26:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\TOPwriteinstructionsfrom27to26.bin"
 
-;A022
+;84CE
 
-	BlockCurveUpEndPage1BOTTOMfrom27to26:	equ CurveUpEndBlock4
+	BlockCurveUpEndPage1BOTTOMfrom27to26:	equ CurveUpEndBlock5
 	CurveUpEndPage1BOTTOMChangedPixelsfrom27to26:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\BOTTOMchangedpixelsfrom27to26.bin"
 	CurveUpEndPage1BOTTOMAddressesfrom27to26:
@@ -1098,9 +1104,9 @@ CurveUpEndBlock4:  			equ   ($-RomStartAddress) and (romsize-1) / RomBlockSize
 	CurveUpEndPage1BOTTOMWriteInstructionsfrom27to26:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\BOTTOMwriteinstructionsfrom27to26.bin"
 
-;A36C
+;876C
 
-	BlockCurveUpEndPage0TOPfrom28to27:	equ CurveUpEndBlock4
+	BlockCurveUpEndPage0TOPfrom28to27:	equ CurveUpEndBlock5
 	CurveUpEndPage0TOPChangedPixelsfrom28to27:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\TOPchangedpixelsfrom28to27.bin"
 	CurveUpEndPage0TOPAddressesfrom28to27:
@@ -1108,9 +1114,9 @@ CurveUpEndBlock4:  			equ   ($-RomStartAddress) and (romsize-1) / RomBlockSize
 	CurveUpEndPage0TOPWriteInstructionsfrom28to27:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\TOPwriteinstructionsfrom28to27.bin"
 
-;A462
+;8AB0
 
-	BlockCurveUpEndPage0BOTTOMfrom28to27:	equ CurveUpEndBlock4
+	BlockCurveUpEndPage0BOTTOMfrom28to27:	equ CurveUpEndBlock5
 	CurveUpEndPage0BOTTOMChangedPixelsfrom28to27:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\BOTTOMchangedpixelsfrom28to27.bin"
 	CurveUpEndPage0BOTTOMAddressesfrom28to27:
@@ -1118,9 +1124,9 @@ CurveUpEndBlock4:  			equ   ($-RomStartAddress) and (romsize-1) / RomBlockSize
 	CurveUpEndPage0BOTTOMWriteInstructionsfrom28to27:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\BOTTOMwriteinstructionsfrom28to27.bin"
 
-;A751
+;8D3B
 
-	BlockCurveUpEndPage1TOPfrom28to27:	equ CurveUpEndBlock4
+	BlockCurveUpEndPage1TOPfrom28to27:	equ CurveUpEndBlock5
 	CurveUpEndPage1TOPChangedPixelsfrom28to27:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\TOPchangedpixelsfrom28to27.bin"
 	CurveUpEndPage1TOPAddressesfrom28to27:
@@ -1128,9 +1134,9 @@ CurveUpEndBlock4:  			equ   ($-RomStartAddress) and (romsize-1) / RomBlockSize
 	CurveUpEndPage1TOPWriteInstructionsfrom28to27:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\TOPwriteinstructionsfrom28to27.bin"
 
-;A847
+;8FE9
 
-	BlockCurveUpEndPage1BOTTOMfrom28to27:	equ CurveUpEndBlock4
+	BlockCurveUpEndPage1BOTTOMfrom28to27:	equ CurveUpEndBlock5
 	CurveUpEndPage1BOTTOMChangedPixelsfrom28to27:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\BOTTOMchangedpixelsfrom28to27.bin"
 	CurveUpEndPage1BOTTOMAddressesfrom28to27:
@@ -1138,9 +1144,9 @@ CurveUpEndBlock4:  			equ   ($-RomStartAddress) and (romsize-1) / RomBlockSize
 	CurveUpEndPage1BOTTOMWriteInstructionsfrom28to27:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\BOTTOMwriteinstructionsfrom28to27.bin"
 
-;AB36
+;91F7
 
-	BlockCurveUpEndPage0TOPfrom29to28:	equ CurveUpEndBlock4
+	BlockCurveUpEndPage0TOPfrom29to28:	equ CurveUpEndBlock5
 	CurveUpEndPage0TOPChangedPixelsfrom29to28:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\TOPchangedpixelsfrom29to28.bin"
 	CurveUpEndPage0TOPAddressesfrom29to28:
@@ -1148,9 +1154,9 @@ CurveUpEndBlock4:  			equ   ($-RomStartAddress) and (romsize-1) / RomBlockSize
 	CurveUpEndPage0TOPWriteInstructionsfrom29to28:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\TOPwriteinstructionsfrom29to28.bin"
 
-;AD5D
+;94AF
 
-	BlockCurveUpEndPage0BOTTOMfrom29to28:	equ CurveUpEndBlock4
+	BlockCurveUpEndPage0BOTTOMfrom29to28:	equ CurveUpEndBlock5
 	CurveUpEndPage0BOTTOMChangedPixelsfrom29to28:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\BOTTOMchangedpixelsfrom29to28.bin"
 	CurveUpEndPage0BOTTOMAddressesfrom29to28:
@@ -1158,9 +1164,9 @@ CurveUpEndBlock4:  			equ   ($-RomStartAddress) and (romsize-1) / RomBlockSize
 	CurveUpEndPage0BOTTOMWriteInstructionsfrom29to28:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\BOTTOMwriteinstructionsfrom29to28.bin"
 
-;AF9F
+;980A
 
-	BlockCurveUpEndPage1TOPfrom29to28:	equ CurveUpEndBlock4
+	BlockCurveUpEndPage1TOPfrom29to28:	equ CurveUpEndBlock5
 	CurveUpEndPage1TOPChangedPixelsfrom29to28:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\TOPchangedpixelsfrom29to28.bin"
 	CurveUpEndPage1TOPAddressesfrom29to28:
@@ -1168,9 +1174,9 @@ CurveUpEndBlock4:  			equ   ($-RomStartAddress) and (romsize-1) / RomBlockSize
 	CurveUpEndPage1TOPWriteInstructionsfrom29to28:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\TOPwriteinstructionsfrom29to28.bin"
 
-;B1C6
+;9A5E
 
-	BlockCurveUpEndPage1BOTTOMfrom29to28:	equ CurveUpEndBlock4
+	BlockCurveUpEndPage1BOTTOMfrom29to28:	equ CurveUpEndBlock5
 	CurveUpEndPage1BOTTOMChangedPixelsfrom29to28:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\BOTTOMchangedpixelsfrom29to28.bin"
 	CurveUpEndPage1BOTTOMAddressesfrom29to28:
@@ -1178,9 +1184,9 @@ CurveUpEndBlock4:  			equ   ($-RomStartAddress) and (romsize-1) / RomBlockSize
 	CurveUpEndPage1BOTTOMWriteInstructionsfrom29to28:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\BOTTOMwriteinstructionsfrom29to28.bin"
 
-;B408
+;9CC4
 
-	BlockCurveUpEndPage0TOPfrom30to29:	equ CurveUpEndBlock4
+	BlockCurveUpEndPage0TOPfrom30to29:	equ CurveUpEndBlock5
 	CurveUpEndPage0TOPChangedPixelsfrom30to29:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\TOPchangedpixelsfrom30to29.bin"
 	CurveUpEndPage0TOPAddressesfrom30to29:
@@ -1188,9 +1194,9 @@ CurveUpEndBlock4:  			equ   ($-RomStartAddress) and (romsize-1) / RomBlockSize
 	CurveUpEndPage0TOPWriteInstructionsfrom30to29:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\TOPwriteinstructionsfrom30to29.bin"
 
-;B562
+;9E4D
 
-	BlockCurveUpEndPage0BOTTOMfrom30to29:	equ CurveUpEndBlock4
+	BlockCurveUpEndPage0BOTTOMfrom30to29:	equ CurveUpEndBlock5
 	CurveUpEndPage0BOTTOMChangedPixelsfrom30to29:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\BOTTOMchangedpixelsfrom30to29.bin"
 	CurveUpEndPage0BOTTOMAddressesfrom30to29:
@@ -1198,9 +1204,9 @@ CurveUpEndBlock4:  			equ   ($-RomStartAddress) and (romsize-1) / RomBlockSize
 	CurveUpEndPage0BOTTOMWriteInstructionsfrom30to29:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\BOTTOMwriteinstructionsfrom30to29.bin"
 
-;B881
+;A1D0
 
-	BlockCurveUpEndPage1TOPfrom30to29:	equ CurveUpEndBlock4
+	BlockCurveUpEndPage1TOPfrom30to29:	equ CurveUpEndBlock5
 	CurveUpEndPage1TOPChangedPixelsfrom30to29:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\TOPchangedpixelsfrom30to29.bin"
 	CurveUpEndPage1TOPAddressesfrom30to29:
@@ -1208,9 +1214,9 @@ CurveUpEndBlock4:  			equ   ($-RomStartAddress) and (romsize-1) / RomBlockSize
 	CurveUpEndPage1TOPWriteInstructionsfrom30to29:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\TOPwriteinstructionsfrom30to29.bin"
 
-;B9DB
+;A2DC
 
-	BlockCurveUpEndPage1BOTTOMfrom30to29:	equ CurveUpEndBlock4
+	BlockCurveUpEndPage1BOTTOMfrom30to29:	equ CurveUpEndBlock5
 	CurveUpEndPage1BOTTOMChangedPixelsfrom30to29:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\BOTTOMchangedpixelsfrom30to29.bin"
 	CurveUpEndPage1BOTTOMAddressesfrom30to29:
@@ -1218,9 +1224,9 @@ CurveUpEndBlock4:  			equ   ($-RomStartAddress) and (romsize-1) / RomBlockSize
 	CurveUpEndPage1BOTTOMWriteInstructionsfrom30to29:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\BOTTOMwriteinstructionsfrom30to29.bin"
 
-;BCFA
+;A540
 
-	BlockCurveUpEndPage0TOPfrom31to30:	equ CurveUpEndBlock4
+	BlockCurveUpEndPage0TOPfrom31to30:	equ CurveUpEndBlock5
 	CurveUpEndPage0TOPChangedPixelsfrom31to30:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\TOPchangedpixelsfrom31to30.bin"
 	CurveUpEndPage0TOPAddressesfrom31to30:
@@ -1228,13 +1234,7 @@ CurveUpEndBlock4:  			equ   ($-RomStartAddress) and (romsize-1) / RomBlockSize
 	CurveUpEndPage0TOPWriteInstructionsfrom31to30:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\TOPwriteinstructionsfrom31to30.bin"
 
-;BF64
-
-	dephase	
-	DS RomBlockSize - $ and (RomBlockSize - 1), -1	; fill remainder of block
-
-CurveUpEndBlock5:  			equ   ($-RomStartAddress) and (romsize-1) / RomBlockSize
-	phase 0x8000
+;A8C9
 
 	BlockCurveUpEndPage0BOTTOMfrom31to30:	equ CurveUpEndBlock5
 	CurveUpEndPage0BOTTOMChangedPixelsfrom31to30:
@@ -1244,7 +1244,7 @@ CurveUpEndBlock5:  			equ   ($-RomStartAddress) and (romsize-1) / RomBlockSize
 	CurveUpEndPage0BOTTOMWriteInstructionsfrom31to30:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\BOTTOMwriteinstructionsfrom31to30.bin"
 
-;82EA
+;ABD5
 
 	BlockCurveUpEndPage1TOPfrom31to30:	equ CurveUpEndBlock5
 	CurveUpEndPage1TOPChangedPixelsfrom31to30:
@@ -1254,7 +1254,7 @@ CurveUpEndBlock5:  			equ   ($-RomStartAddress) and (romsize-1) / RomBlockSize
 	CurveUpEndPage1TOPWriteInstructionsfrom31to30:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\TOPwriteinstructionsfrom31to30.bin"
 
-;8554
+;AEC8
 
 	BlockCurveUpEndPage1BOTTOMfrom31to30:	equ CurveUpEndBlock5
 	CurveUpEndPage1BOTTOMChangedPixelsfrom31to30:
@@ -1264,7 +1264,7 @@ CurveUpEndBlock5:  			equ   ($-RomStartAddress) and (romsize-1) / RomBlockSize
 	CurveUpEndPage1BOTTOMWriteInstructionsfrom31to30:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\BOTTOMwriteinstructionsfrom31to30.bin"
 
-;883E
+;B136
 
 	BlockCurveUpEndPage0TOPfrom32to31:	equ CurveUpEndBlock5
 	CurveUpEndPage0TOPChangedPixelsfrom32to31:
@@ -1274,7 +1274,7 @@ CurveUpEndBlock5:  			equ   ($-RomStartAddress) and (romsize-1) / RomBlockSize
 	CurveUpEndPage0TOPWriteInstructionsfrom32to31:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\TOPwriteinstructionsfrom32to31.bin"
 
-;8947
+;B45D
 
 	BlockCurveUpEndPage0BOTTOMfrom32to31:	equ CurveUpEndBlock5
 	CurveUpEndPage0BOTTOMChangedPixelsfrom32to31:
@@ -1284,7 +1284,7 @@ CurveUpEndBlock5:  			equ   ($-RomStartAddress) and (romsize-1) / RomBlockSize
 	CurveUpEndPage0BOTTOMWriteInstructionsfrom32to31:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\BOTTOMwriteinstructionsfrom32to31.bin"
 
-;8C1B
+;B850
 
 	BlockCurveUpEndPage1TOPfrom32to31:	equ CurveUpEndBlock5
 	CurveUpEndPage1TOPChangedPixelsfrom32to31:
@@ -1294,7 +1294,7 @@ CurveUpEndBlock5:  			equ   ($-RomStartAddress) and (romsize-1) / RomBlockSize
 	CurveUpEndPage1TOPWriteInstructionsfrom32to31:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\TOPwriteinstructionsfrom32to31.bin"
 
-;8D24
+;BAFA
 
 	BlockCurveUpEndPage1BOTTOMfrom32to31:	equ CurveUpEndBlock5
 	CurveUpEndPage1BOTTOMChangedPixelsfrom32to31:
@@ -1304,7 +1304,7 @@ CurveUpEndBlock5:  			equ   ($-RomStartAddress) and (romsize-1) / RomBlockSize
 	CurveUpEndPage1BOTTOMWriteInstructionsfrom32to31:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\BOTTOMwriteinstructionsfrom32to31.bin"
 
-;8FF8
+;BDBE
 
 	BlockCurveUpEndPage0TOPfrom33to32:	equ CurveUpEndBlock5
 	CurveUpEndPage0TOPChangedPixelsfrom33to32:
@@ -1314,9 +1314,15 @@ CurveUpEndBlock5:  			equ   ($-RomStartAddress) and (romsize-1) / RomBlockSize
 	CurveUpEndPage0TOPWriteInstructionsfrom33to32:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\TOPwriteinstructionsfrom33to32.bin"
 
-;9249
+;BF12
 
-	BlockCurveUpEndPage0BOTTOMfrom33to32:	equ CurveUpEndBlock5
+	dephase	
+	DS RomBlockSize - $ and (RomBlockSize - 1), -1	; fill remainder of block
+
+CurveUpEndBlock6:  			equ   ($-RomStartAddress) and (romsize-1) / RomBlockSize
+	phase 0x8000
+
+	BlockCurveUpEndPage0BOTTOMfrom33to32:	equ CurveUpEndBlock6
 	CurveUpEndPage0BOTTOMChangedPixelsfrom33to32:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\BOTTOMchangedpixelsfrom33to32.bin"
 	CurveUpEndPage0BOTTOMAddressesfrom33to32:
@@ -1324,9 +1330,9 @@ CurveUpEndBlock5:  			equ   ($-RomStartAddress) and (romsize-1) / RomBlockSize
 	CurveUpEndPage0BOTTOMWriteInstructionsfrom33to32:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\BOTTOMwriteinstructionsfrom33to32.bin"
 
-;94B1
+;8297
 
-	BlockCurveUpEndPage1TOPfrom33to32:	equ CurveUpEndBlock5
+	BlockCurveUpEndPage1TOPfrom33to32:	equ CurveUpEndBlock6
 	CurveUpEndPage1TOPChangedPixelsfrom33to32:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\TOPchangedpixelsfrom33to32.bin"
 	CurveUpEndPage1TOPAddressesfrom33to32:
@@ -1334,9 +1340,9 @@ CurveUpEndBlock5:  			equ   ($-RomStartAddress) and (romsize-1) / RomBlockSize
 	CurveUpEndPage1TOPWriteInstructionsfrom33to32:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\TOPwriteinstructionsfrom33to32.bin"
 
-;9702
+;8387
 
-	BlockCurveUpEndPage1BOTTOMfrom33to32:	equ CurveUpEndBlock5
+	BlockCurveUpEndPage1BOTTOMfrom33to32:	equ CurveUpEndBlock6
 	CurveUpEndPage1BOTTOMChangedPixelsfrom33to32:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\BOTTOMchangedpixelsfrom33to32.bin"
 	CurveUpEndPage1BOTTOMAddressesfrom33to32:
@@ -1344,9 +1350,9 @@ CurveUpEndBlock5:  			equ   ($-RomStartAddress) and (romsize-1) / RomBlockSize
 	CurveUpEndPage1BOTTOMWriteInstructionsfrom33to32:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\BOTTOMwriteinstructionsfrom33to32.bin"
 
-;996A
+;854B
 
-	BlockCurveUpEndPage0TOPfrom34to33:	equ CurveUpEndBlock5
+	BlockCurveUpEndPage0TOPfrom34to33:	equ CurveUpEndBlock6
 	CurveUpEndPage0TOPChangedPixelsfrom34to33:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\TOPchangedpixelsfrom34to33.bin"
 	CurveUpEndPage0TOPAddressesfrom34to33:
@@ -1354,9 +1360,9 @@ CurveUpEndBlock5:  			equ   ($-RomStartAddress) and (romsize-1) / RomBlockSize
 	CurveUpEndPage0TOPWriteInstructionsfrom34to33:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\TOPwriteinstructionsfrom34to33.bin"
 
-;9A7E
+;8896
 
-	BlockCurveUpEndPage0BOTTOMfrom34to33:	equ CurveUpEndBlock5
+	BlockCurveUpEndPage0BOTTOMfrom34to33:	equ CurveUpEndBlock6
 	CurveUpEndPage0BOTTOMChangedPixelsfrom34to33:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\BOTTOMchangedpixelsfrom34to33.bin"
 	CurveUpEndPage0BOTTOMAddressesfrom34to33:
@@ -1364,9 +1370,9 @@ CurveUpEndBlock5:  			equ   ($-RomStartAddress) and (romsize-1) / RomBlockSize
 	CurveUpEndPage0BOTTOMWriteInstructionsfrom34to33:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\BOTTOMwriteinstructionsfrom34to33.bin"
 
-;9D25
+;8B3E
 
-	BlockCurveUpEndPage1TOPfrom34to33:	equ CurveUpEndBlock5
+	BlockCurveUpEndPage1TOPfrom34to33:	equ CurveUpEndBlock6
 	CurveUpEndPage1TOPChangedPixelsfrom34to33:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\TOPchangedpixelsfrom34to33.bin"
 	CurveUpEndPage1TOPAddressesfrom34to33:
@@ -1374,9 +1380,9 @@ CurveUpEndBlock5:  			equ   ($-RomStartAddress) and (romsize-1) / RomBlockSize
 	CurveUpEndPage1TOPWriteInstructionsfrom34to33:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\TOPwriteinstructionsfrom34to33.bin"
 
-;9E39
+;8E0C
 
-	BlockCurveUpEndPage1BOTTOMfrom34to33:	equ CurveUpEndBlock5
+	BlockCurveUpEndPage1BOTTOMfrom34to33:	equ CurveUpEndBlock6
 	CurveUpEndPage1BOTTOMChangedPixelsfrom34to33:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\BOTTOMchangedpixelsfrom34to33.bin"
 	CurveUpEndPage1BOTTOMAddressesfrom34to33:
@@ -1384,9 +1390,9 @@ CurveUpEndBlock5:  			equ   ($-RomStartAddress) and (romsize-1) / RomBlockSize
 	CurveUpEndPage1BOTTOMWriteInstructionsfrom34to33:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\BOTTOMwriteinstructionsfrom34to33.bin"
 
-;A0E0
+;8FC2
 
-	BlockCurveUpEndPage0TOPfrom35to34:	equ CurveUpEndBlock5
+	BlockCurveUpEndPage0TOPfrom35to34:	equ CurveUpEndBlock6
 	CurveUpEndPage0TOPChangedPixelsfrom35to34:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\TOPchangedpixelsfrom35to34.bin"
 	CurveUpEndPage0TOPAddressesfrom35to34:
@@ -1394,9 +1400,9 @@ CurveUpEndBlock5:  			equ   ($-RomStartAddress) and (romsize-1) / RomBlockSize
 	CurveUpEndPage0TOPWriteInstructionsfrom35to34:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\TOPwriteinstructionsfrom35to34.bin"
 
-;A390
+;932C
 
-	BlockCurveUpEndPage0BOTTOMfrom35to34:	equ CurveUpEndBlock5
+	BlockCurveUpEndPage0BOTTOMfrom35to34:	equ CurveUpEndBlock6
 	CurveUpEndPage0BOTTOMChangedPixelsfrom35to34:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\BOTTOMchangedpixelsfrom35to34.bin"
 	CurveUpEndPage0BOTTOMAddressesfrom35to34:
@@ -1404,9 +1410,9 @@ CurveUpEndBlock5:  			equ   ($-RomStartAddress) and (romsize-1) / RomBlockSize
 	CurveUpEndPage0BOTTOMWriteInstructionsfrom35to34:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\BOTTOMwriteinstructionsfrom35to34.bin"
 
-;A6B4
+;9837
 
-	BlockCurveUpEndPage1TOPfrom35to34:	equ CurveUpEndBlock5
+	BlockCurveUpEndPage1TOPfrom35to34:	equ CurveUpEndBlock6
 	CurveUpEndPage1TOPChangedPixelsfrom35to34:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\TOPchangedpixelsfrom35to34.bin"
 	CurveUpEndPage1TOPAddressesfrom35to34:
@@ -1414,9 +1420,9 @@ CurveUpEndBlock5:  			equ   ($-RomStartAddress) and (romsize-1) / RomBlockSize
 	CurveUpEndPage1TOPWriteInstructionsfrom35to34:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\TOPwriteinstructionsfrom35to34.bin"
 
-;A964
+;9B0B
 
-	BlockCurveUpEndPage1BOTTOMfrom35to34:	equ CurveUpEndBlock5
+	BlockCurveUpEndPage1BOTTOMfrom35to34:	equ CurveUpEndBlock6
 	CurveUpEndPage1BOTTOMChangedPixelsfrom35to34:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\BOTTOMchangedpixelsfrom35to34.bin"
 	CurveUpEndPage1BOTTOMAddressesfrom35to34:
@@ -1424,9 +1430,9 @@ CurveUpEndBlock5:  			equ   ($-RomStartAddress) and (romsize-1) / RomBlockSize
 	CurveUpEndPage1BOTTOMWriteInstructionsfrom35to34:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\BOTTOMwriteinstructionsfrom35to34.bin"
 
-;AC88
+;9E9D
 
-	BlockCurveUpEndPage0TOPfrom36to35:	equ CurveUpEndBlock5
+	BlockCurveUpEndPage0TOPfrom36to35:	equ CurveUpEndBlock6
 	CurveUpEndPage0TOPChangedPixelsfrom36to35:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\TOPchangedpixelsfrom36to35.bin"
 	CurveUpEndPage0TOPAddressesfrom36to35:
@@ -1434,9 +1440,9 @@ CurveUpEndBlock5:  			equ   ($-RomStartAddress) and (romsize-1) / RomBlockSize
 	CurveUpEndPage0TOPWriteInstructionsfrom36to35:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\TOPwriteinstructionsfrom36to35.bin"
 
-;AD83
+;A07C
 
-	BlockCurveUpEndPage0BOTTOMfrom36to35:	equ CurveUpEndBlock5
+	BlockCurveUpEndPage0BOTTOMfrom36to35:	equ CurveUpEndBlock6
 	CurveUpEndPage0BOTTOMChangedPixelsfrom36to35:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\BOTTOMchangedpixelsfrom36to35.bin"
 	CurveUpEndPage0BOTTOMAddressesfrom36to35:
@@ -1444,9 +1450,9 @@ CurveUpEndBlock5:  			equ   ($-RomStartAddress) and (romsize-1) / RomBlockSize
 	CurveUpEndPage0BOTTOMWriteInstructionsfrom36to35:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\BOTTOMwriteinstructionsfrom36to35.bin"
 
-;B0A4
+;A331
 
-	BlockCurveUpEndPage1TOPfrom36to35:	equ CurveUpEndBlock5
+	BlockCurveUpEndPage1TOPfrom36to35:	equ CurveUpEndBlock6
 	CurveUpEndPage1TOPChangedPixelsfrom36to35:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\TOPchangedpixelsfrom36to35.bin"
 	CurveUpEndPage1TOPAddressesfrom36to35:
@@ -1454,9 +1460,9 @@ CurveUpEndBlock5:  			equ   ($-RomStartAddress) and (romsize-1) / RomBlockSize
 	CurveUpEndPage1TOPWriteInstructionsfrom36to35:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\TOPwriteinstructionsfrom36to35.bin"
 
-;B19F
+;A493
 
-	BlockCurveUpEndPage1BOTTOMfrom36to35:	equ CurveUpEndBlock5
+	BlockCurveUpEndPage1BOTTOMfrom36to35:	equ CurveUpEndBlock6
 	CurveUpEndPage1BOTTOMChangedPixelsfrom36to35:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\BOTTOMchangedpixelsfrom36to35.bin"
 	CurveUpEndPage1BOTTOMAddressesfrom36to35:
@@ -1464,9 +1470,9 @@ CurveUpEndBlock5:  			equ   ($-RomStartAddress) and (romsize-1) / RomBlockSize
 	CurveUpEndPage1BOTTOMWriteInstructionsfrom36to35:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\BOTTOMwriteinstructionsfrom36to35.bin"
 
-;B4C0
+;A693
 
-	BlockCurveUpEndPage0TOPfrom37to36:	equ CurveUpEndBlock5
+	BlockCurveUpEndPage0TOPfrom37to36:	equ CurveUpEndBlock6
 	CurveUpEndPage0TOPChangedPixelsfrom37to36:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\TOPchangedpixelsfrom37to36.bin"
 	CurveUpEndPage0TOPAddressesfrom37to36:
@@ -1474,9 +1480,9 @@ CurveUpEndBlock5:  			equ   ($-RomStartAddress) and (romsize-1) / RomBlockSize
 	CurveUpEndPage0TOPWriteInstructionsfrom37to36:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\TOPwriteinstructionsfrom37to36.bin"
 
-;B7B2
+;AA3A
 
-	BlockCurveUpEndPage0BOTTOMfrom37to36:	equ CurveUpEndBlock5
+	BlockCurveUpEndPage0BOTTOMfrom37to36:	equ CurveUpEndBlock6
 	CurveUpEndPage0BOTTOMChangedPixelsfrom37to36:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\BOTTOMchangedpixelsfrom37to36.bin"
 	CurveUpEndPage0BOTTOMAddressesfrom37to36:
@@ -1484,9 +1490,9 @@ CurveUpEndBlock5:  			equ   ($-RomStartAddress) and (romsize-1) / RomBlockSize
 	CurveUpEndPage0BOTTOMWriteInstructionsfrom37to36:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\BOTTOMwriteinstructionsfrom37to36.bin"
 
-;BA27
+;ABC8
 
-	BlockCurveUpEndPage1TOPfrom37to36:	equ CurveUpEndBlock5
+	BlockCurveUpEndPage1TOPfrom37to36:	equ CurveUpEndBlock6
 	CurveUpEndPage1TOPChangedPixelsfrom37to36:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\TOPchangedpixelsfrom37to36.bin"
 	CurveUpEndPage1TOPAddressesfrom37to36:
@@ -1494,9 +1500,9 @@ CurveUpEndBlock5:  			equ   ($-RomStartAddress) and (romsize-1) / RomBlockSize
 	CurveUpEndPage1TOPWriteInstructionsfrom37to36:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\TOPwriteinstructionsfrom37to36.bin"
 
-;BD19
+;AEC0
 
-	BlockCurveUpEndPage1BOTTOMfrom37to36:	equ CurveUpEndBlock5
+	BlockCurveUpEndPage1BOTTOMfrom37to36:	equ CurveUpEndBlock6
 	CurveUpEndPage1BOTTOMChangedPixelsfrom37to36:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\BOTTOMchangedpixelsfrom37to36.bin"
 	CurveUpEndPage1BOTTOMAddressesfrom37to36:
@@ -1504,13 +1510,7 @@ CurveUpEndBlock5:  			equ   ($-RomStartAddress) and (romsize-1) / RomBlockSize
 	CurveUpEndPage1BOTTOMWriteInstructionsfrom37to36:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\BOTTOMwriteinstructionsfrom37to36.bin"
 
-;BF8E
-
-	dephase	
-	DS RomBlockSize - $ and (RomBlockSize - 1), -1	; fill remainder of block
-
-CurveUpEndBlock6:  			equ   ($-RomStartAddress) and (romsize-1) / RomBlockSize
-	phase 0x8000
+;AFE4
 
 	BlockCurveUpEndPage0TOPfrom38to37:	equ CurveUpEndBlock6
 	CurveUpEndPage0TOPChangedPixelsfrom38to37:
@@ -1520,7 +1520,7 @@ CurveUpEndBlock6:  			equ   ($-RomStartAddress) and (romsize-1) / RomBlockSize
 	CurveUpEndPage0TOPWriteInstructionsfrom38to37:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\TOPwriteinstructionsfrom38to37.bin"
 
-;8154
+;B3A4
 
 	BlockCurveUpEndPage0BOTTOMfrom38to37:	equ CurveUpEndBlock6
 	CurveUpEndPage0BOTTOMChangedPixelsfrom38to37:
@@ -1530,7 +1530,7 @@ CurveUpEndBlock6:  			equ   ($-RomStartAddress) and (romsize-1) / RomBlockSize
 	CurveUpEndPage0BOTTOMWriteInstructionsfrom38to37:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\BOTTOMwriteinstructionsfrom38to37.bin"
 
-;81E9
+;B7A4
 
 	BlockCurveUpEndPage1TOPfrom38to37:	equ CurveUpEndBlock6
 	CurveUpEndPage1TOPChangedPixelsfrom38to37:
@@ -1540,7 +1540,7 @@ CurveUpEndBlock6:  			equ   ($-RomStartAddress) and (romsize-1) / RomBlockSize
 	CurveUpEndPage1TOPWriteInstructionsfrom38to37:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\TOPwriteinstructionsfrom38to37.bin"
 
-;833D
+;BACE
 
 	BlockCurveUpEndPage1BOTTOMfrom38to37:	equ CurveUpEndBlock6
 	CurveUpEndPage1BOTTOMChangedPixelsfrom38to37:
@@ -1550,7 +1550,7 @@ CurveUpEndBlock6:  			equ   ($-RomStartAddress) and (romsize-1) / RomBlockSize
 	CurveUpEndPage1BOTTOMWriteInstructionsfrom38to37:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\BOTTOMwriteinstructionsfrom38to37.bin"
 
-;83D2
+;BDA2
 
 	BlockCurveUpEndPage0TOPfrom39to38:	equ CurveUpEndBlock6
 	CurveUpEndPage0TOPChangedPixelsfrom39to38:
@@ -1560,247 +1560,7 @@ CurveUpEndBlock6:  			equ   ($-RomStartAddress) and (romsize-1) / RomBlockSize
 	CurveUpEndPage0TOPWriteInstructionsfrom39to38:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\TOPwriteinstructionsfrom39to38.bin"
 
-;86AE
-
-	BlockCurveUpEndPage0BOTTOMfrom39to38:	equ CurveUpEndBlock6
-	CurveUpEndPage0BOTTOMChangedPixelsfrom39to38:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\BOTTOMchangedpixelsfrom39to38.bin"
-	CurveUpEndPage0BOTTOMAddressesfrom39to38:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\BOTTOMaddressesfrom39to38.bin"
-	CurveUpEndPage0BOTTOMWriteInstructionsfrom39to38:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\BOTTOMwriteinstructionsfrom39to38.bin"
-
-;8A80
-
-	BlockCurveUpEndPage1TOPfrom39to38:	equ CurveUpEndBlock6
-	CurveUpEndPage1TOPChangedPixelsfrom39to38:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\TOPchangedpixelsfrom39to38.bin"
-	CurveUpEndPage1TOPAddressesfrom39to38:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\TOPaddressesfrom39to38.bin"
-	CurveUpEndPage1TOPWriteInstructionsfrom39to38:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\TOPwriteinstructionsfrom39to38.bin"
-
-;8D5C
-
-	BlockCurveUpEndPage1BOTTOMfrom39to38:	equ CurveUpEndBlock6
-	CurveUpEndPage1BOTTOMChangedPixelsfrom39to38:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\BOTTOMchangedpixelsfrom39to38.bin"
-	CurveUpEndPage1BOTTOMAddressesfrom39to38:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\BOTTOMaddressesfrom39to38.bin"
-	CurveUpEndPage1BOTTOMWriteInstructionsfrom39to38:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\BOTTOMwriteinstructionsfrom39to38.bin"
-
-;912E
-
-	BlockCurveUpEndPage0TOPfrom40to39:	equ CurveUpEndBlock6
-	CurveUpEndPage0TOPChangedPixelsfrom40to39:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\TOPchangedpixelsfrom40to39.bin"
-	CurveUpEndPage0TOPAddressesfrom40to39:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\TOPaddressesfrom40to39.bin"
-	CurveUpEndPage0TOPWriteInstructionsfrom40to39:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\TOPwriteinstructionsfrom40to39.bin"
-
-;921B
-
-	BlockCurveUpEndPage0BOTTOMfrom40to39:	equ CurveUpEndBlock6
-	CurveUpEndPage0BOTTOMChangedPixelsfrom40to39:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\BOTTOMchangedpixelsfrom40to39.bin"
-	CurveUpEndPage0BOTTOMAddressesfrom40to39:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\BOTTOMaddressesfrom40to39.bin"
-	CurveUpEndPage0BOTTOMWriteInstructionsfrom40to39:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\BOTTOMwriteinstructionsfrom40to39.bin"
-
-;94A8
-
-	BlockCurveUpEndPage1TOPfrom40to39:	equ CurveUpEndBlock6
-	CurveUpEndPage1TOPChangedPixelsfrom40to39:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\TOPchangedpixelsfrom40to39.bin"
-	CurveUpEndPage1TOPAddressesfrom40to39:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\TOPaddressesfrom40to39.bin"
-	CurveUpEndPage1TOPWriteInstructionsfrom40to39:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\TOPwriteinstructionsfrom40to39.bin"
-
-;9595
-
-	BlockCurveUpEndPage1BOTTOMfrom40to39:	equ CurveUpEndBlock6
-	CurveUpEndPage1BOTTOMChangedPixelsfrom40to39:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\BOTTOMchangedpixelsfrom40to39.bin"
-	CurveUpEndPage1BOTTOMAddressesfrom40to39:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\BOTTOMaddressesfrom40to39.bin"
-	CurveUpEndPage1BOTTOMWriteInstructionsfrom40to39:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\BOTTOMwriteinstructionsfrom40to39.bin"
-
-;9822
-
-	BlockCurveUpEndPage0TOPfrom41to40:	equ CurveUpEndBlock6
-	CurveUpEndPage0TOPChangedPixelsfrom41to40:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\TOPchangedpixelsfrom41to40.bin"
-	CurveUpEndPage0TOPAddressesfrom41to40:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\TOPaddressesfrom41to40.bin"
-	CurveUpEndPage0TOPWriteInstructionsfrom41to40:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\TOPwriteinstructionsfrom41to40.bin"
-
-;9AE2
-
-	BlockCurveUpEndPage0BOTTOMfrom41to40:	equ CurveUpEndBlock6
-	CurveUpEndPage0BOTTOMChangedPixelsfrom41to40:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\BOTTOMchangedpixelsfrom41to40.bin"
-	CurveUpEndPage0BOTTOMAddressesfrom41to40:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\BOTTOMaddressesfrom41to40.bin"
-	CurveUpEndPage0BOTTOMWriteInstructionsfrom41to40:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\BOTTOMwriteinstructionsfrom41to40.bin"
-
-;9D72
-
-	BlockCurveUpEndPage1TOPfrom41to40:	equ CurveUpEndBlock6
-	CurveUpEndPage1TOPChangedPixelsfrom41to40:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\TOPchangedpixelsfrom41to40.bin"
-	CurveUpEndPage1TOPAddressesfrom41to40:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\TOPaddressesfrom41to40.bin"
-	CurveUpEndPage1TOPWriteInstructionsfrom41to40:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\TOPwriteinstructionsfrom41to40.bin"
-
-;A032
-
-	BlockCurveUpEndPage1BOTTOMfrom41to40:	equ CurveUpEndBlock6
-	CurveUpEndPage1BOTTOMChangedPixelsfrom41to40:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\BOTTOMchangedpixelsfrom41to40.bin"
-	CurveUpEndPage1BOTTOMAddressesfrom41to40:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\BOTTOMaddressesfrom41to40.bin"
-	CurveUpEndPage1BOTTOMWriteInstructionsfrom41to40:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\BOTTOMwriteinstructionsfrom41to40.bin"
-
-;A2C2
-
-	BlockCurveUpEndPage0TOPfrom42to41:	equ CurveUpEndBlock6
-	CurveUpEndPage0TOPChangedPixelsfrom42to41:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\TOPchangedpixelsfrom42to41.bin"
-	CurveUpEndPage0TOPAddressesfrom42to41:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\TOPaddressesfrom42to41.bin"
-	CurveUpEndPage0TOPWriteInstructionsfrom42to41:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\TOPwriteinstructionsfrom42to41.bin"
-
-;A450
-
-	BlockCurveUpEndPage0BOTTOMfrom42to41:	equ CurveUpEndBlock6
-	CurveUpEndPage0BOTTOMChangedPixelsfrom42to41:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\BOTTOMchangedpixelsfrom42to41.bin"
-	CurveUpEndPage0BOTTOMAddressesfrom42to41:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\BOTTOMaddressesfrom42to41.bin"
-	CurveUpEndPage0BOTTOMWriteInstructionsfrom42to41:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\BOTTOMwriteinstructionsfrom42to41.bin"
-
-;A67E
-
-	BlockCurveUpEndPage1TOPfrom42to41:	equ CurveUpEndBlock6
-	CurveUpEndPage1TOPChangedPixelsfrom42to41:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\TOPchangedpixelsfrom42to41.bin"
-	CurveUpEndPage1TOPAddressesfrom42to41:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\TOPaddressesfrom42to41.bin"
-	CurveUpEndPage1TOPWriteInstructionsfrom42to41:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\TOPwriteinstructionsfrom42to41.bin"
-
-;A80C
-
-	BlockCurveUpEndPage1BOTTOMfrom42to41:	equ CurveUpEndBlock6
-	CurveUpEndPage1BOTTOMChangedPixelsfrom42to41:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\BOTTOMchangedpixelsfrom42to41.bin"
-	CurveUpEndPage1BOTTOMAddressesfrom42to41:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\BOTTOMaddressesfrom42to41.bin"
-	CurveUpEndPage1BOTTOMWriteInstructionsfrom42to41:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\BOTTOMwriteinstructionsfrom42to41.bin"
-
-;AA3A
-
-	BlockCurveUpEndPage0TOPfrom43to42:	equ CurveUpEndBlock6
-	CurveUpEndPage0TOPChangedPixelsfrom43to42:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\TOPchangedpixelsfrom43to42.bin"
-	CurveUpEndPage0TOPAddressesfrom43to42:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\TOPaddressesfrom43to42.bin"
-	CurveUpEndPage0TOPWriteInstructionsfrom43to42:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\TOPwriteinstructionsfrom43to42.bin"
-
-;ACF2
-
-	BlockCurveUpEndPage0BOTTOMfrom43to42:	equ CurveUpEndBlock6
-	CurveUpEndPage0BOTTOMChangedPixelsfrom43to42:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\BOTTOMchangedpixelsfrom43to42.bin"
-	CurveUpEndPage0BOTTOMAddressesfrom43to42:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\BOTTOMaddressesfrom43to42.bin"
-	CurveUpEndPage0BOTTOMWriteInstructionsfrom43to42:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\BOTTOMwriteinstructionsfrom43to42.bin"
-
-;AF97
-
-	BlockCurveUpEndPage1TOPfrom43to42:	equ CurveUpEndBlock6
-	CurveUpEndPage1TOPChangedPixelsfrom43to42:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\TOPchangedpixelsfrom43to42.bin"
-	CurveUpEndPage1TOPAddressesfrom43to42:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\TOPaddressesfrom43to42.bin"
-	CurveUpEndPage1TOPWriteInstructionsfrom43to42:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\TOPwriteinstructionsfrom43to42.bin"
-
-;B24F
-
-	BlockCurveUpEndPage1BOTTOMfrom43to42:	equ CurveUpEndBlock6
-	CurveUpEndPage1BOTTOMChangedPixelsfrom43to42:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\BOTTOMchangedpixelsfrom43to42.bin"
-	CurveUpEndPage1BOTTOMAddressesfrom43to42:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\BOTTOMaddressesfrom43to42.bin"
-	CurveUpEndPage1BOTTOMWriteInstructionsfrom43to42:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\BOTTOMwriteinstructionsfrom43to42.bin"
-
-;B4F4
-
-	BlockCurveUpEndPage0TOPfrom44to43:	equ CurveUpEndBlock6
-	CurveUpEndPage0TOPChangedPixelsfrom44to43:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\TOPchangedpixelsfrom44to43.bin"
-	CurveUpEndPage0TOPAddressesfrom44to43:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\TOPaddressesfrom44to43.bin"
-	CurveUpEndPage0TOPWriteInstructionsfrom44to43:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\TOPwriteinstructionsfrom44to43.bin"
-
-;B60B
-
-	BlockCurveUpEndPage0BOTTOMfrom44to43:	equ CurveUpEndBlock6
-	CurveUpEndPage0BOTTOMChangedPixelsfrom44to43:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\BOTTOMchangedpixelsfrom44to43.bin"
-	CurveUpEndPage0BOTTOMAddressesfrom44to43:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\BOTTOMaddressesfrom44to43.bin"
-	CurveUpEndPage0BOTTOMWriteInstructionsfrom44to43:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\BOTTOMwriteinstructionsfrom44to43.bin"
-
-;B83E
-
-	BlockCurveUpEndPage1TOPfrom44to43:	equ CurveUpEndBlock6
-	CurveUpEndPage1TOPChangedPixelsfrom44to43:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\TOPchangedpixelsfrom44to43.bin"
-	CurveUpEndPage1TOPAddressesfrom44to43:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\TOPaddressesfrom44to43.bin"
-	CurveUpEndPage1TOPWriteInstructionsfrom44to43:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\TOPwriteinstructionsfrom44to43.bin"
-
-;B955
-
-	BlockCurveUpEndPage1BOTTOMfrom44to43:	equ CurveUpEndBlock6
-	CurveUpEndPage1BOTTOMChangedPixelsfrom44to43:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\BOTTOMchangedpixelsfrom44to43.bin"
-	CurveUpEndPage1BOTTOMAddressesfrom44to43:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\BOTTOMaddressesfrom44to43.bin"
-	CurveUpEndPage1BOTTOMWriteInstructionsfrom44to43:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\BOTTOMwriteinstructionsfrom44to43.bin"
-
-;BB88
-
-	BlockCurveUpEndPage0TOPfrom45to44:	equ CurveUpEndBlock6
-	CurveUpEndPage0TOPChangedPixelsfrom45to44:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\TOPchangedpixelsfrom45to44.bin"
-	CurveUpEndPage0TOPAddressesfrom45to44:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\TOPaddressesfrom45to44.bin"
-	CurveUpEndPage0TOPWriteInstructionsfrom45to44:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\TOPwriteinstructionsfrom45to44.bin"
-
-;BED3
+;BF8C
 
 	dephase	
 	DS RomBlockSize - $ and (RomBlockSize - 1), -1	; fill remainder of block
@@ -1808,275 +1568,235 @@ CurveUpEndBlock6:  			equ   ($-RomStartAddress) and (romsize-1) / RomBlockSize
 CurveUpEndBlock7:  			equ   ($-RomStartAddress) and (romsize-1) / RomBlockSize
 	phase 0x8000
 
-	BlockCurveUpEndPage0BOTTOMfrom45to44:	equ CurveUpEndBlock7
-	CurveUpEndPage0BOTTOMChangedPixelsfrom45to44:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\BOTTOMchangedpixelsfrom45to44.bin"
-	CurveUpEndPage0BOTTOMAddressesfrom45to44:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\BOTTOMaddressesfrom45to44.bin"
-	CurveUpEndPage0BOTTOMWriteInstructionsfrom45to44:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\BOTTOMwriteinstructionsfrom45to44.bin"
+	BlockCurveUpEndPage0BOTTOMfrom39to38:	equ CurveUpEndBlock7
+	CurveUpEndPage0BOTTOMChangedPixelsfrom39to38:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\BOTTOMchangedpixelsfrom39to38.bin"
+	CurveUpEndPage0BOTTOMAddressesfrom39to38:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\BOTTOMaddressesfrom39to38.bin"
+	CurveUpEndPage0BOTTOMWriteInstructionsfrom39to38:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\BOTTOMwriteinstructionsfrom39to38.bin"
 
-;822E
+;82A5
 
-	BlockCurveUpEndPage1TOPfrom45to44:	equ CurveUpEndBlock7
-	CurveUpEndPage1TOPChangedPixelsfrom45to44:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\TOPchangedpixelsfrom45to44.bin"
-	CurveUpEndPage1TOPAddressesfrom45to44:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\TOPaddressesfrom45to44.bin"
-	CurveUpEndPage1TOPWriteInstructionsfrom45to44:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\TOPwriteinstructionsfrom45to44.bin"
+	BlockCurveUpEndPage1TOPfrom39to38:	equ CurveUpEndBlock7
+	CurveUpEndPage1TOPChangedPixelsfrom39to38:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\TOPchangedpixelsfrom39to38.bin"
+	CurveUpEndPage1TOPAddressesfrom39to38:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\TOPaddressesfrom39to38.bin"
+	CurveUpEndPage1TOPWriteInstructionsfrom39to38:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\TOPwriteinstructionsfrom39to38.bin"
 
-;8579
+;83F9
 
-	BlockCurveUpEndPage1BOTTOMfrom45to44:	equ CurveUpEndBlock7
-	CurveUpEndPage1BOTTOMChangedPixelsfrom45to44:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\BOTTOMchangedpixelsfrom45to44.bin"
-	CurveUpEndPage1BOTTOMAddressesfrom45to44:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\BOTTOMaddressesfrom45to44.bin"
-	CurveUpEndPage1BOTTOMWriteInstructionsfrom45to44:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\BOTTOMwriteinstructionsfrom45to44.bin"
+	BlockCurveUpEndPage1BOTTOMfrom39to38:	equ CurveUpEndBlock7
+	CurveUpEndPage1BOTTOMChangedPixelsfrom39to38:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\BOTTOMchangedpixelsfrom39to38.bin"
+	CurveUpEndPage1BOTTOMAddressesfrom39to38:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\BOTTOMaddressesfrom39to38.bin"
+	CurveUpEndPage1BOTTOMWriteInstructionsfrom39to38:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\BOTTOMwriteinstructionsfrom39to38.bin"
 
-;87A7
+;85DB
 
-	BlockCurveUpEndPage0TOPfrom46to45:	equ CurveUpEndBlock7
-	CurveUpEndPage0TOPChangedPixelsfrom46to45:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\TOPchangedpixelsfrom46to45.bin"
-	CurveUpEndPage0TOPAddressesfrom46to45:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\TOPaddressesfrom46to45.bin"
-	CurveUpEndPage0TOPWriteInstructionsfrom46to45:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\TOPwriteinstructionsfrom46to45.bin"
+	BlockCurveUpEndPage0TOPfrom40to39:	equ CurveUpEndBlock7
+	CurveUpEndPage0TOPChangedPixelsfrom40to39:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\TOPchangedpixelsfrom40to39.bin"
+	CurveUpEndPage0TOPAddressesfrom40to39:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\TOPaddressesfrom40to39.bin"
+	CurveUpEndPage0TOPWriteInstructionsfrom40to39:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\TOPwriteinstructionsfrom40to39.bin"
 
-;8938
+;89B4
 
-	BlockCurveUpEndPage0BOTTOMfrom46to45:	equ CurveUpEndBlock7
-	CurveUpEndPage0BOTTOMChangedPixelsfrom46to45:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\BOTTOMchangedpixelsfrom46to45.bin"
-	CurveUpEndPage0BOTTOMAddressesfrom46to45:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\BOTTOMaddressesfrom46to45.bin"
-	CurveUpEndPage0BOTTOMWriteInstructionsfrom46to45:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\BOTTOMwriteinstructionsfrom46to45.bin"
+	BlockCurveUpEndPage0BOTTOMfrom40to39:	equ CurveUpEndBlock7
+	CurveUpEndPage0BOTTOMChangedPixelsfrom40to39:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\BOTTOMchangedpixelsfrom40to39.bin"
+	CurveUpEndPage0BOTTOMAddressesfrom40to39:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\BOTTOMaddressesfrom40to39.bin"
+	CurveUpEndPage0BOTTOMWriteInstructionsfrom40to39:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\BOTTOMwriteinstructionsfrom40to39.bin"
 
-;8B8A
+;8CA6
 
-	BlockCurveUpEndPage1TOPfrom46to45:	equ CurveUpEndBlock7
-	CurveUpEndPage1TOPChangedPixelsfrom46to45:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\TOPchangedpixelsfrom46to45.bin"
-	CurveUpEndPage1TOPAddressesfrom46to45:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\TOPaddressesfrom46to45.bin"
-	CurveUpEndPage1TOPWriteInstructionsfrom46to45:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\TOPwriteinstructionsfrom46to45.bin"
+	BlockCurveUpEndPage1TOPfrom40to39:	equ CurveUpEndBlock7
+	CurveUpEndPage1TOPChangedPixelsfrom40to39:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\TOPchangedpixelsfrom40to39.bin"
+	CurveUpEndPage1TOPAddressesfrom40to39:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\TOPaddressesfrom40to39.bin"
+	CurveUpEndPage1TOPWriteInstructionsfrom40to39:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\TOPwriteinstructionsfrom40to39.bin"
 
-;8D1B
+;8FD0
 
-	BlockCurveUpEndPage1BOTTOMfrom46to45:	equ CurveUpEndBlock7
-	CurveUpEndPage1BOTTOMChangedPixelsfrom46to45:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\BOTTOMchangedpixelsfrom46to45.bin"
-	CurveUpEndPage1BOTTOMAddressesfrom46to45:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\BOTTOMaddressesfrom46to45.bin"
-	CurveUpEndPage1BOTTOMWriteInstructionsfrom46to45:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\BOTTOMwriteinstructionsfrom46to45.bin"
+	BlockCurveUpEndPage1BOTTOMfrom40to39:	equ CurveUpEndBlock7
+	CurveUpEndPage1BOTTOMChangedPixelsfrom40to39:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\BOTTOMchangedpixelsfrom40to39.bin"
+	CurveUpEndPage1BOTTOMAddressesfrom40to39:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\BOTTOMaddressesfrom40to39.bin"
+	CurveUpEndPage1BOTTOMWriteInstructionsfrom40to39:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\BOTTOMwriteinstructionsfrom40to39.bin"
 
-;8F6D
+;91DE
 
-	BlockCurveUpEndPage0TOPfrom47to46:	equ CurveUpEndBlock7
-	CurveUpEndPage0TOPChangedPixelsfrom47to46:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\TOPchangedpixelsfrom47to46.bin"
-	CurveUpEndPage0TOPAddressesfrom47to46:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\TOPaddressesfrom47to46.bin"
-	CurveUpEndPage0TOPWriteInstructionsfrom47to46:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\TOPwriteinstructionsfrom47to46.bin"
+	BlockCurveUpEndPage0TOPfrom41to40:	equ CurveUpEndBlock7
+	CurveUpEndPage0TOPChangedPixelsfrom41to40:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\TOPchangedpixelsfrom41to40.bin"
+	CurveUpEndPage0TOPAddressesfrom41to40:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\TOPaddressesfrom41to40.bin"
+	CurveUpEndPage0TOPWriteInstructionsfrom41to40:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\TOPwriteinstructionsfrom41to40.bin"
 
-;920C
+;956B
 
-	BlockCurveUpEndPage0BOTTOMfrom47to46:	equ CurveUpEndBlock7
-	CurveUpEndPage0BOTTOMChangedPixelsfrom47to46:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\BOTTOMchangedpixelsfrom47to46.bin"
-	CurveUpEndPage0BOTTOMAddressesfrom47to46:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\BOTTOMaddressesfrom47to46.bin"
-	CurveUpEndPage0BOTTOMWriteInstructionsfrom47to46:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\BOTTOMwriteinstructionsfrom47to46.bin"
+	BlockCurveUpEndPage0BOTTOMfrom41to40:	equ CurveUpEndBlock7
+	CurveUpEndPage0BOTTOMChangedPixelsfrom41to40:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\BOTTOMchangedpixelsfrom41to40.bin"
+	CurveUpEndPage0BOTTOMAddressesfrom41to40:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\BOTTOMaddressesfrom41to40.bin"
+	CurveUpEndPage0BOTTOMWriteInstructionsfrom41to40:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\BOTTOMwriteinstructionsfrom41to40.bin"
 
-;957C
+;9889
 
-	BlockCurveUpEndPage1TOPfrom47to46:	equ CurveUpEndBlock7
-	CurveUpEndPage1TOPChangedPixelsfrom47to46:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\TOPchangedpixelsfrom47to46.bin"
-	CurveUpEndPage1TOPAddressesfrom47to46:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\TOPaddressesfrom47to46.bin"
-	CurveUpEndPage1TOPWriteInstructionsfrom47to46:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\TOPwriteinstructionsfrom47to46.bin"
+	BlockCurveUpEndPage1TOPfrom41to40:	equ CurveUpEndBlock7
+	CurveUpEndPage1TOPChangedPixelsfrom41to40:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\TOPchangedpixelsfrom41to40.bin"
+	CurveUpEndPage1TOPAddressesfrom41to40:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\TOPaddressesfrom41to40.bin"
+	CurveUpEndPage1TOPWriteInstructionsfrom41to40:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\TOPwriteinstructionsfrom41to40.bin"
 
-;981B
+;9B83
 
-	BlockCurveUpEndPage1BOTTOMfrom47to46:	equ CurveUpEndBlock7
-	CurveUpEndPage1BOTTOMChangedPixelsfrom47to46:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\BOTTOMchangedpixelsfrom47to46.bin"
-	CurveUpEndPage1BOTTOMAddressesfrom47to46:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\BOTTOMaddressesfrom47to46.bin"
-	CurveUpEndPage1BOTTOMWriteInstructionsfrom47to46:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\BOTTOMwriteinstructionsfrom47to46.bin"
+	BlockCurveUpEndPage1BOTTOMfrom41to40:	equ CurveUpEndBlock7
+	CurveUpEndPage1BOTTOMChangedPixelsfrom41to40:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\BOTTOMchangedpixelsfrom41to40.bin"
+	CurveUpEndPage1BOTTOMAddressesfrom41to40:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\BOTTOMaddressesfrom41to40.bin"
+	CurveUpEndPage1BOTTOMWriteInstructionsfrom41to40:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\BOTTOMwriteinstructionsfrom41to40.bin"
 
-;9B8B
+;9DC5
 
-	BlockCurveUpEndPage0TOPfrom48to47:	equ CurveUpEndBlock7
-	CurveUpEndPage0TOPChangedPixelsfrom48to47:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\TOPchangedpixelsfrom48to47.bin"
-	CurveUpEndPage0TOPAddressesfrom48to47:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\TOPaddressesfrom48to47.bin"
-	CurveUpEndPage0TOPWriteInstructionsfrom48to47:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\TOPwriteinstructionsfrom48to47.bin"
+	BlockCurveUpEndPage0TOPfrom42to41:	equ CurveUpEndBlock7
+	CurveUpEndPage0TOPChangedPixelsfrom42to41:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\TOPchangedpixelsfrom42to41.bin"
+	CurveUpEndPage0TOPAddressesfrom42to41:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\TOPaddressesfrom42to41.bin"
+	CurveUpEndPage0TOPWriteInstructionsfrom42to41:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\TOPwriteinstructionsfrom42to41.bin"
 
-;9CA4
+;A000
 
-	BlockCurveUpEndPage0BOTTOMfrom48to47:	equ CurveUpEndBlock7
-	CurveUpEndPage0BOTTOMChangedPixelsfrom48to47:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\BOTTOMchangedpixelsfrom48to47.bin"
-	CurveUpEndPage0BOTTOMAddressesfrom48to47:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\BOTTOMaddressesfrom48to47.bin"
-	CurveUpEndPage0BOTTOMWriteInstructionsfrom48to47:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\BOTTOMwriteinstructionsfrom48to47.bin"
+	BlockCurveUpEndPage0BOTTOMfrom42to41:	equ CurveUpEndBlock7
+	CurveUpEndPage0BOTTOMChangedPixelsfrom42to41:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\BOTTOMchangedpixelsfrom42to41.bin"
+	CurveUpEndPage0BOTTOMAddressesfrom42to41:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\BOTTOMaddressesfrom42to41.bin"
+	CurveUpEndPage0BOTTOMWriteInstructionsfrom42to41:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\BOTTOMwriteinstructionsfrom42to41.bin"
 
-;9F1C
+;A2EE
 
-	BlockCurveUpEndPage1TOPfrom48to47:	equ CurveUpEndBlock7
-	CurveUpEndPage1TOPChangedPixelsfrom48to47:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\TOPchangedpixelsfrom48to47.bin"
-	CurveUpEndPage1TOPAddressesfrom48to47:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\TOPaddressesfrom48to47.bin"
-	CurveUpEndPage1TOPWriteInstructionsfrom48to47:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\TOPwriteinstructionsfrom48to47.bin"
+	BlockCurveUpEndPage1TOPfrom42to41:	equ CurveUpEndBlock7
+	CurveUpEndPage1TOPChangedPixelsfrom42to41:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\TOPchangedpixelsfrom42to41.bin"
+	CurveUpEndPage1TOPAddressesfrom42to41:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\TOPaddressesfrom42to41.bin"
+	CurveUpEndPage1TOPWriteInstructionsfrom42to41:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\TOPwriteinstructionsfrom42to41.bin"
 
-;A035
+;A47A
 
-	BlockCurveUpEndPage1BOTTOMfrom48to47:	equ CurveUpEndBlock7
-	CurveUpEndPage1BOTTOMChangedPixelsfrom48to47:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\BOTTOMchangedpixelsfrom48to47.bin"
-	CurveUpEndPage1BOTTOMAddressesfrom48to47:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\BOTTOMaddressesfrom48to47.bin"
-	CurveUpEndPage1BOTTOMWriteInstructionsfrom48to47:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\BOTTOMwriteinstructionsfrom48to47.bin"
+	BlockCurveUpEndPage1BOTTOMfrom42to41:	equ CurveUpEndBlock7
+	CurveUpEndPage1BOTTOMChangedPixelsfrom42to41:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\BOTTOMchangedpixelsfrom42to41.bin"
+	CurveUpEndPage1BOTTOMAddressesfrom42to41:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\BOTTOMaddressesfrom42to41.bin"
+	CurveUpEndPage1BOTTOMWriteInstructionsfrom42to41:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\BOTTOMwriteinstructionsfrom42to41.bin"
 
-;A2AD
+;A68A
 
-	BlockCurveUpEndPage0TOPfrom49to48:	equ CurveUpEndBlock7
-	CurveUpEndPage0TOPChangedPixelsfrom49to48:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\TOPchangedpixelsfrom49to48.bin"
-	CurveUpEndPage0TOPAddressesfrom49to48:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\TOPaddressesfrom49to48.bin"
-	CurveUpEndPage0TOPWriteInstructionsfrom49to48:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\TOPwriteinstructionsfrom49to48.bin"
+	BlockCurveUpEndPage0TOPfrom43to42:	equ CurveUpEndBlock7
+	CurveUpEndPage0TOPChangedPixelsfrom43to42:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\TOPchangedpixelsfrom43to42.bin"
+	CurveUpEndPage0TOPAddressesfrom43to42:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\TOPaddressesfrom43to42.bin"
+	CurveUpEndPage0TOPWriteInstructionsfrom43to42:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\TOPwriteinstructionsfrom43to42.bin"
 
-;A61F
+;A9DD
 
-	BlockCurveUpEndPage0BOTTOMfrom49to48:	equ CurveUpEndBlock7
-	CurveUpEndPage0BOTTOMChangedPixelsfrom49to48:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\BOTTOMchangedpixelsfrom49to48.bin"
-	CurveUpEndPage0BOTTOMAddressesfrom49to48:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\BOTTOMaddressesfrom49to48.bin"
-	CurveUpEndPage0BOTTOMWriteInstructionsfrom49to48:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\BOTTOMwriteinstructionsfrom49to48.bin"
+	BlockCurveUpEndPage0BOTTOMfrom43to42:	equ CurveUpEndBlock7
+	CurveUpEndPage0BOTTOMChangedPixelsfrom43to42:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\BOTTOMchangedpixelsfrom43to42.bin"
+	CurveUpEndPage0BOTTOMAddressesfrom43to42:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\BOTTOMaddressesfrom43to42.bin"
+	CurveUpEndPage0BOTTOMWriteInstructionsfrom43to42:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\BOTTOMwriteinstructionsfrom43to42.bin"
 
-;A765
+;AD16
 
-	BlockCurveUpEndPage1TOPfrom49to48:	equ CurveUpEndBlock7
-	CurveUpEndPage1TOPChangedPixelsfrom49to48:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\TOPchangedpixelsfrom49to48.bin"
-	CurveUpEndPage1TOPAddressesfrom49to48:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\TOPaddressesfrom49to48.bin"
-	CurveUpEndPage1TOPWriteInstructionsfrom49to48:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\TOPwriteinstructionsfrom49to48.bin"
+	BlockCurveUpEndPage1TOPfrom43to42:	equ CurveUpEndBlock7
+	CurveUpEndPage1TOPChangedPixelsfrom43to42:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\TOPchangedpixelsfrom43to42.bin"
+	CurveUpEndPage1TOPAddressesfrom43to42:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\TOPaddressesfrom43to42.bin"
+	CurveUpEndPage1TOPWriteInstructionsfrom43to42:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\TOPwriteinstructionsfrom43to42.bin"
 
-;AAD7
+;AFEC
 
-	BlockCurveUpEndPage1BOTTOMfrom49to48:	equ CurveUpEndBlock7
-	CurveUpEndPage1BOTTOMChangedPixelsfrom49to48:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\BOTTOMchangedpixelsfrom49to48.bin"
-	CurveUpEndPage1BOTTOMAddressesfrom49to48:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\BOTTOMaddressesfrom49to48.bin"
-	CurveUpEndPage1BOTTOMWriteInstructionsfrom49to48:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\BOTTOMwriteinstructionsfrom49to48.bin"
+	BlockCurveUpEndPage1BOTTOMfrom43to42:	equ CurveUpEndBlock7
+	CurveUpEndPage1BOTTOMChangedPixelsfrom43to42:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\BOTTOMchangedpixelsfrom43to42.bin"
+	CurveUpEndPage1BOTTOMAddressesfrom43to42:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\BOTTOMaddressesfrom43to42.bin"
+	CurveUpEndPage1BOTTOMWriteInstructionsfrom43to42:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\BOTTOMwriteinstructionsfrom43to42.bin"
 
-;AC1D
+;B23C
 
-	BlockCurveUpEndPage0TOPfrom50to49:	equ CurveUpEndBlock7
-	CurveUpEndPage0TOPChangedPixelsfrom50to49:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\TOPchangedpixelsfrom50to49.bin"
-	CurveUpEndPage0TOPAddressesfrom50to49:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\TOPaddressesfrom50to49.bin"
-	CurveUpEndPage0TOPWriteInstructionsfrom50to49:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\TOPwriteinstructionsfrom50to49.bin"
+	BlockCurveUpEndPage0TOPfrom44to43:	equ CurveUpEndBlock7
+	CurveUpEndPage0TOPChangedPixelsfrom44to43:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\TOPchangedpixelsfrom44to43.bin"
+	CurveUpEndPage0TOPAddressesfrom44to43:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\TOPaddressesfrom44to43.bin"
+	CurveUpEndPage0TOPWriteInstructionsfrom44to43:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\TOPwriteinstructionsfrom44to43.bin"
 
-;ADCC
+;B620
 
-	BlockCurveUpEndPage0BOTTOMfrom50to49:	equ CurveUpEndBlock7
-	CurveUpEndPage0BOTTOMChangedPixelsfrom50to49:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\BOTTOMchangedpixelsfrom50to49.bin"
-	CurveUpEndPage0BOTTOMAddressesfrom50to49:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\BOTTOMaddressesfrom50to49.bin"
-	CurveUpEndPage0BOTTOMWriteInstructionsfrom50to49:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\BOTTOMwriteinstructionsfrom50to49.bin"
+	BlockCurveUpEndPage0BOTTOMfrom44to43:	equ CurveUpEndBlock7
+	CurveUpEndPage0BOTTOMChangedPixelsfrom44to43:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\BOTTOMchangedpixelsfrom44to43.bin"
+	CurveUpEndPage0BOTTOMAddressesfrom44to43:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\BOTTOMaddressesfrom44to43.bin"
+	CurveUpEndPage0BOTTOMWriteInstructionsfrom44to43:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\BOTTOMwriteinstructionsfrom44to43.bin"
 
-;B084
+;B922
 
-	BlockCurveUpEndPage1TOPfrom50to49:	equ CurveUpEndBlock7
-	CurveUpEndPage1TOPChangedPixelsfrom50to49:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\TOPchangedpixelsfrom50to49.bin"
-	CurveUpEndPage1TOPAddressesfrom50to49:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\TOPaddressesfrom50to49.bin"
-	CurveUpEndPage1TOPWriteInstructionsfrom50to49:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\TOPwriteinstructionsfrom50to49.bin"
+	BlockCurveUpEndPage1TOPfrom44to43:	equ CurveUpEndBlock7
+	CurveUpEndPage1TOPChangedPixelsfrom44to43:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\TOPchangedpixelsfrom44to43.bin"
+	CurveUpEndPage1TOPAddressesfrom44to43:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\TOPaddressesfrom44to43.bin"
+	CurveUpEndPage1TOPWriteInstructionsfrom44to43:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\TOPwriteinstructionsfrom44to43.bin"
 
-;B233
+;BC3E
 
-	BlockCurveUpEndPage1BOTTOMfrom50to49:	equ CurveUpEndBlock7
-	CurveUpEndPage1BOTTOMChangedPixelsfrom50to49:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\BOTTOMchangedpixelsfrom50to49.bin"
-	CurveUpEndPage1BOTTOMAddressesfrom50to49:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\BOTTOMaddressesfrom50to49.bin"
-	CurveUpEndPage1BOTTOMWriteInstructionsfrom50to49:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\BOTTOMwriteinstructionsfrom50to49.bin"
+	BlockCurveUpEndPage1BOTTOMfrom44to43:	equ CurveUpEndBlock7
+	CurveUpEndPage1BOTTOMChangedPixelsfrom44to43:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\BOTTOMchangedpixelsfrom44to43.bin"
+	CurveUpEndPage1BOTTOMAddressesfrom44to43:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\BOTTOMaddressesfrom44to43.bin"
+	CurveUpEndPage1BOTTOMWriteInstructionsfrom44to43:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\BOTTOMwriteinstructionsfrom44to43.bin"
 
-;B4EB
-
-	BlockCurveUpEndPage0TOPfrom51to50:	equ CurveUpEndBlock7
-	CurveUpEndPage0TOPChangedPixelsfrom51to50:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\TOPchangedpixelsfrom51to50.bin"
-	CurveUpEndPage0TOPAddressesfrom51to50:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\TOPaddressesfrom51to50.bin"
-	CurveUpEndPage0TOPWriteInstructionsfrom51to50:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\TOPwriteinstructionsfrom51to50.bin"
-
-;B78A
-
-	BlockCurveUpEndPage0BOTTOMfrom51to50:	equ CurveUpEndBlock7
-	CurveUpEndPage0BOTTOMChangedPixelsfrom51to50:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\BOTTOMchangedpixelsfrom51to50.bin"
-	CurveUpEndPage0BOTTOMAddressesfrom51to50:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\BOTTOMaddressesfrom51to50.bin"
-	CurveUpEndPage0BOTTOMWriteInstructionsfrom51to50:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\BOTTOMwriteinstructionsfrom51to50.bin"
-
-;B9BA
-
-	BlockCurveUpEndPage1TOPfrom51to50:	equ CurveUpEndBlock7
-	CurveUpEndPage1TOPChangedPixelsfrom51to50:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\TOPchangedpixelsfrom51to50.bin"
-	CurveUpEndPage1TOPAddressesfrom51to50:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\TOPaddressesfrom51to50.bin"
-	CurveUpEndPage1TOPWriteInstructionsfrom51to50:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\TOPwriteinstructionsfrom51to50.bin"
-
-;BC59
-
-	BlockCurveUpEndPage1BOTTOMfrom51to50:	equ CurveUpEndBlock7
-	CurveUpEndPage1BOTTOMChangedPixelsfrom51to50:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\BOTTOMchangedpixelsfrom51to50.bin"
-	CurveUpEndPage1BOTTOMAddressesfrom51to50:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\BOTTOMaddressesfrom51to50.bin"
-	CurveUpEndPage1BOTTOMWriteInstructionsfrom51to50:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\BOTTOMwriteinstructionsfrom51to50.bin"
-
-;BE89
+;BE88
 
 	dephase	
 	DS RomBlockSize - $ and (RomBlockSize - 1), -1	; fill remainder of block
@@ -2084,285 +1804,245 @@ CurveUpEndBlock7:  			equ   ($-RomStartAddress) and (romsize-1) / RomBlockSize
 CurveUpEndBlock8:  			equ   ($-RomStartAddress) and (romsize-1) / RomBlockSize
 	phase 0x8000
 
-	BlockCurveUpEndPage0TOPfrom52to51:	equ CurveUpEndBlock8
-	CurveUpEndPage0TOPChangedPixelsfrom52to51:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\TOPchangedpixelsfrom52to51.bin"
-	CurveUpEndPage0TOPAddressesfrom52to51:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\TOPaddressesfrom52to51.bin"
-	CurveUpEndPage0TOPWriteInstructionsfrom52to51:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\TOPwriteinstructionsfrom52to51.bin"
+	BlockCurveUpEndPage0TOPfrom45to44:	equ CurveUpEndBlock8
+	CurveUpEndPage0TOPChangedPixelsfrom45to44:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\TOPchangedpixelsfrom45to44.bin"
+	CurveUpEndPage0TOPAddressesfrom45to44:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\TOPaddressesfrom45to44.bin"
+	CurveUpEndPage0TOPWriteInstructionsfrom45to44:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\TOPwriteinstructionsfrom45to44.bin"
 
-;8191
+;83B8
 
-	BlockCurveUpEndPage0BOTTOMfrom52to51:	equ CurveUpEndBlock8
-	CurveUpEndPage0BOTTOMChangedPixelsfrom52to51:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\BOTTOMchangedpixelsfrom52to51.bin"
-	CurveUpEndPage0BOTTOMAddressesfrom52to51:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\BOTTOMaddressesfrom52to51.bin"
-	CurveUpEndPage0BOTTOMWriteInstructionsfrom52to51:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\BOTTOMwriteinstructionsfrom52to51.bin"
+	BlockCurveUpEndPage0BOTTOMfrom45to44:	equ CurveUpEndBlock8
+	CurveUpEndPage0BOTTOMChangedPixelsfrom45to44:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\BOTTOMchangedpixelsfrom45to44.bin"
+	CurveUpEndPage0BOTTOMAddressesfrom45to44:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\BOTTOMaddressesfrom45to44.bin"
+	CurveUpEndPage0BOTTOMWriteInstructionsfrom45to44:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\BOTTOMwriteinstructionsfrom45to44.bin"
 
-;8396
+;860C
 
-	BlockCurveUpEndPage1TOPfrom52to51:	equ CurveUpEndBlock8
-	CurveUpEndPage1TOPChangedPixelsfrom52to51:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\TOPchangedpixelsfrom52to51.bin"
-	CurveUpEndPage1TOPAddressesfrom52to51:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\TOPaddressesfrom52to51.bin"
-	CurveUpEndPage1TOPWriteInstructionsfrom52to51:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\TOPwriteinstructionsfrom52to51.bin"
+	BlockCurveUpEndPage1TOPfrom45to44:	equ CurveUpEndBlock8
+	CurveUpEndPage1TOPChangedPixelsfrom45to44:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\TOPchangedpixelsfrom45to44.bin"
+	CurveUpEndPage1TOPAddressesfrom45to44:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\TOPaddressesfrom45to44.bin"
+	CurveUpEndPage1TOPWriteInstructionsfrom45to44:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\TOPwriteinstructionsfrom45to44.bin"
 
-;8527
+;892E
 
-	BlockCurveUpEndPage1BOTTOMfrom52to51:	equ CurveUpEndBlock8
-	CurveUpEndPage1BOTTOMChangedPixelsfrom52to51:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\BOTTOMchangedpixelsfrom52to51.bin"
-	CurveUpEndPage1BOTTOMAddressesfrom52to51:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\BOTTOMaddressesfrom52to51.bin"
-	CurveUpEndPage1BOTTOMWriteInstructionsfrom52to51:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\BOTTOMwriteinstructionsfrom52to51.bin"
+	BlockCurveUpEndPage1BOTTOMfrom45to44:	equ CurveUpEndBlock8
+	CurveUpEndPage1BOTTOMChangedPixelsfrom45to44:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\BOTTOMchangedpixelsfrom45to44.bin"
+	CurveUpEndPage1BOTTOMAddressesfrom45to44:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\BOTTOMaddressesfrom45to44.bin"
+	CurveUpEndPage1BOTTOMWriteInstructionsfrom45to44:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\BOTTOMwriteinstructionsfrom45to44.bin"
 
-;872C
+;8ACE
 
-	BlockCurveUpEndPage0TOPfrom53to52:	equ CurveUpEndBlock8
-	CurveUpEndPage0TOPChangedPixelsfrom53to52:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\TOPchangedpixelsfrom53to52.bin"
-	CurveUpEndPage0TOPAddressesfrom53to52:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\TOPaddressesfrom53to52.bin"
-	CurveUpEndPage0TOPWriteInstructionsfrom53to52:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\TOPwriteinstructionsfrom53to52.bin"
+	BlockCurveUpEndPage0TOPfrom46to45:	equ CurveUpEndBlock8
+	CurveUpEndPage0TOPChangedPixelsfrom46to45:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\TOPchangedpixelsfrom46to45.bin"
+	CurveUpEndPage0TOPAddressesfrom46to45:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\TOPaddressesfrom46to45.bin"
+	CurveUpEndPage0TOPWriteInstructionsfrom46to45:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\TOPwriteinstructionsfrom46to45.bin"
 
-;8A7F
+;8D3A
 
-	BlockCurveUpEndPage0BOTTOMfrom53to52:	equ CurveUpEndBlock8
-	CurveUpEndPage0BOTTOMChangedPixelsfrom53to52:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\BOTTOMchangedpixelsfrom53to52.bin"
-	CurveUpEndPage0BOTTOMAddressesfrom53to52:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\BOTTOMaddressesfrom53to52.bin"
-	CurveUpEndPage0BOTTOMWriteInstructionsfrom53to52:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\BOTTOMwriteinstructionsfrom53to52.bin"
+	BlockCurveUpEndPage0BOTTOMfrom46to45:	equ CurveUpEndBlock8
+	CurveUpEndPage0BOTTOMChangedPixelsfrom46to45:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\BOTTOMchangedpixelsfrom46to45.bin"
+	CurveUpEndPage0BOTTOMAddressesfrom46to45:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\BOTTOMaddressesfrom46to45.bin"
+	CurveUpEndPage0BOTTOMWriteInstructionsfrom46to45:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\BOTTOMwriteinstructionsfrom46to45.bin"
 
-;8D71
+;90BE
 
-	BlockCurveUpEndPage1TOPfrom53to52:	equ CurveUpEndBlock8
-	CurveUpEndPage1TOPChangedPixelsfrom53to52:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\TOPchangedpixelsfrom53to52.bin"
-	CurveUpEndPage1TOPAddressesfrom53to52:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\TOPaddressesfrom53to52.bin"
-	CurveUpEndPage1TOPWriteInstructionsfrom53to52:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\TOPwriteinstructionsfrom53to52.bin"
+	BlockCurveUpEndPage1TOPfrom46to45:	equ CurveUpEndBlock8
+	CurveUpEndPage1TOPChangedPixelsfrom46to45:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\TOPchangedpixelsfrom46to45.bin"
+	CurveUpEndPage1TOPAddressesfrom46to45:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\TOPaddressesfrom46to45.bin"
+	CurveUpEndPage1TOPWriteInstructionsfrom46to45:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\TOPwriteinstructionsfrom46to45.bin"
 
-;90C4
+;9262
 
-	BlockCurveUpEndPage1BOTTOMfrom53to52:	equ CurveUpEndBlock8
-	CurveUpEndPage1BOTTOMChangedPixelsfrom53to52:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\BOTTOMchangedpixelsfrom53to52.bin"
-	CurveUpEndPage1BOTTOMAddressesfrom53to52:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\BOTTOMaddressesfrom53to52.bin"
-	CurveUpEndPage1BOTTOMWriteInstructionsfrom53to52:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\BOTTOMwriteinstructionsfrom53to52.bin"
+	BlockCurveUpEndPage1BOTTOMfrom46to45:	equ CurveUpEndBlock8
+	CurveUpEndPage1BOTTOMChangedPixelsfrom46to45:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\BOTTOMchangedpixelsfrom46to45.bin"
+	CurveUpEndPage1BOTTOMAddressesfrom46to45:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\BOTTOMaddressesfrom46to45.bin"
+	CurveUpEndPage1BOTTOMWriteInstructionsfrom46to45:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\BOTTOMwriteinstructionsfrom46to45.bin"
 
-;93B6
+;94C2
 
-	BlockCurveUpEndPage0TOPfrom54to53:	equ CurveUpEndBlock8
-	CurveUpEndPage0TOPChangedPixelsfrom54to53:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\TOPchangedpixelsfrom54to53.bin"
-	CurveUpEndPage0TOPAddressesfrom54to53:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\TOPaddressesfrom54to53.bin"
-	CurveUpEndPage0TOPWriteInstructionsfrom54to53:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\TOPwriteinstructionsfrom54to53.bin"
+	BlockCurveUpEndPage0TOPfrom47to46:	equ CurveUpEndBlock8
+	CurveUpEndPage0TOPChangedPixelsfrom47to46:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\TOPchangedpixelsfrom47to46.bin"
+	CurveUpEndPage0TOPAddressesfrom47to46:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\TOPaddressesfrom47to46.bin"
+	CurveUpEndPage0TOPWriteInstructionsfrom47to46:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\TOPwriteinstructionsfrom47to46.bin"
 
-;9523
+;9866
 
-	BlockCurveUpEndPage0BOTTOMfrom54to53:	equ CurveUpEndBlock8
-	CurveUpEndPage0BOTTOMChangedPixelsfrom54to53:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\BOTTOMchangedpixelsfrom54to53.bin"
-	CurveUpEndPage0BOTTOMAddressesfrom54to53:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\BOTTOMaddressesfrom54to53.bin"
-	CurveUpEndPage0BOTTOMWriteInstructionsfrom54to53:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\BOTTOMwriteinstructionsfrom54to53.bin"
+	BlockCurveUpEndPage0BOTTOMfrom47to46:	equ CurveUpEndBlock8
+	CurveUpEndPage0BOTTOMChangedPixelsfrom47to46:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\BOTTOMchangedpixelsfrom47to46.bin"
+	CurveUpEndPage0BOTTOMAddressesfrom47to46:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\BOTTOMaddressesfrom47to46.bin"
+	CurveUpEndPage0BOTTOMWriteInstructionsfrom47to46:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\BOTTOMwriteinstructionsfrom47to46.bin"
 
-;9597
+;9A93
 
-	BlockCurveUpEndPage1TOPfrom54to53:	equ CurveUpEndBlock8
-	CurveUpEndPage1TOPChangedPixelsfrom54to53:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\TOPchangedpixelsfrom54to53.bin"
-	CurveUpEndPage1TOPAddressesfrom54to53:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\TOPaddressesfrom54to53.bin"
-	CurveUpEndPage1TOPWriteInstructionsfrom54to53:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\TOPwriteinstructionsfrom54to53.bin"
+	BlockCurveUpEndPage1TOPfrom47to46:	equ CurveUpEndBlock8
+	CurveUpEndPage1TOPChangedPixelsfrom47to46:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\TOPchangedpixelsfrom47to46.bin"
+	CurveUpEndPage1TOPAddressesfrom47to46:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\TOPaddressesfrom47to46.bin"
+	CurveUpEndPage1TOPWriteInstructionsfrom47to46:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\TOPwriteinstructionsfrom47to46.bin"
 
-;9704
+;9DA1
 
-	BlockCurveUpEndPage1BOTTOMfrom54to53:	equ CurveUpEndBlock8
-	CurveUpEndPage1BOTTOMChangedPixelsfrom54to53:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\BOTTOMchangedpixelsfrom54to53.bin"
-	CurveUpEndPage1BOTTOMAddressesfrom54to53:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\BOTTOMaddressesfrom54to53.bin"
-	CurveUpEndPage1BOTTOMWriteInstructionsfrom54to53:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\BOTTOMwriteinstructionsfrom54to53.bin"
+	BlockCurveUpEndPage1BOTTOMfrom47to46:	equ CurveUpEndBlock8
+	CurveUpEndPage1BOTTOMChangedPixelsfrom47to46:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\BOTTOMchangedpixelsfrom47to46.bin"
+	CurveUpEndPage1BOTTOMAddressesfrom47to46:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\BOTTOMaddressesfrom47to46.bin"
+	CurveUpEndPage1BOTTOMWriteInstructionsfrom47to46:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\BOTTOMwriteinstructionsfrom47to46.bin"
 
-;9778
+;9F59
 
-	BlockCurveUpEndPage0TOPfrom55to54:	equ CurveUpEndBlock8
-	CurveUpEndPage0TOPChangedPixelsfrom55to54:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\TOPchangedpixelsfrom55to54.bin"
-	CurveUpEndPage0TOPAddressesfrom55to54:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\TOPaddressesfrom55to54.bin"
-	CurveUpEndPage0TOPWriteInstructionsfrom55to54:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\TOPwriteinstructionsfrom55to54.bin"
+	BlockCurveUpEndPage0TOPfrom48to47:	equ CurveUpEndBlock8
+	CurveUpEndPage0TOPChangedPixelsfrom48to47:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\TOPchangedpixelsfrom48to47.bin"
+	CurveUpEndPage0TOPAddressesfrom48to47:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\TOPaddressesfrom48to47.bin"
+	CurveUpEndPage0TOPWriteInstructionsfrom48to47:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\TOPwriteinstructionsfrom48to47.bin"
 
-;9A6F
+;A32C
 
-	BlockCurveUpEndPage0BOTTOMfrom55to54:	equ CurveUpEndBlock8
-	CurveUpEndPage0BOTTOMChangedPixelsfrom55to54:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\BOTTOMchangedpixelsfrom55to54.bin"
-	CurveUpEndPage0BOTTOMAddressesfrom55to54:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\BOTTOMaddressesfrom55to54.bin"
-	CurveUpEndPage0BOTTOMWriteInstructionsfrom55to54:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\BOTTOMwriteinstructionsfrom55to54.bin"
+	BlockCurveUpEndPage0BOTTOMfrom48to47:	equ CurveUpEndBlock8
+	CurveUpEndPage0BOTTOMChangedPixelsfrom48to47:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\BOTTOMchangedpixelsfrom48to47.bin"
+	CurveUpEndPage0BOTTOMAddressesfrom48to47:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\BOTTOMaddressesfrom48to47.bin"
+	CurveUpEndPage0BOTTOMWriteInstructionsfrom48to47:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\BOTTOMwriteinstructionsfrom48to47.bin"
 
-;9D8D
+;A5B2
 
-	BlockCurveUpEndPage1TOPfrom55to54:	equ CurveUpEndBlock8
-	CurveUpEndPage1TOPChangedPixelsfrom55to54:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\TOPchangedpixelsfrom55to54.bin"
-	CurveUpEndPage1TOPAddressesfrom55to54:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\TOPaddressesfrom55to54.bin"
-	CurveUpEndPage1TOPWriteInstructionsfrom55to54:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\TOPwriteinstructionsfrom55to54.bin"
+	BlockCurveUpEndPage1TOPfrom48to47:	equ CurveUpEndBlock8
+	CurveUpEndPage1TOPChangedPixelsfrom48to47:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\TOPchangedpixelsfrom48to47.bin"
+	CurveUpEndPage1TOPAddressesfrom48to47:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\TOPaddressesfrom48to47.bin"
+	CurveUpEndPage1TOPWriteInstructionsfrom48to47:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\TOPwriteinstructionsfrom48to47.bin"
 
-;A084
+;A8D6
 
-	BlockCurveUpEndPage1BOTTOMfrom55to54:	equ CurveUpEndBlock8
-	CurveUpEndPage1BOTTOMChangedPixelsfrom55to54:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\BOTTOMchangedpixelsfrom55to54.bin"
-	CurveUpEndPage1BOTTOMAddressesfrom55to54:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\BOTTOMaddressesfrom55to54.bin"
-	CurveUpEndPage1BOTTOMWriteInstructionsfrom55to54:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\BOTTOMwriteinstructionsfrom55to54.bin"
+	BlockCurveUpEndPage1BOTTOMfrom48to47:	equ CurveUpEndBlock8
+	CurveUpEndPage1BOTTOMChangedPixelsfrom48to47:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\BOTTOMchangedpixelsfrom48to47.bin"
+	CurveUpEndPage1BOTTOMAddressesfrom48to47:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\BOTTOMaddressesfrom48to47.bin"
+	CurveUpEndPage1BOTTOMWriteInstructionsfrom48to47:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\BOTTOMwriteinstructionsfrom48to47.bin"
 
-;A3A2
+;AA68
 
-	BlockCurveUpEndPage0TOPfrom56to55:	equ CurveUpEndBlock8
-	CurveUpEndPage0TOPChangedPixelsfrom56to55:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\TOPchangedpixelsfrom56to55.bin"
-	CurveUpEndPage0TOPAddressesfrom56to55:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\TOPaddressesfrom56to55.bin"
-	CurveUpEndPage0TOPWriteInstructionsfrom56to55:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\TOPwriteinstructionsfrom56to55.bin"
+	BlockCurveUpEndPage0TOPfrom49to48:	equ CurveUpEndBlock8
+	CurveUpEndPage0TOPChangedPixelsfrom49to48:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\TOPchangedpixelsfrom49to48.bin"
+	CurveUpEndPage0TOPAddressesfrom49to48:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\TOPaddressesfrom49to48.bin"
+	CurveUpEndPage0TOPWriteInstructionsfrom49to48:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\TOPwriteinstructionsfrom49to48.bin"
 
-;A58C
+;AD12
 
-	BlockCurveUpEndPage0BOTTOMfrom56to55:	equ CurveUpEndBlock8
-	CurveUpEndPage0BOTTOMChangedPixelsfrom56to55:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\BOTTOMchangedpixelsfrom56to55.bin"
-	CurveUpEndPage0BOTTOMAddressesfrom56to55:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\BOTTOMaddressesfrom56to55.bin"
-	CurveUpEndPage0BOTTOMWriteInstructionsfrom56to55:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\BOTTOMwriteinstructionsfrom56to55.bin"
+	BlockCurveUpEndPage0BOTTOMfrom49to48:	equ CurveUpEndBlock8
+	CurveUpEndPage0BOTTOMChangedPixelsfrom49to48:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\BOTTOMchangedpixelsfrom49to48.bin"
+	CurveUpEndPage0BOTTOMAddressesfrom49to48:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\BOTTOMaddressesfrom49to48.bin"
+	CurveUpEndPage0BOTTOMWriteInstructionsfrom49to48:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\BOTTOMwriteinstructionsfrom49to48.bin"
 
-;A806
+;B156
 
-	BlockCurveUpEndPage1TOPfrom56to55:	equ CurveUpEndBlock8
-	CurveUpEndPage1TOPChangedPixelsfrom56to55:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\TOPchangedpixelsfrom56to55.bin"
-	CurveUpEndPage1TOPAddressesfrom56to55:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\TOPaddressesfrom56to55.bin"
-	CurveUpEndPage1TOPWriteInstructionsfrom56to55:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\TOPwriteinstructionsfrom56to55.bin"
+	BlockCurveUpEndPage1TOPfrom49to48:	equ CurveUpEndBlock8
+	CurveUpEndPage1TOPChangedPixelsfrom49to48:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\TOPchangedpixelsfrom49to48.bin"
+	CurveUpEndPage1TOPAddressesfrom49to48:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\TOPaddressesfrom49to48.bin"
+	CurveUpEndPage1TOPWriteInstructionsfrom49to48:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\TOPwriteinstructionsfrom49to48.bin"
 
-;A9F0
+;B31C
 
-	BlockCurveUpEndPage1BOTTOMfrom56to55:	equ CurveUpEndBlock8
-	CurveUpEndPage1BOTTOMChangedPixelsfrom56to55:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\BOTTOMchangedpixelsfrom56to55.bin"
-	CurveUpEndPage1BOTTOMAddressesfrom56to55:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\BOTTOMaddressesfrom56to55.bin"
-	CurveUpEndPage1BOTTOMWriteInstructionsfrom56to55:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\BOTTOMwriteinstructionsfrom56to55.bin"
+	BlockCurveUpEndPage1BOTTOMfrom49to48:	equ CurveUpEndBlock8
+	CurveUpEndPage1BOTTOMChangedPixelsfrom49to48:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\BOTTOMchangedpixelsfrom49to48.bin"
+	CurveUpEndPage1BOTTOMAddressesfrom49to48:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\BOTTOMaddressesfrom49to48.bin"
+	CurveUpEndPage1BOTTOMWriteInstructionsfrom49to48:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\BOTTOMwriteinstructionsfrom49to48.bin"
 
-;AC6A
+;B634
 
-	BlockCurveUpEndPage0TOPfrom57to56:	equ CurveUpEndBlock8
-	CurveUpEndPage0TOPChangedPixelsfrom57to56:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\TOPchangedpixelsfrom57to56.bin"
-	CurveUpEndPage0TOPAddressesfrom57to56:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\TOPaddressesfrom57to56.bin"
-	CurveUpEndPage0TOPWriteInstructionsfrom57to56:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\TOPwriteinstructionsfrom57to56.bin"
+	BlockCurveUpEndPage0TOPfrom50to49:	equ CurveUpEndBlock8
+	CurveUpEndPage0TOPChangedPixelsfrom50to49:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\TOPchangedpixelsfrom50to49.bin"
+	CurveUpEndPage0TOPAddressesfrom50to49:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\TOPaddressesfrom50to49.bin"
+	CurveUpEndPage0TOPWriteInstructionsfrom50to49:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\TOPwriteinstructionsfrom50to49.bin"
 
-;AF11
+;B9A0
 
-	BlockCurveUpEndPage0BOTTOMfrom57to56:	equ CurveUpEndBlock8
-	CurveUpEndPage0BOTTOMChangedPixelsfrom57to56:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\BOTTOMchangedpixelsfrom57to56.bin"
-	CurveUpEndPage0BOTTOMAddressesfrom57to56:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\BOTTOMaddressesfrom57to56.bin"
-	CurveUpEndPage0BOTTOMWriteInstructionsfrom57to56:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\BOTTOMwriteinstructionsfrom57to56.bin"
+	BlockCurveUpEndPage0BOTTOMfrom50to49:	equ CurveUpEndBlock8
+	CurveUpEndPage0BOTTOMChangedPixelsfrom50to49:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\BOTTOMchangedpixelsfrom50to49.bin"
+	CurveUpEndPage0BOTTOMAddressesfrom50to49:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\BOTTOMaddressesfrom50to49.bin"
+	CurveUpEndPage0BOTTOMWriteInstructionsfrom50to49:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\BOTTOMwriteinstructionsfrom50to49.bin"
 
-;B24A
+;BB3C
 
-	BlockCurveUpEndPage1TOPfrom57to56:	equ CurveUpEndBlock8
-	CurveUpEndPage1TOPChangedPixelsfrom57to56:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\TOPchangedpixelsfrom57to56.bin"
-	CurveUpEndPage1TOPAddressesfrom57to56:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\TOPaddressesfrom57to56.bin"
-	CurveUpEndPage1TOPWriteInstructionsfrom57to56:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\TOPwriteinstructionsfrom57to56.bin"
+	BlockCurveUpEndPage1TOPfrom50to49:	equ CurveUpEndBlock8
+	CurveUpEndPage1TOPChangedPixelsfrom50to49:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\TOPchangedpixelsfrom50to49.bin"
+	CurveUpEndPage1TOPAddressesfrom50to49:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\TOPaddressesfrom50to49.bin"
+	CurveUpEndPage1TOPWriteInstructionsfrom50to49:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\TOPwriteinstructionsfrom50to49.bin"
 
-;B4F1
+;BE44
 
-	BlockCurveUpEndPage1BOTTOMfrom57to56:	equ CurveUpEndBlock8
-	CurveUpEndPage1BOTTOMChangedPixelsfrom57to56:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\BOTTOMchangedpixelsfrom57to56.bin"
-	CurveUpEndPage1BOTTOMAddressesfrom57to56:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\BOTTOMaddressesfrom57to56.bin"
-	CurveUpEndPage1BOTTOMWriteInstructionsfrom57to56:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\BOTTOMwriteinstructionsfrom57to56.bin"
+	BlockCurveUpEndPage1BOTTOMfrom50to49:	equ CurveUpEndBlock8
+	CurveUpEndPage1BOTTOMChangedPixelsfrom50to49:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\BOTTOMchangedpixelsfrom50to49.bin"
+	CurveUpEndPage1BOTTOMAddressesfrom50to49:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\BOTTOMaddressesfrom50to49.bin"
+	CurveUpEndPage1BOTTOMWriteInstructionsfrom50to49:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\BOTTOMwriteinstructionsfrom50to49.bin"
 
-;B82A
-
-	BlockCurveUpEndPage0TOPfrom58to57:	equ CurveUpEndBlock8
-	CurveUpEndPage0TOPChangedPixelsfrom58to57:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\TOPchangedpixelsfrom58to57.bin"
-	CurveUpEndPage0TOPAddressesfrom58to57:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\TOPaddressesfrom58to57.bin"
-	CurveUpEndPage0TOPWriteInstructionsfrom58to57:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\TOPwriteinstructionsfrom58to57.bin"
-
-;BA6F
-
-	BlockCurveUpEndPage0BOTTOMfrom58to57:	equ CurveUpEndBlock8
-	CurveUpEndPage0BOTTOMChangedPixelsfrom58to57:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\BOTTOMchangedpixelsfrom58to57.bin"
-	CurveUpEndPage0BOTTOMAddressesfrom58to57:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\BOTTOMaddressesfrom58to57.bin"
-	CurveUpEndPage0BOTTOMWriteInstructionsfrom58to57:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\BOTTOMwriteinstructionsfrom58to57.bin"
-
-;BB83
-
-	BlockCurveUpEndPage1TOPfrom58to57:	equ CurveUpEndBlock8
-	CurveUpEndPage1TOPChangedPixelsfrom58to57:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\TOPchangedpixelsfrom58to57.bin"
-	CurveUpEndPage1TOPAddressesfrom58to57:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\TOPaddressesfrom58to57.bin"
-	CurveUpEndPage1TOPWriteInstructionsfrom58to57:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\TOPwriteinstructionsfrom58to57.bin"
-
-;BDC8
-
-	BlockCurveUpEndPage1BOTTOMfrom58to57:	equ CurveUpEndBlock8
-	CurveUpEndPage1BOTTOMChangedPixelsfrom58to57:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\BOTTOMchangedpixelsfrom58to57.bin"
-	CurveUpEndPage1BOTTOMAddressesfrom58to57:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\BOTTOMaddressesfrom58to57.bin"
-	CurveUpEndPage1BOTTOMWriteInstructionsfrom58to57:
-	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\BOTTOMwriteinstructionsfrom58to57.bin"
-
-;BEDC
+;BF68
 
 	dephase	
 	DS RomBlockSize - $ and (RomBlockSize - 1), -1	; fill remainder of block
@@ -2370,7 +2050,333 @@ CurveUpEndBlock8:  			equ   ($-RomStartAddress) and (romsize-1) / RomBlockSize
 CurveUpEndBlock9:  			equ   ($-RomStartAddress) and (romsize-1) / RomBlockSize
 	phase 0x8000
 
-	BlockCurveUpEndPage0TOPfrom59to58:	equ CurveUpEndBlock9
+	BlockCurveUpEndPage0TOPfrom51to50:	equ CurveUpEndBlock9
+	CurveUpEndPage0TOPChangedPixelsfrom51to50:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\TOPchangedpixelsfrom51to50.bin"
+	CurveUpEndPage0TOPAddressesfrom51to50:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\TOPaddressesfrom51to50.bin"
+	CurveUpEndPage0TOPWriteInstructionsfrom51to50:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\TOPwriteinstructionsfrom51to50.bin"
+
+;846F
+
+	BlockCurveUpEndPage0BOTTOMfrom51to50:	equ CurveUpEndBlock9
+	CurveUpEndPage0BOTTOMChangedPixelsfrom51to50:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\BOTTOMchangedpixelsfrom51to50.bin"
+	CurveUpEndPage0BOTTOMAddressesfrom51to50:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\BOTTOMaddressesfrom51to50.bin"
+	CurveUpEndPage0BOTTOMWriteInstructionsfrom51to50:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\BOTTOMwriteinstructionsfrom51to50.bin"
+
+;86C8
+
+	BlockCurveUpEndPage1TOPfrom51to50:	equ CurveUpEndBlock9
+	CurveUpEndPage1TOPChangedPixelsfrom51to50:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\TOPchangedpixelsfrom51to50.bin"
+	CurveUpEndPage1TOPAddressesfrom51to50:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\TOPaddressesfrom51to50.bin"
+	CurveUpEndPage1TOPWriteInstructionsfrom51to50:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\TOPwriteinstructionsfrom51to50.bin"
+
+;8A3A
+
+	BlockCurveUpEndPage1BOTTOMfrom51to50:	equ CurveUpEndBlock9
+	CurveUpEndPage1BOTTOMChangedPixelsfrom51to50:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\BOTTOMchangedpixelsfrom51to50.bin"
+	CurveUpEndPage1BOTTOMAddressesfrom51to50:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\BOTTOMaddressesfrom51to50.bin"
+	CurveUpEndPage1BOTTOMWriteInstructionsfrom51to50:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\BOTTOMwriteinstructionsfrom51to50.bin"
+
+;8C1E
+
+	BlockCurveUpEndPage0TOPfrom52to51:	equ CurveUpEndBlock9
+	CurveUpEndPage0TOPChangedPixelsfrom52to51:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\TOPchangedpixelsfrom52to51.bin"
+	CurveUpEndPage0TOPAddressesfrom52to51:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\TOPaddressesfrom52to51.bin"
+	CurveUpEndPage0TOPWriteInstructionsfrom52to51:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\TOPwriteinstructionsfrom52to51.bin"
+
+;8EA1
+
+	BlockCurveUpEndPage0BOTTOMfrom52to51:	equ CurveUpEndBlock9
+	CurveUpEndPage0BOTTOMChangedPixelsfrom52to51:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\BOTTOMchangedpixelsfrom52to51.bin"
+	CurveUpEndPage0BOTTOMAddressesfrom52to51:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\BOTTOMaddressesfrom52to51.bin"
+	CurveUpEndPage0BOTTOMWriteInstructionsfrom52to51:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\BOTTOMwriteinstructionsfrom52to51.bin"
+
+;8FBD
+
+	BlockCurveUpEndPage1TOPfrom52to51:	equ CurveUpEndBlock9
+	CurveUpEndPage1TOPChangedPixelsfrom52to51:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\TOPchangedpixelsfrom52to51.bin"
+	CurveUpEndPage1TOPAddressesfrom52to51:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\TOPaddressesfrom52to51.bin"
+	CurveUpEndPage1TOPWriteInstructionsfrom52to51:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\TOPwriteinstructionsfrom52to51.bin"
+
+;9191
+
+	BlockCurveUpEndPage1BOTTOMfrom52to51:	equ CurveUpEndBlock9
+	CurveUpEndPage1BOTTOMChangedPixelsfrom52to51:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\BOTTOMchangedpixelsfrom52to51.bin"
+	CurveUpEndPage1BOTTOMAddressesfrom52to51:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\BOTTOMaddressesfrom52to51.bin"
+	CurveUpEndPage1BOTTOMWriteInstructionsfrom52to51:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\BOTTOMwriteinstructionsfrom52to51.bin"
+
+;9257
+
+	BlockCurveUpEndPage0TOPfrom53to52:	equ CurveUpEndBlock9
+	CurveUpEndPage0TOPChangedPixelsfrom53to52:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\TOPchangedpixelsfrom53to52.bin"
+	CurveUpEndPage0TOPAddressesfrom53to52:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\TOPaddressesfrom53to52.bin"
+	CurveUpEndPage0TOPWriteInstructionsfrom53to52:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\TOPwriteinstructionsfrom53to52.bin"
+
+;961C
+
+	BlockCurveUpEndPage0BOTTOMfrom53to52:	equ CurveUpEndBlock9
+	CurveUpEndPage0BOTTOMChangedPixelsfrom53to52:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\BOTTOMchangedpixelsfrom53to52.bin"
+	CurveUpEndPage0BOTTOMAddressesfrom53to52:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\BOTTOMaddressesfrom53to52.bin"
+	CurveUpEndPage0BOTTOMWriteInstructionsfrom53to52:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\BOTTOMwriteinstructionsfrom53to52.bin"
+
+;9B06
+
+	BlockCurveUpEndPage1TOPfrom53to52:	equ CurveUpEndBlock9
+	CurveUpEndPage1TOPChangedPixelsfrom53to52:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\TOPchangedpixelsfrom53to52.bin"
+	CurveUpEndPage1TOPAddressesfrom53to52:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\TOPaddressesfrom53to52.bin"
+	CurveUpEndPage1TOPWriteInstructionsfrom53to52:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\TOPwriteinstructionsfrom53to52.bin"
+
+;9E1C
+
+	BlockCurveUpEndPage1BOTTOMfrom53to52:	equ CurveUpEndBlock9
+	CurveUpEndPage1BOTTOMChangedPixelsfrom53to52:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\BOTTOMchangedpixelsfrom53to52.bin"
+	CurveUpEndPage1BOTTOMAddressesfrom53to52:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\BOTTOMaddressesfrom53to52.bin"
+	CurveUpEndPage1BOTTOMWriteInstructionsfrom53to52:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\BOTTOMwriteinstructionsfrom53to52.bin"
+
+;A1B0
+
+	BlockCurveUpEndPage0TOPfrom54to53:	equ CurveUpEndBlock9
+	CurveUpEndPage0TOPChangedPixelsfrom54to53:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\TOPchangedpixelsfrom54to53.bin"
+	CurveUpEndPage0TOPAddressesfrom54to53:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\TOPaddressesfrom54to53.bin"
+	CurveUpEndPage0TOPWriteInstructionsfrom54to53:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\TOPwriteinstructionsfrom54to53.bin"
+
+;A5DF
+
+	BlockCurveUpEndPage0BOTTOMfrom54to53:	equ CurveUpEndBlock9
+	CurveUpEndPage0BOTTOMChangedPixelsfrom54to53:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\BOTTOMchangedpixelsfrom54to53.bin"
+	CurveUpEndPage0BOTTOMAddressesfrom54to53:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\BOTTOMaddressesfrom54to53.bin"
+	CurveUpEndPage0BOTTOMWriteInstructionsfrom54to53:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\BOTTOMwriteinstructionsfrom54to53.bin"
+
+;A74B
+
+	BlockCurveUpEndPage1TOPfrom54to53:	equ CurveUpEndBlock9
+	CurveUpEndPage1TOPChangedPixelsfrom54to53:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\TOPchangedpixelsfrom54to53.bin"
+	CurveUpEndPage1TOPAddressesfrom54to53:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\TOPaddressesfrom54to53.bin"
+	CurveUpEndPage1TOPWriteInstructionsfrom54to53:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\TOPwriteinstructionsfrom54to53.bin"
+
+;AAAF
+
+	BlockCurveUpEndPage1BOTTOMfrom54to53:	equ CurveUpEndBlock9
+	CurveUpEndPage1BOTTOMChangedPixelsfrom54to53:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\BOTTOMchangedpixelsfrom54to53.bin"
+	CurveUpEndPage1BOTTOMAddressesfrom54to53:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\BOTTOMaddressesfrom54to53.bin"
+	CurveUpEndPage1BOTTOMWriteInstructionsfrom54to53:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\BOTTOMwriteinstructionsfrom54to53.bin"
+
+;ABB7
+
+	BlockCurveUpEndPage0TOPfrom55to54:	equ CurveUpEndBlock9
+	CurveUpEndPage0TOPChangedPixelsfrom55to54:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\TOPchangedpixelsfrom55to54.bin"
+	CurveUpEndPage0TOPAddressesfrom55to54:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\TOPaddressesfrom55to54.bin"
+	CurveUpEndPage0TOPWriteInstructionsfrom55to54:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\TOPwriteinstructionsfrom55to54.bin"
+
+;AE29
+
+	BlockCurveUpEndPage0BOTTOMfrom55to54:	equ CurveUpEndBlock9
+	CurveUpEndPage0BOTTOMChangedPixelsfrom55to54:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\BOTTOMchangedpixelsfrom55to54.bin"
+	CurveUpEndPage0BOTTOMAddressesfrom55to54:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\BOTTOMaddressesfrom55to54.bin"
+	CurveUpEndPage0BOTTOMWriteInstructionsfrom55to54:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\BOTTOMwriteinstructionsfrom55to54.bin"
+
+;B0F0
+
+	BlockCurveUpEndPage1TOPfrom55to54:	equ CurveUpEndBlock9
+	CurveUpEndPage1TOPChangedPixelsfrom55to54:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\TOPchangedpixelsfrom55to54.bin"
+	CurveUpEndPage1TOPAddressesfrom55to54:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\TOPaddressesfrom55to54.bin"
+	CurveUpEndPage1TOPWriteInstructionsfrom55to54:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\TOPwriteinstructionsfrom55to54.bin"
+
+;B29A
+
+	BlockCurveUpEndPage1BOTTOMfrom55to54:	equ CurveUpEndBlock9
+	CurveUpEndPage1BOTTOMChangedPixelsfrom55to54:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\BOTTOMchangedpixelsfrom55to54.bin"
+	CurveUpEndPage1BOTTOMAddressesfrom55to54:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\BOTTOMaddressesfrom55to54.bin"
+	CurveUpEndPage1BOTTOMWriteInstructionsfrom55to54:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\BOTTOMwriteinstructionsfrom55to54.bin"
+
+;B494
+
+	BlockCurveUpEndPage0TOPfrom56to55:	equ CurveUpEndBlock9
+	CurveUpEndPage0TOPChangedPixelsfrom56to55:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\TOPchangedpixelsfrom56to55.bin"
+	CurveUpEndPage0TOPAddressesfrom56to55:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\TOPaddressesfrom56to55.bin"
+	CurveUpEndPage0TOPWriteInstructionsfrom56to55:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\TOPwriteinstructionsfrom56to55.bin"
+
+;B85C
+
+	BlockCurveUpEndPage0BOTTOMfrom56to55:	equ CurveUpEndBlock9
+	CurveUpEndPage0BOTTOMChangedPixelsfrom56to55:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\BOTTOMchangedpixelsfrom56to55.bin"
+	CurveUpEndPage0BOTTOMAddressesfrom56to55:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\BOTTOMaddressesfrom56to55.bin"
+	CurveUpEndPage0BOTTOMWriteInstructionsfrom56to55:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\BOTTOMwriteinstructionsfrom56to55.bin"
+
+;BB48
+
+	BlockCurveUpEndPage1TOPfrom56to55:	equ CurveUpEndBlock9
+	CurveUpEndPage1TOPChangedPixelsfrom56to55:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\TOPchangedpixelsfrom56to55.bin"
+	CurveUpEndPage1TOPAddressesfrom56to55:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\TOPaddressesfrom56to55.bin"
+	CurveUpEndPage1TOPWriteInstructionsfrom56to55:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\TOPwriteinstructionsfrom56to55.bin"
+
+;BE74
+
+	dephase	
+	DS RomBlockSize - $ and (RomBlockSize - 1), -1	; fill remainder of block
+
+CurveUpEndBlock10:  			equ   ($-RomStartAddress) and (romsize-1) / RomBlockSize
+	phase 0x8000
+
+	BlockCurveUpEndPage1BOTTOMfrom56to55:	equ CurveUpEndBlock10
+	CurveUpEndPage1BOTTOMChangedPixelsfrom56to55:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\BOTTOMchangedpixelsfrom56to55.bin"
+	CurveUpEndPage1BOTTOMAddressesfrom56to55:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\BOTTOMaddressesfrom56to55.bin"
+	CurveUpEndPage1BOTTOMWriteInstructionsfrom56to55:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\BOTTOMwriteinstructionsfrom56to55.bin"
+
+;8210
+
+	BlockCurveUpEndPage0TOPfrom57to56:	equ CurveUpEndBlock10
+	CurveUpEndPage0TOPChangedPixelsfrom57to56:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\TOPchangedpixelsfrom57to56.bin"
+	CurveUpEndPage0TOPAddressesfrom57to56:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\TOPaddressesfrom57to56.bin"
+	CurveUpEndPage0TOPWriteInstructionsfrom57to56:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\TOPwriteinstructionsfrom57to56.bin"
+
+;85E6
+
+	BlockCurveUpEndPage0BOTTOMfrom57to56:	equ CurveUpEndBlock10
+	CurveUpEndPage0BOTTOMChangedPixelsfrom57to56:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\BOTTOMchangedpixelsfrom57to56.bin"
+	CurveUpEndPage0BOTTOMAddressesfrom57to56:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\BOTTOMaddressesfrom57to56.bin"
+	CurveUpEndPage0BOTTOMWriteInstructionsfrom57to56:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\BOTTOMwriteinstructionsfrom57to56.bin"
+
+;877E
+
+	BlockCurveUpEndPage1TOPfrom57to56:	equ CurveUpEndBlock10
+	CurveUpEndPage1TOPChangedPixelsfrom57to56:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\TOPchangedpixelsfrom57to56.bin"
+	CurveUpEndPage1TOPAddressesfrom57to56:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\TOPaddressesfrom57to56.bin"
+	CurveUpEndPage1TOPWriteInstructionsfrom57to56:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\TOPwriteinstructionsfrom57to56.bin"
+
+;8ABE
+
+	BlockCurveUpEndPage1BOTTOMfrom57to56:	equ CurveUpEndBlock10
+	CurveUpEndPage1BOTTOMChangedPixelsfrom57to56:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\BOTTOMchangedpixelsfrom57to56.bin"
+	CurveUpEndPage1BOTTOMAddressesfrom57to56:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\BOTTOMaddressesfrom57to56.bin"
+	CurveUpEndPage1BOTTOMWriteInstructionsfrom57to56:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\BOTTOMwriteinstructionsfrom57to56.bin"
+
+;8BF2
+
+	BlockCurveUpEndPage0TOPfrom58to57:	equ CurveUpEndBlock10
+	CurveUpEndPage0TOPChangedPixelsfrom58to57:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\TOPchangedpixelsfrom58to57.bin"
+	CurveUpEndPage0TOPAddressesfrom58to57:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\TOPaddressesfrom58to57.bin"
+	CurveUpEndPage0TOPWriteInstructionsfrom58to57:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\TOPwriteinstructionsfrom58to57.bin"
+
+;8EF7
+
+	BlockCurveUpEndPage0BOTTOMfrom58to57:	equ CurveUpEndBlock10
+	CurveUpEndPage0BOTTOMChangedPixelsfrom58to57:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\BOTTOMchangedpixelsfrom58to57.bin"
+	CurveUpEndPage0BOTTOMAddressesfrom58to57:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\BOTTOMaddressesfrom58to57.bin"
+	CurveUpEndPage0BOTTOMWriteInstructionsfrom58to57:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\BOTTOMwriteinstructionsfrom58to57.bin"
+
+;922D
+
+	BlockCurveUpEndPage1TOPfrom58to57:	equ CurveUpEndBlock10
+	CurveUpEndPage1TOPChangedPixelsfrom58to57:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\TOPchangedpixelsfrom58to57.bin"
+	CurveUpEndPage1TOPAddressesfrom58to57:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\TOPaddressesfrom58to57.bin"
+	CurveUpEndPage1TOPWriteInstructionsfrom58to57:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\TOPwriteinstructionsfrom58to57.bin"
+
+;9435
+
+	BlockCurveUpEndPage1BOTTOMfrom58to57:	equ CurveUpEndBlock10
+	CurveUpEndPage1BOTTOMChangedPixelsfrom58to57:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\BOTTOMchangedpixelsfrom58to57.bin"
+	CurveUpEndPage1BOTTOMAddressesfrom58to57:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\BOTTOMaddressesfrom58to57.bin"
+	CurveUpEndPage1BOTTOMWriteInstructionsfrom58to57:
+	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\BOTTOMwriteinstructionsfrom58to57.bin"
+
+;965B
+
+	BlockCurveUpEndPage0TOPfrom59to58:	equ CurveUpEndBlock10
 	CurveUpEndPage0TOPChangedPixelsfrom59to58:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\TOPchangedpixelsfrom59to58.bin"
 	CurveUpEndPage0TOPAddressesfrom59to58:
@@ -2378,9 +2384,9 @@ CurveUpEndBlock9:  			equ   ($-RomStartAddress) and (romsize-1) / RomBlockSize
 	CurveUpEndPage0TOPWriteInstructionsfrom59to58:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\TOPwriteinstructionsfrom59to58.bin"
 
-;82FD
+;9A26
 
-	BlockCurveUpEndPage0BOTTOMfrom59to58:	equ CurveUpEndBlock9
+	BlockCurveUpEndPage0BOTTOMfrom59to58:	equ CurveUpEndBlock10
 	CurveUpEndPage0BOTTOMChangedPixelsfrom59to58:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\BOTTOMchangedpixelsfrom59to58.bin"
 	CurveUpEndPage0BOTTOMAddressesfrom59to58:
@@ -2388,9 +2394,9 @@ CurveUpEndBlock9:  			equ   ($-RomStartAddress) and (romsize-1) / RomBlockSize
 	CurveUpEndPage0BOTTOMWriteInstructionsfrom59to58:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage0\BOTTOMwriteinstructionsfrom59to58.bin"
 
-;856F
+;9CA3
 
-	BlockCurveUpEndPage1TOPfrom59to58:	equ CurveUpEndBlock9
+	BlockCurveUpEndPage1TOPfrom59to58:	equ CurveUpEndBlock10
 	CurveUpEndPage1TOPChangedPixelsfrom59to58:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\TOPchangedpixelsfrom59to58.bin"
 	CurveUpEndPage1TOPAddressesfrom59to58:
@@ -2398,9 +2404,9 @@ CurveUpEndBlock9:  			equ   ($-RomStartAddress) and (romsize-1) / RomBlockSize
 	CurveUpEndPage1TOPWriteInstructionsfrom59to58:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\TOPwriteinstructionsfrom59to58.bin"
 
-;886C
+;9FD5
 
-	BlockCurveUpEndPage1BOTTOMfrom59to58:	equ CurveUpEndBlock9
+	BlockCurveUpEndPage1BOTTOMfrom59to58:	equ CurveUpEndBlock10
 	CurveUpEndPage1BOTTOMChangedPixelsfrom59to58:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\BOTTOMchangedpixelsfrom59to58.bin"
 	CurveUpEndPage1BOTTOMAddressesfrom59to58:
@@ -2408,7 +2414,7 @@ CurveUpEndBlock9:  			equ   ($-RomStartAddress) and (romsize-1) / RomBlockSize
 	CurveUpEndPage1BOTTOMWriteInstructionsfrom59to58:
 	incbin "..\grapx\RacingGame\CurveUpEndAnimationPage1\BOTTOMwriteinstructionsfrom59to58.bin"
 
-;8ADE
+;A18D
 
 	dephase	
 	DS RomBlockSize - $ and (RomBlockSize - 1), -1	; fill remainder of block

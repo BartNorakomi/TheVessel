@@ -4,7 +4,7 @@
 
 Phase MovementRoutinesAddress
 
-
+MaximumSpeedRacingGame: equ 200
 RacingGamePlayerY:  equ 161                 ;y never changes ?
 RacingGameRoutine:
   ld    a,0*32 + 31                         ;force page 0
@@ -16,10 +16,15 @@ RacingGameRoutine:
   inc   a
   ld    (framecounter2),a
 
-  call  AnimateRoad
   call  .HandlePhase                        ;used to build up screen and initiate variables
   call  .SetPlayerSprite
-  call  .MovePlayer
+  call  .SetHorMoveSpeedAndAnimatePlayerSprite
+  call  .MovePlayerHorizontally
+  call  .HandleAccelerateAndDecelerate      ;speed up with trig A, brake with trig B
+  call  .UpdateDistance
+  call  .UpdateRoadLinesAnimation
+  call  .ChangeLineIntHeightWhenCurvingUpOrDown
+;  call  HandleCurvatureRoad
   ret
 
   .HandlePhase:
@@ -35,31 +40,385 @@ RacingGameRoutine:
 ;  ld    (SetLineIntHeightOnVblankDrillingGame?),a
   call  SetInterruptHandlerRacingGame
 
+  ;set y coordinates player sprite
   ld    a,RacingGamePlayerY
   ld    (spat+0+(00*4)),a                 ;y sprite 0
   ld    (spat+0+(01*4)),a                 ;y sprite 1
+  add   a,16
   ld    (spat+0+(02*4)),a                 ;y sprite 2
   ld    (spat+0+(03*4)),a                 ;y sprite 3
-  add   a,16
   ld    (spat+0+(04*4)),a                 ;y sprite 4
   ld    (spat+0+(05*4)),a                 ;y sprite 5
+  add   a,16
   ld    (spat+0+(06*4)),a                 ;y sprite 6
   ld    (spat+0+(07*4)),a                 ;y sprite 7
-  add   a,16
   ld    (spat+0+(08*4)),a                 ;y sprite 8
   ld    (spat+0+(09*4)),a                 ;y sprite 9
-  ld    (spat+0+(10*4)),a                 ;y sprite 10
-  ld    (spat+0+(11*4)),a                 ;y sprite 11
 
-  ld    a,21                              ;value from 0-41 where 21 is center (not moving) 0-20 is moving left, 22-41 is moving right
-  ld    (RacingGameHorMoveSpeed),a
-  ld    hl,0
-  ld    (RacingGameHorScreenPosition),hl
+  ld    a,21                              
+  ld    (RacingGameHorMoveSpeed),a        ;value from 0-41 where 21 is center (not moving) 0-20 is moving left, 22-41 is moving right
+  ld    hl,112*10
+  ld    (RacingGameHorScreenPosition),hl  ;HorScreenPosition / 10 = Player X
+  ld    (RacingGameDistance),hl
+  ld    (RacingGameDistance+2),hl
+
+  ld    hl,0                            ;speed in m/p/h
+  ld    (RacingGameSpeed),hl
+
   ld    a,112
   ld    (RacingGamePlayerX),a
   ret
 
-  .MovePlayer:
+  .HandleAccelerateAndDecelerate:
+; bit	7	  6	  5		    4		    3		    2		  1		  0
+;		  0	  0	  trig-b	trig-a	right	  left	down	up	(joystick)
+;		  F5	F1	'M'		  space	  right	  left	down	up	(keyboard)
+;
+	ld		a,(Controls)
+  and   %0010 0010                      ;check if trig b or down is pressed (brake)
+  jr    nz,.Brake
+	ld		a,(Controls)
+  and   %0001 0001                      ;check if trig a or space is pressed (gas)
+  jr    nz,.Gas
+
+  .SlowDown:
+  ld    hl,(RacingGameSpeed)
+  dec   hl
+  bit   7,h
+  ret   nz
+  ld    (RacingGameSpeed),hl
+  ret
+
+  .Gas:
+  ld    hl,(RacingGameSpeed)
+  inc   hl
+  ld    (RacingGameSpeed),hl
+  ld    de,MaximumSpeedRacingGame
+  sbc   hl,de
+  ret   c
+  ld    hl,MaximumSpeedRacingGame
+  ld    (RacingGameSpeed),hl
+  ret
+
+  .Brake:
+  ld    hl,(RacingGameSpeed)
+  ld    de,2
+  sbc   hl,de
+  ld    (RacingGameSpeed),hl
+  bit   7,h
+  ret   z
+  ld    hl,0
+  ld    (RacingGameSpeed),hl
+  ret
+
+  .ChangeLineIntHeightWhenCurvingUpOrDown:
+  ld    a,(AnimateRoad?)                            ;2=up, 3=end up, 4=down, 5=end down
+  cp    2
+  jr    z,.CurveUp
+  cp    3
+  jr    z,.EndCurveUp
+  cp    4
+  jr    z,.CurveDown
+  cp    5
+  jr    z,.EndCurveDown
+  ret
+
+  .EndCurveDown:
+  ld    a,(RoadCurvatureAnimationStep)
+  srl   a                                 ;/2
+  ld    e,a
+  ld    d,0
+  ld    hl,.CurveDownLineIntHeightTableEnd-1
+  xor   a
+  sbc   hl,de
+  ld    a,(hl)
+  ld    (RacingGameNewLineIntToBeSetOnVblank),a                 ;113 is the standard, 083 is perfect for the road all the way curved up
+  ret
+
+  .CurveDown:
+  ld    a,(RoadCurvatureAnimationStep)
+  srl   a                                 ;/2
+  ld    e,a
+  ld    d,0
+  ld    hl,.CurveDownLineIntHeightTable
+  add   hl,de
+  ld    a,(hl)
+  ld    (RacingGameNewLineIntToBeSetOnVblank),a                 ;113 is the standard, 083 is perfect for the road all the way curved up
+  ret
+
+  .EndCurveUp:
+  ld    a,(RoadCurvatureAnimationStep)
+  srl   a                                 ;/2
+  ld    e,a
+  ld    d,0
+  ld    hl,.CurveUpLineIntHeightTableEnd-1
+  xor   a
+  sbc   hl,de
+  ld    a,(hl)
+  ld    (RacingGameNewLineIntToBeSetOnVblank),a                 ;113 is the standard, 083 is perfect for the road all the way curved up
+  ret
+
+  .CurveUp:
+  ld    a,(RoadCurvatureAnimationStep)
+  srl   a                                 ;/2
+  ld    e,a
+  ld    d,0
+  ld    hl,.CurveUpLineIntHeightTable
+  add   hl,de
+  ld    a,(hl)
+  ld    (RacingGameNewLineIntToBeSetOnVblank),a                 ;113 is the standard, 083 is perfect for the road all the way curved up
+  ret
+
+  .CurveUpLineIntHeightTable:
+db    LineIntHeightStraightRoad-0
+db    LineIntHeightStraightRoad-1
+db    LineIntHeightStraightRoad-1
+db    LineIntHeightStraightRoad-2
+db    LineIntHeightStraightRoad-3
+db    LineIntHeightStraightRoad-3
+db    LineIntHeightStraightRoad-4
+db    LineIntHeightStraightRoad-5
+db    LineIntHeightStraightRoad-5
+db    LineIntHeightStraightRoad-6
+db    LineIntHeightStraightRoad-7
+db    LineIntHeightStraightRoad-7
+db    LineIntHeightStraightRoad-8
+db    LineIntHeightStraightRoad-9
+db    LineIntHeightStraightRoad-9
+db    LineIntHeightStraightRoad-10
+db    LineIntHeightStraightRoad-11
+db    LineIntHeightStraightRoad-11
+db    LineIntHeightStraightRoad-12
+db    LineIntHeightStraightRoad-13
+db    LineIntHeightStraightRoad-13
+db    LineIntHeightStraightRoad-14
+db    LineIntHeightStraightRoad-15
+db    LineIntHeightStraightRoad-15
+db    LineIntHeightStraightRoad-16
+db    LineIntHeightStraightRoad-17
+db    LineIntHeightStraightRoad-17
+db    LineIntHeightStraightRoad-18
+db    LineIntHeightStraightRoad-19
+db    LineIntHeightStraightRoad-19
+db    LineIntHeightStraightRoad-20
+db    LineIntHeightStraightRoad-21
+db    LineIntHeightStraightRoad-21
+db    LineIntHeightStraightRoad-22
+db    LineIntHeightStraightRoad-23
+db    LineIntHeightStraightRoad-23
+db    LineIntHeightStraightRoad-24
+db    LineIntHeightStraightRoad-25
+db    LineIntHeightStraightRoad-25
+db    LineIntHeightStraightRoad-26
+db    LineIntHeightStraightRoad-27
+db    LineIntHeightStraightRoad-27
+db    LineIntHeightStraightRoad-28
+db    LineIntHeightStraightRoad-29
+db    LineIntHeightStraightRoad-29
+db    LineIntHeightStraightRoad-30
+db    LineIntHeightStraightRoad-31
+db    LineIntHeightStraightRoad-31
+db    LineIntHeightStraightRoad-32
+db    LineIntHeightStraightRoad-33
+db    LineIntHeightStraightRoad-33
+db    LineIntHeightStraightRoad-34
+db    LineIntHeightStraightRoad-35
+db    LineIntHeightStraightRoad-36
+db    LineIntHeightStraightRoad-37
+db    LineIntHeightStraightRoad-38
+db    LineIntHeightStraightRoad-39
+db    LineIntHeightStraightRoad-40
+db    LineIntHeightStraightRoad-40
+.CurveUpLineIntHeightTableEnd:
+
+  .CurveDownLineIntHeightTable:
+db    LineIntHeightStraightRoad+0
+db    LineIntHeightStraightRoad+1
+db    LineIntHeightStraightRoad+1
+db    LineIntHeightStraightRoad+2
+db    LineIntHeightStraightRoad+2
+db    LineIntHeightStraightRoad+3
+db    LineIntHeightStraightRoad+3
+db    LineIntHeightStraightRoad+4
+db    LineIntHeightStraightRoad+4
+db    LineIntHeightStraightRoad+5
+db    LineIntHeightStraightRoad+5
+db    LineIntHeightStraightRoad+6
+db    LineIntHeightStraightRoad+6
+db    LineIntHeightStraightRoad+7
+db    LineIntHeightStraightRoad+7
+db    LineIntHeightStraightRoad+8
+db    LineIntHeightStraightRoad+8
+db    LineIntHeightStraightRoad+9
+db    LineIntHeightStraightRoad+9
+db    LineIntHeightStraightRoad+10
+db    LineIntHeightStraightRoad+10
+db    LineIntHeightStraightRoad+11
+db    LineIntHeightStraightRoad+11
+db    LineIntHeightStraightRoad+12
+db    LineIntHeightStraightRoad+12
+db    LineIntHeightStraightRoad+13
+db    LineIntHeightStraightRoad+13
+db    LineIntHeightStraightRoad+14
+db    LineIntHeightStraightRoad+14
+db    LineIntHeightStraightRoad+15
+db    LineIntHeightStraightRoad+15
+db    LineIntHeightStraightRoad+16
+db    LineIntHeightStraightRoad+16
+db    LineIntHeightStraightRoad+17
+db    LineIntHeightStraightRoad+17
+db    LineIntHeightStraightRoad+18
+db    LineIntHeightStraightRoad+18
+db    LineIntHeightStraightRoad+19
+db    LineIntHeightStraightRoad+19
+db    LineIntHeightStraightRoad+20
+db    LineIntHeightStraightRoad+20
+db    LineIntHeightStraightRoad+21
+db    LineIntHeightStraightRoad+21
+db    LineIntHeightStraightRoad+22
+db    LineIntHeightStraightRoad+22
+db    LineIntHeightStraightRoad+23
+db    LineIntHeightStraightRoad+24
+db    LineIntHeightStraightRoad+24
+db    LineIntHeightStraightRoad+25
+db    LineIntHeightStraightRoad+26
+db    LineIntHeightStraightRoad+26
+db    LineIntHeightStraightRoad+27
+db    LineIntHeightStraightRoad+27
+db    LineIntHeightStraightRoad+28
+db    LineIntHeightStraightRoad+28
+db    LineIntHeightStraightRoad+29
+db    LineIntHeightStraightRoad+29
+db    LineIntHeightStraightRoad+30
+db    LineIntHeightStraightRoad+30
+
+.CurveDownLineIntHeightTableEnd:
+
+  .UpdateRoadLinesAnimation:
+  ld    hl,(RoadLinesMovementAnimationPointer)
+  ld    de,(RacingGameSpeed)
+  add   hl,de
+  ld    (RoadLinesMovementAnimationPointer),hl
+  ld    de,32                             ;every 32 distance travelled the road lines shift 1 pixel
+  ld    b,0                               ;amount of pixels the road lines shift
+  .loop:
+  sbc   hl,de
+  jr    c,.AnimationStepsFound
+  inc   b
+  jp    .loop
+  .AnimationStepsFound:
+
+  add   hl,de
+  ld    (RoadLinesMovementAnimationPointer),hl
+  ld    a,(RoadAnimationStep)
+  add   a,b
+  cp    60
+  jr    c,.SetRoadAnimationStep
+  sub   a,60
+  .SetRoadAnimationStep:
+  ld    (RoadAnimationStep),a
+  ret
+
+  .UpdateDistance:
+  ld    hl,(RacingGameDistance)
+  ld    de,(RacingGameSpeed)
+  add   hl,de
+  ld    (RacingGameDistance),hl
+  ret   nc
+  ld    hl,(RacingGameDistance+2)
+  inc   hl
+  ld    (RacingGameDistance+2),hl
+  ret
+
+  .MovePlayerHorizontally:
+  ld    hl,(RacingGameHorScreenPosition)
+
+  ld    d,0
+  ld    a,(RacingGameHorMoveSpeed)        ;value from 0-41 where 21 is center (not moving) 0-20 is moving left, 22-41 is moving right
+  sub   21
+  ld    e,a
+  jr    nc,.EndCheckHorMoveSpeedNegative
+  dec   d
+  .EndCheckHorMoveSpeedNegative:
+
+  ;hl=horizontal screen position, de=horizontal movement speed
+  add   hl,de
+  ld    (RacingGameHorScreenPosition),hl
+  bit   7,h
+  jp    z,.EndCheckOutOfScreenLeft    
+  ld    hl,0
+  ld    (RacingGameHorScreenPosition),hl
+  .EndCheckOutOfScreenLeft:
+  push  hl
+  ld    de,10*(256-32)
+  sbc   hl,de
+  jr    c,.EndCheckOutOfScreenRight
+  pop   hl
+  ld    hl,10*(256-32)
+  ld    (RacingGameHorScreenPosition),hl
+  push  hl
+  .EndCheckOutOfScreenRight:
+  pop   bc
+  ld    de,010                            ;HorScreenPosition / 10 = Player X
+  call  DivideBCbyDE          ; Out: BC = result, HL = rest
+  ld    a,c
+  ld    (RacingGamePlayerX),a
+  ret
+
+  .SetHorMoveSpeedAndAnimatePlayerSprite:
+
+
+
+
+;HORIZONTAL MOVEMENT SHOULD BE DEPENDANT ON THE RacingGameSpeed AND HORIZONTAL FACING DIRECTION - Start with renaming this
+
+
+
+
+  ld    a,(RacingGameSpeed)               ;speed in m/p/h
+  or    a
+  jr    z,.NotMovingLeftOrRight
+
+  cp    50
+  ld    b,7
+  jr    c,.Set
+  cp    100
+  ld    b,3
+  jr    c,.Set
+  cp    150
+  ld    b,1
+  jr    c,.Set
+  ld    b,0
+
+  .Set:
+  ld    a,(framecounter2)
+  and   b
+;  jr    z,.Move
+  ret   nz
+
+
+
+;
+; bit	7	  6	  5		    4		    3		    2		  1		  0
+;		  0	  0	  trig-b	trig-a	right	  left	down	up	(joystick)
+;		  F5	F1	'M'		  space	  right	  left	down	up	(keyboard)
+;
+;	ld		a,(Controls)
+;  and   %0001 0001                        ;left and right
+;  jr    z,.NotMovingLeftOrRight
+;  ret
+;  .Move:
+
+
+
+
+
+
+
+  ld    a,(RacingGameSpeed)               ;speed in m/p/h
+  cp    20
+  jp    c,.NotMovingLeftOrRight
+
 ;
 ; bit	7	  6	  5		    4		    3		    2		  1		  0
 ;		  0	  0	  trig-b	trig-a	right	  left	down	up	(joystick)
@@ -74,95 +433,125 @@ RacingGameRoutine:
   jr    nz,.MoveRight
 
   .MoveLeft:
-  ld    a,(RacingGameHorMoveSpeed)
+  ld    a,(RacingGameHorMoveSpeed)        ;value from 0-41 where 21 is center (not moving) 0-20 is moving left, 22-41 is moving right
   dec   a
   ret   m
-  ld    (RacingGameHorMoveSpeed),a
+  ld    (RacingGameHorMoveSpeed),a        ;value from 0-41 where 21 is center (not moving) 0-20 is moving left, 22-41 is moving right
   ret
 
   .MoveRight:
-  ld    a,(RacingGameHorMoveSpeed)
+  ld    a,(RacingGameHorMoveSpeed)        ;value from 0-41 where 21 is center (not moving) 0-20 is moving left, 22-41 is moving right
   inc   a
   cp    42
   ret   z
-  ld    (RacingGameHorMoveSpeed),a
+  ld    (RacingGameHorMoveSpeed),a        ;value from 0-41 where 21 is center (not moving) 0-20 is moving left, 22-41 is moving right
   ret
 
   .NotMovingLeftOrRight:
+  ld    a,(RacingGameHorMoveSpeed)        ;value from 0-41 where 21 is center (not moving) 0-20 is moving left, 22-41 is moving right
+  cp    21
+  ret   z
+  jr    c,.SlowDownFromMovingLeftToCenter
+
+  .SlowDownFromMovingRightToCenter:
+  dec   a
+  ld    (RacingGameHorMoveSpeed),a        ;value from 0-41 where 21 is center (not moving) 0-20 is moving left, 22-41 is moving right
+  ret
+
+  .SlowDownFromMovingLeftToCenter:
+  inc   a
+  ld    (RacingGameHorMoveSpeed),a        ;value from 0-41 where 21 is center (not moving) 0-20 is moving left, 22-41 is moving right
   ret
 
   .SetPlayerSprite:
-  ld    a,(RacingGamePlayerX)
+  ;set x coordinates player sprite
+  ld    a,(RacingGameHorMoveSpeed)        ;value from 0-41 where 21 is center (not moving) 0-20 is moving left, 22-41 is moving right
+  srl   a                                 ;/2
+  ld    e,a
+  ld    d,0
+  ld    hl,.XOffsetsHeadSprite            ;21 offset * 4 bytes per offset = 84 bytes
+  add   hl,de
 
-  ld    (spat+1+(00*4)),a                 ;x sprite 0
-  ld    (spat+1+(01*4)),a                 ;x sprite 1
-  add   a,16
+  ld    a,(RacingGamePlayerX)
   ld    (spat+1+(02*4)),a                 ;x sprite 2
   ld    (spat+1+(03*4)),a                 ;x sprite 3
-  sub   a,16
+  add   a,16
   ld    (spat+1+(04*4)),a                 ;x sprite 4
   ld    (spat+1+(05*4)),a                 ;x sprite 5
-  add   a,16
+  sub   a,16
   ld    (spat+1+(06*4)),a                 ;x sprite 6
   ld    (spat+1+(07*4)),a                 ;x sprite 7
-  sub   a,16
+  add   a,16
   ld    (spat+1+(08*4)),a                 ;x sprite 8
   ld    (spat+1+(09*4)),a                 ;x sprite 9
-  add   a,16
-  ld    (spat+1+(10*4)),a                 ;x sprite 10
-  ld    (spat+1+(11*4)),a                 ;x sprite 11
+  sub   a,16
+  add   a,(hl)
+  ld    (spat+1+(00*4)),a                 ;x sprite 0
+  ld    (spat+1+(01*4)),a                 ;x sprite 1
 
-;load sprites data
-	xor		a				;page 0/1
-	ld		hl,sprcharaddr	;sprite 0 character table in VRAM
-	call	SetVdp_Write
-
-  ld    a,(RacingGameHorMoveSpeed)        ;value between 00-41
+  ;jump to correct sprite addresses in SpriteOffSetsTable
+  ld    a,(RacingGameHorMoveSpeed)        ;value from 0-41 where 21 is center (not moving) 0-20 is moving left, 22-41 is moving right
   res   0,a
   add   a,a
   ld    e,a
   ld    d,0
-  ld    ix,.SpriteOffSets                 ;21 offset * 4 bytes per offset = 84 bytes
+  ld    ix,.SpriteOffSetsTable            ;21 offset * 4 bytes per offset = 84 bytes
   add   ix,de
 
-  .SetSprite:
+  ;write sprite character
+	xor		a				;page 0/1
+	ld		hl,sprcharaddr	;sprite 0 character table in VRAM
+	call	SetVdp_Write
+
   ld    l,(ix+0)
   ld    h,(ix+1)
 	ld		c,$98
-	call	outix128		;write sprite character to vram
-  ld    de,6*128
-  add   hl,de
-	call	outix128		;write sprite character to vram
-  add   hl,de
-	call	outix128		;write sprite character to vram
+	call	outix320		;write sprite character to vram
+
 	xor		a				;page 0/1
 	ld		hl,sprcoladdr	;sprite 0 color table in VRAM
 	call	SetVdp_Write
-  exx
+
   ld    l,(ix+2)
   ld    h,(ix+3)
 	ld		c,$98
-	call	outix64		;write sprite color of pointer and hand to vram
-  ld    de,6*64
-  add   hl,de
-	call	outix64		;write sprite color of pointer and hand to vram
-  add   hl,de
-	call	outix64		;write sprite color of pointer and hand to vram
+	call	outix160		;write sprite color of pointer and hand to vram
   ret
 
-  ;offset character, color
-.SpriteOffSets: dw  .PlayerSpritesCharacters+00*128,.PlayerSpriteColors+00*064,  .PlayerSpritesCharacters+01*128,.PlayerSpriteColors+01*064,  .PlayerSpritesCharacters+02*128,.PlayerSpriteColors+02*064,  .PlayerSpritesCharacters+03*128,.PlayerSpriteColors+03*064,  .PlayerSpritesCharacters+04*128,.PlayerSpriteColors+04*064,  .PlayerSpritesCharacters+05*128,.PlayerSpriteColors+05*064,  .PlayerSpritesCharacters+06*128,.PlayerSpriteColors+06*064 
-                dw  .PlayerSpritesCharacters+21*128,.PlayerSpriteColors+21*064,  .PlayerSpritesCharacters+22*128,.PlayerSpriteColors+22*064,  .PlayerSpritesCharacters+23*128,.PlayerSpriteColors+23*064,  .PlayerSpritesCharacters+24*128,.PlayerSpriteColors+24*064,  .PlayerSpritesCharacters+25*128,.PlayerSpriteColors+25*064,  .PlayerSpritesCharacters+26*128,.PlayerSpriteColors+26*064,  .PlayerSpritesCharacters+27*128,.PlayerSpriteColors+27*064 
-                dw  .PlayerSpritesCharacters+42*128,.PlayerSpriteColors+42*064,  .PlayerSpritesCharacters+43*128,.PlayerSpriteColors+43*064,  .PlayerSpritesCharacters+44*128,.PlayerSpriteColors+44*064,  .PlayerSpritesCharacters+45*128,.PlayerSpriteColors+45*064,  .PlayerSpritesCharacters+46*128,.PlayerSpriteColors+46*064,  .PlayerSpritesCharacters+47*128,.PlayerSpriteColors+47*064,  .PlayerSpritesCharacters+48*128,.PlayerSpriteColors+48*064 
+  ;x offsets for the head sprite
+.XOffsetsHeadSprite:  
+db 7,7,7,8,8,8,8,8,8,8,8,8,8,8,8,8,8,9,9,9,10
 
 .PlayerSpritesCharacters:	
 include "..\grapx\racinggame\sprites\Sprites.tgs.gen"
 .PlayerSpriteColors:	
 include "..\grapx\racinggame\sprites\Sprites.tcs.gen"
 
+  ;offset character, color
+.SpriteOffSetsTable: 
+dw  .PlayerSpritesCharacters+00*320,.PlayerSpriteColors+00*160
+dw  .PlayerSpritesCharacters+01*320,.PlayerSpriteColors+01*160
+dw  .PlayerSpritesCharacters+02*320,.PlayerSpriteColors+02*160
+dw  .PlayerSpritesCharacters+03*320,.PlayerSpriteColors+03*160
+dw  .PlayerSpritesCharacters+04*320,.PlayerSpriteColors+04*160
+dw  .PlayerSpritesCharacters+05*320,.PlayerSpriteColors+05*160
+dw  .PlayerSpritesCharacters+06*320,.PlayerSpriteColors+06*160
+dw  .PlayerSpritesCharacters+07*320,.PlayerSpriteColors+07*160
+dw  .PlayerSpritesCharacters+08*320,.PlayerSpriteColors+08*160
+dw  .PlayerSpritesCharacters+09*320,.PlayerSpriteColors+09*160
+dw  .PlayerSpritesCharacters+10*320,.PlayerSpriteColors+10*160
+dw  .PlayerSpritesCharacters+11*320,.PlayerSpriteColors+11*160
+dw  .PlayerSpritesCharacters+12*320,.PlayerSpriteColors+12*160
+dw  .PlayerSpritesCharacters+13*320,.PlayerSpriteColors+13*160
+dw  .PlayerSpritesCharacters+14*320,.PlayerSpriteColors+14*160
+dw  .PlayerSpritesCharacters+15*320,.PlayerSpriteColors+15*160
+dw  .PlayerSpritesCharacters+16*320,.PlayerSpriteColors+16*160
+dw  .PlayerSpritesCharacters+17*320,.PlayerSpriteColors+17*160
+dw  .PlayerSpritesCharacters+18*320,.PlayerSpriteColors+18*160
+dw  .PlayerSpritesCharacters+19*320,.PlayerSpriteColors+19*160
+dw  .PlayerSpritesCharacters+20*320,.PlayerSpriteColors+20*160
 
-
-AnimateRoad:
+HandleCurvatureRoad:
 ;
 ; bit	7	  6	  5		    4		    3		    2		  1		  0
 ;		  0	  0	  trig-b	trig-a	right	  left	down	up	(joystick)
@@ -229,8 +618,12 @@ AnimateRoad:
   jp    nz,.CurveUpEnd
 
   .CurveDownEnd:
+  xor   a
+  ld    (RoadCurvatureAnimationStep),a
   ld    a,1
-  ld    (AnimateRoad?),a
+  ld    (AnimateRoadPage0AndPage1Simultaneous?),a
+  ld    a,5
+  ld    (AnimateRoad?),a                            ;2=up, 3=end up, 4=down, 5=end down
   ld    hl,CurveDownEndDataFiles
   ld    (RoadCurvatureAnimationPointer),hl
   ld    a,RoadAnimationIndexesBlockCurveDownEnd
@@ -238,6 +631,9 @@ AnimateRoad:
   ret
 
   .CurveLeftEnd:
+  xor   a
+  ld    (RoadCurvatureAnimationStep),a
+  ld    (AnimateRoadPage0AndPage1Simultaneous?),a
   ld    a,1
   ld    (AnimateRoad?),a
   ld    hl,CurveLeftEndDataFiles
@@ -247,6 +643,9 @@ AnimateRoad:
   ret
 
   .CurveRightEnd:
+  xor   a
+  ld    (RoadCurvatureAnimationStep),a
+  ld    (AnimateRoadPage0AndPage1Simultaneous?),a
   ld    a,1
   ld    (AnimateRoad?),a
   ld    hl,CurveRightEndDataFiles
@@ -256,8 +655,12 @@ AnimateRoad:
   ret
 
   .CurveUpEnd:
+  xor   a
+  ld    (RoadCurvatureAnimationStep),a
+  ld    a,3
+  ld    (AnimateRoad?),a                            ;2=up, 3=end up, 4=down, 5=end down
   ld    a,1
-  ld    (AnimateRoad?),a
+  ld    (AnimateRoadPage0AndPage1Simultaneous?),a
   ld    hl,CurveUpEndDataFiles
   ld    (RoadCurvatureAnimationPointer),hl
   ld    a,RoadAnimationIndexesBlockCurveUpEnd
@@ -265,8 +668,12 @@ AnimateRoad:
   ret
 
   .UpPressed:
+  xor   a
+  ld    (RoadCurvatureAnimationStep),a
+  ld    a,2
+  ld    (AnimateRoad?),a                            ;2=up, 3=end up, 4=down, 5=end down
   ld    a,1
-  ld    (AnimateRoad?),a
+  ld    (AnimateRoadPage0AndPage1Simultaneous?),a
   ld    hl,CurveUpDataFiles
   ld    (RoadCurvatureAnimationPointer),hl
   ld    a,RoadAnimationIndexesBlockCurveUp
@@ -274,8 +681,12 @@ AnimateRoad:
   ret
 
   .DownPressed:
+  xor   a
+  ld    (RoadCurvatureAnimationStep),a
+  ld    a,4
+  ld    (AnimateRoad?),a                            ;2=up, 3=end up, 4=down, 5=end down
   ld    a,1
-  ld    (AnimateRoad?),a
+  ld    (AnimateRoadPage0AndPage1Simultaneous?),a
   ld    hl,CurveDownDataFiles
   ld    (RoadCurvatureAnimationPointer),hl
   ld    a,RoadAnimationIndexesBlockCurveDown
@@ -283,6 +694,9 @@ AnimateRoad:
   ret
 
   .LeftPressed:
+  xor   a
+  ld    (RoadCurvatureAnimationStep),a
+  ld    (AnimateRoadPage0AndPage1Simultaneous?),a
   ld    a,1
   ld    (AnimateRoad?),a
   ld    hl,CurveLeftDataFiles
@@ -292,6 +706,9 @@ AnimateRoad:
   ret
 
   .RightPressed:
+  xor   a
+  ld    (RoadCurvatureAnimationStep),a
+  ld    (AnimateRoadPage0AndPage1Simultaneous?),a
   ld    a,1
   ld    (AnimateRoad?),a
   ld    hl,CurveRightDataFiles
@@ -299,15 +716,6 @@ AnimateRoad:
   ld    a,RoadAnimationIndexesBlockCurveRight
 	ld		(RoadAnimationIndexesBlock),a
   ret
-
-
-
-
-
-
-
-
-
 
 SetInterruptHandlerRacingGame:
   di

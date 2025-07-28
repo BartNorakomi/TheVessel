@@ -215,17 +215,15 @@ vblank:
 
 
   .RacingGame:
-  call  BackdropRandom
+;  call  BackdropRandom
   call  VideoReplayer
-  call  BackdropBlack
+;  call  BackdropBlack
+
+  ld    a,(RacingGameNewLineIntToBeSetOnVblank)
+  ld    (RacingGameLineIntOffset),a
+
 
   ld    a,(RoadAnimationStep)
-  inc   a
-  cp    60
-  jr    nz,.EndCheckLoop
-  xor   a
-  .EndCheckLoop:
-  ld    (RoadAnimationStep),a
 
   ld    d,0
   ld    e,a
@@ -285,6 +283,7 @@ sub StartRacingGameLineInt
   ld    a,19+128                        ;set lineinterrupt height
   out   ($99),a 
 
+
 ;  ld    a,-50
 ;  out   ($99),a
 ;  ld    a,23+128                        ;r#23 vertical screen offset
@@ -293,13 +292,17 @@ sub StartRacingGameLineInt
 
 
 
-RacingGameLineIntOffset:  db 113     ;113 is the standard, 083 is perfect for the road all the way curved up
+LineIntHeightStraightRoad:  equ 113
+RacingGameLineIntOffset:  db LineIntHeightStraightRoad     ;113 is the standard, 083 is perfect for the road all the way curved up
+
+
+RacingGameNewLineIntToBeSetOnVblank:  db  LineIntHeightStraightRoad
 
 ;The road animation starts to look good from y=15 and onwards. the animation starts at y=3, so we can skip the first 12 lines ???
 StartRacingGameLineInt: equ 12
 
 
-RoadAnimationStep:  db  -1
+RoadAnimationStep:  db  0
 RoadAnimationAddressesPointer:  dw  RoadAnimationAddresses
 
 RoadAnimationAddresses:
@@ -1075,12 +1078,14 @@ LineIntRacingGame:
 
   ld    hl,(PointerToSwapLines)
   ld    a,(hl)
-  inc   hl
-  ld    (PointerToSwapLines),hl
-
   add   a,b                             ;RacingGameLineIntOffset
   cp    210
   jr    nc,.VblankReachedPart2
+  cp    40
+  jr    c,.VblankReachedPart2
+
+  inc   hl
+  ld    (PointerToSwapLines),hl
 
   ld    (LineIntHeightRacingGame),a
   out   ($99),a

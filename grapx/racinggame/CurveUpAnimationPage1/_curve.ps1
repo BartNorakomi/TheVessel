@@ -38,7 +38,7 @@ $palette = @(
 
 $steps = 60
 for ($step = 0; $step -lt $steps; $step++) {
-    $hillHeight = -30 * ($step / ($steps - 1))
+    $hillHeight = -40 * ($step / ($steps - 1))
 
     # Pixel buffer and filled lines tracker
     $pixels = New-Object 'Byte[]' ($width * $totalHeight)

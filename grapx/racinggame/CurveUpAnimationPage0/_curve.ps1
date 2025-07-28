@@ -43,7 +43,7 @@ $palette = @(
 $steps = 60
 for ($step = 0; $step -lt $steps; $step++) {
     # - 50 for going up, +50 for going down
-    $hillHeight = -30 * ($step / ($steps - 1))  # From 0 to -20 in 10 steps
+    $hillHeight = -40 * ($step / ($steps - 1))  # From 0 to -20 in 10 steps
     #$hillHeight = 30 * ($step / ($steps - 1))  # From 0 to -20 in 10 steps
 
     # Pixel buffer and filled lines tracker

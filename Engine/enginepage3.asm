@@ -1483,6 +1483,15 @@ VideoReplayer:
   or    a
   ret   z
 
+  ld    a,(RoadCurvatureAnimationStep)
+	inc		a
+  ld    (RoadCurvatureAnimationStep),a
+
+	ld		a,(AnimateRoadPage0AndPage1Simultaneous?)
+	or		a
+	call	nz,.GoDouble
+	.GoDouble:
+
   ld    ix,(RoadCurvatureAnimationPointer)
 	ld		a,(RoadAnimationIndexesBlock)
   call  block12                             ;CARE!!! we can only switch block34 if page 1 is in rom  
@@ -2248,6 +2257,14 @@ RoadAnimationIndexesBlock:	rb	1
 RacingGamePlayerX:					rb	1
 RacingGameHorMoveSpeed:			rb	1
 RacingGameHorScreenPosition:		rb	2
+RacingGameDistance:					rb	4
+
+RacingGameSpeed:						rb	2					;between 0 mph and 200 mph
+
+RoadLinesMovementAnimationPointer:			rb	2
+AnimateRoadPage0AndPage1Simultaneous?:			rb	1
+
+RoadCurvatureAnimationStep:			rb	1
 
 
 

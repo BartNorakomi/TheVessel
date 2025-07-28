@@ -38,7 +38,7 @@ $palette = @(
 
 $steps = 60
 for ($step = 0; $step -lt $steps; $step++) {
-    $hillHeight = -30 * ($step / ($steps - 1))
+    $hillHeight = -40 * ($step / ($steps - 1))
 
     $pixels = New-Object 'Byte[]' ($width * $totalHeight)
     $filled = New-Object 'bool[]' $totalHeight

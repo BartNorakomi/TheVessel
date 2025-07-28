@@ -11,6 +11,7 @@ for ($i = 75; $i -ge 1; $i--) {
             $changed = "CurveRightEndPage${page}${region}ChangedPixelsfrom${i}to${j}"
             $addr = "CurveRightEndPage${page}${region}Addressesfrom${i}to${j}"
             $instr = "CurveRightEndPage${page}${region}WriteInstructionsfrom${i}to${j}"
+
             # Final flag formula
             if ($region -eq "TOP") {
                 $flag = $page * 2
@@ -19,6 +20,12 @@ for ($i = 75; $i -ge 1; $i--) {
             }
 
             $line = "db $block, $flag | dw $changed, $addr, $instr"
+
+            # Comment out TOP lines
+            if ($region -eq "TOP") {
+                $line = "; " + $line
+            }
+
             Add-Content -Path $outputFile -Encoding ascii -Value $line
         }
     }
