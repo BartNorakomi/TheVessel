@@ -2118,6 +2118,11 @@ StartWakeUpEvent?:								db	1
 OffloadResources?:								db	0
 
 
+
+RacingGameEventDistance:  dw  00078
+RacingGameEventPointer:   dw  RacingGameEvents
+
+
 CurrentRacingGamePalette:	db	0 ; can be removed later
 
 

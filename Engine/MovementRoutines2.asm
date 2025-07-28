@@ -4,6 +4,21 @@
 
 Phase MovementRoutinesAddress
 
+
+
+
+
+
+
+
+
+
+
+;IDEA maak een slalom parcours
+;IDEA laat gaten in de road verschijnen waar visjes uitspringen
+
+
+
 MaximumSpeedRacingGame: equ 200
 RacingGamePlayerY:  equ 161                 ;y never changes ?
 RacingGameRoutine:
@@ -24,7 +39,8 @@ RacingGameRoutine:
   call  .UpdateDistance
   call  .UpdateRoadLinesAnimation
   call  .ChangeLineIntHeightWhenCurvingUpOrDown
-;  call  HandleCurvatureRoad
+  call  HandleCurvatureRoad
+  call  ChangePaletteRacingGame
   ret
 
   .HandlePhase:
@@ -59,6 +75,7 @@ RacingGameRoutine:
   ld    (RacingGameHorMoveSpeed),a        ;value from 0-41 where 21 is center (not moving) 0-20 is moving left, 22-41 is moving right
   ld    hl,112*10
   ld    (RacingGameHorScreenPosition),hl  ;HorScreenPosition / 10 = Player X
+  ld    hl,0
   ld    (RacingGameDistance),hl
   ld    (RacingGameDistance+2),hl
 
@@ -366,59 +383,25 @@ db    LineIntHeightStraightRoad+30
   ret
 
   .SetHorMoveSpeedAndAnimatePlayerSprite:
+  ld    hl,RacingGameHorMoveSpeed         ;value from 0-41 where 21 is center (not moving) 0-20 is moving left, 22-41 is moving right
 
-
-
-
-;HORIZONTAL MOVEMENT SHOULD BE DEPENDANT ON THE RacingGameSpeed AND HORIZONTAL FACING DIRECTION - Start with renaming this
-
-
-
-
+  ld    c,01                              ;left border max speed
+  ld    b,41                              ;right border max speed
+  ;if racinggamespeed < 42 apply limit to how far we can turn left and right
   ld    a,(RacingGameSpeed)               ;speed in m/p/h
-  or    a
-  jr    z,.NotMovingLeftOrRight
+  srl   a                                 ;/2
+  cp    21
+  jr    nc,.EndCheckLimitations
 
-  cp    50
-  ld    b,7
-  jr    c,.Set
-  cp    100
-  ld    b,3
-  jr    c,.Set
-  cp    150
-  ld    b,1
-  jr    c,.Set
-  ld    b,0
-
-  .Set:
-  ld    a,(framecounter2)
-  and   b
-;  jr    z,.Move
-  ret   nz
-
-
-
-;
-; bit	7	  6	  5		    4		    3		    2		  1		  0
-;		  0	  0	  trig-b	trig-a	right	  left	down	up	(joystick)
-;		  F5	F1	'M'		  space	  right	  left	down	up	(keyboard)
-;
-;	ld		a,(Controls)
-;  and   %0001 0001                        ;left and right
-;  jr    z,.NotMovingLeftOrRight
-;  ret
-;  .Move:
-
-
-
-
-
-
-
-  ld    a,(RacingGameSpeed)               ;speed in m/p/h
-  cp    20
-  jp    c,.NotMovingLeftOrRight
-
+  ld    c,a
+  ld    b,a
+  ld    a,21
+  sub   a,c
+  ld    c,a
+  ld    a,21
+  add   a,b
+  ld    b,a
+.EndCheckLimitations:
 ;
 ; bit	7	  6	  5		    4		    3		    2		  1		  0
 ;		  0	  0	  trig-b	trig-a	right	  left	down	up	(joystick)
@@ -433,18 +416,24 @@ db    LineIntHeightStraightRoad+30
   jr    nz,.MoveRight
 
   .MoveLeft:
-  ld    a,(RacingGameHorMoveSpeed)        ;value from 0-41 where 21 is center (not moving) 0-20 is moving left, 22-41 is moving right
-  dec   a
-  ret   m
-  ld    (RacingGameHorMoveSpeed),a        ;value from 0-41 where 21 is center (not moving) 0-20 is moving left, 22-41 is moving right
+  ld    a,(hl)                            ;value from 0-41 where 21 is center (not moving) 0-20 is moving left, 22-41 is moving right
+  sub   a,2
+  jp    p,.Positive
+  xor   a
+  .Positive:
+  cp    c
+  ld    (hl),a                            ;value from 0-41 where 21 is center (not moving) 0-20 is moving left, 22-41 is moving right
+  ret   nc
+  ld    (hl),c                            ;value from 0-41 where 21 is center (not moving) 0-20 is moving left, 22-41 is moving right
   ret
 
   .MoveRight:
-  ld    a,(RacingGameHorMoveSpeed)        ;value from 0-41 where 21 is center (not moving) 0-20 is moving left, 22-41 is moving right
-  inc   a
-  cp    42
-  ret   z
-  ld    (RacingGameHorMoveSpeed),a        ;value from 0-41 where 21 is center (not moving) 0-20 is moving left, 22-41 is moving right
+  ld    a,(hl)                            ;value from 0-41 where 21 is center (not moving) 0-20 is moving left, 22-41 is moving right
+  add   a,2
+  cp    b
+  ld    (hl),a                            ;value from 0-41 where 21 is center (not moving) 0-20 is moving left, 22-41 is moving right
+  ret   c
+  ld    (hl),b                            ;value from 0-41 where 21 is center (not moving) 0-20 is moving left, 22-41 is moving right
   ret
 
   .NotMovingLeftOrRight:
@@ -551,26 +540,15 @@ dw  .PlayerSpritesCharacters+18*320,.PlayerSpriteColors+18*160
 dw  .PlayerSpritesCharacters+19*320,.PlayerSpriteColors+19*160
 dw  .PlayerSpritesCharacters+20*320,.PlayerSpriteColors+20*160
 
-HandleCurvatureRoad:
+ChangePaletteRacingGame:
 ;
 ; bit	7	  6	  5		    4		    3		    2		  1		  0
 ;		  0	  0	  trig-b	trig-a	right	  left	down	up	(joystick)
 ;		  F5	F1	'M'		  space	  right	  left	down	up	(keyboard)
 ;
 	ld		a,(NewPrContr)
-	bit		5,a           ;trig b pressed ?
-  jp    nz,.ChangePalette
-	bit		4,a           ;space pressed ?
-  jp    nz,.CurveEnd
-	bit		3,a           ;right pressed ?
-  jp    nz,.RightPressed
-	bit		2,a           ;left pressed ?
-  jp    nz,.LeftPressed
-	bit		1,a           ;down pressed ?
-  jp    nz,.DownPressed
-	bit		0,a           ;up pressed ?
-  jp    nz,.UpPressed
-  ret
+	bit		6,a           ;trig b pressed ?
+  ret   z
 
   .ChangePalette:
   ld    a,(CurrentRacingGamePalette)
@@ -600,22 +578,46 @@ HandleCurvatureRoad:
   incbin "..\grapx\RacingGame\Palette5.SC5",$7680+7,32
 
 
+                    ;next distance, curve (1=right, 2=endright, 3=down, 4=enddown, 5=left, 6=endleft, 7=up, 8=endup)
+RacingGameEvents:     dw 00300 | db 1 | dw 00500 | db 2
+                      dw 00700 | db 3 | dw 00800 | db 4
+                      dw 01100 | db 5 | dw 01300 | db 6
+                      dw 01500 | db 7 | dw 02000 | db 8
+                      dw 02500 | db 1 | dw 10000 | db 2
+HandleCurvatureRoad:
+  ld    hl,(RacingGameDistance+1)
+  ld    de,(RacingGameEventDistance)
+  xor   a
+  sbc   hl,de
+  ret   c
 
-  .CurveEnd:
-;
-; bit	7	  6	  5		    4		    3		    2		  1		  0
-;		  0	  0	  trig-b	trig-a	right	  left	down	up	(joystick)
-;		  F5	F1	'M'		  space	  right	  left	down	up	(keyboard)
-;
-	ld		a,(Controls)
-	bit		3,a           ;right pressed ?
-  jp    nz,.CurveRightEnd
-	bit		2,a           ;left pressed ?
-  jp    nz,.CurveLeftEnd
-	bit		1,a           ;down pressed ?
-  jp    nz,.CurveDownEnd
-	bit		0,a           ;up pressed ?
-  jp    nz,.CurveUpEnd
+  ld    hl,(RacingGameEventPointer)
+  ld    e,(hl)
+  inc   hl
+  ld    d,(hl)                                    ;now distance in de
+  ld    (RacingGameEventDistance),de
+  inc   hl
+  ld    a,(hl)
+  inc   hl
+  ld    (RacingGameEventPointer),hl
+
+  dec   a
+  jp    z,.RightPressed
+  dec   a
+  jp    z,.CurveRightEnd
+  dec   a
+  jp    z,.DownPressed
+  dec   a
+  jp    z,.CurveDownEnd
+  dec   a
+  jp    z,.LeftPressed
+  dec   a
+  jp    z,.CurveLeftEnd
+  dec   a
+  jp    z,.UpPressed
+  dec   a
+  jp    z,.CurveUpEnd
+  ret
 
   .CurveDownEnd:
   xor   a
