@@ -2285,6 +2285,9 @@ RacingGameEnemyX:						rb	1
 RacingGameEnemyY:						rb	2
 
 
+RacingGameEnemy1DistanceFromPlayer:						rb	2
+
+
 
 endenginepage3variables:  equ $+enginepage3length
 org variables

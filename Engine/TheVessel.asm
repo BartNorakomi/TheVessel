@@ -973,4 +973,7 @@ TheVesselrepBlock:				equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
 	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
 
 endRom:
-	ds		(RomSize-1) - endRom,$ff
+;	ds		(RomSize-1) - endRom,$ff
+
+
+	ds		$800000 - endRom + $4000,$ff

@@ -5,8 +5,23 @@
 Phase MovementRoutinesAddress
 
 
+
+
+
 ;IDEA maak een slalom parcours
 ;IDEA laat gaten in de road verschijnen waar visjes uitspringen
+;1 minder animatiestap links en rechts op top speed (bij lage snelheid kan dat ook. Dus je kunt de rotaties houden, maar de scope moet kleiner naarmate je sneller rijdt)
+;snelheid van de weg mag wel hoger
+;heuvels mogen dieper/hoger
+;Mss iets qua banden wat enige beweging suggereert.
+;aan de horizon, zou ik qua gfx experimenteren met een raster.
+;horizon verticaal meescrollen in de up/down curves
+;maak een zooi palettes zie subtielere verschillen tonen (vooral met blauwtinten)
+;wat als je die stroken minder breed maakt. Alsof je op zo'n grote brug rijdt met links/rechts nog een paar meter gras, maar daarna niks meer. In wat je dan weglaat kun je neem ik aan gewoon een achtergrond hebben van iets.
+
+
+
+
 
 RacingGamePlayerY:  equ 161                 ;y never changes ?
 RacingGameRoutine:
@@ -28,7 +43,7 @@ RacingGameRoutine:
   call  .UpdateDistance
   call  .UpdateRoadLinesAnimation
   call  .ChangeLineIntHeightWhenCurvingUpOrDown
-  call  HandleCurvatureRoad
+;  call  HandleCurvatureRoad
   call  ChangePaletteRacingGame
   call  .UpdateMaximumSpeedOnCurveOrDown
   call  ForceMovePlayerAgainstCurves
@@ -80,10 +95,13 @@ RacingGameRoutine:
   xor   a
   ld    (RoadCurveAmountPixelsTraversed),a
 
-  ld    a,140
+  ld    a,112 ; 140
   ld    (RacingGameEnemyX),a
-  ld    a,91
+  ld    a,RacingGamePlayerY
   ld    (RacingGameEnemyY),a
+
+  ld    hl,15000
+  ld    (RacingGameEnemy1DistanceFromPlayer),hl
   ret
 
   .UpdateMaximumSpeedOnCurveOrDown:
@@ -498,15 +516,48 @@ db    LineIntHeightStraightRoad+30
   ld    (RacingGameHorMoveSpeed),a        ;value from 0-41 where 21 is center (not moving) 0-20 is moving left, 22-41 is moving right
   ret
 
+  .PerspectiveTable:
+  include "..\grapx\racinggame\PerspectiveYTable.asm"
+
   .SetEnemySprite:
-  ret
-  ld    a,(RacingGameEnemyY)
-  inc   a
-  cp    208
-  jr    c,.GoMoveEnemyY
-  ld    a,91
-  .GoMoveEnemyY:
+
+  ;distance from player to horizon = 15000
+  ;y player=161 horizon is 82 pixels higher (on straight roads)
+  ;y horizon=79
+
+  ;simulate enemy driving away from player
+  ld    bc,100                           ;enemy speed
+  ld    de,(RacingGameSpeed)
+
+  ld    hl,(RacingGameEnemy1DistanceFromPlayer)
+  xor   a
+  add   hl,bc                           ;enemy speed
+  sbc   hl,de
+  jr    nc,.NotCarry
+  ld    hl,15000
+  .NotCarry:
+  ld    (RacingGameEnemy1DistanceFromPlayer),hl
+  push  hl
+  pop   bc
+
+  ;we can calculate enemy y screen position with y=590 / (z/1000) 161 - z/182
+
+  ld    de,100
+  call  DivideBCbyDE                                ; Out: BC = result, HL = rest
+
+  ld    hl,.PerspectiveTable
+  add   hl,bc
+  ld    a,(hl)
   ld    (RacingGameEnemyY),a
+
+
+;  ld    a,(RacingGameEnemyY)
+;  inc   a
+;  cp    208
+;  jr    c,.GoMoveEnemyY
+;  ld    a,91
+;  .GoMoveEnemyY:
+;  ld    (RacingGameEnemyY),a
 
   ld    a,(RacingGameEnemyX)
   ld    (spat+1+(12*4)),a                 ;x sprite 2
@@ -551,6 +602,10 @@ db    LineIntHeightStraightRoad+30
   .go:
   ld    e,a
   ld    d,0
+
+
+
+ld de,14*4
 
   ;jump to correct sprite addresses in SpriteOffSetsTable
   ld    ix,.Girl1PonyOffSetsTable             ;21 offset * 4 bytes per offset = 84 bytes
