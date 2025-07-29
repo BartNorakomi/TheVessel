@@ -653,7 +653,10 @@ DrillingLocationsGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlo
   incbin "..\grapx\DrillingLocations\DrillingLocations.SC5",7,212 * 128      ;98 lines
 	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
 
-;  incbin "..\grapx\RacingGame\nightstriker2Prepared.SR5",7,212 * 128      ;98 lines
+
+
+
+
 
 RacingGameTrackStraightPage0GfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
   incbin "..\grapx\RacingGame\TrackStraightPage0.sc5",7,211 * 128      ;98 lines
@@ -669,9 +672,14 @@ RacingGameBackdropGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBl
   incbin "..\grapx\RacingGame\RoadMSXSize\backdrop.sc5",7,015 * 128      ;98 lines
 	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
 
-
-
-
+RacingGameGirl1PonySpritesBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
+	phase	$8000
+	Girl1PonySpritesCharacters:
+	include "..\grapx\racinggame\sprites\Girl1Pony\Girl1Pony.tgs.gen"
+	Girl1PonySpriteColors:	
+	include "..\grapx\racinggame\sprites\Girl1Pony\Girl1Pony.tcs.gen"
+	dephase
+	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
 
 	include	"..\grapx\RacingGame\CurveLeftDataFiles.asm"
 	include	"..\grapx\RacingGame\CurveLeftEndDataFiles.asm"
@@ -681,9 +689,6 @@ RacingGameBackdropGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBl
 	include	"..\grapx\RacingGame\CurveUpEndDataFiles.asm"
 	include	"..\grapx\RacingGame\CurveDownDataFiles.asm"
 	include	"..\grapx\RacingGame\CurveDownEndDataFiles.asm"
-
-
-
 
 RoadAnimationIndexesBlockCurveUp:				equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
 RoadAnimationIndexesBlockCurveUpEnd:		equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
@@ -708,7 +713,8 @@ db 0,0
 RoadAnimationIndexesBlockCurveLeft:			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
 RoadAnimationIndexesBlockCurveLeftEnd:	equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
 RoadAnimationIndexesBlockCurveRight:		equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
-RoadAnimationIndexesBlockCurveRightEnd:	equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize	phase	$4000
+RoadAnimationIndexesBlockCurveRightEnd:	equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
+	phase	$4000
 CurveLeftDataFiles:
 	include	"..\grapx\RacingGame\CurveLeftDataIndex.asm"
 db 0,0
@@ -721,8 +727,22 @@ db 0,0
 CurveRightEndDataFiles:
 	include	"..\grapx\RacingGame\CurveRightEndDataIndex.asm"
 db 0,0
+HalfCurveLeftDataFiles:
+	include	"..\grapx\RacingGame\HalfCurveLeftDataIndex.asm"
+db 0,0
+HalfCurveLeftEndDataFiles:
+	include	"..\grapx\RacingGame\HalfCurveLeftEndDataIndex.asm"
+db 0,0
+HalfCurveRightDataFiles:
+	include	"..\grapx\RacingGame\HalfCurveRightDataIndex.asm"
+db 0,0
+HalfCurveRightEndDataFiles:
+	include	"..\grapx\RacingGame\HalfCurveRightEndDataIndex.asm"
+db 0,0
 	dephase
 	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
+
+
 
 
 
@@ -940,6 +960,11 @@ MovementRoutinesBlock:	equ ($-RomStartAddress) and (romsize-1) /RomBlockSize ;$0
 ;movement routines2
 MovementRoutines2Block:	equ ($-RomStartAddress) and (romsize-1) /RomBlockSize ;$04
 								include "MovementRoutines2.asm"  
+								DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
+
+;movement routines3
+MovementRoutines3Block:	equ ($-RomStartAddress) and (romsize-1) /RomBlockSize ;$04
+								include "MovementRoutines3.asm"  
 								DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
 
 

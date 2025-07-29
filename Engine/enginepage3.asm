@@ -137,7 +137,7 @@ EventUpgradeMenu:					db	1,$28,$7e | dw 000,000					,000        | db 255      ,M
 
 EventDrillingLocations:		db	1,$28,$7e | dw 000,000					,000        | db 255      ,MovementRoutines2Block| dw DrillingLocationsRoutine	| db 000,000 ,000, 000
 
-EventRacingGame:					db	1,$28,$7e | dw 000,000					,000        | db 255      ,MovementRoutines2Block| dw RacingGameRoutine					| db 000,000 ,000, 000
+EventRacingGame:					db	1,$28,$7e | dw 000,000					,000        | db 255      ,MovementRoutines3Block| dw RacingGameRoutine					| db 000,000 ,000, 000
 
 
 
@@ -1483,6 +1483,11 @@ VideoReplayer:
   or    a
   ret   z
 
+	ld		a,(RoadCurve200PixelsTraversed?)
+	dec		a
+	ret		m
+	ld		(RoadCurve200PixelsTraversed?),a
+
   ld    a,(RoadCurvatureAnimationStep)
 	inc		a
   ld    (RoadCurvatureAnimationStep),a
@@ -2119,7 +2124,7 @@ OffloadResources?:								db	0
 
 
 
-RacingGameEventDistance:  dw  00078
+RacingGameEventDistance:  dw  0000
 RacingGameEventPointer:   dw  RacingGameEvents
 
 
@@ -2270,6 +2275,14 @@ RoadLinesMovementAnimationPointer:			rb	2
 AnimateRoadPage0AndPage1Simultaneous?:			rb	1
 
 RoadCurvatureAnimationStep:			rb	1
+RoadCurve200PixelsTraversed?:			rb	1
+RoadCurveAmountPixelsTraversed:			rb	1
+CurrentCurve:								rb	1					;1=right, 2=down, 3=left, 4=up, 5=right end, 6=down end, 7=left end, 8=up end
+MaximumSpeedRacingGame: 		rb	2
+HalfCurve?: 								rb	1
+
+RacingGameEnemyX:						rb	1
+RacingGameEnemyY:						rb	2
 
 
 
