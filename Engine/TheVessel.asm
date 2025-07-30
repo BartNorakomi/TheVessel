@@ -681,6 +681,168 @@ RacingGameGirl1PonySpritesBlock:  			equ   ($-RomStartAddress) and (romsize-1) /
 	dephase
 	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
 
+RacingGamePlayerSpritesBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
+	phase	$8000
+	PlayerSpritesCharacters:
+	include "..\grapx\racinggame\sprites\Player\Player.tgs.gen"
+	PlayerSpriteColors:	
+	include "..\grapx\racinggame\sprites\Player\Player.tcs.gen"
+
+	PlayerPart2SpritesCharacters:
+	include "..\grapx\racinggame\sprites\Player\PlayerPart2.tgs.gen"
+	PlayerPart2SpriteColors:	
+	include "..\grapx\racinggame\sprites\Player\PlayerPart2.tcs.gen"
+
+
+  ;offset character, color
+SpriteOffSetsTableSlowSpeed: 
+dw  PlayerSpritesCharacters+00*320,PlayerSpriteColors+00*160
+dw  PlayerSpritesCharacters+01*320,PlayerSpriteColors+01*160
+dw  PlayerSpritesCharacters+02*320,PlayerSpriteColors+02*160
+dw  PlayerSpritesCharacters+03*320,PlayerSpriteColors+03*160
+dw  PlayerSpritesCharacters+04*320,PlayerSpriteColors+04*160
+dw  PlayerSpritesCharacters+05*320,PlayerSpriteColors+05*160
+dw  PlayerSpritesCharacters+06*320,PlayerSpriteColors+06*160
+dw  PlayerSpritesCharacters+07*320,PlayerSpriteColors+07*160
+dw  PlayerSpritesCharacters+08*320,PlayerSpriteColors+08*160
+dw  PlayerSpritesCharacters+09*320,PlayerSpriteColors+09*160
+dw  PlayerSpritesCharacters+10*320,PlayerSpriteColors+10*160
+dw  PlayerSpritesCharacters+11*320,PlayerSpriteColors+11*160
+dw  PlayerSpritesCharacters+12*320,PlayerSpriteColors+12*160
+dw  PlayerSpritesCharacters+13*320,PlayerSpriteColors+13*160
+dw  PlayerSpritesCharacters+14*320,PlayerSpriteColors+14*160
+dw  PlayerSpritesCharacters+15*320,PlayerSpriteColors+15*160
+dw  PlayerSpritesCharacters+16*320,PlayerSpriteColors+16*160
+dw  PlayerSpritesCharacters+17*320,PlayerSpriteColors+17*160
+dw  PlayerSpritesCharacters+18*320,PlayerSpriteColors+18*160
+dw  PlayerSpritesCharacters+19*320,PlayerSpriteColors+19*160
+dw  PlayerSpritesCharacters+20*320,PlayerSpriteColors+20*160
+
+  ;offset character, color
+SpriteOffSetsTableMediumSpeed: 
+dw  PlayerSpritesCharacters+01*320,PlayerSpriteColors+01*160
+dw  PlayerSpritesCharacters+01*320,PlayerSpriteColors+01*160
+dw  PlayerSpritesCharacters+02*320,PlayerSpriteColors+02*160
+dw  PlayerSpritesCharacters+03*320,PlayerSpriteColors+03*160
+dw  PlayerSpritesCharacters+04*320,PlayerSpriteColors+04*160
+dw  PlayerSpritesCharacters+05*320,PlayerSpriteColors+05*160
+dw  PlayerSpritesCharacters+06*320,PlayerSpriteColors+06*160
+dw  PlayerSpritesCharacters+07*320,PlayerSpriteColors+07*160
+dw  PlayerSpritesCharacters+08*320,PlayerSpriteColors+08*160
+dw  PlayerSpritesCharacters+09*320,PlayerSpriteColors+09*160
+dw  PlayerSpritesCharacters+10*320,PlayerSpriteColors+10*160
+dw  PlayerSpritesCharacters+11*320,PlayerSpriteColors+11*160
+dw  PlayerSpritesCharacters+12*320,PlayerSpriteColors+12*160
+dw  PlayerSpritesCharacters+13*320,PlayerSpriteColors+13*160
+dw  PlayerSpritesCharacters+14*320,PlayerSpriteColors+14*160
+dw  PlayerSpritesCharacters+15*320,PlayerSpriteColors+15*160
+dw  PlayerSpritesCharacters+16*320,PlayerSpriteColors+16*160
+dw  PlayerSpritesCharacters+17*320,PlayerSpriteColors+17*160
+dw  PlayerSpritesCharacters+18*320,PlayerSpriteColors+18*160
+dw  PlayerSpritesCharacters+19*320,PlayerSpriteColors+19*160
+dw  PlayerSpritesCharacters+19*320,PlayerSpriteColors+19*160
+
+  ;offset character, color
+SpriteOffSetsTableMaxSpeed: 
+dw  PlayerSpritesCharacters+02*320,PlayerSpriteColors+02*160
+dw  PlayerSpritesCharacters+02*320,PlayerSpriteColors+02*160
+dw  PlayerSpritesCharacters+02*320,PlayerSpriteColors+02*160
+dw  PlayerSpritesCharacters+03*320,PlayerSpriteColors+03*160
+dw  PlayerSpritesCharacters+04*320,PlayerSpriteColors+04*160
+dw  PlayerSpritesCharacters+05*320,PlayerSpriteColors+05*160
+dw  PlayerSpritesCharacters+06*320,PlayerSpriteColors+06*160
+dw  PlayerSpritesCharacters+07*320,PlayerSpriteColors+07*160
+dw  PlayerSpritesCharacters+08*320,PlayerSpriteColors+08*160
+dw  PlayerSpritesCharacters+09*320,PlayerSpriteColors+09*160
+dw  PlayerSpritesCharacters+10*320,PlayerSpriteColors+10*160
+dw  PlayerSpritesCharacters+11*320,PlayerSpriteColors+11*160
+dw  PlayerSpritesCharacters+12*320,PlayerSpriteColors+12*160
+dw  PlayerSpritesCharacters+13*320,PlayerSpriteColors+13*160
+dw  PlayerSpritesCharacters+14*320,PlayerSpriteColors+14*160
+dw  PlayerSpritesCharacters+15*320,PlayerSpriteColors+15*160
+dw  PlayerSpritesCharacters+16*320,PlayerSpriteColors+16*160
+dw  PlayerSpritesCharacters+17*320,PlayerSpriteColors+17*160
+dw  PlayerSpritesCharacters+18*320,PlayerSpriteColors+18*160
+dw  PlayerSpritesCharacters+18*320,PlayerSpriteColors+18*160
+dw  PlayerSpritesCharacters+18*320,PlayerSpriteColors+18*160
+
+WheelAnimated:
+  ;offset character, color
+.SpriteOffSetsTableSlowSpeed:
+dw  PlayerPart2SpritesCharacters+00*320,PlayerPart2SpriteColors+00*160
+dw  PlayerPart2SpritesCharacters+01*320,PlayerPart2SpriteColors+01*160
+dw  PlayerPart2SpritesCharacters+02*320,PlayerPart2SpriteColors+02*160
+dw  PlayerSpritesCharacters+03*320,PlayerSpriteColors+03*160
+dw  PlayerSpritesCharacters+04*320,PlayerSpriteColors+04*160
+dw  PlayerSpritesCharacters+05*320,PlayerSpriteColors+05*160
+dw  PlayerSpritesCharacters+06*320,PlayerSpriteColors+06*160
+dw  PlayerSpritesCharacters+07*320,PlayerSpriteColors+07*160
+dw  PlayerSpritesCharacters+08*320,PlayerSpriteColors+08*160
+dw  PlayerSpritesCharacters+09*320,PlayerSpriteColors+09*160
+dw  PlayerPart2SpritesCharacters+03*320,PlayerPart2SpriteColors+03*160
+dw  PlayerSpritesCharacters+11*320,PlayerSpriteColors+11*160
+dw  PlayerSpritesCharacters+12*320,PlayerSpriteColors+12*160
+dw  PlayerSpritesCharacters+13*320,PlayerSpriteColors+13*160
+dw  PlayerSpritesCharacters+14*320,PlayerSpriteColors+14*160
+dw  PlayerSpritesCharacters+15*320,PlayerSpriteColors+15*160
+dw  PlayerSpritesCharacters+16*320,PlayerSpriteColors+16*160
+dw  PlayerSpritesCharacters+17*320,PlayerSpriteColors+17*160
+dw  PlayerPart2SpritesCharacters+04*320,PlayerPart2SpriteColors+04*160
+dw  PlayerPart2SpritesCharacters+05*320,PlayerPart2SpriteColors+05*160
+dw  PlayerPart2SpritesCharacters+06*320,PlayerPart2SpriteColors+06*160
+
+  ;offset character, color
+.SpriteOffSetsTableMediumSpeed: 
+dw  PlayerPart2SpritesCharacters+01*320,PlayerPart2SpriteColors+01*160
+dw  PlayerPart2SpritesCharacters+01*320,PlayerPart2SpriteColors+01*160
+dw  PlayerPart2SpritesCharacters+02*320,PlayerPart2SpriteColors+02*160
+dw  PlayerSpritesCharacters+03*320,PlayerSpriteColors+03*160
+dw  PlayerSpritesCharacters+04*320,PlayerSpriteColors+04*160
+dw  PlayerSpritesCharacters+05*320,PlayerSpriteColors+05*160
+dw  PlayerSpritesCharacters+06*320,PlayerSpriteColors+06*160
+dw  PlayerSpritesCharacters+07*320,PlayerSpriteColors+07*160
+dw  PlayerSpritesCharacters+08*320,PlayerSpriteColors+08*160
+dw  PlayerSpritesCharacters+09*320,PlayerSpriteColors+09*160
+dw  PlayerPart2SpritesCharacters+03*320,PlayerPart2SpriteColors+03*160
+dw  PlayerSpritesCharacters+11*320,PlayerSpriteColors+11*160
+dw  PlayerSpritesCharacters+12*320,PlayerSpriteColors+12*160
+dw  PlayerSpritesCharacters+13*320,PlayerSpriteColors+13*160
+dw  PlayerSpritesCharacters+14*320,PlayerSpriteColors+14*160
+dw  PlayerSpritesCharacters+15*320,PlayerSpriteColors+15*160
+dw  PlayerSpritesCharacters+16*320,PlayerSpriteColors+16*160
+dw  PlayerSpritesCharacters+17*320,PlayerSpriteColors+17*160
+dw  PlayerPart2SpritesCharacters+04*320,PlayerPart2SpriteColors+04*160
+dw  PlayerPart2SpritesCharacters+05*320,PlayerPart2SpriteColors+05*160
+dw  PlayerPart2SpritesCharacters+05*320,PlayerPart2SpriteColors+05*160
+
+  ;offset character, color
+.SpriteOffSetsTableMaxSpeed: 
+dw  PlayerPart2SpritesCharacters+02*320,PlayerPart2SpriteColors+02*160
+dw  PlayerPart2SpritesCharacters+02*320,PlayerPart2SpriteColors+02*160
+dw  PlayerPart2SpritesCharacters+02*320,PlayerPart2SpriteColors+02*160
+dw  PlayerSpritesCharacters+03*320,PlayerSpriteColors+03*160
+dw  PlayerSpritesCharacters+04*320,PlayerSpriteColors+04*160
+dw  PlayerSpritesCharacters+05*320,PlayerSpriteColors+05*160
+dw  PlayerSpritesCharacters+06*320,PlayerSpriteColors+06*160
+dw  PlayerSpritesCharacters+07*320,PlayerSpriteColors+07*160
+dw  PlayerSpritesCharacters+08*320,PlayerSpriteColors+08*160
+dw  PlayerSpritesCharacters+09*320,PlayerSpriteColors+09*160
+dw  PlayerPart2SpritesCharacters+03*320,PlayerPart2SpriteColors+03*160
+dw  PlayerSpritesCharacters+11*320,PlayerSpriteColors+11*160
+dw  PlayerSpritesCharacters+12*320,PlayerSpriteColors+12*160
+dw  PlayerSpritesCharacters+13*320,PlayerSpriteColors+13*160
+dw  PlayerSpritesCharacters+14*320,PlayerSpriteColors+14*160
+dw  PlayerSpritesCharacters+15*320,PlayerSpriteColors+15*160
+dw  PlayerSpritesCharacters+16*320,PlayerSpriteColors+16*160
+dw  PlayerSpritesCharacters+17*320,PlayerSpriteColors+17*160
+dw  PlayerPart2SpritesCharacters+04*320,PlayerPart2SpriteColors+04*160
+dw  PlayerPart2SpritesCharacters+04*320,PlayerPart2SpriteColors+04*160
+dw  PlayerPart2SpritesCharacters+04*320,PlayerPart2SpriteColors+04*160
+
+	dephase
+	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
+
+
 	include	"..\grapx\RacingGame\CurveLeftDataFiles.asm"
 	include	"..\grapx\RacingGame\CurveLeftEndDataFiles.asm"
 	include	"..\grapx\RacingGame\CurveRightDataFiles.asm"

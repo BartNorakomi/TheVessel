@@ -12,11 +12,13 @@ Phase MovementRoutinesAddress
 ;IDEA laat gaten in de road verschijnen waar visjes uitspringen
 ;1 minder animatiestap links en rechts op top speed (bij lage snelheid kan dat ook. Dus je kunt de rotaties houden, maar de scope moet kleiner naarmate je sneller rijdt)
 ;snelheid van de weg mag wel hoger
-;heuvels mogen dieper/hoger
+;groentinten omgedraaid bij het graspalette
 ;Mss iets qua banden wat enige beweging suggereert.
+
+;heuvels mogen dieper/hoger
 ;aan de horizon, zou ik qua gfx experimenteren met een raster.
 ;horizon verticaal meescrollen in de up/down curves
-;maak een zooi palettes zie subtielere verschillen tonen (vooral met blauwtinten)
+;maak een zooi palettes die subtielere verschillen tonen (vooral met blauwtinten)
 ;wat als je die stroken minder breed maakt. Alsof je op zo'n grote brug rijdt met links/rechts nog een paar meter gras, maar daarna niks meer. In wat je dan weglaat kun je neem ik aan gewoon een achtergrond hebben van iets.
 
 
@@ -86,6 +88,11 @@ RacingGameRoutine:
   ld    (RacingGameDistance+2),hl
 
   ld    hl,0                            ;speed in m/p/h
+
+
+ld    hl,150                            ;speed in m/p/h
+
+
   ld    (RacingGameSpeed),hl
   ld    hl,200
   ld    (MaximumSpeedRacingGame),hl
@@ -95,12 +102,12 @@ RacingGameRoutine:
   xor   a
   ld    (RoadCurveAmountPixelsTraversed),a
 
-  ld    a,112 ; 140
-  ld    (RacingGameEnemyX),a
+  ld    hl,228 
+  ld    (RacingGameEnemyX),hl
   ld    a,RacingGamePlayerY
   ld    (RacingGameEnemyY),a
 
-  ld    hl,15000
+  ld    hl,9370
   ld    (RacingGameEnemy1DistanceFromPlayer),hl
   ret
 
@@ -368,7 +375,7 @@ db    LineIntHeightStraightRoad+30
   ld    de,(RacingGameSpeed)
   add   hl,de
   ld    (RoadLinesMovementAnimationPointer),hl
-  ld    de,32                             ;every 32 distance travelled the road lines shift 1 pixel
+  ld    de,16                             ;every 32 distance travelled the road lines shift 1 pixel
   ld    b,0                               ;amount of pixels the road lines shift
   .loop:
   sbc   hl,de
@@ -516,14 +523,13 @@ db    LineIntHeightStraightRoad+30
   ld    (RacingGameHorMoveSpeed),a        ;value from 0-41 where 21 is center (not moving) 0-20 is moving left, 22-41 is moving right
   ret
 
-  .PerspectiveTable:
+  .PerspectiveYTable:
   include "..\grapx\racinggame\PerspectiveYTable.asm"
 
   .SetEnemySprite:
-
-  ;distance from player to horizon = 15000
-  ;y player=161 horizon is 82 pixels higher (on straight roads)
-  ;y horizon=79
+  ;distance from player to horizon = 9370
+  ;enemy on horizon needs to have y=78 
+  ;y player=161
 
   ;simulate enemy driving away from player
   ld    bc,100                           ;enemy speed
@@ -531,35 +537,74 @@ db    LineIntHeightStraightRoad+30
 
   ld    hl,(RacingGameEnemy1DistanceFromPlayer)
   xor   a
-  add   hl,bc                           ;enemy speed
-  sbc   hl,de
+  add   hl,bc                           ;add enemy speed
+  sbc   hl,de                           ;subtract player speed
   jr    nc,.NotCarry
-  ld    hl,15000
+
+  ;at this point enemy is out of screen bottom, just remove enemy instead of replacing
+  ld    a,r                             ;set random x for new enemy
+  add   a,64
+  ld    (RacingGameEnemyX),a            ;outer limits are 28 and 228
+  ld    hl,9370                         ;place enemy on the horizon
   .NotCarry:
   ld    (RacingGameEnemy1DistanceFromPlayer),hl
+  push  hl                              ;distance from player
+
+  ;check enemy out of screen top
+  ld    de,9368
+  sbc   hl,de
+  jr    c,.Carry
+  ;at this point enemy is out of screen top, just remove enemy instead of replacing
+  ld    hl,9370
+  ld    (RacingGameEnemy1DistanceFromPlayer),hl
+  pop   de
   push  hl
-  pop   bc
+  .Carry:
 
-  ;we can calculate enemy y screen position with y=590 / (z/1000) 161 - z/182
+  pop   bc                              ;distance from player
+  ;distance from player / 29 to find y using perspective table. 
 
-  ld    de,100
+  ;FINETUNE this or we get in shit with hills
+  ld    de,29
   call  DivideBCbyDE                                ; Out: BC = result, HL = rest
-
-  ld    hl,.PerspectiveTable
+  ld    hl,.PerspectiveYTable
   add   hl,bc
   ld    a,(hl)
   ld    (RacingGameEnemyY),a
 
+  ;when we have the y, we can use our lookup table to find our x
+  sub   82                                          ;y top at horizon is 82
+  add   a,a                                         ;*2
+  ld    l,a
+  ld    h,0
+  add   hl,hl                                       ;*4
+  ld    de,.PerspectiveXTable
+  add   hl,de                                       ;x left yellow line (16 bit)
+  ld    e,(hl)                                      ;x left yellow line
+  inc   hl
+  ld    d,(hl)                                      ;x left yellow line
+  push  de
 
-;  ld    a,(RacingGameEnemyY)
-;  inc   a
-;  cp    208
-;  jr    c,.GoMoveEnemyY
-;  ld    a,91
-;  .GoMoveEnemyY:
-;  ld    (RacingGameEnemyY),a
+;  sub   16                                          ;16 pixel displacement since our sprite is 32 pixels wide and we calculate from the left instead of the middle
+;  push  af
 
-  ld    a,(RacingGameEnemyX)
+  ;we are now on the left yellow line on the road
+  ;to calculate where exactly on the road we are we add: x * width / 256
+  inc   hl                                          ;width road in that line (16 bit)
+  ld    e,(hl)                                      ;width road in that line
+  inc   hl
+  ld    d,(hl)                                      ;width road in that line
+  ld    hl,(RacingGameEnemyX)                       ;outer limits are 28 and 228
+  call  MultiplyHlWithDE                            ;HL = result
+  push  hl
+  pop   bc
+  ld    de,256
+  call  DivideBCbyDE                                ; Out: BC = result, HL = rest
+  pop   hl
+  add   hl,bc
+  ld    a,l
+  sub   16                                          ;16 pixel displacement since our sprite is 32 pixels wide and we calculate from the left instead of the middle
+
   ld    (spat+1+(12*4)),a                 ;x sprite 2
   ld    (spat+1+(13*4)),a                 ;x sprite 3
   add   a,16
@@ -594,7 +639,7 @@ db    LineIntHeightStraightRoad+30
   ret   nz
 
   ld    a,(RacingGameEnemyY)
-  sub   91
+  sub   78
   and   %1111 1100                       ;4 fold
   cp    15*4
   jr    c,.go
@@ -605,7 +650,7 @@ db    LineIntHeightStraightRoad+30
 
 
 
-ld de,14*4
+;ld de,14*4
 
   ;jump to correct sprite addresses in SpriteOffSetsTable
   ld    ix,.Girl1PonyOffSetsTable             ;21 offset * 4 bytes per offset = 84 bytes
@@ -615,7 +660,6 @@ ld de,14*4
   out   ($a8),a     
   ld    a,RacingGameGirl1PonySpritesBlock   	;drilling game map
   call  block34                       	;CARE!!! we can only switch block34 if page 1 is in rom  
-
 
   ;write sprite character
 	xor		a				;page 0/1
@@ -636,6 +680,60 @@ ld de,14*4
 	ld		c,$98
 	call	outix160		;write sprite color of pointer and hand to vram
   ret
+
+  .PerspectiveXTable: ;generated values of x yellow line and width road on that line
+  include "..\grapx\racinggame\CurveLeftAnimationPage1\0.asm"
+;Extension of list for when enemy is clipping out of screen bot
+dw 12,233
+dw 11,235
+dw 10,237
+dw 9,239
+dw 8,241
+dw 7,243
+dw 6,245
+dw 5,247
+dw 4,249
+dw 3,251
+dw 2,253
+dw 1,255
+dw 0,257
+dw -1,259
+dw -2,261
+dw -3,263
+dw -4,265
+dw -5,267
+dw -6,269
+dw -7,271
+dw -8,273
+dw -9,275
+dw -10,277
+dw -11,279
+dw -12,281
+dw -13,283
+dw -14,285
+dw -15,287
+dw -16,289
+dw -17,291
+dw -18,293
+dw -19,295
+dw -20,297
+dw -21,299
+dw -22,301
+dw -23,303
+dw -24,305
+dw -25,307
+dw -26,309
+dw -27,311
+dw -28,313
+dw -29,315
+dw -30,317
+dw -31,319
+dw -32,321
+dw -33,323
+dw -34,325
+dw -35,327
+dw -36,329
+dw -37,331
 
   ;offset character, color
 .Girl1PonyOffSetsTable: 
@@ -658,10 +756,6 @@ dw  Girl1PonySpritesCharacters+13*320,Girl1PonySpriteColors+13*160
 dw  Girl1PonySpritesCharacters+14*320,Girl1PonySpriteColors+14*160
 
   .SetPlayerSprite:
-  ld    a,(framecounter2)                 ;only update odd frames
-  bit   0,a
-  ret   z
-
   ;set x coordinates player sprite
   ld    a,(RacingGameHorMoveSpeed)        ;value from 0-41 where 21 is center (not moving) 0-20 is moving left, 22-41 is moving right
   srl   a                                 ;/2
@@ -687,14 +781,48 @@ dw  Girl1PonySpritesCharacters+14*320,Girl1PonySpriteColors+14*160
   ld    (spat+1+(00*4)),a                 ;x sprite 0
   ld    (spat+1+(01*4)),a                 ;x sprite 1
 
+  ld    a,(framecounter2)                 ;only update odd frames
+  bit   0,a
+  ret   z
+
+  ld    a,(RacingGameSpeed)
+  cp    175
+  ld    ix,SpriteOffSetsTableMaxSpeed   ;21 offset * 4 bytes per offset = 84 bytes
+  jr    nc,.SpeedTableFound
+  cp    150
+  ld    ix,SpriteOffSetsTableMediumSpeed   ;21 offset * 4 bytes per offset = 84 bytes
+  jr    nc,.SpeedTableFound
+  ld    ix,SpriteOffSetsTableSlowSpeed   ;21 offset * 4 bytes per offset = 84 bytes
+  .SpeedTableFound:
+
+  ld    a,(RacingGameSpeed)
+  cp    10
+  jr    c,.EndAnimateWheels
+
+  ;animate wheels
+  ld    a,(framecounter2)
+  and   7
+  cp    4
+  ld    de,0
+  jr    c,.AnimateWheels
+  ld    de,WheelAnimated-SpriteOffSetsTableSlowSpeed
+  .AnimateWheels:
+  add   ix,de
+  .EndAnimateWheels:  
+
   ;jump to correct sprite addresses in SpriteOffSetsTable
   ld    a,(RacingGameHorMoveSpeed)        ;value from 0-41 where 21 is center (not moving) 0-20 is moving left, 22-41 is moving right
   res   0,a
   add   a,a
   ld    e,a
   ld    d,0
-  ld    ix,.SpriteOffSetsTable            ;21 offset * 4 bytes per offset = 84 bytes
+;  ld    ix,.SpriteOffSetsTable            ;21 offset * 4 bytes per offset = 84 bytes
   add   ix,de
+
+  ld    a,(slot.page12rom)              ;all RAM except page 1+2
+  out   ($a8),a     
+  ld    a,RacingGamePlayerSpritesBlock   	;sprites block
+  call  block34                       	;CARE!!! we can only switch block34 if page 1 is in rom  
 
   ;write sprite character
 	xor		a				;page 0/1
@@ -720,34 +848,13 @@ dw  Girl1PonySpritesCharacters+14*320,Girl1PonySpriteColors+14*160
 .XOffsetsHeadSprite:  
 db 7,7,7,8,8,8,8,8,8,8,8,8,8,8,8,8,8,9,9,9,10
 
-.PlayerSpritesCharacters:	
-include "..\grapx\racinggame\sprites\Sprites.tgs.gen"
-.PlayerSpriteColors:	
-include "..\grapx\racinggame\sprites\Sprites.tcs.gen"
 
-  ;offset character, color
-.SpriteOffSetsTable: 
-dw  .PlayerSpritesCharacters+00*320,.PlayerSpriteColors+00*160
-dw  .PlayerSpritesCharacters+01*320,.PlayerSpriteColors+01*160
-dw  .PlayerSpritesCharacters+02*320,.PlayerSpriteColors+02*160
-dw  .PlayerSpritesCharacters+03*320,.PlayerSpriteColors+03*160
-dw  .PlayerSpritesCharacters+04*320,.PlayerSpriteColors+04*160
-dw  .PlayerSpritesCharacters+05*320,.PlayerSpriteColors+05*160
-dw  .PlayerSpritesCharacters+06*320,.PlayerSpriteColors+06*160
-dw  .PlayerSpritesCharacters+07*320,.PlayerSpriteColors+07*160
-dw  .PlayerSpritesCharacters+08*320,.PlayerSpriteColors+08*160
-dw  .PlayerSpritesCharacters+09*320,.PlayerSpriteColors+09*160
-dw  .PlayerSpritesCharacters+10*320,.PlayerSpriteColors+10*160
-dw  .PlayerSpritesCharacters+11*320,.PlayerSpriteColors+11*160
-dw  .PlayerSpritesCharacters+12*320,.PlayerSpriteColors+12*160
-dw  .PlayerSpritesCharacters+13*320,.PlayerSpriteColors+13*160
-dw  .PlayerSpritesCharacters+14*320,.PlayerSpriteColors+14*160
-dw  .PlayerSpritesCharacters+15*320,.PlayerSpriteColors+15*160
-dw  .PlayerSpritesCharacters+16*320,.PlayerSpriteColors+16*160
-dw  .PlayerSpritesCharacters+17*320,.PlayerSpriteColors+17*160
-dw  .PlayerSpritesCharacters+18*320,.PlayerSpriteColors+18*160
-dw  .PlayerSpritesCharacters+19*320,.PlayerSpriteColors+19*160
-dw  .PlayerSpritesCharacters+20*320,.PlayerSpriteColors+20*160
+
+
+
+
+
+
 
 ChangePaletteRacingGame:
 ;
@@ -1095,11 +1202,6 @@ SetInterruptHandlerRacingGame:
   ei
   out   ($99),a 
   ret
-
-
-
-
-
 
 
 

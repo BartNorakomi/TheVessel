@@ -2281,7 +2281,7 @@ CurrentCurve:								rb	1					;1=right, 2=down, 3=left, 4=up, 5=right end, 6=dow
 MaximumSpeedRacingGame: 		rb	2
 HalfCurve?: 								rb	1
 
-RacingGameEnemyX:						rb	1
+RacingGameEnemyX:						rb	2
 RacingGameEnemyY:						rb	2
 
 
