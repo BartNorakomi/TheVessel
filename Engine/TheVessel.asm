@@ -1593,16 +1593,15 @@ CurveRightPerspectiveXTable78:
 
 
 
+Division29TableBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
+	phase	$8000
+	Division29Table:
+  include "..\grapx\racinggame\Division29Table.asm"
+	kut: equ $-Division29Table
 
 
-
-
-
-
-
-
-
-
+	dephase
+	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
 
 
 
@@ -1894,9 +1893,14 @@ MovementRoutines3Block:	equ ($-RomStartAddress) and (romsize-1) /RomBlockSize ;$
 								DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
 
 
+;ds $4000*30
+
 TheVesselrepBlock:				equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
 	incbin "msxlegends.rep"
 	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
+
+EndBlock:				equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
+
 
 endRom:
 ;	ds		(RomSize-1) - endRom,$ff

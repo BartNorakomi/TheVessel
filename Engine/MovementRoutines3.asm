@@ -56,12 +56,10 @@ RacingGameRoutine:
   call  .SetHorMoveSpeedAndAnimatePlayerSprite
 
 
-
-  call  .MovePlayerHorizontally
-;&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-;  ld    de,010                            ;HorScreenPosition / 10 = Player X
-;  call  DivideBCbyDE          ; Out: BC = result, HL = rest
-;&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+;  call  BackdropGreen
+;we can slightly improve this with a movementtable and HorizontalMovementtablePointer
+  call  MovePlayerHorizontally
+;  call  BackdropBlack
 
 
   call  .HandleAccelerateAndDecelerate      ;speed up with trig A, brake with trig B
@@ -77,7 +75,7 @@ RacingGameRoutine:
 
 ;  call  BackdropGreen
 ;&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-  call  ForceMovePlayerAgainstCurves        ;This one must be faster with a table
+;  call  ForceMovePlayerAgainstCurves        ;This one must be faster with a table
 ;&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 ;  call  BackdropBlack
 
@@ -481,41 +479,6 @@ db    LineIntHeightStraightRoad+30
   ld    (RacingGameDistance+2),hl
   ret
 
-  .MovePlayerHorizontally:
-  ld    hl,(RacingGameHorScreenPosition)
-
-  ld    d,0
-  ld    a,(RacingGameHorMoveSpeed)        ;value from 0-41 where 21 is center (not moving) 0-20 is moving left, 22-41 is moving right
-  sub   21
-  ld    e,a
-  jr    nc,.EndCheckHorMoveSpeedNegative
-  dec   d
-  .EndCheckHorMoveSpeedNegative:
-
-  ;hl=horizontal screen position, de=horizontal movement speed
-  add   hl,de
-  ld    (RacingGameHorScreenPosition),hl
-  bit   7,h
-  jp    z,.EndCheckOutOfScreenLeft    
-  ld    hl,0
-  ld    (RacingGameHorScreenPosition),hl
-  .EndCheckOutOfScreenLeft:
-  push  hl
-  ld    de,10*(256-32)
-  sbc   hl,de
-  jr    c,.EndCheckOutOfScreenRight
-  pop   hl
-  ld    hl,10*(256-32)
-  ld    (RacingGameHorScreenPosition),hl
-  push  hl
-  .EndCheckOutOfScreenRight:
-  pop   bc
-  ld    de,010                            ;HorScreenPosition / 10 = Player X
-  call  DivideBCbyDE          ; Out: BC = result, HL = rest
-  ld    a,c
-  ld    (RacingGamePlayerX),a
-  ret
-
   .SetHorMoveSpeedAndAnimatePlayerSprite:
   ld    hl,RacingGameHorMoveSpeed         ;value from 0-41 where 21 is center (not moving) 0-20 is moving left, 22-41 is moving right
 
@@ -603,32 +566,15 @@ SetEnemySprite:
   .HandleObject:
   bit   0,(ix+RacingGameObjectOn?)
   ret   z
-;  ld    a,(framecounter2)
-;  and   3
-;  cp    (ix+PutOnFrame)
-;  ret   nz
-
-;  ld    hl,9370
-;  ld    (Object2+DistanceFromPlayer),hl
-;  ld    hl,128 
-;  ld    (Object2+X16bit),hl
-;  ld    a,1
-;  ld    (Object2+On?),a
-
-
-
   ;distance from player to horizon = 9370
-  ;enemy y on horizon=78 on straight road
-  ;y player=161
+  ;enemy y on horizon=78 on straight road. y player=161
 
   ;simulate enemy driving away from player
-  ld    bc,100                           ;enemy speed
-;  ld    bc,-000                           ;enemy speed
+  ld    bc,50                           ;enemy speed
   ld    de,(RacingGameSpeed)              ;player speed
 
   ld    l,(ix+DistanceFromPlayer)
   ld    h,(ix+DistanceFromPlayer+1)
-;  ld    hl,(RacingGameEnemy1DistanceFromPlayer)
   xor   a
   add   hl,bc                           ;add enemy speed
   sbc   hl,de                           ;subtract player speed
@@ -671,8 +617,23 @@ SetEnemySprite:
   pop   bc                              ;distance from player
   ;distance from player / 29 to find y using perspective table. 
   ;FINETUNE this or we get in shit with hills
-  ld    de,29                                       ;9370/29=323 (so 323 entries in our perspective table)
-  call  DivideBCbyDE                                ; Out: BC = result, HL = rest
+
+
+  ld    a,Division29TableBlock   	;table block
+  call  block34                       	;CARE!!! we can only switch block34 if page 1 is in rom  
+  ld    hl,Division29Table
+  add   hl,bc
+  res   0,l
+;  add   hl,bc                                      ;we cut the table in half, it was too big
+  ld    c,(hl)
+  inc   hl
+  ld    b,(hl)
+
+;&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+  ;we can use a table with 9370 entries and their outcomes
+;&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&                   
+;  ld    de,29                                       ;9370/29=323 (so 323 entries in our perspective table)
+;  call  DivideBCbyDE                                ; Out: BC = result, HL = rest
 
   ld    hl,CurveUpPerspectiveYTable0                ;straight road
   ld    a,CurveUpPerspectiveYTableBlock   	;drilling game map
@@ -742,7 +703,7 @@ SetEnemySprite:
   ld    e,(hl)                                      ;x left yellow line
   inc   hl
   ld    d,(hl)                                      ;x left yellow line
-  push  de
+  push  de                                          ;x left yellow line
   ;we are now on the left yellow line on the road
   ;to calculate where exactly on the road we are we add: x * width / 256
   inc   hl                                          ;width road in that line (16 bit)
@@ -755,11 +716,15 @@ SetEnemySprite:
   ld    h,(ix+X16bit+1)
 
   call  MultiplyHlWithDE                            ;HL = result
-  push  hl
+;  push  hl
+;  pop   bc
+;  ld    de,256
+;  call  DivideBCbyDE                                ; Out: BC = result, HL = rest
+
+  ld    l,h
+  ld    h,0                                         ;/256
+
   pop   bc
-  ld    de,256
-  call  DivideBCbyDE                                ; Out: BC = result, HL = rest
-  pop   hl
   add   hl,bc
   ld    a,l
   sub   16                                          ;16 pixel displacement since our sprite is 32 pixels wide and we calculate from the left instead of the middle
@@ -879,6 +844,13 @@ SetEnemySprite:
 
   .EndCheckVerticalCurveX:
 
+
+
+
+
+
+
+
   pop   hl                                          ;y*2
   add   hl,de                                       ;add y*2 to find in our list: x left yellow line (16 bit)
   ld    e,(hl)                                      ;x left yellow line
@@ -896,11 +868,20 @@ SetEnemySprite:
   ld    h,(ix+X16bit+1)
 
   call  MultiplyHlWithDE                            ;HL = result
-  push  hl
+;  push  hl
+;  pop   bc
+;  ld    de,256
+;  call  DivideBCbyDE                                ; Out: BC = result, HL = rest
+
+;  push  hl
+;  pop   bc
+;  ld    de,256
+;  call  DivideBCbyDE                                ; Out: BC = result, HL = rest
+
+  ld    l,h
+  ld    h,0                                         ;/256
+
   pop   bc
-  ld    de,256
-  call  DivideBCbyDE                                ; Out: BC = result, HL = rest
-  pop   hl
   add   hl,bc
   ld    a,l
   sub   16                                          ;16 pixel displacement since our sprite is 32 pixels wide and we calculate from the left instead of the middle
@@ -940,7 +921,7 @@ SetEnemySprite:
   ld    a,(RacingGameEnemyY)
   ld    l,(ix+SpatEntry)
   ld    h,(ix+SpatEntry+1)                ;y sprite in spat
-  ld    de,4
+;  ld    de,4
   ld    (hl),a
   add   hl,de
   ld    (hl),a
@@ -1199,7 +1180,49 @@ db CurveRightPerspectiveXTablePart2Block | dw CurveRightPerspectiveXTable78
 
 
 
+;HorizontalMovementPointer:  db  -2,-2,-2
+MovePlayerHorizontally:
+  ld    hl,(RacingGameHorScreenPosition)
 
+  ld    d,0
+  ld    a,(RacingGameHorMoveSpeed)        ;value from 0-41 where 21 is center (not moving) 0-20 is moving left, 22-41 is moving right
+  sub   21
+  ld    e,a
+  jr    nc,.EndCheckHorMoveSpeedNegative
+  dec   d
+  .EndCheckHorMoveSpeedNegative:
+
+  ;hl=horizontal screen position, de=horizontal movement speed
+  add   hl,de
+  ld    (RacingGameHorScreenPosition),hl
+  bit   7,h
+  jp    z,.EndCheckOutOfScreenLeft    
+  ld    hl,0
+  ld    (RacingGameHorScreenPosition),hl
+  .EndCheckOutOfScreenLeft:
+  push  hl
+  ld    de,8*(256-32)
+  sbc   hl,de
+  jr    c,.EndCheckOutOfScreenRight
+  pop   hl
+  ld    hl,8*(256-32)
+  ld    (RacingGameHorScreenPosition),hl
+  push  hl
+  .EndCheckOutOfScreenRight:
+  pop   bc
+
+    srl b
+    rr c                            ;bc /2
+    srl b
+    rr c                            ;bc /4
+    srl b
+    rr c                            ;bc /8
+
+;  ld    de,008                            ;HorScreenPosition / 10 = Player X
+;  call  DivideBCbyDE          ; Out: BC = result, HL = rest
+  ld    a,c
+  ld    (RacingGamePlayerX),a
+  ret
 
 SetPlayerSprite:
   ;set x coordinates player sprite
@@ -1355,6 +1378,7 @@ ForceMovePlayerAgainstCurves:
   jp    .GoLeft
 
   .Left:
+;we can use a table for this x-axis=roadcurvaturestep/2 0-75 y-axis=racinggamespeed/2 0-100. total entries 75*100=less than 2kb
   ld    a,(RoadCurvatureAnimationStep)              ;goes from 0-150  0=straight road, 150=all the way left
   .GoLeft:
   ld    e,a
@@ -1416,14 +1440,14 @@ HalfCurveRight: equ 5
 HalfCurveLeft: equ 6
 
                     ;next distance, curve (1=right, 2=down, 3=left, 4=up, 0=end current curve)
-RacingGameEvents:                db CurveUp         | dw 00500 | db EndCurve
+RacingGameEvents:                db CurveLeft         | dw 00500 | db EndCurve
                       dw 00200 | db CurveLeft       | dw 00200 | db EndCurve
-                      dw 00200 | db CurveRight         | dw 00200 | db EndCurve
-                      dw 00200 | db CurveDown       | dw 00200 | db EndCurve
+                      dw 00200 | db CurveLeft         | dw 00200 | db EndCurve
+                      dw 00200 | db CurveLeft       | dw 00200 | db EndCurve
                       dw 00200 | db CurveLeft  | dw 00200 | db EndCurve
-                      dw 00200 | db CurveRight   | dw 00200 | db EndCurve
-                      dw 00200 | db CurveDown      | dw 00200 | db EndCurve
-                      dw 00200 | db CurveUp       | dw 00200 | db EndCurve
+                      dw 00200 | db CurveLeft   | dw 00200 | db EndCurve
+                      dw 00200 | db CurveLeft      | dw 00200 | db EndCurve
+                      dw 00200 | db CurveLeft       | dw 00200 | db EndCurve
                       dw 60000 | db CurveUp
 HandleCurvatureRoad:
   ld    hl,(RacingGameDistance+1)
