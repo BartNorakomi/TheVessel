@@ -13,7 +13,6 @@ LevelEngine:
 
 
 ;  call  BackdropGreen
-  call  WriteSpatToVram
 ;  call  BackdropBlack
 
 
@@ -22,17 +21,13 @@ LevelEngine:
   if ConversationsOn?
   call  HandleConversations             ;handles NPC conversations
   endif
-;  call  BackdropOrange
+;  call  BackdropGreen
   call  HandleObjects
 ;  call  BackdropBlack
-
-
 
   ld    a,(CurrentRoom)                 ;racing game has music outside the interrupt
   cp    15
   call  z,RePlayer_Tick                 ;initialise, load samples
-
-
 
   xor   a
   ld    hl,vblankintflag
@@ -41,7 +36,6 @@ LevelEngine:
   jr    z,.checkflag
   ld    (hl),a
   jp    LevelEngine
-
 
 SetScreenonWithDelay:
 	ld		a,(ScreenOnDelay)								;amount of frames until screen turns on (we need some frames to first put all objects in screen)
@@ -122,11 +116,16 @@ vblank:
   push  de
   push  hl
 
+
+;  call  BackdropYellow
+
+
+
   in	  a,($a8)
   push	af					      ;store current RAM/ROM state
   ld    a,(CurrentRoom)
-  cp    15
-  call  nz,RePlayer_Tick                 ;initialise, load samples
+  cp    15                              ;racing game has music outside the interrupt
+  call  nz,RePlayer_Tick                ;initialise, load samples
   pop   af
   out   ($a8),a                         ;restore ram/rom page settings     
 
@@ -194,6 +193,9 @@ vblank:
   ld    a,(CurrentRoom)
   cp    15
   call  z,.RacingGame
+
+;  call  BackdropBlack
+
 
   pop   hl 
   pop   de 
@@ -288,6 +290,41 @@ sub StartRacingGameLineInt
 ;  out   ($99),a
 ;  ld    a,23+128                        ;r#23 vertical screen offset
 ;  out   ($99),a 
+
+;  call  SetEnemySprite.PutEnemySpriteCharacter
+  call  WriteSpatToVram
+  call  SetEnemySpriteCharacterAndColorData
+  ret
+
+UpdateEnemySpritePattern?: ds  1
+EnemySpriteBlock: ds  1
+EnemySpriteCharacter: ds  2
+EnemySpriteColor: ds  2
+EnemySpriteCharacterVramAddress: ds  2
+EnemySpriteColorVramAddress: ds  2
+
+SetEnemySpriteCharacterAndColorData:
+  ld    a,(UpdateEnemySpritePattern?)
+  dec   a
+  ret   m
+  ld    (UpdateEnemySpritePattern?),a
+
+  ld    a,(EnemySpriteBlock)
+  call  block34                       	;CARE!!! we can only switch block34 if page 1 is in rom  
+
+  ;write sprite character
+	xor		a				;page 0/1
+  ld    hl,(EnemySpriteCharacterVramAddress)
+	call	SetVdp_Write
+  ld    hl,(EnemySpriteCharacter)
+	ld		c,$98
+	call	outix320		;write sprite character to vram
+	xor		a				;page 0/1
+  ld    hl,(EnemySpriteColorVramAddress)
+	call	SetVdp_Write
+  ld    hl,(EnemySpriteColor)
+	ld		c,$98
+	call	outix160		;write sprite color of pointer and hand to vram
   ret
 
 
@@ -1183,6 +1220,14 @@ ObjectPhase:            equ 13
 Var1:                   equ 14
 Var2:                   equ 15
 Var3:                   equ 16
+
+RacingGameObjectOn?:    equ 1
+X16bit:                 equ 2   ;2 bytes, used for racing game
+DistanceFromPlayer:     equ 4   ;2 bytes, used for racing game
+SpatEntry:              equ 6   ;2 bytes, used for racing game
+;PutOnFrame:             equ 9
+SpriteCharacterAddress: equ 10  ;2 bytes, used for racing game
+SpriteColorAddress:     equ 12  ;2 bytes, used for racing game
 
 ObjectTable:
 ;           on?,  y,  x,  sprite restore table                                ,sprite data,put on frame ,movement routine block,  movement routine,							 phase,var1,var2,var3
@@ -3347,8 +3392,8 @@ spat:						;sprite attribute table (y,x)
 
 	db		230,230,64,0	,230,230,68,0	,230,230,72,0	,230,230,76,0
 	db		230,230,80,0	,230,230,84,0	,230,230,88,0	,230,230,92,0
-	db		230,230,00,0	,230,230,00,0	,230,230,00,0	,230,230,00,0
-	db		230,230,00,0	,230,230,00,0	,230,230,00,0	,230,230,00,0
+	db		230,230,96,0	,230,230,100,0	,230,230,104,0	,230,230,108,0
+	db		230,230,112,0	,230,230,116,0	,230,230,120,0	,230,230,124,0
 
 FreeToUseFastCopy0:                     ;freely usable anywhere
   db    000,000,000,000                 ;sx,--,sy,spage

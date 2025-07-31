@@ -37,23 +37,54 @@ RacingGameRoutine:
   ld    (framecounter2),a
 
   call  .HandlePhase                        ;used to build up screen and initiate variables
-  call  .SetPlayerSprite
-  call  .SetEnemySprite
+  call  SetPlayerSprite
+
+
+
+
+;&&&&&&&&&&&&&&&&&&&&&&&&&&&
+;Uses 3 Divide calls
+  call  SetEnemySprite
+;&&&&&&&&&&&&&&&&&&&&&&&&&&&
+
+
+
+
+
+
+
   call  .SetHorMoveSpeedAndAnimatePlayerSprite
+
+
+
   call  .MovePlayerHorizontally
+;&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+;  ld    de,010                            ;HorScreenPosition / 10 = Player X
+;  call  DivideBCbyDE          ; Out: BC = result, HL = rest
+;&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+
+
   call  .HandleAccelerateAndDecelerate      ;speed up with trig A, brake with trig B
   call  .UpdateDistance
   call  .UpdateRoadLinesAnimation
   call  .ChangeLineIntHeightWhenCurvingUpOrDown
-;  call  HandleCurvatureRoad
+  call  HandleCurvatureRoad
   call  ChangePaletteRacingGame
-  call  .UpdateMaximumSpeedOnCurveOrDown
-  call  ForceMovePlayerAgainstCurves
+
+
+
+;  call  .UpdateMaximumSpeedOnCurveUpOrDown
+
+;  call  BackdropGreen
+;&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+  call  ForceMovePlayerAgainstCurves        ;This one must be faster with a table
+;&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+;  call  BackdropBlack
+
   ret
 
   .HandlePhase:
-  ld    a,(iy+ObjectPhase)
-  or    a
+  bit   0,(iy+ObjectPhase)
   ret   nz
   ld    (iy+ObjectPhase),1
 
@@ -92,7 +123,7 @@ RacingGameRoutine:
 
 ld    hl,150                            ;speed in m/p/h
 
-
+;ld hl,50
   ld    (RacingGameSpeed),hl
   ld    hl,200
   ld    (MaximumSpeedRacingGame),hl
@@ -101,17 +132,49 @@ ld    hl,150                            ;speed in m/p/h
   ld    (RacingGamePlayerX),a
   xor   a
   ld    (RoadCurveAmountPixelsTraversed),a
+  ld    (UpdateEnemySpritePattern?),a
 
-  ld    hl,228 
+  ld    hl,128 
   ld    (RacingGameEnemyX),hl
   ld    a,RacingGamePlayerY
   ld    (RacingGameEnemyY),a
 
   ld    hl,9370
   ld    (RacingGameEnemy1DistanceFromPlayer),hl
+
+  ld    hl,4570
+  ld    (Object3+DistanceFromPlayer),hl
+  ld    hl,128 
+  ld    (Object3+X16bit),hl
+  ld    a,1
+  ld    (Object3+RacingGameObjectOn?),a
+  ld    a,2                                 ;player is put on frame 0
+  ld    (Object3+PutOnFrame),a
+  ld    hl,spat+0+(20*4)
+  ld    (Object3+SpatEntry),hl
+	ld		hl,sprcharaddr+640	;sprite 0 character table in VRAM
+  ld    (Object3+SpriteCharacterAddress),hl
+	ld		hl,sprcoladdr+320	;sprite 0 color table in VRAM
+  ld    (Object3+SpriteColorAddress),hl
+;  ret
+
+  ld    hl,9370
+  ld    (Object2+DistanceFromPlayer),hl
+  ld    hl,128 
+  ld    (Object2+X16bit),hl
+  ld    a,1
+  ld    (Object2+RacingGameObjectOn?),a
+  ld    a,1                                 ;player is put on frame 0
+  ld    (Object2+PutOnFrame),a
+  ld    hl,spat+0+(10*4)
+  ld    (Object2+SpatEntry),hl
+	ld		hl,sprcharaddr+10*32	;sprite 0 character table in VRAM
+  ld    (Object2+SpriteCharacterAddress),hl
+	ld		hl,sprcoladdr+10*16	;sprite 0 color table in VRAM
+  ld    (Object2+SpriteColorAddress),hl
   ret
 
-  .UpdateMaximumSpeedOnCurveOrDown:
+  .UpdateMaximumSpeedOnCurveUpOrDown:
   ld    a,200
   ld    (MaximumSpeedRacingGame),a
   ld    a,(CurrentCurve)                ;1=right, 2=down, 3=left, 4=up, 5=right end, 6=down end, 7=left end, 8=up end
@@ -523,78 +586,315 @@ db    LineIntHeightStraightRoad+30
   ld    (RacingGameHorMoveSpeed),a        ;value from 0-41 where 21 is center (not moving) 0-20 is moving left, 22-41 is moving right
   ret
 
-  .PerspectiveYTable:
-  include "..\grapx\racinggame\PerspectiveYTable.asm"
 
-  .SetEnemySprite:
+SetEnemySprite:
+;  call  BackdropGreen
+
+
+  ld    ix,Object2
+  call  .HandleObject
+  ld    ix,Object3
+  call  .HandleObject
+
+;  call  BackdropBlack
+
+  ret
+
+  .HandleObject:
+  bit   0,(ix+RacingGameObjectOn?)
+  ret   z
+;  ld    a,(framecounter2)
+;  and   3
+;  cp    (ix+PutOnFrame)
+;  ret   nz
+
+;  ld    hl,9370
+;  ld    (Object2+DistanceFromPlayer),hl
+;  ld    hl,128 
+;  ld    (Object2+X16bit),hl
+;  ld    a,1
+;  ld    (Object2+On?),a
+
+
+
   ;distance from player to horizon = 9370
-  ;enemy on horizon needs to have y=78 
+  ;enemy y on horizon=78 on straight road
   ;y player=161
 
   ;simulate enemy driving away from player
   ld    bc,100                           ;enemy speed
-  ld    de,(RacingGameSpeed)
+;  ld    bc,-000                           ;enemy speed
+  ld    de,(RacingGameSpeed)              ;player speed
 
-  ld    hl,(RacingGameEnemy1DistanceFromPlayer)
+  ld    l,(ix+DistanceFromPlayer)
+  ld    h,(ix+DistanceFromPlayer+1)
+;  ld    hl,(RacingGameEnemy1DistanceFromPlayer)
   xor   a
   add   hl,bc                           ;add enemy speed
   sbc   hl,de                           ;subtract player speed
   jr    nc,.NotCarry
 
+  ;We dont put enemy back at the horizon until enemy sprite pattern gets updated this frame as well, otherwise we might put a HUGE sprite there
+  ld    a,(framecounter2)
+  and   3
+  cp    (ix+PutOnFrame)
+  ret   nz
+
   ;at this point enemy is out of screen bottom, just remove enemy instead of replacing
   ld    a,r                             ;set random x for new enemy
   add   a,64
-  ld    (RacingGameEnemyX),a            ;outer limits are 28 and 228
+;  ld    (RacingGameEnemyX),a            ;outer limits are 28 and 228
+  ld    (ix+X16bit),a
   ld    hl,9370                         ;place enemy on the horizon
   .NotCarry:
-  ld    (RacingGameEnemy1DistanceFromPlayer),hl
+
+;ld    hl,9370                         ;place enemy on the horizon
+
+  ld    (ix+DistanceFromPlayer),l
+  ld    (ix+DistanceFromPlayer+1),h
+;  ld    (RacingGameEnemy1DistanceFromPlayer),hl
   push  hl                              ;distance from player
 
   ;check enemy out of screen top
   ld    de,9368
   sbc   hl,de
   jr    c,.Carry
-  ;at this point enemy is out of screen top, just remove enemy instead of replacing
+ ;at this point enemy is out of screen top, just remove enemy instead of replacing
   ld    hl,9370
-  ld    (RacingGameEnemy1DistanceFromPlayer),hl
+;  ld    (RacingGameEnemy1DistanceFromPlayer),hl
+  ld    (ix+DistanceFromPlayer),l
+  ld    (ix+DistanceFromPlayer+1),h
   pop   de
   push  hl
   .Carry:
 
   pop   bc                              ;distance from player
   ;distance from player / 29 to find y using perspective table. 
-
   ;FINETUNE this or we get in shit with hills
-  ld    de,29
+  ld    de,29                                       ;9370/29=323 (so 323 entries in our perspective table)
   call  DivideBCbyDE                                ; Out: BC = result, HL = rest
-  ld    hl,.PerspectiveYTable
+
+  ld    hl,CurveUpPerspectiveYTable0                ;straight road
+  ld    a,CurveUpPerspectiveYTableBlock   	;drilling game map
+  call  block34                       	;CARE!!! we can only switch block34 if page 1 is in rom  
+
+  ld    a,(CurrentCurve)                           ;1=right, 2=down, 3=left, 4=up, 5=right end, 6=down end, 7=left end, 8=up end
+  cp    4                                           ;up
+  jr    z,.VerticalCurveFound
+  cp    8                                           ;up end
+  jr    z,.CurveUpEndFound
+  cp    2                                           ;down
+  jr    z,.CurveDownFound
+  cp    6                                           ;down end
+  jr    nz,.EndCheckVerticalCurve
+
+  .CurveDownEndFound:
+  ld    a,CurveDownPerspectiveYTableBlock   	;drilling game map
+  call  block34                       	;CARE!!! we can only switch block34 if page 1 is in rom  
+  ld    a,(RoadCurvatureAnimationStep)              ;59 steps
+  ld    e,a
+  ld    a,59*2
+  sub   e
+  jp    .Go2
+
+  .CurveDownFound:
+  ld    a,CurveDownPerspectiveYTableBlock   	;drilling game map
+  call  block34                       	;CARE!!! we can only switch block34 if page 1 is in rom  
+  jp    .VerticalCurveFound
+
+  .CurveUpEndFound:
+  ld    a,(RoadCurvatureAnimationStep)              ;59 steps
+  ld    e,a
+  ld    a,59*2
+  sub   e
+  jp    .Go2
+
+  .VerticalCurveFound:
+  ld    a,(RoadCurvatureAnimationStep)              ;59 steps
+  .Go2:
+  res   0,a
+  ld    e,a
+  ld    d,0
+  ld    hl,CurveUpPerspectiveYTablePointer
+  add   hl,de
+  ld    e,(hl)
+  inc   hl
+  ld    d,(hl)
+  push  de
+  pop   hl
+  .EndCheckVerticalCurve:
+  
   add   hl,bc
   ld    a,(hl)
   ld    (RacingGameEnemyY),a
 
   ;when we have the y, we can use our lookup table to find our x
-  sub   82                                          ;y top at horizon is 82
-  add   a,a                                         ;*2
+  sub   39                                          ;y top at horizon is 82
+  cp    124
+  jp    c,.EndCheckClippingBot
+  sub   123
   ld    l,a
   ld    h,0
+  add   hl,hl                                       ;*2
   add   hl,hl                                       ;*4
-  ld    de,.PerspectiveXTable
+  ld    de,.PerspectiveXTableExtension
   add   hl,de                                       ;x left yellow line (16 bit)
   ld    e,(hl)                                      ;x left yellow line
   inc   hl
   ld    d,(hl)                                      ;x left yellow line
   push  de
-
-;  sub   16                                          ;16 pixel displacement since our sprite is 32 pixels wide and we calculate from the left instead of the middle
-;  push  af
-
   ;we are now on the left yellow line on the road
   ;to calculate where exactly on the road we are we add: x * width / 256
   inc   hl                                          ;width road in that line (16 bit)
   ld    e,(hl)                                      ;width road in that line
   inc   hl
   ld    d,(hl)                                      ;width road in that line
-  ld    hl,(RacingGameEnemyX)                       ;outer limits are 28 and 228
+;  ld    hl,(RacingGameEnemyX)                       ;outer limits are 28 and 228
+
+  ld    l,(ix+X16bit)
+  ld    h,(ix+X16bit+1)
+
+  call  MultiplyHlWithDE                            ;HL = result
+  push  hl
+  pop   bc
+  ld    de,256
+  call  DivideBCbyDE                                ; Out: BC = result, HL = rest
+  pop   hl
+  add   hl,bc
+  ld    a,l
+  sub   16                                          ;16 pixel displacement since our sprite is 32 pixels wide and we calculate from the left instead of the middle
+  jp    .SetXSpat
+
+  .EndCheckClippingBot:
+  add   a,a                                         ;*2
+  ld    l,a
+  ld    h,0
+
+  ld    a,CurveUpPerspectiveXTableBlock   	;drilling game map
+  call  block34                       	;CARE!!! we can only switch block34 if page 1 is in rom  
+  ld    de,CurveUpPerspectiveXTable0
+
+  push  hl
+
+  ld    a,(CurrentCurve)                           ;1=right, 2=down, 3=left, 4=up, 5=right end, 6=down end, 7=left end, 8=up end
+  cp    3                                           ;left
+  jr    z,.CurveLeftFoundX
+  cp    1                                           ;right
+  jr    z,.CurveRightFoundX
+  cp    5                                           ;left end
+  jr    z,.CurveRightEndFoundX
+  cp    7                                           ;left end
+  jr    z,.CurveLeftEndFoundX
+  cp    4                                           ;up
+  jr    z,.CurveUpFoundX
+  cp    8                                           ;up end
+  jr    z,.CurveUpEndFoundX
+  cp    2                                           ;down
+  jr    z,.CurveDownFoundX
+  cp    6                                           ;down end
+  jr    z,.CurveDownEndFoundX
+  jr    .EndCheckVerticalCurveX
+
+  .CurveDownEndFoundX:
+  ld    a,CurveDownPerspectiveXTableBlock   	;drilling game map
+  call  block34                       	;CARE!!! we can only switch block34 if page 1 is in rom  
+
+  .CurveUpEndFoundX:
+  ld    a,(RoadCurvatureAnimationStep)              ;59 steps
+  ld    e,a
+  ld    a,59*2
+  sub   e
+  jp    .Go3
+
+  .CurveLeftEndFoundX:
+  ld    a,(RoadCurvatureAnimationStep)              ;75 steps
+  ld    e,a
+  ld    a,150
+  sub   e
+  jp    .Go4
+
+  .CurveLeftFoundX:
+  ld    a,(RoadCurvatureAnimationStep)              ;0- 150
+  .Go4:
+  srl   a                                           ;/2
+  ld    l,a
+  ld    h,0
+  ld    e,a
+  ld    d,0
+  add   hl,hl                                       ;*2
+  add   hl,de                                       ;*3
+  ld    de,.CurveLeftPerspectiveXTablePointer
+  add   hl,de
+  ld    a,(hl)                                      ;block
+  call  block34                       	;CARE!!! we can only switch block34 if page 1 is in rom  
+  inc   hl
+  ld    e,(hl)
+  inc   hl
+  ld    d,(hl)
+  jp    .EndCheckVerticalCurveX
+
+  .CurveRightEndFoundX:
+  ld    a,(RoadCurvatureAnimationStep)              ;75 steps
+  ld    e,a
+  ld    a,150
+  sub   e
+  jp    .Go5
+
+  .CurveRightFoundX:
+  ld    a,(RoadCurvatureAnimationStep)              ;0- 150
+  .Go5:
+  srl   a                                           ;/2
+  ld    l,a
+  ld    h,0
+  ld    e,a
+  ld    d,0
+  add   hl,hl                                       ;*2
+  add   hl,de                                       ;*3
+  ld    de,.CurveRightPerspectiveXTablePointer
+  add   hl,de
+  ld    a,(hl)                                      ;block
+  call  block34                       	;CARE!!! we can only switch block34 if page 1 is in rom  
+  inc   hl
+  ld    e,(hl)
+  inc   hl
+  ld    d,(hl)
+  jp    .EndCheckVerticalCurveX
+
+  .CurveDownFoundX:
+  ld    a,CurveDownPerspectiveXTableBlock   	;drilling game map
+  call  block34                       	;CARE!!! we can only switch block34 if page 1 is in rom  
+
+  .CurveUpFoundX:
+  ld    a,(RoadCurvatureAnimationStep)              ;59 steps
+  .Go3:
+  res   0,a
+  ld    e,a
+  ld    d,0
+  ld    hl,CurveUpPerspectiveXTablePointer
+  add   hl,de
+  ld    e,(hl)
+  inc   hl
+  ld    d,(hl)
+;  jp    .EndCheckVerticalCurveX
+
+  .EndCheckVerticalCurveX:
+
+  pop   hl                                          ;y*2
+  add   hl,de                                       ;add y*2 to find in our list: x left yellow line (16 bit)
+  ld    e,(hl)                                      ;x left yellow line
+  ld    d,0
+  push  de
+
+  ;we are now on the left yellow line on the road
+  ;to calculate where exactly on the road we are we add: x * width / 256
+  inc   hl                                          ;width road in that line (16 bit)
+  ld    e,(hl)                                      ;width road in that line
+  ld    d,0
+;  ld    hl,(RacingGameEnemyX)                       ;outer limits are 28 and 228
+
+  ld    l,(ix+X16bit)
+  ld    h,(ix+X16bit+1)
+
   call  MultiplyHlWithDE                            ;HL = result
   push  hl
   pop   bc
@@ -605,157 +905,303 @@ db    LineIntHeightStraightRoad+30
   ld    a,l
   sub   16                                          ;16 pixel displacement since our sprite is 32 pixels wide and we calculate from the left instead of the middle
 
-  ld    (spat+1+(12*4)),a                 ;x sprite 2
-  ld    (spat+1+(13*4)),a                 ;x sprite 3
+;ld a,112
+  .SetXSpat:
+  ld    l,(ix+SpatEntry)
+  ld    h,(ix+SpatEntry+1)                ;y sprite in spat
+  inc   hl
+  add   a,8
+  ld    (hl),a
+  ld    de,4
+  add   hl,de
+  ld    (hl),a
+  sub   8
+  add   hl,de
+  ld    (hl),a
+  add   hl,de
+  ld    (hl),a
   add   a,16
-  ld    (spat+1+(14*4)),a                 ;x sprite 4
-  ld    (spat+1+(15*4)),a                 ;x sprite 5
+  add   hl,de
+  ld    (hl),a
+  add   hl,de
+  ld    (hl),a
   sub   a,16
-  ld    (spat+1+(16*4)),a                 ;x sprite 6
-  ld    (spat+1+(17*4)),a                 ;x sprite 7
+  add   hl,de
+  ld    (hl),a
+  add   hl,de
+  ld    (hl),a
   add   a,16
-  ld    (spat+1+(18*4)),a                 ;x sprite 8
-  ld    (spat+1+(19*4)),a                 ;x sprite 9
-  sub   a,8
-  ld    (spat+1+(10*4)),a                 ;x sprite 0
-  ld    (spat+1+(11*4)),a                 ;x sprite 1
+  add   hl,de
+  ld    (hl),a
+  add   hl,de
+  ld    (hl),a
 
+  ;Set Y spat
   ld    a,(RacingGameEnemyY)
-  ld    (spat+0+(10*4)),a                 ;y sprite 0
-  ld    (spat+0+(11*4)),a                 ;y sprite 1
+  ld    l,(ix+SpatEntry)
+  ld    h,(ix+SpatEntry+1)                ;y sprite in spat
+  ld    de,4
+  ld    (hl),a
+  add   hl,de
+  ld    (hl),a
   add   a,16
-  ld    (spat+0+(12*4)),a                 ;y sprite 2
-  ld    (spat+0+(13*4)),a                 ;y sprite 3
-  ld    (spat+0+(14*4)),a                 ;y sprite 4
-  ld    (spat+0+(15*4)),a                 ;y sprite 5
+  add   hl,de
+  ld    (hl),a
+  add   hl,de
+  ld    (hl),a
+  add   hl,de
+  ld    (hl),a
+  add   hl,de
+  ld    (hl),a
   add   a,16
-  ld    (spat+0+(16*4)),a                 ;y sprite 6
-  ld    (spat+0+(17*4)),a                 ;y sprite 7
-  ld    (spat+0+(18*4)),a                 ;y sprite 8
-  ld    (spat+0+(19*4)),a                 ;y sprite 9
+  add   hl,de
+  ld    (hl),a
+  add   hl,de
+  ld    (hl),a
+  add   hl,de
+  ld    (hl),a
+  add   hl,de
+  ld    (hl),a
 
-  ld    a,(framecounter2)                 ;only update even frames
-  bit   0,a
+  ld    a,(framecounter2)
+  and   3
+  cp    (ix+PutOnFrame)
   ret   nz
 
-  ld    a,(RacingGameEnemyY)
-  sub   78
-  and   %1111 1100                       ;4 fold
-  cp    15*4
-  jr    c,.go
-  ld    a,14*4
-  .go:
+  ld    a,1
+  ld    (UpdateEnemySpritePattern?),a
+
+  ;size of the enemy sprite is depending on the distance from player 9370=horizon
+  ;ld    hl,9370                         ;place enemy on the horizon
+;  ld    a,(RacingGameEnemy1DistanceFromPlayer+1)      ;value from 0-36
+  ld    a,(ix+DistanceFromPlayer+1)
+
+  srl   a                                 ;/2
+  add   a,a
+  res   0,a                               ;value from 0-18 (only even)
   ld    e,a
   ld    d,0
+  ld    hl,.GirlOffSetPointer             ;21 offset * 4 bytes per offset = 84 bytes
+  add   hl,de                             ;jump to correct sprite addresses in SpriteOffSetsTable
 
+  ld    e,(hl)
+  inc   hl
+  ld    h,(hl)
+  ld    l,e
 
-
-;ld de,14*4
-
-  ;jump to correct sprite addresses in SpriteOffSetsTable
-  ld    ix,.Girl1PonyOffSetsTable             ;21 offset * 4 bytes per offset = 84 bytes
-  add   ix,de
-
-  ld    a,(slot.page12rom)              ;all RAM except page 1+2
-  out   ($a8),a     
   ld    a,RacingGameGirl1PonySpritesBlock   	;drilling game map
-  call  block34                       	;CARE!!! we can only switch block34 if page 1 is in rom  
+  ld    (EnemySpriteBlock),a
+  ld    e,(hl)
+  inc   hl
+  ld    d,(hl)
+  ld    (EnemySpriteCharacter),de
+  inc   hl
+  ld    e,(hl)
+  inc   hl
+  ld    d,(hl)
+  ld    (EnemySpriteColor),de
 
-  ;write sprite character
-	xor		a				;page 0/1
-	ld		hl,sprcharaddr+320	;sprite 0 character table in VRAM
-	call	SetVdp_Write
+  ld    l,(ix+SpriteCharacterAddress)
+  ld    h,(ix+SpriteCharacterAddress+1)
 
-  ld    l,(ix+0)
-  ld    h,(ix+1)
-	ld		c,$98
-	call	outix320		;write sprite character to vram
-
-	xor		a				;page 0/1
-	ld		hl,sprcoladdr+160	;sprite 0 color table in VRAM
-	call	SetVdp_Write
-
-  ld    l,(ix+2)
-  ld    h,(ix+3)
-	ld		c,$98
-	call	outix160		;write sprite color of pointer and hand to vram
+  ld    (EnemySpriteCharacterVramAddress),hl
+  ld    l,(ix+SpriteColorAddress)
+  ld    h,(ix+SpriteColorAddress+1)
+  ld    (EnemySpriteColorVramAddress),hl
   ret
 
-  .PerspectiveXTable: ;generated values of x yellow line and width road on that line
-  include "..\grapx\racinggame\CurveLeftAnimationPage1\0.asm"
-;Extension of list for when enemy is clipping out of screen bot
-dw 12,233
-dw 11,235
-dw 10,237
-dw 9,239
-dw 8,241
-dw 7,243
-dw 6,245
-dw 5,247
-dw 4,249
-dw 3,251
-dw 2,253
-dw 1,255
-dw 0,257
-dw -1,259
-dw -2,261
-dw -3,263
-dw -4,265
-dw -5,267
-dw -6,269
-dw -7,271
-dw -8,273
-dw -9,275
-dw -10,277
-dw -11,279
-dw -12,281
-dw -13,283
-dw -14,285
-dw -15,287
-dw -16,289
-dw -17,291
-dw -18,293
-dw -19,295
-dw -20,297
-dw -21,299
-dw -22,301
-dw -23,303
-dw -24,305
-dw -25,307
-dw -26,309
-dw -27,311
-dw -28,313
-dw -29,315
-dw -30,317
-dw -31,319
-dw -32,321
-dw -33,323
-dw -34,325
-dw -35,327
-dw -36,329
-dw -37,331
+.GirlOffSetPointer: dw  .Size14, .Size14, .Size14, .Size13, .Size12, .Size11, .Size10, .Size9, .Size8, .Size7, .Size6, .Size5, .Size4, .Size3, .Size2, .Size1, .Size0, .Size0, .Size0
 
   ;offset character, color
-.Girl1PonyOffSetsTable: 
-dw  Girl1PonySpritesCharacters+00*320,Girl1PonySpriteColors+00*160
-dw  Girl1PonySpritesCharacters+01*320,Girl1PonySpriteColors+01*160
-dw  Girl1PonySpritesCharacters+02*320,Girl1PonySpriteColors+02*160
-dw  Girl1PonySpritesCharacters+03*320,Girl1PonySpriteColors+03*160
-dw  Girl1PonySpritesCharacters+04*320,Girl1PonySpriteColors+04*160
+.Size14: dw  Girl1PonySpritesCharacters+14*320, Girl1PonySpriteColors+14*160
+.Size13: dw  Girl1PonySpritesCharacters+13*320, Girl1PonySpriteColors+13*160
+.Size12: dw  Girl1PonySpritesCharacters+12*320, Girl1PonySpriteColors+12*160
+.Size11: dw  Girl1PonySpritesCharacters+11*320, Girl1PonySpriteColors+11*160
+.Size10: dw  Girl1PonySpritesCharacters+10*320, Girl1PonySpriteColors+10*160
+.Size9:  dw  Girl1PonySpritesCharacters+9*320,  Girl1PonySpriteColors+9*160
+.Size8:  dw  Girl1PonySpritesCharacters+8*320,  Girl1PonySpriteColors+8*160
+.Size7:  dw  Girl1PonySpritesCharacters+7*320,  Girl1PonySpriteColors+7*160
+.Size6:  dw  Girl1PonySpritesCharacters+6*320,  Girl1PonySpriteColors+6*160
+.Size5:  dw  Girl1PonySpritesCharacters+5*320,  Girl1PonySpriteColors+5*160
+.Size4:  dw  Girl1PonySpritesCharacters+4*320,  Girl1PonySpriteColors+4*160
+.Size3:  dw  Girl1PonySpritesCharacters+3*320,  Girl1PonySpriteColors+3*160
+.Size2:  dw  Girl1PonySpritesCharacters+2*320,  Girl1PonySpriteColors+2*160
+.Size1:  dw  Girl1PonySpritesCharacters+1*320,  Girl1PonySpriteColors+1*160
+.Size0:  dw  Girl1PonySpritesCharacters+0*320,  Girl1PonySpriteColors+0*160
 
-dw  Girl1PonySpritesCharacters+05*320,Girl1PonySpriteColors+05*160
-dw  Girl1PonySpritesCharacters+06*320,Girl1PonySpriteColors+06*160
-dw  Girl1PonySpritesCharacters+07*320,Girl1PonySpriteColors+07*160
-dw  Girl1PonySpritesCharacters+08*320,Girl1PonySpriteColors+08*160
-dw  Girl1PonySpritesCharacters+09*320,Girl1PonySpriteColors+09*160
 
-dw  Girl1PonySpritesCharacters+10*320,Girl1PonySpriteColors+10*160
-dw  Girl1PonySpritesCharacters+11*320,Girl1PonySpriteColors+11*160
-dw  Girl1PonySpritesCharacters+12*320,Girl1PonySpriteColors+12*160
-dw  Girl1PonySpritesCharacters+13*320,Girl1PonySpriteColors+13*160
-dw  Girl1PonySpritesCharacters+14*320,Girl1PonySpriteColors+14*160
+  .PerspectiveXTableExtension:
+  include "..\grapx\racinggame\CurveUpEndAnimationPage1\_XPerspectiveTableExtension.asm"
 
-  .SetPlayerSprite:
+
+  .CurveLeftPerspectiveXTablePointer:
+db CurveLeftPerspectiveXTableBlock | dw CurveLeftPerspectiveXTable0
+db CurveLeftPerspectiveXTableBlock | dw CurveLeftPerspectiveXTable1
+db CurveLeftPerspectiveXTableBlock | dw CurveLeftPerspectiveXTable2
+db CurveLeftPerspectiveXTableBlock | dw CurveLeftPerspectiveXTable3
+db CurveLeftPerspectiveXTableBlock | dw CurveLeftPerspectiveXTable4
+db CurveLeftPerspectiveXTableBlock | dw CurveLeftPerspectiveXTable5
+db CurveLeftPerspectiveXTableBlock | dw CurveLeftPerspectiveXTable6
+db CurveLeftPerspectiveXTableBlock | dw CurveLeftPerspectiveXTable7
+db CurveLeftPerspectiveXTableBlock | dw CurveLeftPerspectiveXTable8
+db CurveLeftPerspectiveXTableBlock | dw CurveLeftPerspectiveXTable9
+db CurveLeftPerspectiveXTableBlock | dw CurveLeftPerspectiveXTable10
+db CurveLeftPerspectiveXTableBlock | dw CurveLeftPerspectiveXTable11
+db CurveLeftPerspectiveXTableBlock | dw CurveLeftPerspectiveXTable12
+db CurveLeftPerspectiveXTableBlock | dw CurveLeftPerspectiveXTable13
+db CurveLeftPerspectiveXTableBlock | dw CurveLeftPerspectiveXTable14
+db CurveLeftPerspectiveXTableBlock | dw CurveLeftPerspectiveXTable15
+db CurveLeftPerspectiveXTableBlock | dw CurveLeftPerspectiveXTable16
+db CurveLeftPerspectiveXTableBlock | dw CurveLeftPerspectiveXTable17
+db CurveLeftPerspectiveXTableBlock | dw CurveLeftPerspectiveXTable18
+db CurveLeftPerspectiveXTableBlock | dw CurveLeftPerspectiveXTable19
+db CurveLeftPerspectiveXTableBlock | dw CurveLeftPerspectiveXTable20
+db CurveLeftPerspectiveXTableBlock | dw CurveLeftPerspectiveXTable21
+db CurveLeftPerspectiveXTableBlock | dw CurveLeftPerspectiveXTable22
+db CurveLeftPerspectiveXTableBlock | dw CurveLeftPerspectiveXTable23
+db CurveLeftPerspectiveXTableBlock | dw CurveLeftPerspectiveXTable24
+db CurveLeftPerspectiveXTableBlock | dw CurveLeftPerspectiveXTable25
+db CurveLeftPerspectiveXTableBlock | dw CurveLeftPerspectiveXTable26
+db CurveLeftPerspectiveXTableBlock | dw CurveLeftPerspectiveXTable27
+db CurveLeftPerspectiveXTableBlock | dw CurveLeftPerspectiveXTable28
+db CurveLeftPerspectiveXTableBlock | dw CurveLeftPerspectiveXTable29
+db CurveLeftPerspectiveXTableBlock | dw CurveLeftPerspectiveXTable30
+db CurveLeftPerspectiveXTableBlock | dw CurveLeftPerspectiveXTable31
+db CurveLeftPerspectiveXTableBlock | dw CurveLeftPerspectiveXTable32
+db CurveLeftPerspectiveXTableBlock | dw CurveLeftPerspectiveXTable33
+db CurveLeftPerspectiveXTableBlock | dw CurveLeftPerspectiveXTable34
+db CurveLeftPerspectiveXTableBlock | dw CurveLeftPerspectiveXTable35
+db CurveLeftPerspectiveXTableBlock | dw CurveLeftPerspectiveXTable36
+db CurveLeftPerspectiveXTableBlock | dw CurveLeftPerspectiveXTable37
+db CurveLeftPerspectiveXTableBlock | dw CurveLeftPerspectiveXTable38
+db CurveLeftPerspectiveXTableBlock | dw CurveLeftPerspectiveXTable39
+db CurveLeftPerspectiveXTableBlock | dw CurveLeftPerspectiveXTable40
+db CurveLeftPerspectiveXTableBlock | dw CurveLeftPerspectiveXTable41
+db CurveLeftPerspectiveXTableBlock | dw CurveLeftPerspectiveXTable42
+db CurveLeftPerspectiveXTableBlock | dw CurveLeftPerspectiveXTable43
+db CurveLeftPerspectiveXTableBlock | dw CurveLeftPerspectiveXTable44
+db CurveLeftPerspectiveXTableBlock | dw CurveLeftPerspectiveXTable45
+db CurveLeftPerspectiveXTableBlock | dw CurveLeftPerspectiveXTable46
+db CurveLeftPerspectiveXTableBlock | dw CurveLeftPerspectiveXTable47
+db CurveLeftPerspectiveXTableBlock | dw CurveLeftPerspectiveXTable48
+db CurveLeftPerspectiveXTableBlock | dw CurveLeftPerspectiveXTable49
+db CurveLeftPerspectiveXTableBlock | dw CurveLeftPerspectiveXTable50
+db CurveLeftPerspectiveXTableBlock | dw CurveLeftPerspectiveXTable51
+db CurveLeftPerspectiveXTableBlock | dw CurveLeftPerspectiveXTable52
+db CurveLeftPerspectiveXTableBlock | dw CurveLeftPerspectiveXTable53
+db CurveLeftPerspectiveXTableBlock | dw CurveLeftPerspectiveXTable54
+db CurveLeftPerspectiveXTableBlock | dw CurveLeftPerspectiveXTable55
+db CurveLeftPerspectiveXTableBlock | dw CurveLeftPerspectiveXTable56
+db CurveLeftPerspectiveXTableBlock | dw CurveLeftPerspectiveXTable57
+db CurveLeftPerspectiveXTableBlock | dw CurveLeftPerspectiveXTable58
+db CurveLeftPerspectiveXTableBlock | dw CurveLeftPerspectiveXTable59
+db CurveLeftPerspectiveXTableBlock | dw CurveLeftPerspectiveXTable60
+db CurveLeftPerspectiveXTableBlock | dw CurveLeftPerspectiveXTable61
+db CurveLeftPerspectiveXTableBlock | dw CurveLeftPerspectiveXTable62
+db CurveLeftPerspectiveXTableBlock | dw CurveLeftPerspectiveXTable63
+db CurveLeftPerspectiveXTableBlock | dw CurveLeftPerspectiveXTable64
+db CurveLeftPerspectiveXTableBlock | dw CurveLeftPerspectiveXTable65
+db CurveLeftPerspectiveXTablePart2Block | dw CurveLeftPerspectiveXTable66
+db CurveLeftPerspectiveXTablePart2Block | dw CurveLeftPerspectiveXTable67
+db CurveLeftPerspectiveXTablePart2Block | dw CurveLeftPerspectiveXTable68
+db CurveLeftPerspectiveXTablePart2Block | dw CurveLeftPerspectiveXTable69
+db CurveLeftPerspectiveXTablePart2Block | dw CurveLeftPerspectiveXTable70
+db CurveLeftPerspectiveXTablePart2Block | dw CurveLeftPerspectiveXTable71
+db CurveLeftPerspectiveXTablePart2Block | dw CurveLeftPerspectiveXTable72
+db CurveLeftPerspectiveXTablePart2Block | dw CurveLeftPerspectiveXTable73
+db CurveLeftPerspectiveXTablePart2Block | dw CurveLeftPerspectiveXTable74
+db CurveLeftPerspectiveXTablePart2Block | dw CurveLeftPerspectiveXTable75
+db CurveLeftPerspectiveXTablePart2Block | dw CurveLeftPerspectiveXTable76
+db CurveLeftPerspectiveXTablePart2Block | dw CurveLeftPerspectiveXTable77
+db CurveLeftPerspectiveXTablePart2Block | dw CurveLeftPerspectiveXTable78
+
+
+  .CurveRightPerspectiveXTablePointer:
+db CurveRightPerspectiveXTableBlock | dw CurveRightPerspectiveXTable0
+db CurveRightPerspectiveXTableBlock | dw CurveRightPerspectiveXTable1
+db CurveRightPerspectiveXTableBlock | dw CurveRightPerspectiveXTable2
+db CurveRightPerspectiveXTableBlock | dw CurveRightPerspectiveXTable3
+db CurveRightPerspectiveXTableBlock | dw CurveRightPerspectiveXTable4
+db CurveRightPerspectiveXTableBlock | dw CurveRightPerspectiveXTable5
+db CurveRightPerspectiveXTableBlock | dw CurveRightPerspectiveXTable6
+db CurveRightPerspectiveXTableBlock | dw CurveRightPerspectiveXTable7
+db CurveRightPerspectiveXTableBlock | dw CurveRightPerspectiveXTable8
+db CurveRightPerspectiveXTableBlock | dw CurveRightPerspectiveXTable9
+db CurveRightPerspectiveXTableBlock | dw CurveRightPerspectiveXTable10
+db CurveRightPerspectiveXTableBlock | dw CurveRightPerspectiveXTable11
+db CurveRightPerspectiveXTableBlock | dw CurveRightPerspectiveXTable12
+db CurveRightPerspectiveXTableBlock | dw CurveRightPerspectiveXTable13
+db CurveRightPerspectiveXTableBlock | dw CurveRightPerspectiveXTable14
+db CurveRightPerspectiveXTableBlock | dw CurveRightPerspectiveXTable15
+db CurveRightPerspectiveXTableBlock | dw CurveRightPerspectiveXTable16
+db CurveRightPerspectiveXTableBlock | dw CurveRightPerspectiveXTable17
+db CurveRightPerspectiveXTableBlock | dw CurveRightPerspectiveXTable18
+db CurveRightPerspectiveXTableBlock | dw CurveRightPerspectiveXTable19
+db CurveRightPerspectiveXTableBlock | dw CurveRightPerspectiveXTable20
+db CurveRightPerspectiveXTableBlock | dw CurveRightPerspectiveXTable21
+db CurveRightPerspectiveXTableBlock | dw CurveRightPerspectiveXTable22
+db CurveRightPerspectiveXTableBlock | dw CurveRightPerspectiveXTable23
+db CurveRightPerspectiveXTableBlock | dw CurveRightPerspectiveXTable24
+db CurveRightPerspectiveXTableBlock | dw CurveRightPerspectiveXTable25
+db CurveRightPerspectiveXTableBlock | dw CurveRightPerspectiveXTable26
+db CurveRightPerspectiveXTableBlock | dw CurveRightPerspectiveXTable27
+db CurveRightPerspectiveXTableBlock | dw CurveRightPerspectiveXTable28
+db CurveRightPerspectiveXTableBlock | dw CurveRightPerspectiveXTable29
+db CurveRightPerspectiveXTableBlock | dw CurveRightPerspectiveXTable30
+db CurveRightPerspectiveXTableBlock | dw CurveRightPerspectiveXTable31
+db CurveRightPerspectiveXTableBlock | dw CurveRightPerspectiveXTable32
+db CurveRightPerspectiveXTableBlock | dw CurveRightPerspectiveXTable33
+db CurveRightPerspectiveXTableBlock | dw CurveRightPerspectiveXTable34
+db CurveRightPerspectiveXTableBlock | dw CurveRightPerspectiveXTable35
+db CurveRightPerspectiveXTableBlock | dw CurveRightPerspectiveXTable36
+db CurveRightPerspectiveXTableBlock | dw CurveRightPerspectiveXTable37
+db CurveRightPerspectiveXTableBlock | dw CurveRightPerspectiveXTable38
+db CurveRightPerspectiveXTableBlock | dw CurveRightPerspectiveXTable39
+db CurveRightPerspectiveXTableBlock | dw CurveRightPerspectiveXTable40
+db CurveRightPerspectiveXTableBlock | dw CurveRightPerspectiveXTable41
+db CurveRightPerspectiveXTableBlock | dw CurveRightPerspectiveXTable42
+db CurveRightPerspectiveXTableBlock | dw CurveRightPerspectiveXTable43
+db CurveRightPerspectiveXTableBlock | dw CurveRightPerspectiveXTable44
+db CurveRightPerspectiveXTableBlock | dw CurveRightPerspectiveXTable45
+db CurveRightPerspectiveXTableBlock | dw CurveRightPerspectiveXTable46
+db CurveRightPerspectiveXTableBlock | dw CurveRightPerspectiveXTable47
+db CurveRightPerspectiveXTableBlock | dw CurveRightPerspectiveXTable48
+db CurveRightPerspectiveXTableBlock | dw CurveRightPerspectiveXTable49
+db CurveRightPerspectiveXTableBlock | dw CurveRightPerspectiveXTable50
+db CurveRightPerspectiveXTableBlock | dw CurveRightPerspectiveXTable51
+db CurveRightPerspectiveXTableBlock | dw CurveRightPerspectiveXTable52
+db CurveRightPerspectiveXTableBlock | dw CurveRightPerspectiveXTable53
+db CurveRightPerspectiveXTableBlock | dw CurveRightPerspectiveXTable54
+db CurveRightPerspectiveXTableBlock | dw CurveRightPerspectiveXTable55
+db CurveRightPerspectiveXTableBlock | dw CurveRightPerspectiveXTable56
+db CurveRightPerspectiveXTableBlock | dw CurveRightPerspectiveXTable57
+db CurveRightPerspectiveXTableBlock | dw CurveRightPerspectiveXTable58
+db CurveRightPerspectiveXTableBlock | dw CurveRightPerspectiveXTable59
+db CurveRightPerspectiveXTableBlock | dw CurveRightPerspectiveXTable60
+db CurveRightPerspectiveXTableBlock | dw CurveRightPerspectiveXTable61
+db CurveRightPerspectiveXTableBlock | dw CurveRightPerspectiveXTable62
+db CurveRightPerspectiveXTableBlock | dw CurveRightPerspectiveXTable63
+db CurveRightPerspectiveXTableBlock | dw CurveRightPerspectiveXTable64
+db CurveRightPerspectiveXTableBlock | dw CurveRightPerspectiveXTable65
+db CurveRightPerspectiveXTablePart2Block | dw CurveRightPerspectiveXTable66
+db CurveRightPerspectiveXTablePart2Block | dw CurveRightPerspectiveXTable67
+db CurveRightPerspectiveXTablePart2Block | dw CurveRightPerspectiveXTable68
+db CurveRightPerspectiveXTablePart2Block | dw CurveRightPerspectiveXTable69
+db CurveRightPerspectiveXTablePart2Block | dw CurveRightPerspectiveXTable70
+db CurveRightPerspectiveXTablePart2Block | dw CurveRightPerspectiveXTable71
+db CurveRightPerspectiveXTablePart2Block | dw CurveRightPerspectiveXTable72
+db CurveRightPerspectiveXTablePart2Block | dw CurveRightPerspectiveXTable73
+db CurveRightPerspectiveXTablePart2Block | dw CurveRightPerspectiveXTable74
+db CurveRightPerspectiveXTablePart2Block | dw CurveRightPerspectiveXTable75
+db CurveRightPerspectiveXTablePart2Block | dw CurveRightPerspectiveXTable76
+db CurveRightPerspectiveXTablePart2Block | dw CurveRightPerspectiveXTable77
+db CurveRightPerspectiveXTablePart2Block | dw CurveRightPerspectiveXTable78
+
+
+
+
+
+SetPlayerSprite:
   ;set x coordinates player sprite
   ld    a,(RacingGameHorMoveSpeed)        ;value from 0-41 where 21 is center (not moving) 0-20 is moving left, 22-41 is moving right
   srl   a                                 ;/2
@@ -781,9 +1227,9 @@ dw  Girl1PonySpritesCharacters+14*320,Girl1PonySpriteColors+14*160
   ld    (spat+1+(00*4)),a                 ;x sprite 0
   ld    (spat+1+(01*4)),a                 ;x sprite 1
 
-  ld    a,(framecounter2)                 ;only update odd frames
-  bit   0,a
-  ret   z
+  ld    a,(framecounter2)                 ;only once every 4 frames on frame 0
+  and   3
+  ret   nz
 
   ld    a,(RacingGameSpeed)
   cp    175
@@ -819,8 +1265,6 @@ dw  Girl1PonySpritesCharacters+14*320,Girl1PonySpriteColors+14*160
 ;  ld    ix,.SpriteOffSetsTable            ;21 offset * 4 bytes per offset = 84 bytes
   add   ix,de
 
-  ld    a,(slot.page12rom)              ;all RAM except page 1+2
-  out   ($a8),a     
   ld    a,RacingGamePlayerSpritesBlock   	;sprites block
   call  block34                       	;CARE!!! we can only switch block34 if page 1 is in rom  
 
@@ -846,15 +1290,7 @@ dw  Girl1PonySpritesCharacters+14*320,Girl1PonySpriteColors+14*160
 
   ;x offsets for the head sprite
 .XOffsetsHeadSprite:  
-db 7,7,7,8,8,8,8,8,8,8,8,8,8,8,8,8,8,9,9,9,10
-
-
-
-
-
-
-
-
+db 7,7,7,8,8,8,8,8,8,8,8,8,8,8,8,8,8,9,9,9,9
 
 ChangePaletteRacingGame:
 ;
@@ -980,15 +1416,15 @@ HalfCurveRight: equ 5
 HalfCurveLeft: equ 6
 
                     ;next distance, curve (1=right, 2=down, 3=left, 4=up, 0=end current curve)
-RacingGameEvents:                db CurveRight      | dw 00117 | db EndCurve
-                      dw 00117 | db CurveLeft       | dw 00117 | db EndCurve
-                      dw 00117 | db CurveUp         | dw 00100 | db EndCurve
-                      dw 00100 | db CurveDown       | dw 00100 | db EndCurve
-                      dw 00119 | db HalfCurveRight  | dw 00200 | db EndCurve
-                      dw 00200 | db HalfCurveLeft   | dw 00200 | db EndCurve
-                      dw 00200 | db CurveRight      | dw 00200 | db EndCurve
+RacingGameEvents:                db CurveUp         | dw 00500 | db EndCurve
                       dw 00200 | db CurveLeft       | dw 00200 | db EndCurve
-                      dw 60000 | db CurveDown
+                      dw 00200 | db CurveRight         | dw 00200 | db EndCurve
+                      dw 00200 | db CurveDown       | dw 00200 | db EndCurve
+                      dw 00200 | db CurveLeft  | dw 00200 | db EndCurve
+                      dw 00200 | db CurveRight   | dw 00200 | db EndCurve
+                      dw 00200 | db CurveDown      | dw 00200 | db EndCurve
+                      dw 00200 | db CurveUp       | dw 00200 | db EndCurve
+                      dw 60000 | db CurveUp
 HandleCurvatureRoad:
   ld    hl,(RacingGameDistance+1)
   ld    de,(RacingGameEventDistance)
