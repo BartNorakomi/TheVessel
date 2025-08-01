@@ -46,9 +46,7 @@ RacingGameRoutine:
 ;Uses 3 Divide calls
   call  SetEnemySprite
 ;&&&&&&&&&&&&&&&&&&&&&&&&&&&
-
-
-
+  call  PlaceNewObject                      ;new objects may be placed if all active objects distance to player < 6247
 
 
 
@@ -132,15 +130,13 @@ ld    hl,150                            ;speed in m/p/h
   ld    (RoadCurveAmountPixelsTraversed),a
   ld    (UpdateEnemySpritePattern?),a
 
-  ld    hl,128 
-  ld    (RacingGameEnemyX),hl
   ld    a,RacingGamePlayerY
   ld    (RacingGameEnemyY),a
 
   ld    hl,9370
   ld    (RacingGameEnemy1DistanceFromPlayer),hl
 
-  ld    hl,4570
+  ld    hl,6570
   ld    (Object3+DistanceFromPlayer),hl
   ld    hl,128 
   ld    (Object3+X16bit),hl
@@ -154,6 +150,9 @@ ld    hl,150                            ;speed in m/p/h
   ld    (Object3+SpriteCharacterAddress),hl
 	ld		hl,sprcoladdr+320	;sprite 0 color table in VRAM
   ld    (Object3+SpriteColorAddress),hl
+  xor   a
+  ld    (Object3+MiniSprite?),a
+
 ;  ret
 
   ld    hl,9370
@@ -170,6 +169,26 @@ ld    hl,150                            ;speed in m/p/h
   ld    (Object2+SpriteCharacterAddress),hl
 	ld		hl,sprcoladdr+10*16	;sprite 0 color table in VRAM
   ld    (Object2+SpriteColorAddress),hl
+  xor   a
+  ld    (Object2+MiniSprite?),a
+
+
+  ld    hl,3370
+  ld    (Object4+DistanceFromPlayer),hl
+  ld    hl,128 
+  ld    (Object4+X16bit),hl
+  ld    a,1
+  ld    (Object4+RacingGameObjectOn?),a
+  ld    a,3                                 ;player is put on frame 0
+  ld    (Object4+PutOnFrame),a
+  ld    hl,spat+0+(30*4)
+  ld    (Object4+SpatEntry),hl
+	ld		hl,sprcharaddr+30*32	;sprite 0 character table in VRAM
+  ld    (Object4+SpriteCharacterAddress),hl
+	ld		hl,sprcoladdr+30*16	;sprite 0 color table in VRAM
+  ld    (Object4+SpriteColorAddress),hl
+  ld    a,1
+  ld    (Object4+MiniSprite?),a
   ret
 
   .UpdateMaximumSpeedOnCurveUpOrDown:
@@ -549,18 +568,91 @@ db    LineIntHeightStraightRoad+30
   ld    (RacingGameHorMoveSpeed),a        ;value from 0-41 where 21 is center (not moving) 0-20 is moving left, 22-41 is moving right
   ret
 
+PlaceNewObject:                           ;new objects may be placed if all active objects distance to player < 6247
+  ld    hl,(Object2+DistanceFromPlayer)
+  ld    de,6247
+  sbc   hl,de
+  ret   nc
+  ld    hl,(Object3+DistanceFromPlayer)
+  ld    de,6247
+  sbc   hl,de
+  ret   nc
+  ld    hl,(Object4+DistanceFromPlayer)
+  ld    de,6247
+  sbc   hl,de
+  ret   nc
+
+  ld    ix,Object2                      ;enemy 1
+  bit   0,(ix+RacingGameObjectOn?)
+  jr    z,.SetThisObject
+  ld    ix,Object3                      ;enemy 2
+  bit   0,(ix+RacingGameObjectOn?)
+  jr    z,.SetThisObject
+  ld    ix,Object4                      ;heart or other 16x16 sprite
+  bit   0,(ix+RacingGameObjectOn?)
+  jr    z,.SetThisObject
+  ret
+
+  .SetThisObject:
+  ;We dont put enemy back at the horizon until enemy sprite pattern gets updated this frame as well, otherwise we might put a HUGE sprite there
+  ld    a,(framecounter2)
+  inc   a
+  and   3
+  cp    (ix+PutOnFrame)
+  ret   nz
+
+  set   0,(ix+RacingGameObjectOn?)      ;turn object on
+
+  ld    a,r                             ;set random x for new enemy
+  add   a,64
+  ld    (ix+X16bit),a
+  ld    hl,9370                         ;place enemy on the horizon
+  ld    (ix+DistanceFromPlayer),l
+  ld    (ix+DistanceFromPlayer+1),h
+  ret
+
+RemoveEnemySprite:
+  ld    hl,0
+  ld    (ix+DistanceFromPlayer),l
+  ld    (ix+DistanceFromPlayer+1),h  
+  ld    (ix+RacingGameObjectOn?),0
+
+  ld    a,213
+  ld    l,(ix+SpatEntry)
+  ld    h,(ix+SpatEntry+1)                ;y sprite in spat
+  ld    de,4
+  ld    (hl),a
+  add   hl,de
+  ld    (hl),a
+  bit   0,(ix+MiniSprite?)
+  ret   nz
+  add   hl,de
+  ld    (hl),a
+  add   hl,de
+  ld    (hl),a
+  add   hl,de
+  ld    (hl),a
+  add   hl,de
+  ld    (hl),a
+  add   hl,de
+  ld    (hl),a
+  add   hl,de
+  ld    (hl),a
+  add   hl,de
+  ld    (hl),a
+  add   hl,de
+  ld    (hl),a
+  ret
 
 SetEnemySprite:
 ;  call  BackdropGreen
-
-
-  ld    ix,Object2
+  ld    ix,Object2                      ;enemy 1
   call  .HandleObject
-  ld    ix,Object3
+  ld    ix,Object3                      ;enemy 2
   call  .HandleObject
-
+  ld    ix,Object4                      ;heart or other 16x16 sprite
+  call  .HandleObject
 ;  call  BackdropBlack
-
   ret
 
   .HandleObject:
@@ -578,50 +670,19 @@ SetEnemySprite:
   xor   a
   add   hl,bc                           ;add enemy speed
   sbc   hl,de                           ;subtract player speed
-  jr    nc,.NotCarry
-
-  ;We dont put enemy back at the horizon until enemy sprite pattern gets updated this frame as well, otherwise we might put a HUGE sprite there
-  ld    a,(framecounter2)
-  and   3
-  cp    (ix+PutOnFrame)
-  ret   nz
-
-  ;at this point enemy is out of screen bottom, just remove enemy instead of replacing
-  ld    a,r                             ;set random x for new enemy
-  add   a,64
-;  ld    (RacingGameEnemyX),a            ;outer limits are 28 and 228
-  ld    (ix+X16bit),a
-  ld    hl,9370                         ;place enemy on the horizon
-  .NotCarry:
-
-;ld    hl,9370                         ;place enemy on the horizon
-
+  jr    c,RemoveEnemySprite             ;at this point enemy is out of screen bottom
   ld    (ix+DistanceFromPlayer),l
   ld    (ix+DistanceFromPlayer+1),h
-;  ld    (RacingGameEnemy1DistanceFromPlayer),hl
-  push  hl                              ;distance from player
 
   ;check enemy out of screen top
   ld    de,9368
   sbc   hl,de
-  jr    c,.Carry
- ;at this point enemy is out of screen top, just remove enemy instead of replacing
-  ld    hl,9370
-;  ld    (RacingGameEnemy1DistanceFromPlayer),hl
-  ld    (ix+DistanceFromPlayer),l
-  ld    (ix+DistanceFromPlayer+1),h
-  pop   de
-  push  hl
-  .Carry:
-
-  pop   bc                              ;distance from player
-  ;distance from player / 29 to find y using perspective table. 
-  ;FINETUNE this or we get in shit with hills
-
-
-  ld    a,Division29TableBlock   	;table block
+  jr    nc,RemoveEnemySprite            ;at this point enemy is out of screen top
+  add   hl,de                              ;distance from player
+  ;distance from player / 29 to find y using perspective table
+  ld    a,Division29TableBlock   	        ;table block
   call  block34                       	;CARE!!! we can only switch block34 if page 1 is in rom  
-  ld    hl,Division29Table
+  ld    bc,Division29Table
   add   hl,bc
   res   0,l
 ;  add   hl,bc                                      ;we cut the table in half, it was too big
@@ -843,14 +904,6 @@ SetEnemySprite:
 ;  jp    .EndCheckVerticalCurveX
 
   .EndCheckVerticalCurveX:
-
-
-
-
-
-
-
-
   pop   hl                                          ;y*2
   add   hl,de                                       ;add y*2 to find in our list: x left yellow line (16 bit)
   ld    e,(hl)                                      ;x left yellow line
@@ -888,8 +941,90 @@ SetEnemySprite:
 
 ;ld a,112
   .SetXSpat:
+  bit   0,(ix+MiniSprite?)
+  jp    z,.EndCheckMiniSprite
+
   ld    l,(ix+SpatEntry)
-  ld    h,(ix+SpatEntry+1)                ;y sprite in spat
+  ld    h,(ix+SpatEntry+1)                ;x sprite in spat
+  inc   hl
+  add   a,8
+  ld    (hl),a
+  ld    de,4
+  add   hl,de
+  ld    (hl),a
+
+  ;Set Y spat
+  ld    a,(RacingGameEnemyY)
+  dec   hl
+  add   a,32
+  ld    (hl),a
+  sbc   hl,de
+  ld    (hl),a
+
+  ld    a,(framecounter2)
+  and   3
+  cp    (ix+PutOnFrame)
+  ret   nz
+
+  ld    a,1
+  ld    (UpdateEnemySpritePattern?),a
+
+  ;size of the enemy sprite is depending on the distance from player 9370=horizon
+  ;ld    hl,9370                         ;place enemy on the horizon
+;  ld    a,(RacingGameEnemy1DistanceFromPlayer+1)      ;value from 0-36
+  ld    a,(ix+DistanceFromPlayer+1)
+
+  srl   a                                 ;/2
+  add   a,a
+  res   0,a                               ;value from 0-18 (only even)
+  ld    e,a
+  ld    d,0
+  ld    hl,.HeartOffSetPointer             ;21 offset * 4 bytes per offset = 84 bytes
+  add   hl,de                             ;jump to correct sprite addresses in SpriteOffSetsTable
+
+  ld    e,(hl)
+  inc   hl
+  ld    h,(hl)
+  ld    l,e
+
+  ld    a,RacingGameHeartSpritesBlock   	;drilling game map
+  ld    (EnemySpriteBlock),a
+  ld    e,(hl)
+  inc   hl
+  ld    d,(hl)
+  ld    (EnemySpriteCharacter),de
+  inc   hl
+  ld    e,(hl)
+  inc   hl
+  ld    d,(hl)
+  ld    (EnemySpriteColor),de
+
+  ld    l,(ix+SpriteCharacterAddress)
+  ld    h,(ix+SpriteCharacterAddress+1)
+
+  ld    (EnemySpriteCharacterVramAddress),hl
+  ld    l,(ix+SpriteColorAddress)
+  ld    h,(ix+SpriteColorAddress+1)
+  ld    (EnemySpriteColorVramAddress),hl
+  ld    a,(ix+MiniSprite?)
+  ld    (PutMiniSprite?),a
+  ret
+
+.HeartOffSetPointer: dw  .HeartSize7, .HeartSize7, .HeartSize7, .HeartSize6, .HeartSize6, .HeartSize6, .HeartSize5, .HeartSize5, .HeartSize5, .HeartSize4, .HeartSize4, .HeartSize3, .HeartSize3, .HeartSize2, .HeartSize2, .HeartSize1, .HeartSize1, .HeartSize0, .HeartSize0
+
+  ;offset character, color
+.HeartSize7:  dw  HeartSpritesCharacters+7*64,  HeartSpriteColors+7*32
+.HeartSize6:  dw  HeartSpritesCharacters+6*64,  HeartSpriteColors+6*32
+.HeartSize5:  dw  HeartSpritesCharacters+5*64,  HeartSpriteColors+5*32
+.HeartSize4:  dw  HeartSpritesCharacters+4*64,  HeartSpriteColors+4*32
+.HeartSize3:  dw  HeartSpritesCharacters+3*64,  HeartSpriteColors+3*32
+.HeartSize2:  dw  HeartSpritesCharacters+2*64,  HeartSpriteColors+2*32
+.HeartSize1:  dw  HeartSpritesCharacters+1*64,  HeartSpriteColors+1*32
+.HeartSize0:  dw  HeartSpritesCharacters+0*64,  HeartSpriteColors+0*32
+
+  .EndCheckMiniSprite:
+  ld    l,(ix+SpatEntry)
+  ld    h,(ix+SpatEntry+1)                ;x sprite in spat
   inc   hl
   add   a,8
   ld    (hl),a
@@ -943,6 +1078,7 @@ SetEnemySprite:
   ld    (hl),a
   add   hl,de
   ld    (hl),a
+  .SpatSet:
 
   ld    a,(framecounter2)
   and   3
@@ -989,6 +1125,8 @@ SetEnemySprite:
   ld    l,(ix+SpriteColorAddress)
   ld    h,(ix+SpriteColorAddress+1)
   ld    (EnemySpriteColorVramAddress),hl
+  ld    a,(ix+MiniSprite?)
+  ld    (PutMiniSprite?),a
   ret
 
 .GirlOffSetPointer: dw  .Size14, .Size14, .Size14, .Size13, .Size12, .Size11, .Size10, .Size9, .Size8, .Size7, .Size6, .Size5, .Size4, .Size3, .Size2, .Size1, .Size0, .Size0, .Size0

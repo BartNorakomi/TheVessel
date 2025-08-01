@@ -302,6 +302,7 @@ EnemySpriteCharacter: ds  2
 EnemySpriteColor: ds  2
 EnemySpriteCharacterVramAddress: ds  2
 EnemySpriteColorVramAddress: ds  2
+PutMiniSprite?: ds  1
 
 SetEnemySpriteCharacterAndColorData:
   ld    a,(UpdateEnemySpritePattern?)
@@ -312,6 +313,11 @@ SetEnemySpriteCharacterAndColorData:
   ld    a,(EnemySpriteBlock)
   call  block34                       	;CARE!!! we can only switch block34 if page 1 is in rom  
 
+  ld    a,(PutMiniSprite?)
+  or    a
+  jr    nz,.MiniSprite
+
+  .NormalSprite:
   ;write sprite character
 	xor		a				;page 0/1
   ld    hl,(EnemySpriteCharacterVramAddress)
@@ -327,7 +333,21 @@ SetEnemySpriteCharacterAndColorData:
 	call	outix160		;write sprite color of pointer and hand to vram
   ret
 
-
+  .MiniSprite:
+  ;write sprite character
+	xor		a				;page 0/1
+  ld    hl,(EnemySpriteCharacterVramAddress)
+	call	SetVdp_Write
+  ld    hl,(EnemySpriteCharacter)
+	ld		c,$98
+	call	outix64		;write sprite character to vram
+	xor		a				;page 0/1
+  ld    hl,(EnemySpriteColorVramAddress)
+	call	SetVdp_Write
+  ld    hl,(EnemySpriteColor)
+	ld		c,$98
+	call	outix32		;write sprite color of pointer and hand to vram
+  ret
 
 LineIntHeightStraightRoad:  equ 113
 RacingGameLineIntOffset:  db LineIntHeightStraightRoad     ;113 is the standard, 083 is perfect for the road all the way curved up
@@ -1228,6 +1248,7 @@ SpatEntry:              equ 6   ;2 bytes, used for racing game
 ;PutOnFrame:             equ 9
 SpriteCharacterAddress: equ 10  ;2 bytes, used for racing game
 SpriteColorAddress:     equ 12  ;2 bytes, used for racing game
+MiniSprite?:            equ 14  ;1 bytes, used for 16x16 sprites
 
 ObjectTable:
 ;           on?,  y,  x,  sprite restore table                                ,sprite data,put on frame ,movement routine block,  movement routine,							 phase,var1,var2,var3
@@ -3394,6 +3415,8 @@ spat:						;sprite attribute table (y,x)
 	db		230,230,80,0	,230,230,84,0	,230,230,88,0	,230,230,92,0
 	db		230,230,96,0	,230,230,100,0	,230,230,104,0	,230,230,108,0
 	db		230,230,112,0	,230,230,116,0	,230,230,120,0	,230,230,124,0
+ds 8*4
+
 
 FreeToUseFastCopy0:                     ;freely usable anywhere
   db    000,000,000,000                 ;sx,--,sy,spage

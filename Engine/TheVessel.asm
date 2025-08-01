@@ -672,12 +672,20 @@ RacingGameBackdropGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBl
   incbin "..\grapx\RacingGame\RoadMSXSize\backdrop.sc5",7,015 * 128      ;98 lines
 	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
 
+RacingGameHeartSpritesBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
 RacingGameGirl1PonySpritesBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
 	phase	$8000
 	Girl1PonySpritesCharacters:
 	include "..\grapx\racinggame\sprites\Girl1Pony\Girl1Pony.tgs.gen"
 	Girl1PonySpriteColors:	
 	include "..\grapx\racinggame\sprites\Girl1Pony\Girl1Pony.tcs.gen"
+
+	HeartSpritesCharacters:
+	include "..\grapx\racinggame\sprites\Heart\Heart.tgs.gen"
+	HeartSpriteColors:	
+	include "..\grapx\racinggame\sprites\Heart\Heart.tcs.gen"
+
+
 	dephase
 	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
 
