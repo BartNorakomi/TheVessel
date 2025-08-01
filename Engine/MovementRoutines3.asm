@@ -21,7 +21,8 @@ Phase MovementRoutinesAddress
 ;maak een zooi palettes die subtielere verschillen tonen (vooral met blauwtinten)
 ;wat als je die stroken minder breed maakt. Alsof je op zo'n grote brug rijdt met links/rechts nog een paar meter gras, maar daarna niks meer. In wat je dan weglaat kun je neem ik aan gewoon een achtergrond hebben van iets.
 
-
+;Je kunt ditherpatronen gebruiken om 2 kleuren minder groot te laten verschillen
+;bijvoorbeeld het gras (lichtgroen en donkergroen), je gooit in page 0 met dither 80% lichtgroen en 20% donkergroen, en in page 1 draai je dat om
 
 
 
@@ -133,8 +134,8 @@ ld    hl,150                            ;speed in m/p/h
   ld    a,RacingGamePlayerY
   ld    (RacingGameEnemyY),a
 
-  ld    hl,9370
-  ld    (RacingGameEnemy1DistanceFromPlayer),hl
+;  ld    hl,9370
+;  ld    (RacingGameEnemy1DistanceFromPlayer),hl
 
   ld    hl,6570
   ld    (Object3+DistanceFromPlayer),hl
@@ -155,7 +156,7 @@ ld    hl,150                            ;speed in m/p/h
 
 ;  ret
 
-  ld    hl,9370
+  ld    hl,3370
   ld    (Object2+DistanceFromPlayer),hl
   ld    hl,128 
   ld    (Object2+X16bit),hl
@@ -173,7 +174,7 @@ ld    hl,150                            ;speed in m/p/h
   ld    (Object2+MiniSprite?),a
 
 
-  ld    hl,3370
+  ld    hl,9370
   ld    (Object4+DistanceFromPlayer),hl
   ld    hl,128 
   ld    (Object4+X16bit),hl
@@ -612,6 +613,26 @@ PlaceNewObject:                           ;new objects may be placed if all acti
   ret
 
 RemoveEnemySprite:
+  ;If enemy is out of screen bot, AND there is a mini sprite enemy in play, we remove the minisprite enemy, and we place this enemy over the minisprite
+  bit   0,(ix+MiniSprite?)
+  jr    nz,.EndCheckEnemy1OutOfScreenBot
+
+  ;We dont replace enemy with minisprite until enemy sprite pattern gets updated this frame as well, otherwise we might put a HUGE sprite there
+  ld    a,(framecounter2)
+  inc   a
+  and   3
+  cp    (ix+PutOnFrame)
+  ret   nz
+
+  ld    hl,(Object4+X16bit)
+  ld    (ix+X16bit),l
+  ld    (ix+X16bit+1),h
+  ld    hl,(Object4+DistanceFromPlayer)
+  ld    (ix+DistanceFromPlayer),l
+  ld    (ix+DistanceFromPlayer+1),h  
+  ld    ix,Object4
+  .EndCheckEnemy1OutOfScreenBot:
+
   ld    hl,0
   ld    (ix+DistanceFromPlayer),l
   ld    (ix+DistanceFromPlayer+1),h  
@@ -670,14 +691,14 @@ SetEnemySprite:
   xor   a
   add   hl,bc                           ;add enemy speed
   sbc   hl,de                           ;subtract player speed
-  jr    c,RemoveEnemySprite             ;at this point enemy is out of screen bottom
+  jp    c,RemoveEnemySprite             ;at this point enemy is out of screen bottom
   ld    (ix+DistanceFromPlayer),l
   ld    (ix+DistanceFromPlayer+1),h
 
   ;check enemy out of screen top
   ld    de,9368
   sbc   hl,de
-  jr    nc,RemoveEnemySprite            ;at this point enemy is out of screen top
+  jp    nc,RemoveEnemySprite            ;at this point enemy is out of screen top
   add   hl,de                              ;distance from player
   ;distance from player / 29 to find y using perspective table
   ld    a,Division29TableBlock   	        ;table block
@@ -939,6 +960,16 @@ SetEnemySprite:
   ld    a,l
   sub   16                                          ;16 pixel displacement since our sprite is 32 pixels wide and we calculate from the left instead of the middle
 
+
+
+
+
+
+
+
+
+
+
 ;ld a,112
   .SetXSpat:
   bit   0,(ix+MiniSprite?)
@@ -980,6 +1011,14 @@ SetEnemySprite:
   ld    e,a
   ld    d,0
   ld    hl,.HeartOffSetPointer             ;21 offset * 4 bytes per offset = 84 bytes
+
+  bit   1,(ix+MiniSprite?)                  ;heart ?
+  jr    nz,.EndCheckHeart
+
+  ld    hl,.GirlMiniSpriteOffSetPointer             ;21 offset * 4 bytes per offset = 84 bytes
+
+  .EndCheckHeart:
+
   add   hl,de                             ;jump to correct sprite addresses in SpriteOffSetsTable
 
   ld    e,(hl)
@@ -988,6 +1027,7 @@ SetEnemySprite:
   ld    l,e
 
   ld    a,RacingGameHeartSpritesBlock   	;drilling game map
+;  ld    a,RacingGameGirl1PonyMiniSpritesBlock   	;drilling game map
   ld    (EnemySpriteBlock),a
   ld    e,(hl)
   inc   hl
@@ -1009,6 +1049,20 @@ SetEnemySprite:
   ld    a,(ix+MiniSprite?)
   ld    (PutMiniSprite?),a
   ret
+
+
+.GirlMiniSpriteOffSetPointer: dw  .MiniSpriteSize0, .MiniSpriteSize0, .MiniSpriteSize0, .MiniSpriteSize1, .MiniSpriteSize2, .MiniSpriteSize3, .MiniSpriteSize4, .MiniSpriteSize4, .MiniSpriteSize4, .MiniSpriteSize4, .MiniSpriteSize4, .MiniSpriteSize4, .MiniSpriteSize3, .MiniSpriteSize2, .MiniSpriteSize1, .MiniSpriteSize1, .MiniSpriteSize0, .MiniSpriteSize0, .MiniSpriteSize0
+
+  ;offset character, color
+.MiniSpriteSize4:  dw  Girl1PonyMiniSpritesCharacters+4*64,  Girl1PonyMiniSpriteColors+4*32
+.MiniSpriteSize3:  dw  Girl1PonyMiniSpritesCharacters+3*64,  Girl1PonyMiniSpriteColors+3*32
+.MiniSpriteSize2:  dw  Girl1PonyMiniSpritesCharacters+2*64,  Girl1PonyMiniSpriteColors+2*32
+.MiniSpriteSize1:  dw  Girl1PonyMiniSpritesCharacters+1*64,  Girl1PonyMiniSpriteColors+1*32
+.MiniSpriteSize0:  dw  Girl1PonyMiniSpritesCharacters+0*64,  Girl1PonyMiniSpriteColors+0*32
+
+
+
+
 
 .HeartOffSetPointer: dw  .HeartSize7, .HeartSize7, .HeartSize7, .HeartSize6, .HeartSize6, .HeartSize6, .HeartSize5, .HeartSize5, .HeartSize5, .HeartSize4, .HeartSize4, .HeartSize3, .HeartSize3, .HeartSize2, .HeartSize2, .HeartSize1, .HeartSize1, .HeartSize0, .HeartSize0
 
@@ -1129,7 +1183,7 @@ SetEnemySprite:
   ld    (PutMiniSprite?),a
   ret
 
-.GirlOffSetPointer: dw  .Size14, .Size14, .Size14, .Size13, .Size12, .Size11, .Size10, .Size9, .Size8, .Size7, .Size6, .Size5, .Size4, .Size3, .Size2, .Size1, .Size0, .Size0, .Size0
+.GirlOffSetPointer: dw  .Size14, .Size14, .Size13, .Size12, .Size11, .Size10, .Size9, .Size8, .Size7, .Size6, .Size5, .Size4, .Size3, .Size2, .Size1, .Size1, .Size0, .Size0, .Size0
 
   ;offset character, color
 .Size14: dw  Girl1PonySpritesCharacters+14*320, Girl1PonySpriteColors+14*160

@@ -53,7 +53,7 @@ CurveLeftEndPage0TOPChangedPixelsfrom60to59: equ 09A39h ; last def. pass 3
 CurveRightPage0BOTTOMChangedPixelsfrom18to19: equ 084D9h ; last def. pass 3
 CurveRightPage0TOPChangedPixelsfrom53to54: equ 08555h ; last def. pass 3
 CurveLeftBlock13: equ 048h ; last def. pass 3
-SetEnemySprite.HeartSize4: equ 045BDh ; last def. pass 3
+SetEnemySprite.HeartSize4: equ 04622h ; last def. pass 3
 CurveLeftPage0BOTTOMAddressesfrom70to71: equ 09EDBh ; last def. pass 3
 BlockCurveDownEndPage0TOPfrom33to32: equ 0B0h ; last def. pass 3
 putlettre: equ 020DAh ; last def. pass 3
@@ -87,7 +87,7 @@ CurveUpPage1TOPChangedPixelsfrom12to13: equ 0B3F0h ; last def. pass 3
 CurveUpEndPage0TOPWriteInstructionsfrom33to32: equ 0BE1Eh ; last def. pass 3
 BlockCurveRightEndPage0TOPfrom67to66: equ 08Ch ; last def. pass 3
 BlockCurveUpEndPage0TOPfrom43to42: equ 0A0h ; last def. pass 3
-PlaceNewObject.SetThisObject: equ 04347h ; last def. pass 3
+PlaceNewObject.SetThisObject: equ 04341h ; last def. pass 3
 CurveUpEndPage0TOPAddressesfrom4to3: equ 0997Ah ; last def. pass 3
 CurveLeftPage0BOTTOMWriteInstructionsfrom56to57: equ 0A2A1h ; last def. pass 3
 CurveDownEndPage1BOTTOMWriteInstructionsfrom7to6: equ 0AD62h ; last def. pass 3
@@ -236,7 +236,7 @@ CurveLeftEndPage0BOTTOMAddressesfrom47to46: equ 0A982h ; last def. pass 3
 CurveRightPage1TOPAddressesfrom47to48: equ 09C01h ; last def. pass 3
 HandleEventRoutine: equ 01106h ; last def. pass 3
 engine: equ 060DDh ; last def. pass 3
-SetEnemySprite.Size4: equ 046B4h ; last def. pass 3
+SetEnemySprite.Size4: equ 04719h ; last def. pass 3
 medicalbay_0: equ 052F0h ; last def. pass 3
 PutDrillMachineCharacterAndColorData.GoAnimateRight: equ 0716Ah ; last def. pass 3
 CurveUpEndPage0TOPChangedPixelsfrom8to7: equ 0BF33h ; last def. pass 3
@@ -258,7 +258,7 @@ host_8_0: equ 08A7Ch ; last def. pass 3
 CurveLeftPage0TOPAddressesfrom45to46: equ 09C79h ; last def. pass 3
 CurveLeftPage0BOTTOMWriteInstructionsfrom52to53: equ 09AE1h ; last def. pass 3
 CurveRightPage0BOTTOMChangedPixelsfrom29to30: equ 08C2Ah ; last def. pass 3
-RacingGameRoutine.SetHorMoveSpeedAndAnimatePlayerSprite: equ 042BEh ; last def. pass 3
+RacingGameRoutine.SetHorMoveSpeedAndAnimatePlayerSprite: equ 042B8h ; last def. pass 3
 CurveDownEndPage0TOPWriteInstructionsfrom56to55: equ 098A9h ; last def. pass 3
 CurveDownPage1BOTTOMAddressesfrom24to25: equ 08F7Bh ; last def. pass 3
 reactorchamber_6: equ 04D2Bh ; last def. pass 3
@@ -276,7 +276,7 @@ CurveUpEndPage0BOTTOMChangedPixelsfrom53to52: equ 0961Ch ; last def. pass 3
 BlockCurveDownEndPage0TOPfrom3to2: equ 0ACh ; last def. pass 3
 CurveRightEndPage0BOTTOMChangedPixelsfrom23to22: equ 08D08h ; last def. pass 3
 CurveRightPage1BOTTOMChangedPixelsfrom52to53: equ 08000h ; last def. pass 3
-RacingGameRoutine.NotYet200PixelsTraversed: equ 042A7h ; last def. pass 3
+RacingGameRoutine.NotYet200PixelsTraversed: equ 042A1h ; last def. pass 3
 CurveLeftPerspectiveXTable41: equ 0A7B8h ; last def. pass 3
 CurveDownEndPage1BOTTOMChangedPixelsfrom38to37: equ 082B0h ; last def. pass 3
 WaitVdpReady: equ 0D5DBh ; last def. pass 3
@@ -331,7 +331,7 @@ BlockCurveRightEndPage0BOTTOMfrom23to22: equ 080h ; last def. pass 3
 CurveLeftPage1TOPWriteInstructionsfrom40to41: equ 08CC6h ; last def. pass 3
 ConvertDrillingLeftTileWeMoveTo: equ 071C8h ; last def. pass 3
 CheckShowPressTrigAIconsleepingquarters: equ 04C4Ah ; last def. pass 3
-ForceMovePlayerAgainstCurves.RightCurveFound: equ 04BA8h ; last def. pass 3
+ForceMovePlayerAgainstCurves.RightCurveFound: equ 04C0Dh ; last def. pass 3
 BlockCurveUpEndPage0BOTTOMfrom20to19: equ 09Ch ; last def. pass 3
 CurveDownEndPage0BOTTOMChangedPixelsfrom52to51: equ 0B14Ch ; last def. pass 3
 CurveRightPage1BOTTOMChangedPixelsfrom10to11: equ 08000h ; last def. pass 3
@@ -617,7 +617,7 @@ CurveLeftPage0TOPChangedPixelsfrom59to60: equ 09A39h ; last def. pass 3
 CurveUpEndPage0TOPChangedPixelsfrom47to46: equ 094C2h ; last def. pass 3
 CurveUpPage0TOPChangedPixelsfrom3to4: equ 098EFh ; last def. pass 3
 CurveUpPage0BOTTOMChangedPixelsfrom20to21: equ 0814Ah ; last def. pass 3
-RacingGameRoutine.NotMovingLeftOrRight: equ 042FBh ; last def. pass 3
+RacingGameRoutine.NotMovingLeftOrRight: equ 042F5h ; last def. pass 3
 CurveRightEndPage0BOTTOMChangedPixelsfrom34to33: equ 0924Dh ; last def. pass 3
 CurveLeftPage1BOTTOMWriteInstructionsfrom73to74: equ 0A254h ; last def. pass 3
 BlockCurveRightPage0TOPfrom15to16: equ 069h ; last def. pass 3
@@ -749,7 +749,7 @@ LenghtStraightRoad2ndPart13Part1: equ 0C78h ; last def. pass 3
 CurveRightEndPage0TOPAddressesfrom22to21: equ 0AD8Ch ; last def. pass 3
 CurveLeftBlock15: equ 04Ah ; last def. pass 3
 CurveRightEndPage0TOPChangedPixelsfrom27to26: equ 09199h ; last def. pass 3
-SetEnemySprite.EndCheckClippingBot: equ 04461h ; last def. pass 3
+SetEnemySprite.EndCheckClippingBot: equ 04483h ; last def. pass 3
 BlockCurveDownEndPage0TOPfrom34to33: equ 0B0h ; last def. pass 3
 CurveRightPage0BOTTOMAddressesfrom15to16: equ 08E6Fh ; last def. pass 3
 CurveDownPage0BOTTOMChangedPixelsfrom19to20: equ 099BEh ; last def. pass 3
@@ -822,10 +822,10 @@ GoingToSleep.Phase1: equ 04261h ; last def. pass 3
 CurveLeftEndPage1BOTTOMWriteInstructionsfrom15to14: equ 0A9E6h ; last def. pass 3
 BlockCurveDownPage0BOTTOMfrom29to30: equ 0A7h ; last def. pass 3
 BlockCurveDownEndPage1TOPfrom1to0: equ 0ACh ; last def. pass 3
-HandleCurvatureRoad: equ 04BFBh ; last def. pass 3
+HandleCurvatureRoad: equ 04C60h ; last def. pass 3
 CurveDownPage0TOPWriteInstructionsfrom33to34: equ 09869h ; last def. pass 3
 holodecky: equ 049CCh ; last def. pass 3
-Girl1PonySpriteColors: equ 093C0h ; last def. pass 3
+Girl1PonySpriteColors: equ 092C0h ; last def. pass 3
 CurveRightPage1BOTTOMChangedPixelsfrom62to63: equ 0A9B9h ; last def. pass 3
 CurveDownEndPage1TOPWriteInstructionsfrom11to10: equ 09324h ; last def. pass 3
 CurveUpPage1BOTTOMAddressesfrom7to8: equ 08457h ; last def. pass 3
@@ -998,7 +998,6 @@ BlockCurveDownEndPage1BOTTOMfrom55to54: equ 0B3h ; last def. pass 3
 StraightRoad20Part1: equ 0812h ; last def. pass 3
 CurveDownPage1TOPAddressesfrom5to6: equ 0A55Fh ; last def. pass 3
 CurveLeftPage0TOPWriteInstructionsfrom9to10: equ 08D8Dh ; last def. pass 3
-RacingGameEnemy1DistanceFromPlayer: equ 0DED6h ; last def. pass 3
 CurveLeftEndPage0BOTTOMAddressesfrom68to67: equ 0AA82h ; last def. pass 3
 CurveRightPage1TOPWriteInstructionsfrom1to2: equ 08143h ; last def. pass 3
 BlockCurveRightEndPage0TOPfrom11to10: equ 07Ch ; last def. pass 3
@@ -1035,6 +1034,7 @@ SongVictory: equ 01h ; last def. pass 3
 BlockCurveDownEndPage1TOPfrom10to9: equ 0ADh ; last def. pass 3
 BlockCurveLeftEndPage1BOTTOMfrom74to73: equ 065h ; last def. pass 3
 CurveUpPage1TOPChangedPixelsfrom33to34: equ 08B3Eh ; last def. pass 3
+SetEnemySprite.MiniSpriteSize1: equ 045E8h ; last def. pass 3
 CurveDownEndPage0TOPChangedPixelsfrom27to26: equ 09852h ; last def. pass 3
 CurveUpPage1BOTTOMWriteInstructionsfrom16to17: equ 09F13h ; last def. pass 3
 CurveUpPage0BOTTOMWriteInstructionsfrom35to36: equ 0A13Bh ; last def. pass 3
@@ -1122,12 +1122,12 @@ AmountOfDigSitesUnlocked: equ 02140h ; last def. pass 3
 CurveLeftEndPage0BOTTOMWriteInstructionsfrom9to8: equ 0826Eh ; last def. pass 3
 CurveDownEndPage1BOTTOMAddressesfrom8to7: equ 0B38Eh ; last def. pass 3
 CurveDownEndPage1BOTTOMAddressesfrom52to51: equ 0B476h ; last def. pass 3
-SetEnemySprite.Go4: equ 044AFh ; last def. pass 3
+SetEnemySprite.Go4: equ 044D1h ; last def. pass 3
 CurveLeftEndPage0BOTTOMChangedPixelsfrom56to55: equ 0913Eh ; last def. pass 3
 SetEnemySpriteCharacterAndColorData: equ 019Ch ; last def. pass 3
 CurveLeftEndPage1TOPChangedPixelsfrom40to39: equ 0B1CBh ; last def. pass 3
 CurveUpPage0BOTTOMChangedPixelsfrom28to29: equ 094AFh ; last def. pass 3
-MovePlayerHorizontally.EndCheckOutOfScreenLeft: equ 049A3h ; last def. pass 3
+MovePlayerHorizontally.EndCheckOutOfScreenLeft: equ 04A08h ; last def. pass 3
 BlockCurveRightEndPage0BOTTOMfrom73to72: equ 08Eh ; last def. pass 3
 CurveLeftEndPage1BOTTOMAddressesfrom71to70: equ 0A7C7h ; last def. pass 3
 CurveLeftBlock5: equ 040h ; last def. pass 3
@@ -1195,7 +1195,7 @@ CurveRightEndPage1TOPAddressesfrom46to45: equ 0B04Ch ; last def. pass 3
 CurveLeftPage1BOTTOMAddressesfrom41to42: equ 09B83h ; last def. pass 3
 BlockCurveRightEndPage1TOPfrom2to1: equ 07Bh ; last def. pass 3
 BlockCurveRightPage1BOTTOMfrom6to7: equ 066h ; last def. pass 3
-SetEnemySprite.Size5: equ 046B0h ; last def. pass 3
+SetEnemySprite.Size5: equ 04715h ; last def. pass 3
 CurveUpPage0TOPAddressesfrom26to27: equ 0BE3Fh ; last def. pass 3
 StraightRoad13Part2: equ 06E6h ; last def. pass 3
 BlockCurveRightEndPage0BOTTOMfrom58to57: equ 08Ah ; last def. pass 3
@@ -1502,7 +1502,7 @@ BlockCurveLeftEndPage1TOPfrom62to61: equ 062h ; last def. pass 3
 CurveRightPage1BOTTOMChangedPixelsfrom8to9: equ 095A3h ; last def. pass 3
 CurveRightEndBlock13: equ 087h ; last def. pass 3
 CurveUpEndPage1TOPChangedPixelsfrom25to24: equ 0AC73h ; last def. pass 3
-RacingGameRoutine.UpdateMaximumSpeedOnCurveUpOrDown: equ 04126h ; last def. pass 3
+RacingGameRoutine.UpdateMaximumSpeedOnCurveUpOrDown: equ 04120h ; last def. pass 3
 CurveRightEndPage0BOTTOMChangedPixelsfrom41to40: equ 09391h ; last def. pass 3
 CurveUpPage1BOTTOMChangedPixelsfrom50to51: equ 08A3Ah ; last def. pass 3
 CurveLeftEndPage1BOTTOMAddressesfrom53to52: equ 0A231h ; last def. pass 3
@@ -1543,7 +1543,7 @@ BuildUpUpgradesMenu.FuelTankLevelFound: equ 04F3Ah ; last def. pass 3
 CurveDownEndPage0TOPWriteInstructionsfrom26to25: equ 092CFh ; last def. pass 3
 BlockCurveUpEndPage1BOTTOMfrom24to23: equ 09Dh ; last def. pass 3
 BlockCurveLeftEndPage0TOPfrom45to44: equ 05Dh ; last def. pass 3
-ChangePaletteRacingGame.PaletteOriginal: equ 04A98h ; last def. pass 3
+ChangePaletteRacingGame.PaletteOriginal: equ 04AFDh ; last def. pass 3
 CurveLeftEndPage1BOTTOMAddressesfrom11to10: equ 0A40Fh ; last def. pass 3
 CurveRightEndPage1TOPWriteInstructionsfrom5to4: equ 08DB5h ; last def. pass 3
 CurveLeftEndPage1TOPWriteInstructionsfrom68to67: equ 0B112h ; last def. pass 3
@@ -1567,7 +1567,7 @@ BlockCurveLeftPage1BOTTOMfrom26to27: equ 043h ; last def. pass 3
 CheckResourceCollected.Level6: equ 0725Bh ; last def. pass 3
 CurveUpPage1TOPWriteInstructionsfrom51to52: equ 09041h ; last def. pass 3
 LayDownAndGoHeal.HandlePhase: equ 040E6h ; last def. pass 3
-ChangePaletteRacingGame: equ 04A7Ah ; last def. pass 3
+ChangePaletteRacingGame: equ 04ADFh ; last def. pass 3
 CurveLeftPage0BOTTOMWriteInstructionsfrom37to38: equ 08F96h ; last def. pass 3
 CurveDownEndPage1TOPWriteInstructionsfrom59to58: equ 0B2A2h ; last def. pass 3
 SetDrillMachineYRelative: equ 077EFh ; last def. pass 3
@@ -1593,7 +1593,7 @@ BlockCurveUpEndPage0BOTTOMfrom9to8: equ 09Bh ; last def. pass 3
 TextCostColonyExpansion: equ 046E7h ; last def. pass 3
 CurveLeftPage0TOPWriteInstructionsfrom55to56: equ 0913Dh ; last def. pass 3
 BlockCurveLeftEndPage0BOTTOMfrom13to12: equ 054h ; last def. pass 3
-RacingGameRoutine.HandleAccelerateAndDecelerate: equ 04157h ; last def. pass 3
+RacingGameRoutine.HandleAccelerateAndDecelerate: equ 04151h ; last def. pass 3
 YearEenheden: equ 0DE7Dh ; last def. pass 3
 CurveLeftEndPage1TOPAddressesfrom27to26: equ 08DDAh ; last def. pass 3
 BlockCurveRightEndPage1TOPfrom24to23: equ 080h ; last def. pass 3
@@ -1697,7 +1697,7 @@ CurveRightEndPage1BOTTOMChangedPixelsfrom64to63: equ 08840h ; last def. pass 3
 CurveDownPage0TOPAddressesfrom33to34: equ 09869h ; last def. pass 3
 SetItemInfoUpgrades.FuelTank: equ 054A7h ; last def. pass 3
 CurveRightPage0TOPWriteInstructionsfrom73to74: equ 0A6EDh ; last def. pass 3
-RacingGameRoutine.CurveUpLineIntHeightTableEnd: equ 04231h ; last def. pass 3
+RacingGameRoutine.CurveUpLineIntHeightTableEnd: equ 0422Bh ; last def. pass 3
 BlockCurveRightEndPage0TOPfrom14to13: equ 07Dh ; last def. pass 3
 CurveLeftEndPage0BOTTOMWriteInstructionsfrom47to46: equ 0AB22h ; last def. pass 3
 hangarbay1Routine: equ 052D1h ; last def. pass 3
@@ -1707,7 +1707,7 @@ CurveLeftPage0TOPAddressesfrom58to59: equ 08D2Fh ; last def. pass 3
 CurveUpPage0TOPAddressesfrom52to53: equ 0931Eh ; last def. pass 3
 BlockCurveUpEndPage0TOPfrom5to4: equ 09Ah ; last def. pass 3
 BlockCurveLeftPage0BOTTOMfrom60to61: equ 04Ch ; last def. pass 3
-SetEnemySprite.Size9: equ 046A0h ; last def. pass 3
+SetEnemySprite.Size9: equ 04705h ; last def. pass 3
 BlockCurveDownEndPage1TOPfrom25to24: equ 0AFh ; last def. pass 3
 FlashWrite6000hto8000h: equ 0CA2Fh ; last def. pass 3
 CurveDownPage1BOTTOMAddressesfrom33to34: equ 09C1Bh ; last def. pass 3
@@ -1745,7 +1745,7 @@ BlockCurveDownEndPage0BOTTOMfrom9to8: equ 0ADh ; last def. pass 3
 CurveLeftEndPage1TOPAddressesfrom36to35: equ 0A921h ; last def. pass 3
 BlockCurveRightPage1TOPfrom54to55: equ 074h ; last def. pass 3
 CurveLeftEndPage1BOTTOMChangedPixelsfrom70to69: equ 0999Ah ; last def. pass 3
-SetPlayerSprite: equ 049C5h ; last def. pass 3
+SetPlayerSprite: equ 04A2Ah ; last def. pass 3
 CurveUpEndPage0BOTTOMWriteInstructionsfrom36to35: equ 0A13Bh ; last def. pass 3
 CurveLeftPage1BOTTOMChangedPixelsfrom55to56: equ 09AABh ; last def. pass 3
 BlockCurveUpEndPage1BOTTOMfrom8to7: equ 09Bh ; last def. pass 3
@@ -1763,7 +1763,7 @@ CurveDownEndPage1TOPChangedPixelsfrom44to43: equ 0AF2Ah ; last def. pass 3
 CurveUpPage1TOPAddressesfrom38to39: equ 082D1h ; last def. pass 3
 CurveLeftEndPage0BOTTOMAddressesfrom18to17: equ 09C20h ; last def. pass 3
 SetSciencelabIconsLifeSupport.Food: equ 050A9h ; last def. pass 3
-RacingGameRoutine.CurveDownLineIntHeightTable: equ 04231h ; last def. pass 3
+RacingGameRoutine.CurveDownLineIntHeightTable: equ 0422Bh ; last def. pass 3
 BlockCurveLeftPage1BOTTOMfrom55to56: equ 04Bh ; last def. pass 3
 CheckShowPressTrigAIconmedicalbay.PlayerIsNear: equ 04B22h ; last def. pass 3
 CurveUpPage0BOTTOMChangedPixelsfrom53to54: equ 0A5DFh ; last def. pass 3
@@ -1842,7 +1842,7 @@ Promo?: equ 00h ; last def. pass 3
 BlockCurveLeftEndPage0BOTTOMfrom3to2: equ 051h ; last def. pass 3
 BlockCurveRightEndPage0TOPfrom8to7: equ 07Bh ; last def. pass 3
 CurveLeftPage1BOTTOMWriteInstructionsfrom50to51: equ 088F9h ; last def. pass 3
-RacingGameRoutine.UpdateMaxSpeedCurveUpEnd: equ 04151h ; last def. pass 3
+RacingGameRoutine.UpdateMaxSpeedCurveUpEnd: equ 0414Bh ; last def. pass 3
 CurveUpPage0BOTTOMAddressesfrom35to36: equ 0A0C3h ; last def. pass 3
 ConvertDrillingUpTileWeMoveTo.EndCheckHigherLevelSoil: equ 07332h ; last def. pass 3
 reactorchamber_0_0: equ 08000h ; last def. pass 3
@@ -1866,7 +1866,7 @@ CurveUpEndPage1BOTTOMWriteInstructionsfrom20to19: equ 0BD1Ah ; last def. pass 3
 Objecttrainingdeck1: equ 0C7D8h ; last def. pass 3
 CurveUpPage0TOPWriteInstructionsfrom0to1: equ 08082h ; last def. pass 3
 CurveDownEndPage1BOTTOMWriteInstructionsfrom50to49: equ 0A6FDh ; last def. pass 3
-HandleCurvatureRoad.CurveDown: equ 04CFCh ; last def. pass 3
+HandleCurvatureRoad.CurveDown: equ 04D61h ; last def. pass 3
 CurveLeftEndPage0TOPWriteInstructionsfrom59to58: equ 08D2Fh ; last def. pass 3
 CurveUpPage0TOPChangedPixelsfrom47to48: equ 09F59h ; last def. pass 3
 CurveUpEndPage1TOPWriteInstructionsfrom2to1: equ 08B34h ; last def. pass 3
@@ -1875,7 +1875,7 @@ CurveDownPage1TOPChangedPixelsfrom5to6: equ 0A55Fh ; last def. pass 3
 putplayer_clipleft.nopageoverflow: equ 01462h ; last def. pass 3
 CurveDownEndPage0TOPChangedPixelsfrom4to3: equ 09358h ; last def. pass 3
 CurveLeftPage1TOPAddressesfrom24to25: equ 0A4F7h ; last def. pass 3
-SetEnemySprite.EndCheckVerticalCurve: equ 0442Eh ; last def. pass 3
+SetEnemySprite.EndCheckVerticalCurve: equ 04450h ; last def. pass 3
 CurveRightEndPage0BOTTOMChangedPixelsfrom52to51: equ 09CE0h ; last def. pass 3
 CurveDownEndPage1TOPChangedPixelsfrom58to57: equ 0AB6Ch ; last def. pass 3
 SetSciencelabIconsLifeSupport.Oxygen: equ 050C3h ; last def. pass 3
@@ -2050,7 +2050,7 @@ CurveDownEndPage0TOPWriteInstructionsfrom40to39: equ 08E66h ; last def. pass 3
 Var1: equ 0Eh ; last def. pass 3
 CurveLeftEndPage0TOPWriteInstructionsfrom42to41: equ 09107h ; last def. pass 3
 CurveDownEndPage0TOPWriteInstructionsfrom54to53: equ 08B1Dh ; last def. pass 3
-SetEnemySprite.CurveLeftPerspectiveXTablePointer: equ 047ACh ; last def. pass 3
+SetEnemySprite.CurveLeftPerspectiveXTablePointer: equ 04811h ; last def. pass 3
 CurveLeftEndPage1TOPChangedPixelsfrom48to47: equ 08D85h ; last def. pass 3
 CurveLeftPage0BOTTOMWriteInstructionsfrom64to65: equ 082A5h ; last def. pass 3
 CurveRightPage1BOTTOMWriteInstructionsfrom9to10: equ 0A491h ; last def. pass 3
@@ -2168,7 +2168,7 @@ CurveRightEndPage0BOTTOMAddressesfrom32to31: equ 0A9F6h ; last def. pass 3
 ResetRestoreBackgroundTables.loop: equ 0C946h ; last def. pass 3
 CurveRightEndPage0BOTTOMWriteInstructionsfrom19to18: equ 08732h ; last def. pass 3
 CurveRightPage1TOPAddressesfrom38to39: equ 0B1ECh ; last def. pass 3
-SetPlayerSprite.EndAnimateWheels: equ 04A30h ; last def. pass 3
+SetPlayerSprite.EndAnimateWheels: equ 04A95h ; last def. pass 3
 TextRemainingIncubationPeriod: equ 0DA96h ; last def. pass 3
 BlockCurveUpEndPage0BOTTOMfrom7to6: equ 09Ah ; last def. pass 3
 CurveLeftPage0TOPAddressesfrom16to17: equ 08CC7h ; last def. pass 3
@@ -2192,7 +2192,7 @@ BlockCurveLeftEndPage1BOTTOMfrom65to64: equ 063h ; last def. pass 3
 CurveLeftPage0TOPAddressesfrom32to33: equ 0A9DBh ; last def. pass 3
 CurveLeftPage1BOTTOMChangedPixelsfrom70to71: equ 0A730h ; last def. pass 3
 CurveRightPage0TOPAddressesfrom38to39: equ 0A9AFh ; last def. pass 3
-RacingGameRoutine.SlowDownFromMovingRightToCenter: equ 04303h ; last def. pass 3
+RacingGameRoutine.SlowDownFromMovingRightToCenter: equ 042FDh ; last def. pass 3
 CurveDownEndPage0TOPAddressesfrom8to7: equ 0AFE8h ; last def. pass 3
 CloseholodeckDoor.holodeck_16: equ 0535Ah ; last def. pass 3
 CurveDownEndPage0BOTTOMWriteInstructionsfrom53to52: equ 081D6h ; last def. pass 3
@@ -2219,11 +2219,11 @@ CurveDownEndPage0BOTTOMAddressesfrom37to36: equ 0AE63h ; last def. pass 3
 CurveRightPage1BOTTOMWriteInstructionsfrom14to15: equ 089E9h ; last def. pass 3
 CurveRightPage0TOPAddressesfrom20to21: equ 0A018h ; last def. pass 3
 CurveLeftPerspectiveXTable68: equ 081F0h ; last def. pass 3
-RacingGameRoutine.SlowDown: equ 04165h ; last def. pass 3
+RacingGameRoutine.SlowDown: equ 0415Fh ; last def. pass 3
 CurveUpPage0TOPAddressesfrom24to25: equ 0A775h ; last def. pass 3
 BlockCurveDownEndPage1BOTTOMfrom46to45: equ 0B2h ; last def. pass 3
 OxygenInnerBarEmptyPage0: equ 04E62h ; last def. pass 3
-HandleCurvatureRoad.CurveLeftEnd: equ 04C6Ch ; last def. pass 3
+HandleCurvatureRoad.CurveLeftEnd: equ 04CD1h ; last def. pass 3
 CurveRightPage1TOPAddressesfrom28to29: equ 087B9h ; last def. pass 3
 BlockCurveUpPage1BOTTOMfrom35to36: equ 095h ; last def. pass 3
 SpacePressedPurchaseItem.Oxygen: equ 04352h ; last def. pass 3
@@ -2234,7 +2234,7 @@ CurveDownEndPage0TOPWriteInstructionsfrom58to57: equ 0A80Fh ; last def. pass 3
 BlockCurveUpEndPage1BOTTOMfrom32to31: equ 09Eh ; last def. pass 3
 GetMovementInBC: equ 045DCh ; last def. pass 3
 CurveUpEndPage0BOTTOMChangedPixelsfrom21to20: equ 0814Ah ; last def. pass 3
-ChangePaletteRacingGame.ChangePalette: equ 04A80h ; last def. pass 3
+ChangePaletteRacingGame.ChangePalette: equ 04AE5h ; last def. pass 3
 BlockCurveLeftPage0BOTTOMfrom16to17: equ 040h ; last def. pass 3
 CurveUpPage1TOPWriteInstructionsfrom40to41: equ 09973h ; last def. pass 3
 BlockCurveLeftEndPage1TOPfrom65to64: equ 063h ; last def. pass 3
@@ -2382,7 +2382,7 @@ RestoreBackgroundObject4Page2: equ 0127Fh ; last def. pass 3
 ConvGingerBoy: equ 0211Eh ; last def. pass 3
 BlockCurveUpEndPage0BOTTOMfrom14to13: equ 09Bh ; last def. pass 3
 RefuelConversation: equ 0D942h ; last def. pass 3
-HandleCurvatureRoad.CurveLeft: equ 04D1Bh ; last def. pass 3
+HandleCurvatureRoad.CurveLeft: equ 04D80h ; last def. pass 3
 CurveDownEndPage1TOPChangedPixelsfrom12to11: equ 09A54h ; last def. pass 3
 CurveLeftEndPage1BOTTOMWriteInstructionsfrom30to29: equ 08BF1h ; last def. pass 3
 TheVesselrightrunning_3: equ 04010h ; last def. pass 3
@@ -2571,7 +2571,7 @@ sleepingquartersEventRoutine.armoryvault: equ 04CECh ; last def. pass 3
 CurveRightPage0TOPChangedPixelsfrom19to20: equ 091DEh ; last def. pass 3
 CurveLeftPage0BOTTOMAddressesfrom52to53: equ 0995Fh ; last def. pass 3
 medicalbaybed2x: equ 04B02h ; last def. pass 3
-RacingGameRoutine.Positive: equ 042EEh ; last def. pass 3
+RacingGameRoutine.Positive: equ 042E8h ; last def. pass 3
 CurveLeftEndPage1BOTTOMAddressesfrom10to9: equ 096C5h ; last def. pass 3
 CurveUpEndPage1BOTTOMChangedPixelsfrom4to3: equ 0A097h ; last def. pass 3
 CurveLeftEndPage1BOTTOMAddressesfrom41to40: equ 08D47h ; last def. pass 3
@@ -2647,7 +2647,7 @@ CurveRightPage1TOPAddressesfrom29to30: equ 0967Ah ; last def. pass 3
 CurveUpEndPage0TOPAddressesfrom25to24: equ 0A775h ; last def. pass 3
 CurveUpPage1BOTTOMWriteInstructionsfrom56to57: equ 08B12h ; last def. pass 3
 ChooseDigSite.SetNextDigSite: equ 0412Fh ; last def. pass 3
-ForceMovePlayerAgainstCurves.LeftCurveFound: equ 04B7Ah ; last def. pass 3
+ForceMovePlayerAgainstCurves.LeftCurveFound: equ 04BDFh ; last def. pass 3
 CurveLeftEndPage1TOPWriteInstructionsfrom66to65: equ 0975Dh ; last def. pass 3
 CurveRightEndPage0TOPAddressesfrom31to30: equ 09C53h ; last def. pass 3
 CurveUpEndPage1TOPChangedPixelsfrom36to35: equ 0A331h ; last def. pass 3
@@ -2660,7 +2660,7 @@ CurveDownPerspectiveXTable16: equ 08838h ; last def. pass 3
 BlockCurveLeftEndPage0TOPfrom73to72: equ 065h ; last def. pass 3
 CurveRightPage0BOTTOMAddressesfrom5to6: equ 09327h ; last def. pass 3
 CurveRightEndPage0TOPChangedPixelsfrom59to58: equ 09B01h ; last def. pass 3
-RacingGameRoutine.EndCurveDown: equ 041AEh ; last def. pass 3
+RacingGameRoutine.EndCurveDown: equ 041A8h ; last def. pass 3
 CheckShowPressTrigAIconHangarBay.PlayerIsNear: equ 04FD5h ; last def. pass 3
 CurveRightEndPage0TOPChangedPixelsfrom37to36: equ 08E55h ; last def. pass 3
 CurveDownPage1TOPAddressesfrom21to22: equ 0AB40h ; last def. pass 3
@@ -2702,6 +2702,7 @@ CurveDownEndPage0TOPChangedPixelsfrom52to51: equ 0B14Bh ; last def. pass 3
 CurveLeftPage0BOTTOMChangedPixelsfrom53to54: equ 0A6F0h ; last def. pass 3
 CurveUpEndPage0BOTTOMWriteInstructionsfrom34to33: equ 08952h ; last def. pass 3
 CurveDownPage0TOPChangedPixelsfrom15to16: equ 0B2F4h ; last def. pass 3
+SetEnemySprite.MiniSpriteSize0: equ 045ECh ; last def. pass 3
 CurveLeftPerspectiveXTable51: equ 0B168h ; last def. pass 3
 LenghtStraightRoad2ndPart17Part1: equ 0D3Ah ; last def. pass 3
 CurveRightPage0BOTTOMWriteInstructionsfrom47to48: equ 09681h ; last def. pass 3
@@ -2856,7 +2857,7 @@ BlockCurveUpEndPage1BOTTOMfrom45to44: equ 0A1h ; last def. pass 3
 CurveLeftEndPage0BOTTOMWriteInstructionsfrom39to38: equ 09DACh ; last def. pass 3
 CurveUpEndPage1TOPWriteInstructionsfrom58to57: equ 092BFh ; last def. pass 3
 CurveUpEndPage1BOTTOMChangedPixelsfrom23to22: equ 09B94h ; last def. pass 3
-RacingGameRoutine.UpdateMaxSpeedCurveDown: equ 0413Fh ; last def. pass 3
+RacingGameRoutine.UpdateMaxSpeedCurveDown: equ 04139h ; last def. pass 3
 NPCConv042: equ 0DBB1h ; last def. pass 3
 CurveRightPage1BOTTOMChangedPixelsfrom45to46: equ 08000h ; last def. pass 3
 BlockCurveRightPage0TOPfrom72to73: equ 079h ; last def. pass 3
@@ -3068,7 +3069,7 @@ BlockCurveLeftPage0TOPfrom46to47: equ 048h ; last def. pass 3
 BlockCurveRightEndPage0BOTTOMfrom52to51: equ 088h ; last def. pass 3
 CurveDownEndPage1TOPChangedPixelsfrom2to1: equ 08847h ; last def. pass 3
 CurveUpEndPage0TOPAddressesfrom8to7: equ 0BF3Eh ; last def. pass 3
-SetEnemySprite.HeartSize6: equ 045B5h ; last def. pass 3
+SetEnemySprite.HeartSize6: equ 0461Ah ; last def. pass 3
 MoveDrillInItsDirection.EdgeOfScreenReached: equ 074BBh ; last def. pass 3
 CurveLeftPerspectiveXTable39: equ 0A5C8h ; last def. pass 3
 BlockCurveDownEndPage0TOPfrom39to38: equ 0B1h ; last def. pass 3
@@ -3150,7 +3151,7 @@ CurveUpEndPage1TOPChangedPixelsfrom9to8: equ 08CD8h ; last def. pass 3
 BlockCurveDownPage0BOTTOMfrom34to35: equ 0A8h ; last def. pass 3
 OBJECT_COUNT: equ 04h ; last def. pass 3
 CurveUpEndPage0TOPChangedPixelsfrom45to44: equ 08000h ; last def. pass 3
-RacingGameRoutine.CurveUp: equ 041E5h ; last def. pass 3
+RacingGameRoutine.CurveUp: equ 041DFh ; last def. pass 3
 CurveUpEndPage0TOPAddressesfrom21to20: equ 0802Eh ; last def. pass 3
 CurveDownPage0TOPAddressesfrom18to19: equ 090A8h ; last def. pass 3
 BlockCurveRightPage1TOPfrom47to48: equ 072h ; last def. pass 3
@@ -3190,7 +3191,7 @@ BlockCurveRightEndPage1TOPfrom32to31: equ 082h ; last def. pass 3
 BlockCurveDownEndPage0TOPfrom9to8: equ 0ACh ; last def. pass 3
 PortraitEyesNXNY: equ 01558h ; last def. pass 3
 CurveLeftPerspectiveXTable27: equ 09A28h ; last def. pass 3
-SetEnemySprite.VerticalCurveFound: equ 0441Dh ; last def. pass 3
+SetEnemySprite.VerticalCurveFound: equ 0443Fh ; last def. pass 3
 CurveLeftEndPage0TOPAddressesfrom35to34: equ 09418h ; last def. pass 3
 Biopod_3: equ 05466h ; last def. pass 3
 NPCConv004: equ 042D9h ; last def. pass 3
@@ -3324,7 +3325,7 @@ CurveUpEndPage0BOTTOMAddressesfrom47to46: equ 0989Dh ; last def. pass 3
 CurveLeftPage0TOPChangedPixelsfrom73to74: equ 0985Eh ; last def. pass 3
 CurveRightEndPage1BOTTOMChangedPixelsfrom39to38: equ 08000h ; last def. pass 3
 BlockCurveDownEndPage1BOTTOMfrom20to19: equ 0AEh ; last def. pass 3
-SetEnemySprite.EndCheckVerticalCurveX: equ 04502h ; last def. pass 3
+SetEnemySprite.EndCheckVerticalCurveX: equ 04524h ; last def. pass 3
 BlockCurveUpEndPage0BOTTOMfrom41to40: equ 0A0h ; last def. pass 3
 GoRestoreObject: equ 01158h ; last def. pass 3
 PutObjectsDrillingLocations: equ 0CC02h ; last def. pass 3
@@ -3470,6 +3471,7 @@ CurveLeftEndPage1BOTTOMChangedPixelsfrom13to12: equ 08D3Dh ; last def. pass 3
 BlockCurveLeftEndPage1BOTTOMfrom2to1: equ 051h ; last def. pass 3
 CurveDownPerspectiveXTable24: equ 08C18h ; last def. pass 3
 CurveRightPage0BOTTOMWriteInstructionsfrom69to70: equ 0A0A6h ; last def. pass 3
+SetEnemySprite.MiniSpriteSize3: equ 045E0h ; last def. pass 3
 CurveDownEndPage0TOPAddressesfrom29to28: equ 0A778h ; last def. pass 3
 CurveLeftPage0BOTTOMWriteInstructionsfrom0to1: equ 0816Ch ; last def. pass 3
 TheVesselleftrunning_2: equ 04040h ; last def. pass 3
@@ -3528,11 +3530,11 @@ BlockCurveUpPage1TOPfrom37to38: equ 095h ; last def. pass 3
 MoonSound_WriteFM1Register: equ 0C311h ; last def. pass 3
 CurveUpEndPage1BOTTOMWriteInstructionsfrom28to27: equ 09079h ; last def. pass 3
 CurveLeftEndPage0TOPWriteInstructionsfrom40to39: equ 0A847h ; last def. pass 3
-RacingGameRoutine.CurveDown: equ 041C1h ; last def. pass 3
+RacingGameRoutine.CurveDown: equ 041BBh ; last def. pass 3
 NPCConv041: equ 0D9FCh ; last def. pass 3
 CurveLeftEndPage0TOPChangedPixelsfrom54to53: equ 0A6EFh ; last def. pass 3
 TextCredits: equ 046FDh ; last def. pass 3
-ChangePaletteRacingGame.Palette3: equ 04AF8h ; last def. pass 3
+ChangePaletteRacingGame.Palette3: equ 04B5Dh ; last def. pass 3
 PutObjectsDrillingGame: equ 0CC1Eh ; last def. pass 3
 CurveDownPage1TOPWriteInstructionsfrom19to20: equ 09D2Ah ; last def. pass 3
 CurveDownPage1TOPChangedPixelsfrom37to38: equ 082AFh ; last def. pass 3
@@ -3600,7 +3602,7 @@ CurveLeftEndPage0BOTTOMAddressesfrom19to18: equ 0A957h ; last def. pass 3
 ObjectEntitya: equ 0C695h ; last def. pass 3
 BlockCurveDownPage0TOPfrom1to2: equ 0A4h ; last def. pass 3
 CurveRightEndPage0BOTTOMWriteInstructionsfrom44to43: equ 08EA2h ; last def. pass 3
-HandleCurvatureRoad.CurveUp: equ 04CDDh ; last def. pass 3
+HandleCurvatureRoad.CurveUp: equ 04D42h ; last def. pass 3
 CurveUpPage0TOPAddressesfrom4to5: equ 0A32Fh ; last def. pass 3
 CurveLeftBlock2: equ 03Dh ; last def. pass 3
 BlockCurveRightPage0TOPfrom48to49: equ 072h ; last def. pass 3
@@ -3657,7 +3659,7 @@ CurveRightEndPage0TOPWriteInstructionsfrom45to44: equ 09939h ; last def. pass 3
 CurveDownPage1TOPWriteInstructionsfrom16to17: equ 0878Ah ; last def. pass 3
 CurveUpPage1TOPChangedPixelsfrom24to25: equ 0AC73h ; last def. pass 3
 CurveRightPerspectiveXTable70: equ 083E0h ; last def. pass 3
-SetEnemySprite.CurveLeftEndFoundX: equ 044A2h ; last def. pass 3
+SetEnemySprite.CurveLeftEndFoundX: equ 044C4h ; last def. pass 3
 CurveLeftPerspectiveXTable30: equ 09D10h ; last def. pass 3
 BlockCurveRightPage1BOTTOMfrom22to23: equ 06Bh ; last def. pass 3
 CopyRomToVram.AddressesSet: equ 0D1F0h ; last def. pass 3
@@ -3676,7 +3678,7 @@ CurveLeftPage0BOTTOMWriteInstructionsfrom33to34: equ 0879Fh ; last def. pass 3
 CurveLeftPage1TOPWriteInstructionsfrom47to48: equ 08D85h ; last def. pass 3
 BlockCurveRightEndPage0BOTTOMfrom5to4: equ 07Bh ; last def. pass 3
 CurveDownPage1TOPAddressesfrom25to26: equ 0961Ah ; last def. pass 3
-SetEnemySprite.CurveUpEndFound: equ 04413h ; last def. pass 3
+SetEnemySprite.CurveUpEndFound: equ 04435h ; last def. pass 3
 BlockCurveLeftPage0TOPfrom23to24: equ 042h ; last def. pass 3
 CurveDownPage0BOTTOMAddressesfrom56to57: equ 09F6Bh ; last def. pass 3
 BlockCurveLeftEndPage0BOTTOMfrom44to43: equ 05Dh ; last def. pass 3
@@ -4043,7 +4045,7 @@ CurveDownPage0BOTTOMChangedPixelsfrom37to38: equ 08000h ; last def. pass 3
 RomBlockSize8kb: equ 02000h ; last def. pass 3
 SongHaze: equ 07h ; last def. pass 3
 CurveLeftPage0BOTTOMChangedPixelsfrom15to16: equ 08000h ; last def. pass 3
-SetEnemySprite.Size11: equ 04698h ; last def. pass 3
+SetEnemySprite.Size11: equ 046FDh ; last def. pass 3
 base: equ 04000h ; last def. pass 3
 ClearBarsPage3: equ 04B2Dh ; last def. pass 3
 CurveLeftPage0BOTTOMChangedPixelsfrom67to68: equ 0A992h ; last def. pass 3
@@ -4174,7 +4176,7 @@ BlockCurveRightPage1TOPfrom35to36: equ 06Fh ; last def. pass 3
 CurveRightPage0TOPChangedPixelsfrom72to73: equ 09B5Dh ; last def. pass 3
 CurveRightPage1BOTTOMAddressesfrom24to25: equ 08093h ; last def. pass 3
 BlockCurveRightEndPage1BOTTOMfrom70to69: equ 08Dh ; last def. pass 3
-RacingGameRoutine.CurveDownLineIntHeightTableEnd: equ 0426Ch ; last def. pass 3
+RacingGameRoutine.CurveDownLineIntHeightTableEnd: equ 04266h ; last def. pass 3
 RePlayer_stack: equ 0C4A5h ; last def. pass 3
 CurveRightPerspectiveXTable51: equ 0B168h ; last def. pass 3
 BlockCurveLeftPage0BOTTOMfrom25to26: equ 042h ; last def. pass 3
@@ -4312,10 +4314,11 @@ CurveLeftEndPage1BOTTOMChangedPixelsfrom37to36: equ 0884Bh ; last def. pass 3
 CurveRightPage0BOTTOMChangedPixelsfrom60to61: equ 084B6h ; last def. pass 3
 BlockCurveRightPage1TOPfrom57to58: equ 075h ; last def. pass 3
 CurveRightEndPage1TOPWriteInstructionsfrom2to1: equ 08143h ; last def. pass 3
-SetEnemySprite.CurveRightEndFoundX: equ 044C8h ; last def. pass 3
+SetEnemySprite.CurveRightEndFoundX: equ 044EAh ; last def. pass 3
 CurveLeftEndPage1TOPChangedPixelsfrom39to38: equ 0A396h ; last def. pass 3
 CurveUpPage1BOTTOMAddressesfrom45to46: equ 0929Ah ; last def. pass 3
-ForceMovePlayerAgainstCurves.GoLeft: equ 04B81h ; last def. pass 3
+SetEnemySprite.MiniSpriteSize2: equ 045E4h ; last def. pass 3
+ForceMovePlayerAgainstCurves.GoLeft: equ 04BE6h ; last def. pass 3
 CurveLeftPage1BOTTOMAddressesfrom48to49: equ 09A5Ch ; last def. pass 3
 CurveUpPage1TOPWriteInstructionsfrom57to58: equ 092BFh ; last def. pass 3
 CurveDownPage1BOTTOMAddressesfrom55to56: equ 09C72h ; last def. pass 3
@@ -4367,7 +4370,7 @@ CurveRightEndPage1BOTTOMWriteInstructionsfrom62to61: equ 09E57h ; last def. pass
 CurveRightPage1BOTTOMAddressesfrom57to58: equ 096ABh ; last def. pass 3
 LenghtStraightRoad17Part1: equ 07A7h ; last def. pass 3
 CurveRightPage0TOPAddressesfrom25to26: equ 08519h ; last def. pass 3
-SetEnemySprite.Size2: equ 046BCh ; last def. pass 3
+SetEnemySprite.Size2: equ 04721h ; last def. pass 3
 loader.address: equ 08000h ; last def. pass 3
 CurveLeftEndPage1BOTTOMChangedPixelsfrom11to10: equ 0A383h ; last def. pass 3
 StraightRoad10Part1.Lenght: equ 025h ; last def. pass 3
@@ -4465,7 +4468,7 @@ BlockCurveDownPage1BOTTOMfrom10to11: equ 0A5h ; last def. pass 3
 CurveRightEndPage0BOTTOMAddressesfrom57to56: equ 0811Bh ; last def. pass 3
 DrillingGameColorBlack: equ 0Fh ; last def. pass 3
 CurveUpPage1TOPWriteInstructionsfrom32to33: equ 082DBh ; last def. pass 3
-SetEnemySprite.GirlOffSetPointer: equ 04666h ; last def. pass 3
+SetEnemySprite.GirlOffSetPointer: equ 046CBh ; last def. pass 3
 CurveUpPage0TOPAddressesfrom14to15: equ 080A2h ; last def. pass 3
 CurveUpPage0TOPAddressesfrom34to35: equ 09080h ; last def. pass 3
 CurveUpEndPage1BOTTOMChangedPixelsfrom46to45: equ 09262h ; last def. pass 3
@@ -4730,9 +4733,9 @@ StraightRoad2ndPart04Part1: equ 0AB0h ; last def. pass 3
 CurveUpEndPage1BOTTOMChangedPixelsfrom25to24: equ 0AEB1h ; last def. pass 3
 BlockCurveLeftEndPage0TOPfrom42to41: equ 05Ch ; last def. pass 3
 CurveUpEndPage0BOTTOMChangedPixelsfrom16to15: equ 08D13h ; last def. pass 3
-ForceMovePlayerAgainstCurves.GoRight: equ 04BAFh ; last def. pass 3
+ForceMovePlayerAgainstCurves.GoRight: equ 04C14h ; last def. pass 3
 CurveLeftEndPage1TOPAddressesfrom69to68: equ 08D3Eh ; last def. pass 3
-SetEnemySprite.SetXSpat: equ 0451Dh ; last def. pass 3
+SetEnemySprite.SetXSpat: equ 0453Fh ; last def. pass 3
 LoadTileMap.drillinglocations: equ 0CAAEh ; last def. pass 3
 Entity_a: equ 05159h ; last def. pass 3
 CurveDownPage1TOPAddressesfrom13to14: equ 0A84Eh ; last def. pass 3
@@ -4779,7 +4782,7 @@ CurveLeftPage0TOPWriteInstructionsfrom63to64: equ 0A03Fh ; last def. pass 3
 CurveDownPage1BOTTOMChangedPixelsfrom27to28: equ 0A4FCh ; last def. pass 3
 CurveLeftPage1BOTTOMChangedPixelsfrom56to57: equ 0A8F8h ; last def. pass 3
 CurveRightPage0TOPChangedPixelsfrom7to8: equ 0AC2Ah ; last def. pass 3
-MovePlayerHorizontally.EndCheckOutOfScreenRight: equ 049B3h ; last def. pass 3
+MovePlayerHorizontally.EndCheckOutOfScreenRight: equ 04A18h ; last def. pass 3
 StraightRoad10Part1: equ 0637h ; last def. pass 3
 CurveLeftPage1BOTTOMChangedPixelsfrom60to61: equ 08000h ; last def. pass 3
 BlockCurveLeftEndPage0TOPfrom8to7: equ 052h ; last def. pass 3
@@ -4832,7 +4835,7 @@ CurveRightPage0BOTTOMWriteInstructionsfrom15to16: equ 08FBBh ; last def. pass 3
 sleepingquartersTileMap: equ 08000h ; last def. pass 3
 CurveDownEndPage0BOTTOMWriteInstructionsfrom29to28: equ 0A8B5h ; last def. pass 3
 CurveRightEndPage0TOPWriteInstructionsfrom61to60: equ 084B5h ; last def. pass 3
-MovePlayerHorizontally.EndCheckHorMoveSpeedNegative: equ 04994h ; last def. pass 3
+MovePlayerHorizontally.EndCheckHorMoveSpeedNegative: equ 049F9h ; last def. pass 3
 CurveDownPage0TOPWriteInstructionsfrom2to3: equ 08B7Fh ; last def. pass 3
 CurveDownPage1BOTTOMWriteInstructionsfrom6to7: equ 0AD62h ; last def. pass 3
 CurveRightPage1BOTTOMAddressesfrom52to53: equ 08097h ; last def. pass 3
@@ -4842,7 +4845,7 @@ CurveUpPage1BOTTOMChangedPixelsfrom4to5: equ 0A759h ; last def. pass 3
 BlockCurveDownEndPage1BOTTOMfrom4to3: equ 0ACh ; last def. pass 3
 BlockCurveLeftPage0TOPfrom70to71: equ 04Fh ; last def. pass 3
 CurveLeftEndPage1TOPAddressesfrom32to31: equ 0A518h ; last def. pass 3
-SetEnemySprite.HeartSize2: equ 045C5h ; last def. pass 3
+SetEnemySprite.HeartSize2: equ 0462Ah ; last def. pass 3
 AnimateObject: equ 043BCh ; last def. pass 3
 CurveDownPerspectiveXTable59: equ 09C90h ; last def. pass 3
 BuildUpNewRowCameraGoingUp.PutTileLoop: equ 07D0Fh ; last def. pass 3
@@ -5085,7 +5088,7 @@ CurveUpPage1BOTTOMChangedPixelsfrom0to1: equ 084FFh ; last def. pass 3
 trainingdeckTileMap: equ 09D00h ; last def. pass 3
 CurveRightPerspectiveXTable3: equ 082E8h ; last def. pass 3
 CurveLeftEndPage1BOTTOMWriteInstructionsfrom25to24: equ 0A663h ; last def. pass 3
-SetEnemySprite.CurveUpEndFoundX: equ 04498h ; last def. pass 3
+SetEnemySprite.CurveUpEndFoundX: equ 044BAh ; last def. pass 3
 CurveLeftPerspectiveXTable65: equ 0BEF8h ; last def. pass 3
 CurveLeftPage1TOPChangedPixelsfrom43to44: equ 08830h ; last def. pass 3
 host_3_0: equ 08433h ; last def. pass 3
@@ -5252,7 +5255,7 @@ CurveRightPage1BOTTOMAddressesfrom15to16: equ 0961Dh ; last def. pass 3
 CurveRightEndPage0TOPChangedPixelsfrom1to0: equ 08000h ; last def. pass 3
 BlockCurveRightEndPage1BOTTOMfrom54to53: equ 089h ; last def. pass 3
 CurrentSongBeingPlayed: equ 0C356h ; last def. pass 3
-ChangePaletteRacingGame.notzero: equ 04A8Ah ; last def. pass 3
+ChangePaletteRacingGame.notzero: equ 04AEFh ; last def. pass 3
 CurveDownPerspectiveYTable44: equ 09C50h ; last def. pass 3
 BlockCurveDownPage0TOPfrom34to35: equ 0A8h ; last def. pass 3
 CurveDownPerspectiveXTable1: equ 08078h ; last def. pass 3
@@ -5270,7 +5273,7 @@ CurveUpPerspectiveXTable30: equ 08F00h ; last def. pass 3
 endRom: equ 0484000h ; last def. pass 3
 CurveLeftPage0TOPChangedPixelsfrom39to40: equ 0A847h ; last def. pass 3
 CurveRightEndPage0BOTTOMAddressesfrom74to73: equ 0A7EDh ; last def. pass 3
-ChangePaletteRacingGame.Palette1: equ 04AB8h ; last def. pass 3
+ChangePaletteRacingGame.Palette1: equ 04B1Dh ; last def. pass 3
 CurveRightPage0TOPAddressesfrom0to1: equ 08000h ; last def. pass 3
 CurveUpEndPage1TOPChangedPixelsfrom32to31: equ 0B850h ; last def. pass 3
 BlockCurveUpPage0BOTTOMfrom28to29: equ 094h ; last def. pass 3
@@ -5292,7 +5295,7 @@ CurveUpPage1BOTTOMAddressesfrom54to55: equ 0B2C8h ; last def. pass 3
 CurveUpPage1BOTTOMChangedPixelsfrom34to35: equ 09B0Bh ; last def. pass 3
 CurveRightPage1BOTTOMChangedPixelsfrom67to68: equ 08C55h ; last def. pass 3
 CurveDownPage1BOTTOMChangedPixelsfrom31to32: equ 08CE0h ; last def. pass 3
-SetEnemySprite.CurveLeftFoundX: equ 044ACh ; last def. pass 3
+SetEnemySprite.CurveLeftFoundX: equ 044CEh ; last def. pass 3
 SpatEntry: equ 06h ; last def. pass 3
 CurveDownEndPage0BOTTOMWriteInstructionsfrom34to33: equ 0995Fh ; last def. pass 3
 CurveUpPage0TOPAddressesfrom51to52: equ 08C6Fh ; last def. pass 3
@@ -5333,7 +5336,7 @@ CurveDownPerspectiveXTable10: equ 08550h ; last def. pass 3
 BlockCurveUpEndPage1BOTTOMfrom46to45: equ 0A1h ; last def. pass 3
 SongDefeat: equ 02h ; last def. pass 3
 BlockCurveUpEndPage1BOTTOMfrom22to21: equ 09Dh ; last def. pass 3
-SetEnemySprite.CurveDownEndFound: equ 043FCh ; last def. pass 3
+SetEnemySprite.CurveDownEndFound: equ 0441Eh ; last def. pass 3
 RePlayer_Tick.EndCheckRandomizeWorldSong: equ 0C482h ; last def. pass 3
 CONVERT_DIGIT: equ 0DE30h ; last def. pass 3
 BlockCurveDownPage1TOPfrom55to56: equ 0ABh ; last def. pass 3
@@ -5384,6 +5387,7 @@ CurveLeftPage0TOPAddressesfrom66to67: equ 09C2Ch ; last def. pass 3
 BlockCurveLeftEndPage0TOPfrom5to4: equ 051h ; last def. pass 3
 CurveRightEndPage1BOTTOMAddressesfrom63to62: equ 0AA39h ; last def. pass 3
 Division29TableBlock: equ 03Bh ; last def. pass 3
+RacingGameGirl1PonyMiniSpritesBlock: equ 031h ; last def. pass 3
 CurveLeftEndPage0TOPAddressesfrom6to5: equ 08498h ; last def. pass 3
 CurveLeftPage1TOPWriteInstructionsfrom0to1: equ 084EAh ; last def. pass 3
 BlockCurveUpPage1BOTTOMfrom42to43: equ 096h ; last def. pass 3
@@ -5424,7 +5428,7 @@ CurveLeftEndPage1BOTTOMAddressesfrom19to18: equ 0808Fh ; last def. pass 3
 CurveRightPage1BOTTOMWriteInstructionsfrom32to33: equ 08EC0h ; last def. pass 3
 CurveRightEndPage0BOTTOMAddressesfrom17to16: equ 09B69h ; last def. pass 3
 BlockCurveUpPage0BOTTOMfrom11to12: equ 091h ; last def. pass 3
-ChangePaletteRacingGame.Palette4: equ 04B18h ; last def. pass 3
+ChangePaletteRacingGame.Palette4: equ 04B7Dh ; last def. pass 3
 CurveLeftEndPage0BOTTOMAddressesfrom20to19: equ 085CDh ; last def. pass 3
 CurveRightEndPage1BOTTOMChangedPixelsfrom35to34: equ 0A932h ; last def. pass 3
 CurveRightPage1BOTTOMChangedPixelsfrom23to24: equ 0A3B4h ; last def. pass 3
@@ -5637,7 +5641,7 @@ CurveLeftEndPage0TOPAddressesfrom48to47: equ 085DCh ; last def. pass 3
 CurveRightEndPage1BOTTOMWriteInstructionsfrom32to31: equ 08152h ; last def. pass 3
 CurveRightEndPage1TOPAddressesfrom37to36: equ 096A0h ; last def. pass 3
 BlockCurveUpPage0TOPfrom53to54: equ 098h ; last def. pass 3
-SetEnemySprite.Size6: equ 046ACh ; last def. pass 3
+SetEnemySprite.Size6: equ 04711h ; last def. pass 3
 SpacePressedPurchaseItem.FuelTank: equ 04422h ; last def. pass 3
 CurveRightEndPage1BOTTOMAddressesfrom44to43: equ 09515h ; last def. pass 3
 putplayer_clipleft.skipotir: equ 01482h ; last def. pass 3
@@ -5735,7 +5739,7 @@ CurveLeftPage0TOPChangedPixelsfrom54to55: equ 0850Bh ; last def. pass 3
 CurveUpPage0BOTTOMAddressesfrom45to46: equ 08D96h ; last def. pass 3
 DrillingGameColorGrey: equ 06h ; last def. pass 3
 CurveLeftEndPage1TOPAddressesfrom13to12: equ 08D3Ch ; last def. pass 3
-RacingGameRoutine.Gas: equ 04170h ; last def. pass 3
+RacingGameRoutine.Gas: equ 0416Ah ; last def. pass 3
 StraightRoad2ndPart10Part1.Lenght: equ 025h ; last def. pass 3
 CurveRightEndPage1TOPWriteInstructionsfrom19to18: equ 08D30h ; last def. pass 3
 BlockCurveDownEndPage0TOPfrom22to21: equ 0AEh ; last def. pass 3
@@ -5760,7 +5764,7 @@ CurveDownEndPage1BOTTOMAddressesfrom59to58: equ 0B366h ; last def. pass 3
 CurveUpPage1TOPChangedPixelsfrom50to51: equ 086C8h ; last def. pass 3
 BlockCurveLeftPage0BOTTOMfrom54to55: equ 04Bh ; last def. pass 3
 CurveDownPage1TOPChangedPixelsfrom57to58: equ 0AB6Ch ; last def. pass 3
-RacingGameRoutine.UpdateRoadLinesAnimation: equ 0426Ch ; last def. pass 3
+RacingGameRoutine.UpdateRoadLinesAnimation: equ 04266h ; last def. pass 3
 NPCConv013: equ 055F8h ; last def. pass 3
 CurveLeftPage1BOTTOMChangedPixelsfrom41to42: equ 09AE2h ; last def. pass 3
 StraightRoad27Part1.Lenght: equ 024h ; last def. pass 3
@@ -5770,11 +5774,12 @@ CurveRightEndPage1TOPAddressesfrom32to31: equ 0B142h ; last def. pass 3
 CurveDownEndPage1BOTTOMWriteInstructionsfrom5to4: equ 09F67h ; last def. pass 3
 BlockCurveUpEndPage0BOTTOMfrom22to21: equ 09Dh ; last def. pass 3
 DIV_LOOP: equ 0DDF7h ; last def. pass 3
-SetEnemySprite.CurveDownFound: equ 0440Bh ; last def. pass 3
+SetEnemySprite.CurveDownFound: equ 0442Dh ; last def. pass 3
 BlockCurveLeftPage0TOPfrom4to5: equ 03Ch ; last def. pass 3
 CurveLeftEndPage0TOPAddressesfrom5to4: equ 0A5ACh ; last def. pass 3
 hangarbay_1: equ 052D2h ; last def. pass 3
 BlockCurveLeftEndPage0TOPfrom36to35: equ 05Ah ; last def. pass 3
+Girl1PonyMiniSpriteColors: equ 09D60h ; last def. pass 3
 holodeck_3_0: equ 083C7h ; last def. pass 3
 CurveLeftPage0BOTTOMWriteInstructionsfrom29to30: equ 082E4h ; last def. pass 3
 DrillingLocationsRoutine.HandlePhase: equ 0401Bh ; last def. pass 3
@@ -5878,7 +5883,7 @@ CurveRightEndPage0BOTTOMChangedPixelsfrom25to24: equ 0A90Ch ; last def. pass 3
 CurveDownPage0BOTTOMAddressesfrom48to49: equ 09AC0h ; last def. pass 3
 CurveUpPage0BOTTOMAddressesfrom22to23: equ 09652h ; last def. pass 3
 CurveLeftPage1TOPWriteInstructionsfrom49to50: equ 0A90Eh ; last def. pass 3
-SetPlayerSprite.SpeedTableFound: equ 04A18h ; last def. pass 3
+SetPlayerSprite.SpeedTableFound: equ 04A7Dh ; last def. pass 3
 CurveRightEndPage0TOPWriteInstructionsfrom37to36: equ 08E55h ; last def. pass 3
 CurveUpPage1BOTTOMChangedPixelsfrom57to58: equ 09435h ; last def. pass 3
 CurveRightEndPage1TOPAddressesfrom6to5: equ 09A5Fh ; last def. pass 3
@@ -5902,7 +5907,7 @@ holodeckPalette: equ 0CEE9h ; last def. pass 3
 CurveRightPage0TOPWriteInstructionsfrom30to31: equ 09C53h ; last def. pass 3
 ShowScienceLabMenu: equ 0DEB4h ; last def. pass 3
 CurveLeftPage0BOTTOMChangedPixelsfrom28to29: equ 09F5Fh ; last def. pass 3
-HandleCurvatureRoad.CurveEnd: equ 04C3Bh ; last def. pass 3
+HandleCurvatureRoad.CurveEnd: equ 04CA0h ; last def. pass 3
 CurveLeftPage1BOTTOMAddressesfrom37to38: equ 096ADh ; last def. pass 3
 CurveRightEndPage0TOPChangedPixelsfrom71to70: equ 0AA02h ; last def. pass 3
 BlockCurveDownPage1TOPfrom51to52: equ 0AAh ; last def. pass 3
@@ -6053,6 +6058,7 @@ host_9_0: equ 08BBDh ; last def. pass 3
 host_0_0: equ 08000h ; last def. pass 3
 CurveDownPage0TOPAddressesfrom50to51: equ 0A91Bh ; last def. pass 3
 SetItemInfoPurchase.WaterRecyclerPurchased: equ 0546Ah ; last def. pass 3
+SetEnemySprite.GirlMiniSpriteOffSetPointer: equ 045B6h ; last def. pass 3
 CurveRightPage0TOPWriteInstructionsfrom51to52: equ 09CDFh ; last def. pass 3
 CurveRightEndPage1BOTTOMAddressesfrom53to52: equ 08097h ; last def. pass 3
 CurveLeftPage0BOTTOMChangedPixelsfrom46to47: equ 0A848h ; last def. pass 3
@@ -6086,7 +6092,7 @@ CurveLeftEndPage1BOTTOMWriteInstructionsfrom5to4: equ 08148h ; last def. pass 3
 CurveDownPage0TOPWriteInstructionsfrom11to12: equ 09725h ; last def. pass 3
 TextDigSite: equ 0468Fh ; last def. pass 3
 CurveUpEndPage1TOPChangedPixelsfrom40to39: equ 08CA6h ; last def. pass 3
-SetEnemySprite.Size14: equ 0468Ch ; last def. pass 3
+SetEnemySprite.Size14: equ 046F1h ; last def. pass 3
 BlockCurveLeftPage0BOTTOMfrom12to13: equ 03Fh ; last def. pass 3
 CurveLeftPage1BOTTOMWriteInstructionsfrom15to16: equ 0896Dh ; last def. pass 3
 CurveUpEndPage0TOPChangedPixelsfrom41to40: equ 091DEh ; last def. pass 3
@@ -6177,7 +6183,7 @@ CurveUpEndPage0BOTTOMChangedPixelsfrom12to11: equ 0A52Eh ; last def. pass 3
 BlockCurveLeftPage1TOPfrom29to30: equ 044h ; last def. pass 3
 CurveRightEndPage1TOPAddressesfrom42to41: equ 0A916h ; last def. pass 3
 DrillingGameMap01Block: equ 02h ; last def. pass 3
-SetPlayerSprite.XOffsetsHeadSprite: equ 04A65h ; last def. pass 3
+SetPlayerSprite.XOffsetsHeadSprite: equ 04ACAh ; last def. pass 3
 CurveRightPage1BOTTOMWriteInstructionsfrom12to13: equ 09BEAh ; last def. pass 3
 BlockCurveLeftPage0TOPfrom39to40: equ 046h ; last def. pass 3
 LenghtStraightRoad2ndPart28Part1: equ 0F49h ; last def. pass 3
@@ -6188,7 +6194,7 @@ BlockCurveLeftEndPage0TOPfrom9to8: equ 052h ; last def. pass 3
 trainingdeck_1_0: equ 0818Dh ; last def. pass 3
 CurveDownPerspectiveXTable45: equ 095C8h ; last def. pass 3
 ArcadeMachine1y: equ 04733h ; last def. pass 3
-RacingGameRoutine.EndCurveUp: equ 041D2h ; last def. pass 3
+RacingGameRoutine.EndCurveUp: equ 041CCh ; last def. pass 3
 CurveUpPage0TOPWriteInstructionsfrom44to45: equ 08120h ; last def. pass 3
 SpacePressedPurchaseItem.ColonyExpansion: equ 04251h ; last def. pass 3
 SetSciencelabIconsPurchase.OxygenGenerator: equ 05056h ; last def. pass 3
@@ -6326,7 +6332,7 @@ CurveDownPage1TOPWriteInstructionsfrom42to43: equ 0A81Ch ; last def. pass 3
 HangarbayEventRoutine.CheckPlayerLeavingRoom: equ 04F93h ; last def. pass 3
 BlockCurveRightEndPage0BOTTOMfrom69to68: equ 08Dh ; last def. pass 3
 CurveDownPage0BOTTOMAddressesfrom18to19: equ 0918Fh ; last def. pass 3
-SetEnemySprite.EndCheckMiniSprite: equ 045D1h ; last def. pass 3
+SetEnemySprite.EndCheckMiniSprite: equ 04636h ; last def. pass 3
 CurveDownEndPage0TOPAddressesfrom34to33: equ 09869h ; last def. pass 3
 CurveLeftEndPage1TOPChangedPixelsfrom49to48: equ 099CFh ; last def. pass 3
 BlockCurveDownEndPage1TOPfrom30to29: equ 0AFh ; last def. pass 3
@@ -6355,7 +6361,7 @@ WaterRecyclerPalette: equ 05268h ; last def. pass 3
 CurveUpEndPage0BOTTOMAddressesfrom12to11: equ 0A59Bh ; last def. pass 3
 CurveUpEndPage1BOTTOMChangedPixelsfrom50to49: equ 0BE44h ; last def. pass 3
 BlockCurveDownPage1TOPfrom39to40: equ 0A9h ; last def. pass 3
-HandleCurvatureRoad.CurveRight: equ 04D44h ; last def. pass 3
+HandleCurvatureRoad.CurveRight: equ 04DA9h ; last def. pass 3
 CurveUpPerspectiveXTable9: equ 08458h ; last def. pass 3
 BlockCurveLeftPage0BOTTOMfrom31to32: equ 044h ; last def. pass 3
 CurveLeftEndPage1TOPWriteInstructionsfrom51to50: equ 087B9h ; last def. pass 3
@@ -6447,7 +6453,7 @@ CurveUpEndPage0TOPAddressesfrom51to50: equ 080DDh ; last def. pass 3
 CurveLeftPage0BOTTOMAddressesfrom28to29: equ 0A052h ; last def. pass 3
 CurveLeftEndPage0TOPAddressesfrom71to70: equ 09DBCh ; last def. pass 3
 CurveRightEndPage0TOPChangedPixelsfrom31to30: equ 09C53h ; last def. pass 3
-SetEnemySprite.Size13: equ 04690h ; last def. pass 3
+SetEnemySprite.Size13: equ 046F5h ; last def. pass 3
 CurveDownEndPage1BOTTOMAddressesfrom4to3: equ 09786h ; last def. pass 3
 StraightRoad17Part2: equ 07A8h ; last def. pass 3
 BlockCurveUpPage0BOTTOMfrom21to22: equ 093h ; last def. pass 3
@@ -6494,13 +6500,13 @@ CurveUpPage1TOPWriteInstructionsfrom45to46: equ 09134h ; last def. pass 3
 moveplayerleftinscreen: equ 080h ; last def. pass 3
 CurveRightEndPage0BOTTOMAddressesfrom72to71: equ 08F9Fh ; last def. pass 3
 CurveDownEndPage1BOTTOMAddressesfrom22to21: equ 0AB80h ; last def. pass 3
-SetEnemySprite.Go5: equ 044D5h ; last def. pass 3
+SetEnemySprite.Go5: equ 044F7h ; last def. pass 3
 DrillingGameCameraY: equ 0DEA6h ; last def. pass 3
 CurveRightPage1BOTTOMWriteInstructionsfrom48to49: equ 0A994h ; last def. pass 3
 CurveUpPage1BOTTOMWriteInstructionsfrom35to36: equ 0A51Fh ; last def. pass 3
 BlockCurveLeftEndPage0BOTTOMfrom18to17: equ 055h ; last def. pass 3
 CurveUpPage1BOTTOMAddressesfrom47to48: equ 0A8FCh ; last def. pass 3
-SetEnemySprite.HeartSize0: equ 045CDh ; last def. pass 3
+SetEnemySprite.HeartSize0: equ 04632h ; last def. pass 3
 RacingGameGirl1PonySpritesBlock: equ 031h ; last def. pass 3
 CurveRightPage1TOPAddressesfrom2to3: equ 0831Fh ; last def. pass 3
 CurveDownPerspectiveYTable34: equ 095FCh ; last def. pass 3
@@ -6518,7 +6524,7 @@ LenghtStraightRoad2ndPart23Part1: equ 0E55h ; last def. pass 3
 BlockCurveUpEndPage0TOPfrom23to22: equ 09Dh ; last def. pass 3
 CurveDownPage1TOPChangedPixelsfrom51to52: equ 0B439h ; last def. pass 3
 LenghtStraightRoad2ndPart07Part1: equ 0B5Fh ; last def. pass 3
-RacingGameRoutine.MoveRight: equ 042F3h ; last def. pass 3
+RacingGameRoutine.MoveRight: equ 042EDh ; last def. pass 3
 CurveLeftEndPage1TOPAddressesfrom66to65: equ 0975Dh ; last def. pass 3
 CurveRightPage1BOTTOMChangedPixelsfrom28to29: equ 087BAh ; last def. pass 3
 OpenDoorGfxBlock: equ 0BAh ; last def. pass 3
@@ -6555,6 +6561,7 @@ BlockCurveDownPage0BOTTOMfrom0to1: equ 0A4h ; last def. pass 3
 CurveDownPage0BOTTOMWriteInstructionsfrom47to48: equ 0946Fh ; last def. pass 3
 CurveLeftPage1BOTTOMWriteInstructionsfrom47to48: equ 08EBEh ; last def. pass 3
 BlockCurveUpPage0BOTTOMfrom37to38: equ 095h ; last def. pass 3
+Girl1PonyMiniSpritesCharacters: equ 09C20h ; last def. pass 3
 CurveRightPage0BOTTOMChangedPixelsfrom17to18: equ 0A89Ch ; last def. pass 3
 CurveDownPage0TOPChangedPixelsfrom36to37: equ 0AD6Fh ; last def. pass 3
 CurveUpPage0TOPWriteInstructionsfrom58to59: equ 09780h ; last def. pass 3
@@ -6564,7 +6571,7 @@ BlockCurveRightPage1TOPfrom56to57: equ 075h ; last def. pass 3
 BlockCurveDownEndPage1TOPfrom34to33: equ 0B0h ; last def. pass 3
 BlockCurveLeftEndPage1BOTTOMfrom1to0: equ 051h ; last def. pass 3
 CurveUpPage0BOTTOMWriteInstructionsfrom40to41: equ 09647h ; last def. pass 3
-SetEnemySprite.Go2: equ 04420h ; last def. pass 3
+SetEnemySprite.Go2: equ 04442h ; last def. pass 3
 CurveDownEndBlock7: equ 0B2h ; last def. pass 3
 FreeToUseFastCopy1: equ 0208Ch ; last def. pass 3
 BlockCurveLeftEndPage1TOPfrom60to59: equ 061h ; last def. pass 3
@@ -6623,7 +6630,7 @@ CurveUpEndPage1TOPWriteInstructionsfrom29to28: equ 098C6h ; last def. pass 3
 CurveRightEndPage1BOTTOMAddressesfrom48to47: equ 09C86h ; last def. pass 3
 BackdropRed: equ 020F3h ; last def. pass 3
 RestoreBackgroundObject2Page1: equ 011F8h ; last def. pass 3
-SetEnemySprite.HeartSize7: equ 045B1h ; last def. pass 3
+SetEnemySprite.HeartSize7: equ 04616h ; last def. pass 3
 CheckChangeDrillMovementDirection.RightPressed: equ 0767Ah ; last def. pass 3
 CurveUpPage0TOPAddressesfrom20to21: equ 0802Eh ; last def. pass 3
 CurveRightEndPage1TOPWriteInstructionsfrom64to63: equ 0883Fh ; last def. pass 3
@@ -6909,6 +6916,7 @@ CurveLeftEndPage1TOPWriteInstructionsfrom48to47: equ 08D85h ; last def. pass 3
 CurveDownPage0BOTTOMAddressesfrom29to30: equ 0AFB5h ; last def. pass 3
 CurveLeftPage1TOPAddressesfrom28to29: equ 0A718h ; last def. pass 3
 LenghtStraightRoad19Part1: equ 0806h ; last def. pass 3
+SetEnemySprite.EndCheckHeart: equ 04584h ; last def. pass 3
 BlockCurveRightEndPage0BOTTOMfrom44to43: equ 086h ; last def. pass 3
 CurveDownPage0TOPWriteInstructionsfrom5to6: equ 0A1F5h ; last def. pass 3
 StraightRoad2ndPart15Part1: equ 0CB2h ; last def. pass 3
@@ -6941,7 +6949,7 @@ EntityaRoutine.NPCConv010: equ 051B4h ; last def. pass 3
 LoadHangarbayGfx: equ 0D0A0h ; last def. pass 3
 CurveUpEndPage1TOPWriteInstructionsfrom17to16: equ 09CE6h ; last def. pass 3
 CurveRightEndPage0BOTTOMChangedPixelsfrom51to50: equ 090ACh ; last def. pass 3
-RacingGameRoutine.EndCheckLimitations: equ 042D8h ; last def. pass 3
+RacingGameRoutine.EndCheckLimitations: equ 042D2h ; last def. pass 3
 LevelEngine: equ 03Eh ; last def. pass 3
 CurveUpEndPage0BOTTOMChangedPixelsfrom45to44: equ 083B8h ; last def. pass 3
 CheckShowPressTrigAIconholodeck: equ 049CEh ; last def. pass 3
@@ -7061,7 +7069,7 @@ DigSite1dx: equ 098h ; last def. pass 3
 CurveLeftEndPage1TOPChangedPixelsfrom50to49: equ 0A90Eh ; last def. pass 3
 CurveRightEndPage1BOTTOMAddressesfrom14to13: equ 0A8DAh ; last def. pass 3
 CurveLeftPage1TOPAddressesfrom2to3: equ 09841h ; last def. pass 3
-RacingGameRoutine.UpdateMaxSpeedCurveDownEnd: equ 04145h ; last def. pass 3
+RacingGameRoutine.UpdateMaxSpeedCurveDownEnd: equ 0413Fh ; last def. pass 3
 BlockCurveLeftEndPage1BOTTOMfrom60to59: equ 061h ; last def. pass 3
 CurveRightEndPage1BOTTOMAddressesfrom41to40: equ 09B7Ch ; last def. pass 3
 CurveDownPage1BOTTOMAddressesfrom30to31: equ 085E6h ; last def. pass 3
@@ -7094,7 +7102,7 @@ StraightRoad2ndPart07Part1: equ 0B3Ah ; last def. pass 3
 CurveRightPage0BOTTOMAddressesfrom66to67: equ 0AA20h ; last def. pass 3
 CurveDownEndPage0BOTTOMAddressesfrom8to7: equ 0B04Fh ; last def. pass 3
 CurveLeftEndPage0BOTTOMAddressesfrom56to55: equ 09262h ; last def. pass 3
-SetEnemySprite.CurveDownFoundX: equ 044EEh ; last def. pass 3
+SetEnemySprite.CurveDownFoundX: equ 04510h ; last def. pass 3
 CurveDownEndPage0TOPWriteInstructionsfrom42to41: equ 09D50h ; last def. pass 3
 CurveRightPage1BOTTOMChangedPixelsfrom50to51: equ 09866h ; last def. pass 3
 BlockCurveDownEndPage0BOTTOMfrom49to48: equ 0B2h ; last def. pass 3
@@ -7238,7 +7246,7 @@ CurveDownPage1BOTTOMWriteInstructionsfrom22to23: equ 08138h ; last def. pass 3
 BlockCurveUpEndPage0TOPfrom20to19: equ 09Ch ; last def. pass 3
 CurveRightPage1BOTTOMAddressesfrom14to15: equ 0891Dh ; last def. pass 3
 CurveLeftEndPage0BOTTOMChangedPixelsfrom65to64: equ 08000h ; last def. pass 3
-RemoveEnemySprite: equ 04366h ; last def. pass 3
+RemoveEnemySprite: equ 04360h ; last def. pass 3
 CurveUpEndPage1TOPChangedPixelsfrom16to15: equ 0915Eh ; last def. pass 3
 CurveLeftEndPage0TOPChangedPixelsfrom19to18: equ 0A849h ; last def. pass 3
 BlockCurveLeftEndPage1TOPfrom69to68: equ 064h ; last def. pass 3
@@ -7281,7 +7289,7 @@ CurveRightEndPage0BOTTOMAddressesfrom42to41: equ 0A070h ; last def. pass 3
 HighScoreBlox: equ 0211Ah ; last def. pass 3
 reactorchamber_9: equ 04D2Fh ; last def. pass 3
 SpacePressedPurchaseItem.LifeSupportMenu: equ 042DCh ; last def. pass 3
-ChangePaletteRacingGame.Palette2: equ 04AD8h ; last def. pass 3
+ChangePaletteRacingGame.Palette2: equ 04B3Dh ; last def. pass 3
 BlockCurveUpPage0BOTTOMfrom35to36: equ 095h ; last def. pass 3
 CurveUpPage1TOPChangedPixelsfrom4to5: equ 0A758h ; last def. pass 3
 CheckChangeDrillMovementDirection.LeftPressed: equ 0762Fh ; last def. pass 3
@@ -7348,7 +7356,7 @@ CurveUpPage0BOTTOMWriteInstructionsfrom25to26: equ 0B557h ; last def. pass 3
 BlockCurveUpPage0TOPfrom41to42: equ 096h ; last def. pass 3
 CurveRightEndPage0BOTTOMAddressesfrom62to61: equ 0939Eh ; last def. pass 3
 CurveRightEndPage1BOTTOMChangedPixelsfrom70to69: equ 0A5E3h ; last def. pass 3
-SetEnemySprite.HeartSize3: equ 045C1h ; last def. pass 3
+SetEnemySprite.HeartSize3: equ 04626h ; last def. pass 3
 CurveDownPage0TOPChangedPixelsfrom0to1: equ 08000h ; last def. pass 3
 CurveRightPage1BOTTOMAddressesfrom13to14: equ 0A8DAh ; last def. pass 3
 AIPortraitGfxBlock: equ 0C2h ; last def. pass 3
@@ -7376,7 +7384,7 @@ CurveLeftPage1TOPChangedPixelsfrom52to53: equ 0A199h ; last def. pass 3
 CurveUpEndPage1TOPWriteInstructionsfrom43to42: equ 0ADF6h ; last def. pass 3
 BlockCurveUpEndPage1TOPfrom14to13: equ 09Bh ; last def. pass 3
 CurveDownPerspectiveYTable9: equ 08588h ; last def. pass 3
-SetPlayerSprite.AnimateWheels: equ 04A2Eh ; last def. pass 3
+SetPlayerSprite.AnimateWheels: equ 04A93h ; last def. pass 3
 CurveDownEndPage0TOPChangedPixelsfrom40to39: equ 08E66h ; last def. pass 3
 StraightRoad23Part2: equ 08C3h ; last def. pass 3
 CurveLeftEndPage1BOTTOMWriteInstructionsfrom48to47: equ 08EBEh ; last def. pass 3
@@ -7474,7 +7482,7 @@ CurveDownPage0BOTTOMWriteInstructionsfrom36to37: equ 0AF0Fh ; last def. pass 3
 Eventholodeck: equ 0C882h ; last def. pass 3
 biopod_0_0: equ 08000h ; last def. pass 3
 Host_1: equ 045FAh ; last def. pass 3
-SetEnemySprite.SpatSet: equ 04618h ; last def. pass 3
+SetEnemySprite.SpatSet: equ 0467Dh ; last def. pass 3
 CurveLeftPage1TOPAddressesfrom32to33: equ 0B278h ; last def. pass 3
 CurveRightPage0TOPAddressesfrom13to14: equ 09F50h ; last def. pass 3
 CurveDownEndPage1BOTTOMAddressesfrom29to28: equ 0AC59h ; last def. pass 3
@@ -7489,6 +7497,7 @@ BlockCurveRightPage0BOTTOMfrom56to57: equ 075h ; last def. pass 3
 CurveRightPage1TOPAddressesfrom31to32: equ 0B142h ; last def. pass 3
 CurveLeftEndPage0TOPChangedPixelsfrom61to60: equ 0A717h ; last def. pass 3
 CurveLeftPage1TOPChangedPixelsfrom0to1: equ 084EAh ; last def. pass 3
+SetEnemySprite.MiniSpriteSize4: equ 045DCh ; last def. pass 3
 CurveLeftPage0TOPWriteInstructionsfrom70to71: equ 09DBCh ; last def. pass 3
 CurveLeftPage1BOTTOMChangedPixelsfrom63to64: equ 0A883h ; last def. pass 3
 CurveRightPage1BOTTOMAddressesfrom51to52: equ 0A517h ; last def. pass 3
@@ -7517,7 +7526,7 @@ CurveDownEndPage1TOPAddressesfrom13to12: equ 0A122h ; last def. pass 3
 CurveUpEndPage0BOTTOMChangedPixelsfrom1to0: equ 08188h ; last def. pass 3
 CurveLeftEndPage1BOTTOMWriteInstructionsfrom28to27: equ 09C2Eh ; last def. pass 3
 TheVesselleftrunning_7: equ 04054h ; last def. pass 3
-RacingGameRoutine.loop: equ 0427Ch ; last def. pass 3
+RacingGameRoutine.loop: equ 04276h ; last def. pass 3
 CurveRightPage0BOTTOMWriteInstructionsfrom66to67: equ 0AB7Eh ; last def. pass 3
 BlockCurveRightEndPage0BOTTOMfrom45to44: equ 086h ; last def. pass 3
 CurveRightEndPage1TOPChangedPixelsfrom48to47: equ 09C01h ; last def. pass 3
@@ -7533,7 +7542,7 @@ CurveLeftPage1BOTTOMAddressesfrom67to68: equ 0807Ch ; last def. pass 3
 BlockCurveLeftEndPage0BOTTOMfrom7to6: equ 052h ; last def. pass 3
 CurveDownEndPage0BOTTOMChangedPixelsfrom18to17: equ 08B99h ; last def. pass 3
 CurveLeftEndPage1TOPAddressesfrom23to22: equ 08875h ; last def. pass 3
-ForceMovePlayerAgainstCurves.Right: equ 04BACh ; last def. pass 3
+ForceMovePlayerAgainstCurves.Right: equ 04C11h ; last def. pass 3
 CurveRightPage0BOTTOMAddressesfrom37to38: equ 09C80h ; last def. pass 3
 CurveRightEndPage0BOTTOMWriteInstructionsfrom16to15: equ 08FBBh ; last def. pass 3
 CurveDownPage0BOTTOMWriteInstructionsfrom32to33: equ 090E2h ; last def. pass 3
@@ -7561,7 +7570,7 @@ CurveLeftPage0TOPWriteInstructionsfrom23to24: equ 08D45h ; last def. pass 3
 CurveLeftPage1BOTTOMAddressesfrom61to62: equ 08FE1h ; last def. pass 3
 CurveRightEndPage1TOPAddressesfrom12to11: equ 08D5Bh ; last def. pass 3
 CurveDownPage0TOPChangedPixelsfrom46to47: equ 089D2h ; last def. pass 3
-MovePlayerHorizontally: equ 04986h ; last def. pass 3
+MovePlayerHorizontally: equ 049EBh ; last def. pass 3
 StraightRoad29Part2: equ 09E7h ; last def. pass 3
 CurveUpPage0BOTTOMChangedPixelsfrom46to47: equ 09866h ; last def. pass 3
 CurveLeftEndPage1TOPChangedPixelsfrom24to23: equ 096ABh ; last def. pass 3
@@ -7832,7 +7841,7 @@ CurveUpPerspectiveXTable43: equ 094D0h ; last def. pass 3
 CurveRightPage0BOTTOMChangedPixelsfrom57to58: equ 08DD2h ; last def. pass 3
 CurveLeftEndPage0TOPChangedPixelsfrom33to32: equ 0A9DBh ; last def. pass 3
 CurveDownPage1BOTTOMChangedPixelsfrom57to58: equ 0AB6Dh ; last def. pass 3
-HandleCurvatureRoad.CurveRightEnd: equ 04C95h ; last def. pass 3
+HandleCurvatureRoad.CurveRightEnd: equ 04CFAh ; last def. pass 3
 CurveDownPage0BOTTOMWriteInstructionsfrom20to21: equ 0A0A3h ; last def. pass 3
 CurveLeftEndPage1BOTTOMChangedPixelsfrom7to6: equ 099E3h ; last def. pass 3
 CurveUpPage0TOPChangedPixelsfrom50to51: equ 08000h ; last def. pass 3
@@ -7849,7 +7858,7 @@ CurveRightPage0TOPAddressesfrom29to30: equ 08C29h ; last def. pass 3
 CurveLeftPage1TOPAddressesfrom1to2: equ 08DCBh ; last def. pass 3
 TextCost: equ 04462h ; last def. pass 3
 CurveUpPage1TOPChangedPixelsfrom35to36: equ 0A331h ; last def. pass 3
-SetEnemySprite.CurveRightFoundX: equ 044D2h ; last def. pass 3
+SetEnemySprite.CurveRightFoundX: equ 044F4h ; last def. pass 3
 SetDrillMachineYRelative.GoPutDrillMachineYRelative: equ 07804h ; last def. pass 3
 CurveUpEndPage0TOPAddressesfrom58to57: equ 08C51h ; last def. pass 3
 holodeck1Routine.ShouldWeOpenOrCloseDoor?: equ 053F5h ; last def. pass 3
@@ -7951,7 +7960,7 @@ CurveUpPage1TOPChangedPixelsfrom22to23: equ 09978h ; last def. pass 3
 CurveDownPage1BOTTOMWriteInstructionsfrom54to55: equ 09587h ; last def. pass 3
 CurveDownPage1TOPChangedPixelsfrom12to13: equ 0A122h ; last def. pass 3
 LineInt.LineIntOn: equ 0396h ; last def. pass 3
-RacingGameRoutine.SetRoadAnimationStep: equ 04292h ; last def. pass 3
+RacingGameRoutine.SetRoadAnimationStep: equ 0428Ch ; last def. pass 3
 BlockCurveDownPage0BOTTOMfrom54to55: equ 0ABh ; last def. pass 3
 DigSite3dy: equ 03Fh ; last def. pass 3
 CurveRight: equ 01h ; last def. pass 3
@@ -8472,7 +8481,7 @@ CurveUpPage0BOTTOMWriteInstructionsfrom19to20: equ 0B70Bh ; last def. pass 3
 BlockCurveDownPage1BOTTOMfrom32to33: equ 0A8h ; last def. pass 3
 CurveLeftPage0BOTTOMChangedPixelsfrom14to15: equ 09FFDh ; last def. pass 3
 CurveDownPage0TOPChangedPixelsfrom47to48: equ 09359h ; last def. pass 3
-SetEnemySprite.Size7: equ 046A8h ; last def. pass 3
+SetEnemySprite.Size7: equ 0470Dh ; last def. pass 3
 SetText.HandleWaitVblank: equ 01C81h ; last def. pass 3
 CurveUpEndPage1TOPAddressesfrom48to47: equ 0A666h ; last def. pass 3
 trainingdeck3Routine: equ 052EAh ; last def. pass 3
@@ -8494,7 +8503,7 @@ StraightRoad2ndPart24Part2: equ 0E89h ; last def. pass 3
 CurveRightPage1TOPWriteInstructionsfrom32to33: equ 08D5Fh ; last def. pass 3
 CurveLeftPage1BOTTOMAddressesfrom22to23: equ 0890Bh ; last def. pass 3
 DrillMachineEventRoutine.CheckMoveCameraDown: equ 07C22h ; last def. pass 3
-SetEnemySprite.Size1: equ 046C0h ; last def. pass 3
+SetEnemySprite.Size1: equ 04725h ; last def. pass 3
 RestoreBackgroundObject2Page0: equ 011E9h ; last def. pass 3
 CurveUpEndPage0BOTTOMWriteInstructionsfrom31to30: equ 0A99Fh ; last def. pass 3
 CurveLeftPage0TOPAddressesfrom50to51: equ 0AF10h ; last def. pass 3
@@ -8521,7 +8530,7 @@ CurveRightEndPage1TOPWriteInstructionsfrom74to73: equ 0AF8Bh ; last def. pass 3
 CurveDownPerspectiveYTable53: equ 0A160h ; last def. pass 3
 CurveRightEndPage0BOTTOMWriteInstructionsfrom68to67: equ 086F2h ; last def. pass 3
 CargoSizeLevel: equ 02146h ; last def. pass 3
-SetEnemySprite.HeartSize1: equ 045C9h ; last def. pass 3
+SetEnemySprite.HeartSize1: equ 0462Eh ; last def. pass 3
 CurveLeftPage0BOTTOMWriteInstructionsfrom3to4: equ 09DA7h ; last def. pass 3
 CurveRightPerspectiveXTable21: equ 09458h ; last def. pass 3
 BlockCurveRightEndPage1BOTTOMfrom1to0: equ 07Bh ; last def. pass 3
@@ -8544,7 +8553,7 @@ BlockCurveLeftEndPage0TOPfrom15to14: equ 054h ; last def. pass 3
 CurveUpPage1TOPChangedPixelsfrom21to22: equ 08EC8h ; last def. pass 3
 BlockCurveDownEndPage0TOPfrom57to56: equ 0B3h ; last def. pass 3
 CurveRightPage0TOPAddressesfrom15to16: equ 08D73h ; last def. pass 3
-SetEnemySprite.CurveDownEndFoundX: equ 04493h ; last def. pass 3
+SetEnemySprite.CurveDownEndFoundX: equ 044B5h ; last def. pass 3
 CurveLeftEndPage1TOPChangedPixelsfrom29to28: equ 0A718h ; last def. pass 3
 CurveDownEndPage1TOPWriteInstructionsfrom23to22: equ 0B316h ; last def. pass 3
 Depack.get_gamma_value_size_end: equ 0D691h ; last def. pass 3
@@ -8722,7 +8731,7 @@ CurveUpPage1TOPWriteInstructionsfrom22to23: equ 09A24h ; last def. pass 3
 DrillingTimeFrames: equ 0DEAFh ; last def. pass 3
 CurveRightPage0BOTTOMAddressesfrom21to22: equ 08106h ; last def. pass 3
 CurveRightBlock5: equ 06Ah ; last def. pass 3
-SetEnemySprite.CurveRightPerspectiveXTablePointer: equ 04899h ; last def. pass 3
+SetEnemySprite.CurveRightPerspectiveXTablePointer: equ 048FEh ; last def. pass 3
 BlockCurveDownEndPage0TOPfrom11to10: equ 0ADh ; last def. pass 3
 CurveLeftEndPage1BOTTOMChangedPixelsfrom43to42: equ 0A852h ; last def. pass 3
 CurveRightPage1TOPAddressesfrom7to8: equ 08839h ; last def. pass 3
@@ -8773,7 +8782,7 @@ CurveRightEndPage0TOPAddressesfrom64to63: equ 0ADA9h ; last def. pass 3
 CurveUpEndPage0TOPAddressesfrom54to53: equ 0A285h ; last def. pass 3
 CurveUpEndPage0BOTTOMChangedPixelsfrom4to3: equ 09AC8h ; last def. pass 3
 BlockCurveUpPage1TOPfrom38to39: equ 096h ; last def. pass 3
-RacingGameRoutine.UpdateDistance: equ 04296h ; last def. pass 3
+RacingGameRoutine.UpdateDistance: equ 04290h ; last def. pass 3
 holodeck_10_0: equ 08C9Eh ; last def. pass 3
 StraightRoad17Part1: equ 0781h ; last def. pass 3
 CurveDownEndPage1TOPChangedPixelsfrom31to30: equ 0851Bh ; last def. pass 3
@@ -8881,7 +8890,7 @@ CurveUpEndPage0TOPWriteInstructionsfrom12to11: equ 0A3A0h ; last def. pass 3
 CurveRightEndPage1BOTTOMChangedPixelsfrom27to26: equ 09AE6h ; last def. pass 3
 LenghtStraightRoad2ndPart16Part1: equ 0D09h ; last def. pass 3
 CurveRightPage0BOTTOMAddressesfrom44to45: equ 09A6Ah ; last def. pass 3
-HandleCurvatureRoad.CurveDownEnd: equ 04C4Dh ; last def. pass 3
+HandleCurvatureRoad.CurveDownEnd: equ 04CB2h ; last def. pass 3
 vblank.RacingGame: equ 013Fh ; last def. pass 3
 CurveLeftEndPage1BOTTOMChangedPixelsfrom18to17: equ 0A371h ; last def. pass 3
 CurveUpPage0TOPWriteInstructionsfrom2to3: equ 08F05h ; last def. pass 3
@@ -8917,6 +8926,7 @@ BlockCurveRightEndPage0BOTTOMfrom49to48: equ 087h ; last def. pass 3
 block12High: equ 0D56Eh ; last def. pass 3
 CurveLeftPage1TOPAddressesfrom29to30: equ 08A50h ; last def. pass 3
 CurveRightEndPage0BOTTOMWriteInstructionsfrom49to48: equ 0A29Bh ; last def. pass 3
+RemoveEnemySprite.EndCheckEnemy1OutOfScreenBot: equ 04386h ; last def. pass 3
 CurveRightEndPage1BOTTOMChangedPixelsfrom17to16: equ 0A364h ; last def. pass 3
 CurveUpEndPage0TOPWriteInstructionsfrom7to6: equ 0B4F9h ; last def. pass 3
 CurveLeftPage0TOPChangedPixelsfrom63to64: equ 0A03Fh ; last def. pass 3
@@ -9037,7 +9047,7 @@ CurveDownPerspectiveXTable43: equ 094D0h ; last def. pass 3
 CurveUpPage1TOPAddressesfrom1to2: equ 08B34h ; last def. pass 3
 holodeck_17_0: equ 09575h ; last def. pass 3
 vblank: equ 0BBh ; last def. pass 3
-endenginepage3variables: equ 0FD25h ; last def. pass 3
+endenginepage3variables: equ 0FD23h ; last def. pass 3
 CurveLeftEndPage0BOTTOMWriteInstructionsfrom37to36: equ 08256h ; last def. pass 3
 BlockCurveRightEndPage1TOPfrom74to73: equ 08Eh ; last def. pass 3
 BlockCurveDownPage0BOTTOMfrom18to19: equ 0A6h ; last def. pass 3
@@ -9073,7 +9083,7 @@ CurveDownEndPage0TOPChangedPixelsfrom49to48: equ 099E5h ; last def. pass 3
 CurveUpEndPage1BOTTOMAddressesfrom25to24: equ 0AEE7h ; last def. pass 3
 CurveUpEndPage0BOTTOMAddressesfrom38to37: equ 0B40Ch ; last def. pass 3
 CurveDownEndPage1BOTTOMWriteInstructionsfrom59to58: equ 0B3D0h ; last def. pass 3
-SetEnemySprite.Size3: equ 046B8h ; last def. pass 3
+SetEnemySprite.Size3: equ 0471Dh ; last def. pass 3
 ObjectWall: equ 0C673h ; last def. pass 3
 CurveLeftPage0TOPWriteInstructionsfrom64to65: equ 0AD3Fh ; last def. pass 3
 BlockCurveDownEndPage0BOTTOMfrom36to35: equ 0B0h ; last def. pass 3
@@ -9210,7 +9220,7 @@ CurveLeftPage0TOPWriteInstructionsfrom31to32: equ 09CCDh ; last def. pass 3
 CurveLeftPage0TOPAddressesfrom48to49: equ 091E2h ; last def. pass 3
 BlockCurveLeftPage0BOTTOMfrom57to58: equ 04Ch ; last def. pass 3
 CurveLeftPage0BOTTOMWriteInstructionsfrom49to50: equ 0A160h ; last def. pass 3
-ForceMovePlayerAgainstCurves: equ 04B58h ; last def. pass 3
+ForceMovePlayerAgainstCurves: equ 04BBDh ; last def. pass 3
 BlockCurveUpPage0BOTTOMfrom5to6: equ 090h ; last def. pass 3
 CurveDownPage0TOPWriteInstructionsfrom39to40: equ 08E66h ; last def. pass 3
 CloseBlackWindowDrillingGame.Restore1LineTopAndBottom: equ 016F3h ; last def. pass 3
@@ -9322,7 +9332,7 @@ CurveUpPerspectiveXTable26: equ 08D10h ; last def. pass 3
 CurveDownPage1BOTTOMAddressesfrom15to16: equ 0803Fh ; last def. pass 3
 CurveUpEndPage0TOPWriteInstructionsfrom50to49: equ 0B73Eh ; last def. pass 3
 CurveDownPage0BOTTOMChangedPixelsfrom57to58: equ 0A810h ; last def. pass 3
-ForceMovePlayerAgainstCurves.RightEnd: equ 04B9Ah ; last def. pass 3
+ForceMovePlayerAgainstCurves.RightEnd: equ 04BFFh ; last def. pass 3
 CurveDownEndPage0TOPWriteInstructionsfrom35to34: equ 09E2Dh ; last def. pass 3
 framecounter2: equ 0DE82h ; last def. pass 3
 CurveUpEndPage0TOPWriteInstructionsfrom55to54: equ 0AC67h ; last def. pass 3
@@ -9354,7 +9364,7 @@ BlockCurveLeftEndPage0BOTTOMfrom51to50: equ 05Fh ; last def. pass 3
 CurveLeftEndPage1TOPWriteInstructionsfrom34to33: equ 08E87h ; last def. pass 3
 CurveRightEndPage0TOPChangedPixelsfrom73to72: equ 09B5Dh ; last def. pass 3
 BlockCurveUpEndPage0BOTTOMfrom30to29: equ 09Eh ; last def. pass 3
-SetEnemySprite.PerspectiveXTableExtension: equ 046C8h ; last def. pass 3
+SetEnemySprite.PerspectiveXTableExtension: equ 0472Dh ; last def. pass 3
 CurveLeftPage0TOPAddressesfrom64to65: equ 0AD3Fh ; last def. pass 3
 CurveLeftPage1BOTTOMAddressesfrom72to73: equ 094AEh ; last def. pass 3
 CurveLeftEndPage0BOTTOMWriteInstructionsfrom75to74: equ 0A802h ; last def. pass 3
@@ -9661,7 +9671,7 @@ CurveDownPage1BOTTOMChangedPixelsfrom54to55: equ 09437h ; last def. pass 3
 CurveDownEndPage0BOTTOMWriteInstructionsfrom5to4: equ 09B02h ; last def. pass 3
 Vesselgettingup_13_0: equ 09179h ; last def. pass 3
 CurveUpEndPage1BOTTOMWriteInstructionsfrom52to51: equ 091C7h ; last def. pass 3
-PlaceNewObject: equ 0430Dh ; last def. pass 3
+PlaceNewObject: equ 04307h ; last def. pass 3
 CurveLeftPage1BOTTOMWriteInstructionsfrom70to71: equ 0A8A5h ; last def. pass 3
 CurveDownPage0BOTTOMChangedPixelsfrom26to27: equ 09853h ; last def. pass 3
 PutObjectsarmoryvault: equ 0CC36h ; last def. pass 3
@@ -9913,7 +9923,7 @@ CurveDownPage1TOPChangedPixelsfrom52to53: equ 08652h ; last def. pass 3
 CurveUpPage1BOTTOMWriteInstructionsfrom58to59: equ 0A04Dh ; last def. pass 3
 BlockCurveLeftPage1TOPfrom73to74: equ 050h ; last def. pass 3
 BlockCurveDownPage1TOPfrom18to19: equ 0A6h ; last def. pass 3
-RacingGameRoutine.SlowDownFromMovingLeftToCenter: equ 04308h ; last def. pass 3
+RacingGameRoutine.SlowDownFromMovingLeftToCenter: equ 04302h ; last def. pass 3
 StraightRoad2ndPart17Part2: equ 0D3Bh ; last def. pass 3
 CurveDownEndPage0TOPWriteInstructionsfrom2to1: equ 0833Eh ; last def. pass 3
 CurveUpEndPage1BOTTOMWriteInstructionsfrom32to31: equ 0BBBCh ; last def. pass 3
@@ -9924,7 +9934,7 @@ CurveUpPage1BOTTOMWriteInstructionsfrom8to9: equ 08FA8h ; last def. pass 3
 CurveUpEndPage1BOTTOMAddressesfrom4to3: equ 0A0E7h ; last def. pass 3
 Set_L_stand: equ 045A9h ; last def. pass 3
 CurveRightPage0BOTTOMAddressesfrom43to44: equ 08D62h ; last def. pass 3
-SetEnemySprite.Size8: equ 046A4h ; last def. pass 3
+SetEnemySprite.Size8: equ 04709h ; last def. pass 3
 CurveRightPage1TOPWriteInstructionsfrom7to8: equ 08839h ; last def. pass 3
 CurveDownPage1BOTTOMWriteInstructionsfrom26to27: equ 09E74h ; last def. pass 3
 CurveLeftEndPage0BOTTOMWriteInstructionsfrom20to19: equ 08739h ; last def. pass 3
@@ -10235,7 +10245,7 @@ CurveRightPage0BOTTOMWriteInstructionsfrom20to21: equ 0A27Eh ; last def. pass 3
 BlockCurveRightPage0TOPfrom46to47: equ 072h ; last def. pass 3
 ArcadeHall1GfxBlock: equ 0Ah ; last def. pass 3
 EntityaRoutine.ArcadeHall2EntityPalette: equ 05276h ; last def. pass 3
-HeartSpriteColors: equ 09FA0h ; last def. pass 3
+HeartSpriteColors: equ 0A000h ; last def. pass 3
 BuildUpNewRowCameraGoingUp.FindStartingAddressInRam: equ 07D02h ; last def. pass 3
 RomSize: equ 0800000h ; last def. pass 3
 CurveLeftEndPage0TOPChangedPixelsfrom5to4: equ 0A5ACh ; last def. pass 3
@@ -10275,7 +10285,7 @@ CurveUpPage1BOTTOMAddressesfrom32to33: equ 083B3h ; last def. pass 3
 StraightRoad2ndPart02Part1: equ 0A4Fh ; last def. pass 3
 CurveLeftEndPage0TOPWriteInstructionsfrom71to70: equ 09DBCh ; last def. pass 3
 CurveLeftEndPage0BOTTOMAddressesfrom54to53: equ 0A813h ; last def. pass 3
-SetEnemySprite.Size12: equ 04694h ; last def. pass 3
+SetEnemySprite.Size12: equ 046F9h ; last def. pass 3
 sleepingquartersGfxBlock: equ 018h ; last def. pass 3
 putplayer_clipright.loop: equ 013C0h ; last def. pass 3
 CostOxygenGenerator: equ 0FAh ; last def. pass 3
@@ -10349,14 +10359,14 @@ outix256: equ 0D741h ; last def. pass 3
 CurveRightPage0TOPWriteInstructionsfrom5to6: equ 09222h ; last def. pass 3
 BlockCurveRightPage0BOTTOMfrom60to61: equ 076h ; last def. pass 3
 BlockCurveLeftPage1TOPfrom9to10: equ 03Eh ; last def. pass 3
-ForceMovePlayerAgainstCurves.Left: equ 04B7Eh ; last def. pass 3
+ForceMovePlayerAgainstCurves.Left: equ 04BE3h ; last def. pass 3
 BlockCurveLeftEndPage1TOPfrom40to39: equ 05Bh ; last def. pass 3
 CheckResourceCollected.Level1: equ 07283h ; last def. pass 3
-RacingGameRoutine.CurveUpLineIntHeightTable: equ 041F6h ; last def. pass 3
+RacingGameRoutine.CurveUpLineIntHeightTable: equ 041F0h ; last def. pass 3
 BlockCurveRightEndPage0BOTTOMfrom34to33: equ 083h ; last def. pass 3
 LineIntHeightStraightRoad: equ 071h ; last def. pass 3
 CurveRightPage0BOTTOMChangedPixelsfrom13to14: equ 09F51h ; last def. pass 3
-ForceMovePlayerAgainstCurves.LeftEnd: equ 04B6Ch ; last def. pass 3
+ForceMovePlayerAgainstCurves.LeftEnd: equ 04BD1h ; last def. pass 3
 EnemySpriteColor: equ 0195h ; last def. pass 3
 CurveRightPage1TOPAddressesfrom40to41: equ 09AFBh ; last def. pass 3
 CurveUpPerspectiveXTable41: equ 093D8h ; last def. pass 3
@@ -10612,12 +10622,12 @@ CurveDownPage0BOTTOMChangedPixelsfrom30to31: equ 08000h ; last def. pass 3
 CurveUpEndPage1TOPAddressesfrom51to50: equ 08786h ; last def. pass 3
 BlockCurveLeftEndPage0TOPfrom65to64: equ 062h ; last def. pass 3
 CurveRightEndPage1TOPAddressesfrom48to47: equ 09C01h ; last def. pass 3
-SetEnemySprite: equ 04397h ; last def. pass 3
+SetEnemySprite: equ 043B7h ; last def. pass 3
 memblocks.1: equ 0DE51h ; last def. pass 3
 CurveUpPage1TOPAddressesfrom21to22: equ 08F6Eh ; last def. pass 3
 BlockCurveUpEndPage0BOTTOMfrom55to54: equ 0A2h ; last def. pass 3
 CurveLeftEndPage1BOTTOMChangedPixelsfrom57to56: equ 0A8F8h ; last def. pass 3
-SetEnemySprite.HeartSize5: equ 045B9h ; last def. pass 3
+SetEnemySprite.HeartSize5: equ 0461Eh ; last def. pass 3
 CurveRightEndBlock15: equ 089h ; last def. pass 3
 CurveLeftEndPage0BOTTOMChangedPixelsfrom69to68: equ 0843Dh ; last def. pass 3
 CurveLeftPage1TOPChangedPixelsfrom41to42: equ 09AE1h ; last def. pass 3
@@ -10813,7 +10823,7 @@ CurveDownPage1BOTTOMWriteInstructionsfrom49to50: equ 0A6FDh ; last def. pass 3
 CurveLeftPerspectiveXTable36: equ 0A2E0h ; last def. pass 3
 CurveLeftPage0TOPChangedPixelsfrom0to1: equ 08000h ; last def. pass 3
 BlockCurveUpEndPage1BOTTOMfrom13to12: equ 09Bh ; last def. pass 3
-SetEnemySprite.CurveUpFoundX: equ 044F3h ; last def. pass 3
+SetEnemySprite.CurveUpFoundX: equ 04515h ; last def. pass 3
 BlockCurveRightEndPage0TOPfrom30to29: equ 082h ; last def. pass 3
 CurveUpEndPage1BOTTOMChangedPixelsfrom40to39: equ 08FD0h ; last def. pass 3
 CurveDownPage1TOPAddressesfrom9to10: equ 08BB8h ; last def. pass 3
@@ -10861,7 +10871,7 @@ StraightRoad2ndPart15Part1.Lenght: equ 026h ; last def. pass 3
 CurveDownPerspectiveYTable58: equ 0A52Ch ; last def. pass 3
 CurveRightPage1BOTTOMAddressesfrom18to19: equ 08DC0h ; last def. pass 3
 CurveUpPage1BOTTOMWriteInstructionsfrom46to47: equ 09E19h ; last def. pass 3
-RacingGameRoutine.MoveLeft: equ 042E7h ; last def. pass 3
+RacingGameRoutine.MoveLeft: equ 042E1h ; last def. pass 3
 CurveLeftPage0TOPAddressesfrom24to25: equ 09C03h ; last def. pass 3
 CurveLeftPage0TOPAddressesfrom21to22: equ 0A05Bh ; last def. pass 3
 BlockCurveRightEndPage1BOTTOMfrom39to38: equ 085h ; last def. pass 3
@@ -10955,7 +10965,7 @@ CurveRightPage1TOPAddressesfrom24to25: equ 0B1FFh ; last def. pass 3
 CurveRightPage0BOTTOMWriteInstructionsfrom27to28: equ 0A270h ; last def. pass 3
 BlockCurveRightPage1BOTTOMfrom35to36: equ 06Fh ; last def. pass 3
 ArcadeHall1EventRoutine.CheckPlayerEntersArcade2: equ 048AFh ; last def. pass 3
-SetEnemySprite.Go3: equ 044F6h ; last def. pass 3
+SetEnemySprite.Go3: equ 04518h ; last def. pass 3
 PutLetter: equ 0D257h ; last def. pass 3
 CurveLeftBlock1: equ 03Ch ; last def. pass 3
 CurveLeftEndPage0BOTTOMChangedPixelsfrom18to17: equ 09B28h ; last def. pass 3
@@ -11047,7 +11057,7 @@ BlockCurveRightEndPage1BOTTOMfrom25to24: equ 081h ; last def. pass 3
 BlockCurveDownEndPage0TOPfrom59to58: equ 0B3h ; last def. pass 3
 trainingdeck_2: equ 052E6h ; last def. pass 3
 NPCConv011: equ 0527Bh ; last def. pass 3
-RacingGameRoutine.Brake: equ 04185h ; last def. pass 3
+RacingGameRoutine.Brake: equ 0417Fh ; last def. pass 3
 BlockCurveRightPage0BOTTOMfrom8to9: equ 067h ; last def. pass 3
 BlockCurveDownEndPage0TOPfrom41to40: equ 0B1h ; last def. pass 3
 CurveRightPage0BOTTOMAddressesfrom52to53: equ 0AA0Bh ; last def. pass 3
@@ -11095,7 +11105,7 @@ BlockCurveLeftPage0BOTTOMfrom64to65: equ 04Eh ; last def. pass 3
 CurveUpEndPage1TOPWriteInstructionsfrom39to38: equ 08305h ; last def. pass 3
 CurveLeftEndPage0TOPChangedPixelsfrom37to36: equ 0AE64h ; last def. pass 3
 CurveLeftEndPage1BOTTOMChangedPixelsfrom45to44: equ 096C9h ; last def. pass 3
-SetEnemySprite.Size0: equ 046C4h ; last def. pass 3
+SetEnemySprite.Size0: equ 04729h ; last def. pass 3
 CurveRightPage1TOPChangedPixelsfrom3to4: equ 08553h ; last def. pass 3
 CurveRightPage0TOPWriteInstructionsfrom25to26: equ 08519h ; last def. pass 3
 CostFuelTankLevel3: equ 064h ; last def. pass 3
@@ -11180,7 +11190,7 @@ sleepingquartersbedx: equ 04C49h ; last def. pass 3
 BlockCurveLeftEndPage0TOPfrom58to57: equ 060h ; last def. pass 3
 LoadTileMap.CopyMapToRam: equ 0CADEh ; last def. pass 3
 CurveUpEndPage0BOTTOMAddressesfrom25to24: equ 0A9ABh ; last def. pass 3
-SetEnemySprite.Size10: equ 0469Ch ; last def. pass 3
+SetEnemySprite.Size10: equ 04701h ; last def. pass 3
 ArcadeMachine3x: equ 04738h ; last def. pass 3
 BlockCurveRightEndPage1BOTTOMfrom66to65: equ 08Ch ; last def. pass 3
 BlockCurveLeftEndPage1BOTTOMfrom7to6: equ 052h ; last def. pass 3
@@ -11218,7 +11228,7 @@ CurveLeftEndPage1BOTTOMChangedPixelsfrom63to62: equ 09C4Ch ; last def. pass 3
 CurveUpPerspectiveYTable13: equ 08810h ; last def. pass 3
 CurveUpEndPage1BOTTOMChangedPixelsfrom28to27: equ 08FE9h ; last def. pass 3
 CurveLeftPage1TOPChangedPixelsfrom73to74: equ 0A0FCh ; last def. pass 3
-HeartSpritesCharacters: equ 09DA0h ; last def. pass 3
+HeartSpritesCharacters: equ 09E00h ; last def. pass 3
 CurveUpPerspectiveXTable20: equ 08A28h ; last def. pass 3
 CurveRightEndPage0BOTTOMWriteInstructionsfrom70to69: equ 0A0A6h ; last def. pass 3
 CurveRightEndPage1TOPAddressesfrom57to56: equ 088D1h ; last def. pass 3
@@ -11227,7 +11237,7 @@ BlockCurveUpPage1TOPfrom2to3: equ 090h ; last def. pass 3
 hangarbayframelistblock: equ 0D7h ; last def. pass 3
 CurveLeftPage0BOTTOMWriteInstructionsfrom14to15: equ 0A264h ; last def. pass 3
 CurveDownPage0BOTTOMWriteInstructionsfrom39to40: equ 08F30h ; last def. pass 3
-RacingGameRoutine.UpdateMaxSpeedCurveUp: equ 0414Bh ; last def. pass 3
+RacingGameRoutine.UpdateMaxSpeedCurveUp: equ 04145h ; last def. pass 3
 CurveDownPage0BOTTOMChangedPixelsfrom45to46: equ 0842Ch ; last def. pass 3
 CurveLeftPage0BOTTOMWriteInstructionsfrom5to6: equ 086E9h ; last def. pass 3
 searchSlot: equ 0C0C4h ; last def. pass 3
@@ -11307,7 +11317,7 @@ CurveUpPage1TOPAddressesfrom8to9: equ 08D6Dh ; last def. pass 3
 reactorchamber_8_0: equ 085C8h ; last def. pass 3
 ResetVariables: equ 0C029h ; last def. pass 3
 BlockCurveRightPage1TOPfrom30to31: equ 06Dh ; last def. pass 3
-RacingGameRoutine.ChangeLineIntHeightWhenCurvingUpOrDown: equ 0419Ah ; last def. pass 3
+RacingGameRoutine.ChangeLineIntHeightWhenCurvingUpOrDown: equ 04194h ; last def. pass 3
 CurveRightPage1TOPAddressesfrom67to68: equ 08C54h ; last def. pass 3
 CurveUpEndPage1TOPChangedPixelsfrom33to32: equ 08297h ; last def. pass 3
 CurveUpPerspectiveXTable5: equ 08268h ; last def. pass 3
@@ -11323,7 +11333,7 @@ StraightRoad2ndPart29Part1: equ 0F55h ; last def. pass 3
 CurveLeftEndPage1TOPWriteInstructionsfrom44to43: equ 08830h ; last def. pass 3
 CostWaterRecycler: equ 0FAh ; last def. pass 3
 CurveLeftPage1BOTTOMAddressesfrom66to67: equ 0A543h ; last def. pass 3
-RacingGameRoutine.AnimationStepsFound: equ 04284h ; last def. pass 3
+RacingGameRoutine.AnimationStepsFound: equ 0427Eh ; last def. pass 3
 CurveDownPage0TOPChangedPixelsfrom50to51: equ 0A91Bh ; last def. pass 3
 BlockCurveLeftEndPage0TOPfrom53to52: equ 05Fh ; last def. pass 3
 CurveUpPage1BOTTOMAddressesfrom25to26: equ 0BB67h ; last def. pass 3
@@ -11331,7 +11341,7 @@ RomBlockSize: equ 04000h ; last def. pass 3
 BlockCurveLeftPage1TOPfrom48to49: equ 049h ; last def. pass 3
 CurveLeftEndPage0BOTTOMChangedPixelsfrom22to21: equ 0A05Ch ; last def. pass 3
 CurveRightPage1TOPAddressesfrom48to49: equ 0A84Bh ; last def. pass 3
-SetEnemySprite.HeartOffSetPointer: equ 0458Bh ; last def. pass 3
+SetEnemySprite.HeartOffSetPointer: equ 045F0h ; last def. pass 3
 npcs_3_0: equ 084E3h ; last def. pass 3
 PageOnNextVblank: equ 0DE88h ; last def. pass 3
 CurveUpEndPage0TOPWriteInstructionsfrom43to42: equ 0A78Dh ; last def. pass 3
@@ -11386,7 +11396,7 @@ BlockCurveLeftPage1TOPfrom23to24: equ 042h ; last def. pass 3
 CurveLeftPage1BOTTOMWriteInstructionsfrom33to34: equ 09014h ; last def. pass 3
 CurveUpPage1BOTTOMWriteInstructionsfrom22to23: equ 09C46h ; last def. pass 3
 CurveDownEndPage0BOTTOMChangedPixelsfrom21to20: equ 09F40h ; last def. pass 3
-HandleCurvatureRoad.CurveUpEnd: equ 04CBEh ; last def. pass 3
+HandleCurvatureRoad.CurveUpEnd: equ 04D23h ; last def. pass 3
 BlockCurveDownPage0TOPfrom10to11: equ 0A5h ; last def. pass 3
 CurveUpEndPage1BOTTOMWriteInstructionsfrom59to58: equ 0A04Dh ; last def. pass 3
 CurveRightEndPage1BOTTOMChangedPixelsfrom53to52: equ 08000h ; last def. pass 3
@@ -11399,7 +11409,7 @@ CurveUpEndPage0BOTTOMAddressesfrom4to3: equ 09B45h ; last def. pass 3
 CurveRightEndPage0BOTTOMWriteInstructionsfrom58to57: equ 09025h ; last def. pass 3
 CurveRightEndPage1BOTTOMAddressesfrom51to50: equ 098E9h ; last def. pass 3
 BlockCurveDownPage0TOPfrom55to56: equ 0ABh ; last def. pass 3
-ChangePaletteRacingGame.Palette5: equ 04B38h ; last def. pass 3
+ChangePaletteRacingGame.Palette5: equ 04B9Dh ; last def. pass 3
 SetText.NextLetter: equ 01C70h ; last def. pass 3
 SetInterruptHandler: equ 0D2FAh ; last def. pass 3
 CurveLeftPage0BOTTOMChangedPixelsfrom17to18: equ 09B28h ; last def. pass 3
@@ -11468,7 +11478,7 @@ BlockCurveRightPage0TOPfrom36to37: equ 06Fh ; last def. pass 3
 CurveUpPage1TOPAddressesfrom40to41: equ 09937h ; last def. pass 3
 TextLandinMinutes: equ 0D9F0h ; last def. pass 3
 CurveLeftEndBlock9: equ 059h ; last def. pass 3
-RacingGameEvents: equ 04BCAh ; last def. pass 3
+RacingGameEvents: equ 04C2Fh ; last def. pass 3
 BlockCurveRightPage1TOPfrom0to1: equ 066h ; last def. pass 3
 CurveLeftPage1BOTTOMChangedPixelsfrom36to37: equ 0884Bh ; last def. pass 3
 CurveLeftEndPage1BOTTOMChangedPixelsfrom3to2: equ 09842h ; last def. pass 3
@@ -11481,7 +11491,7 @@ BlockCurveRightEndPage1BOTTOMfrom20to19: equ 07Fh ; last def. pass 3
 CurveLeftEndPage0BOTTOMChangedPixelsfrom14to13: equ 091F5h ; last def. pass 3
 StraightRoad2ndPart20Part1.Lenght: equ 023h ; last def. pass 3
 CurveRightEndPage0TOPAddressesfrom53to52: equ 0A8F1h ; last def. pass 3
-SetInterruptHandlerRacingGame: equ 04D6Dh ; last def. pass 3
+SetInterruptHandlerRacingGame: equ 04DD2h ; last def. pass 3
 CurveLeftEndPage0BOTTOMWriteInstructionsfrom51to50: equ 0822Bh ; last def. pass 3
 CurveLeftEndPage0TOPAddressesfrom44to43: equ 0ACC7h ; last def. pass 3
 CurveRightPerspectiveXTable77: equ 08AA8h ; last def. pass 3
@@ -11497,7 +11507,7 @@ SpacePressedPurchaseItem.ExitUpgradeMenu: equ 04456h ; last def. pass 3
 CurveLeftPage0TOPAddressesfrom59to60: equ 09A39h ; last def. pass 3
 CurveUpPage1TOPChangedPixelsfrom6to7: equ 0BA94h ; last def. pass 3
 CurveRightEndPage1TOPWriteInstructionsfrom75to74: equ 08CA3h ; last def. pass 3
-SetEnemySprite.HandleObject: equ 043ADh ; last def. pass 3
+SetEnemySprite.HandleObject: equ 043CDh ; last def. pass 3
 initMem.done: equ 0C0BCh ; last def. pass 3
 StraightRoad2ndPart02Part1.Lenght: equ 024h ; last def. pass 3
 CurveLeftEndPage1TOPChangedPixelsfrom44to43: equ 08830h ; last def. pass 3

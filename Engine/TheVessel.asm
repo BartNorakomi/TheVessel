@@ -674,11 +674,17 @@ RacingGameBackdropGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBl
 
 RacingGameHeartSpritesBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
 RacingGameGirl1PonySpritesBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
+RacingGameGirl1PonyMiniSpritesBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
 	phase	$8000
 	Girl1PonySpritesCharacters:
 	include "..\grapx\racinggame\sprites\Girl1Pony\Girl1Pony.tgs.gen"
 	Girl1PonySpriteColors:	
 	include "..\grapx\racinggame\sprites\Girl1Pony\Girl1Pony.tcs.gen"
+
+	Girl1PonyMiniSpritesCharacters:
+	include "..\grapx\racinggame\sprites\Girl1Pony\Girl1PonyMiniSprite.tgs.gen"
+	Girl1PonyMiniSpriteColors:	
+	include "..\grapx\racinggame\sprites\Girl1Pony\Girl1PonyMiniSprite.tcs.gen"
 
 	HeartSpritesCharacters:
 	include "..\grapx\racinggame\sprites\Heart\Heart.tgs.gen"
