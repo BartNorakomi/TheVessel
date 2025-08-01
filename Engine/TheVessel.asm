@@ -577,9 +577,6 @@ sciencelabTileMap:  						incbin "..\tools\tilemapsciencelab.bin"
 	dephase
 	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
 
-	dephase
-	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
-
 ArcadeHall1GfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
   incbin "..\grapx\arcadehall1\arcade1.SC5",7,212 * 128      ;212 lines
 	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
@@ -1906,18 +1903,16 @@ MovementRoutines3Block:	equ ($-RomStartAddress) and (romsize-1) /RomBlockSize ;$
 								include "MovementRoutines3.asm"  
 								DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
 
+EndBlock:				equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
 
-;ds $4000*30
 
+
+
+EndFirst4MB:
+	ds		$400000 - EndFirst4MB + $4000,$ff
 TheVesselrepBlock:				equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
 	incbin "msxlegends.rep"
 	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
 
-EndBlock:				equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
-
-
-endRom:
-;	ds		(RomSize-1) - endRom,$ff
-
-
+EndRom:
 	ds		$800000 - endRom + $4000,$ff

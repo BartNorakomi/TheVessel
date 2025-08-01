@@ -29,6 +29,12 @@ LevelEngine:
   cp    15
   call  z,RePlayer_Tick                 ;initialise, load samples
 
+  ld    a,(CurrentRoom)                 ;racing game has music outside the interrupt
+  cp    15
+  call  nz,WriteSpatToVram
+
+
+
   xor   a
   ld    hl,vblankintflag
   .checkflag:
@@ -3415,7 +3421,7 @@ spat:						;sprite attribute table (y,x)
 	db		230,230,80,0	,230,230,84,0	,230,230,88,0	,230,230,92,0
 	db		230,230,96,0	,230,230,100,0	,230,230,104,0	,230,230,108,0
 	db		230,230,112,0	,230,230,116,0	,230,230,120,0	,230,230,124,0
-ds 8*4
+;ds 8*4
 
 
 FreeToUseFastCopy0:                     ;freely usable anywhere

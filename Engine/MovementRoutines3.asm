@@ -118,7 +118,7 @@ RacingGameRoutine:
   ld    hl,0                            ;speed in m/p/h
 
 
-ld    hl,150                            ;speed in m/p/h
+;ld    hl,150                            ;speed in m/p/h
 
 ;ld hl,50
   ld    (RacingGameSpeed),hl
@@ -173,7 +173,6 @@ ld    hl,150                            ;speed in m/p/h
   xor   a
   ld    (Object2+MiniSprite?),a
 
-
   ld    hl,9370
   ld    (Object4+DistanceFromPlayer),hl
   ld    hl,128 
@@ -188,7 +187,7 @@ ld    hl,150                            ;speed in m/p/h
   ld    (Object4+SpriteCharacterAddress),hl
 	ld		hl,sprcoladdr+30*16	;sprite 0 color table in VRAM
   ld    (Object4+SpriteColorAddress),hl
-  ld    a,1
+  ld    a,%0000 0001                        ;bit 0 on=minisprite, bit 1 on=heart, bit 1 off=minienemy
   ld    (Object4+MiniSprite?),a
   ret
 
@@ -591,8 +590,15 @@ PlaceNewObject:                           ;new objects may be placed if all acti
   jr    z,.SetThisObject
   ld    ix,Object4                      ;heart or other 16x16 sprite
   bit   0,(ix+RacingGameObjectOn?)
-  jr    z,.SetThisObject
+  jr    z,.SetThisObjectMiniSprite
   ret
+
+  .SetThisObjectMiniSprite:
+  ld    a,r
+  set   1,(ix+MiniSprite?)              ;bit 0 on=minisprite, bit 1 on=heart, bit 1 off=minienemy
+  and   1
+  jr    z,.SetThisObject
+  res   1,(ix+MiniSprite?)              ;bit 0 on=minisprite, bit 1 on=heart, bit 1 off=minienemy
 
   .SetThisObject:
   ;We dont put enemy back at the horizon until enemy sprite pattern gets updated this frame as well, otherwise we might put a HUGE sprite there
@@ -614,7 +620,10 @@ PlaceNewObject:                           ;new objects may be placed if all acti
 
 RemoveEnemySprite:
   ;If enemy is out of screen bot, AND there is a mini sprite enemy in play, we remove the minisprite enemy, and we place this enemy over the minisprite
-  bit   0,(ix+MiniSprite?)
+  bit   0,(ix+MiniSprite?)              ;bit 0 on=minisprite, bit 1 on=heart, bit 1 off=minienemy
+  jr    nz,.EndCheckEnemy1OutOfScreenBot
+  ld    a,(Object4+MiniSprite?)         ;bit 0 on=minisprite, bit 1 on=heart, bit 1 off=minienemy
+  bit   1,a
   jr    nz,.EndCheckEnemy1OutOfScreenBot
 
   ;We dont replace enemy with minisprite until enemy sprite pattern gets updated this frame as well, otherwise we might put a HUGE sprite there
@@ -698,7 +707,7 @@ SetEnemySprite:
   ;check enemy out of screen top
   ld    de,9368
   sbc   hl,de
-  jp    nc,RemoveEnemySprite            ;at this point enemy is out of screen top
+  jp    nc,RemoveEnemySprite.EndCheckEnemy1OutOfScreenBot            ;at this point enemy is out of screen top
   add   hl,de                              ;distance from player
   ;distance from player / 29 to find y using perspective table
   ld    a,Division29TableBlock   	        ;table block
@@ -1012,7 +1021,7 @@ SetEnemySprite:
   ld    d,0
   ld    hl,.HeartOffSetPointer             ;21 offset * 4 bytes per offset = 84 bytes
 
-  bit   1,(ix+MiniSprite?)                  ;heart ?
+  bit   1,(ix+MiniSprite?)                  ;bit 0 on=minisprite, bit 1 on=heart, bit 1 off=minienemy
   jr    nz,.EndCheckHeart
 
   ld    hl,.GirlMiniSpriteOffSetPointer             ;21 offset * 4 bytes per offset = 84 bytes
@@ -1633,13 +1642,13 @@ HalfCurveLeft: equ 6
 
                     ;next distance, curve (1=right, 2=down, 3=left, 4=up, 0=end current curve)
 RacingGameEvents:                db CurveLeft         | dw 00500 | db EndCurve
+                      dw 00200 | db CurveRight       | dw 00200 | db EndCurve
+                      dw 00200 | db CurveUp         | dw 00200 | db EndCurve
                       dw 00200 | db CurveLeft       | dw 00200 | db EndCurve
-                      dw 00200 | db CurveLeft         | dw 00200 | db EndCurve
-                      dw 00200 | db CurveLeft       | dw 00200 | db EndCurve
-                      dw 00200 | db CurveLeft  | dw 00200 | db EndCurve
+                      dw 00200 | db CurveDown  | dw 00200 | db EndCurve
                       dw 00200 | db CurveLeft   | dw 00200 | db EndCurve
-                      dw 00200 | db CurveLeft      | dw 00200 | db EndCurve
-                      dw 00200 | db CurveLeft       | dw 00200 | db EndCurve
+                      dw 00200 | db CurveRight      | dw 00200 | db EndCurve
+                      dw 00200 | db CurveDown       | dw 00200 | db EndCurve
                       dw 60000 | db CurveUp
 HandleCurvatureRoad:
   ld    hl,(RacingGameDistance+1)

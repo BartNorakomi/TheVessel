@@ -5,4 +5,4 @@ rem "C:\Program Files\openMSX\openmsx.exe" -machine Panasonic_FS-A1GT -carta "Th
 
 
 rem "C:\Program Files\openMSX\openmsx.exe" -machine Panasonic_FS-A1GT -carta "TheVessel.rom" -command "set throttle off; after time 6 \"set throttle on\""
-"C:\Program Files\openMSX\openmsx.exe" -machine Panasonic_FS-A1GT -carta "TheVessel.rom" -command "set throttle off; after time 6 \"set throttle on\""
+"C:\Program Files\openMSX\openmsx.exe" -machine Panasonic_FS-A1GT -ext moonsound -carta "TheVessel.rom" -command "set throttle off; after time 14 \"set throttle on\""

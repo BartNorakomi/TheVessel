@@ -1,7 +1,7 @@
 phase	$c000
 
 StartAtTitleScreen?:                equ 0
-MusicOn?:                           equ 0
+MusicOn?:                           equ 1
 Promo?:                             equ 0
 ConversationsOn?:                  	equ 1
 
@@ -22,7 +22,7 @@ InitiateGame:
 	and		7
 	inc		a
 
-;ld a,5
+ld a,5
 
   ld    (ChangeSong?),a
   call  SetInterruptHandler           	;sets Vblank
@@ -2157,7 +2157,7 @@ memblocks:
 .1:			                    rb    1
 .2:			                    rb    1
 
-Replayer_Currentbank: equ $-1
+;Replayer_Currentbank: equ $-1
 
 ;.3:			                    rb    1
 ;.4:			                    rb    1

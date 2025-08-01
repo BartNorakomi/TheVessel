@@ -34,7 +34,7 @@ LoadSamplesAndPlaySong0:
   ld    (CurrentSongBeingPlayed),a
   call  RePlayer_Stop
   ld    bc,0                          ;track nr
-  ld    a,TheVesselrepBlock               ;ahl = sound data (after format ID, so +1)
+  ld    a,TheVesselrepBlock and 255             ;ahl = sound data (after format ID, so +1)
   ld    hl,$8000+1
   call  RePlayer_Play                 ;bc = track number, ahl = sound data (after format ID, so +1)
   jp    RePlayer_Tick                 ;initialise, load samples
@@ -51,7 +51,7 @@ VGMRePlay:
   and a
   ret z
   ld    bc,0                          ;track nr 0 will alos initialize samples
-  ld    a,TheVesselrepBlock               ;ahl = sound data (after format ID, so +1)
+  ld    a,TheVesselrepBlock and 255               ;ahl = sound data (after format ID, so +1)
   ld    hl,$8000+1
   call  RePlayer_Play                 ;bc = track number, ahl = sound data (after format ID, so +1)
   call	RePlayer_Tick
@@ -145,6 +145,8 @@ RePlayer_Resume:
 ;	jr z,RePlayer_Resume
 ;	jr RePlayer_Stop
 
+RePlayer_currentBank: equ memblocks.2
+RePlayer_BANK_REGISTER: equ 7000H
 RePlayer_Tick:
   ld    a,(slot.page12rom)             ;all RAM except page 1+2
   out   ($a8),a
@@ -173,7 +175,11 @@ RePlayer_Tick:
 	ld a,(ix + 2)
 	ld (RePlayer_currentBank),a
 ;	RePlayer_SetBank_M
-	ld (7000H),a
+;	ld (7000H),a
+
+	ld (RePlayer_BANK_REGISTER + 100H),a
+
+
 	call RePlayer_Process
 	ld b,a
 	ld a,(RePlayer_currentBank)
@@ -189,7 +195,10 @@ RePlayer_Tick:
 	pop af
 	ld (RePlayer_currentBank),a
 ;	RePlayer_SetBank_M
-	ld (7000H),a
+;	ld (7000H),a
+
+	ld (RePlayer_BANK_REGISTER),a
+
 	ret
 
   .ChangeSong:
@@ -236,7 +245,7 @@ RePlayer_Tick:
   call  RePlayer_Stop
   pop   bc                            ;track nr
 ;  ld    bc,3                          ;track nr
-  ld    a,TheVesselrepBlock               ;ahl = sound data (after format ID, so +1)
+  ld    a,TheVesselrepBlock and 255               ;ahl = sound data (after format ID, so +1)
   ld    hl,$8000+1
   call  RePlayer_Play                 ;bc = track number, ahl = sound data (after format ID, so +1)
 ;  call  RePlayer_Tick                 ;initialise, load samples
