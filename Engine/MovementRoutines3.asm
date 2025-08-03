@@ -4,10 +4,6 @@
 
 Phase MovementRoutinesAddress
 
-
-
-
-
 ;IDEA maak een slalom parcours
 ;IDEA laat gaten in de road verschijnen waar visjes uitspringen
 ;1 minder animatiestap links en rechts op top speed (bij lage snelheid kan dat ook. Dus je kunt de rotaties houden, maar de scope moet kleiner naarmate je sneller rijdt)
@@ -29,21 +25,19 @@ Phase MovementRoutinesAddress
 ;btw, diepte-perspectief qua enemies is wat raar, maar dat ga je denk ik ook niet kunnen fixen. Op basis van de scaling zou je denken dat de weg maar iets van 50 m diep is of zo, maar naar 't 
 ;gras en de horizon kijkend zou je denken dat 't honderden meters ver weg is (edited) 
 
+;voor backgrounds: zie super hangon
+
+;Titel: Neon Horizon
+
 RacingGamePlayerY:  equ 161                 ;y never changes ?
 RacingGameRoutine:
-  ld    a,0*32 + 31                         ;force page 0
-	ld    (PageOnNextVblank),a
-  ld    a,1
-  ld    (framecounter),a                    ;we force framecounter to 1 so that the sf2 object handler doesn't swap page ever (so we always stay on page 2 for the game, and page 0 for the hud)
-
-  ld    a,(framecounter2)
-  inc   a
-  ld    (framecounter2),a
-
+  call  .Initiate                           ;screen on, set int handler, init variables
+  .Engine:
+  call  VideoReplayer
+  call  WriteSpatToVram
+  call  SetEnemySpriteCharacterAndColorData
   call  .UpdateDistance
   call  HandleCurvatureRoad
-
-  call  .HandlePhase                        ;used to build up screen and initiate variables
   call  SetPlayerSprite
   call  SetEnemySprite
   call  PlaceNewObject                      ;new objects may be placed if all active objects distance to player < 6247
@@ -55,19 +49,31 @@ RacingGameRoutine:
   call  ChangePaletteRacingGame
 ;  call  .UpdateMaximumSpeedOnCurveUpOrDown
   call  ForceMovePlayerAgainstCurves        ;This one must be faster with a table
-  ret
+  call  PopulateControls
+  ld    a,(framecounter2)
+  inc   a
+  ld    (framecounter2),a
 
-  .HandlePhase:
+  xor   a
+  ld    hl,vblankintflag
+  .checkflag:
+  cp    (hl)
+  jr    z,.checkflag
+  ld    (hl),a
+  jp    .Engine
+
+  .Initiate:
   bit   0,(iy+ObjectPhase)
   ret   nz
   ld    (iy+ObjectPhase),1
+
+  call  SetScreenon
 
 ;  ld    a,32
 ;  ld    (r23onVblank),a
 
 ;  ld    a,1
 ;  ld    (SetLineIntHeightOnVblankDrillingGame?),a
-  call  SetInterruptHandlerRacingGame
 
   ;set y coordinates player sprite
   ld    a,RacingGamePlayerY
@@ -166,6 +172,16 @@ RacingGameRoutine:
   ld    (Object4+SpriteColorAddress),hl
   ld    a,%0000 0001                        ;bit 0 on=minisprite, bit 1 on=heart, bit 1 off=minienemy
   ld    (Object4+MiniSprite?),a
+
+
+  call  RePlayer_Tick                 ;initialise, load samples
+	halt
+  call  RePlayer_Tick                 ;initialise, load samples
+	call	WaitVdpReady
+	halt
+  call  SetInterruptHandlerRacingGame
+  xor   a
+  ld    (vblankintflag),a
   ret
 
   .UpdateMaximumSpeedOnCurveUpOrDown:
@@ -1888,7 +1904,6 @@ SetInterruptHandlerRacingGame:
   ld    hl,StraightRoad01Part2
   ld    (PointerToSwapLines),hl
   
-  xor   a
   ld    (LineIntHeightRacingGame),a
   out   ($99),a
   ld    a,19+128                        ;set lineinterrupt height

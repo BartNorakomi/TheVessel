@@ -29,9 +29,7 @@ LevelEngine:
 ;  cp    15
 ;  call  z,RePlayer_Tick                 ;initialise, load samples
 
-  ld    a,(CurrentRoom)                 ;racing game has music outside the interrupt
-  cp    15
-  call  nz,WriteSpatToVram
+  call  WriteSpatToVram
 
 
 
@@ -107,8 +105,6 @@ InterruptHandler:
   ei
   ret
 
-;page1bank:  ds  1
-;page2bank:  ds  1
 vblank:
   push  bc
   push  de
@@ -124,9 +120,6 @@ vblank:
 
   in    a,($a8)                         ;store current rom/ram settings of page 1+2
   push  af
-;  ld    a,(CurrentRoom)
-;  cp    15                              ;racing game has music outside the interrupt
-;  call  nz,RePlayer_Tick                ;initialise, load samples
   call  RePlayer_Tick                ;initialise, load samples
   pop   af
   out   ($a8),a                         ;reset rom/ram settings of page 1+2
@@ -176,6 +169,60 @@ vblank:
   out   ($99),a
   .EndSetLineIntHeight:
 
+  pop   hl 
+  pop   de 
+  pop   bc 
+  pop   af 
+  ex    af,af'  
+  exx
+  pop   iy 
+  pop   ix 
+  pop   hl 
+  pop   de 
+  pop   bc 
+  pop   af 
+  ei
+  ret
+
+
+
+
+vblankRacingGame:
+  push  bc
+  push  de
+  push  hl
+  push  ix
+  push  iy
+  exx
+  ex    af,af'
+  push  af
+  push  bc
+  push  de
+  push  hl
+	
+  ld    a,0*32 + 31                         ;page 0
+  out   ($99),a
+  ld    a,2+128
+  out   ($99),a
+  ld    (vblankintflag),a               ;set vblank flag (to any value but 0)
+
+;  ld    hl,ConvEntity
+;  bit   1,(hl)
+;  jp    z,.EndCheckCountdownDays
+
+;  ld    a,(TotalMinutesUntilLandCounter)
+;  dec   a
+;  ld    (TotalMinutesUntilLandCounter),a
+;  jp    nz,.EndCheckCountdownDays
+
+;  ld    hl,(TotalMinutesUntilLand)
+;  ld    de,1
+;  xor   a
+;  sbc   hl,de
+;  jr    c,.EndCheckCountdownDays
+;  ld    (TotalMinutesUntilLand),hl
+;  .EndCheckCountdownDays:
+
   ld    a,(CurrentRoom)
   cp    15
   call  z,.RacingGame
@@ -199,12 +246,12 @@ vblank:
 
 
 
+
   .RacingGame:
 ;  call  BackdropRandom
-  call  VideoReplayer
 ;  call  BackdropBlack
 
-  call  .AnimateAndCopyHorizon
+;  call  .AnimateAndCopyHorizon
 
 
   ld    a,(RacingGameNewLineIntToBeSetOnVblank)
@@ -269,17 +316,6 @@ sub StartRacingGameLineInt
   out   ($99),a
   ld    a,19+128                        ;set lineinterrupt height
   out   ($99),a 
-
-
-;  ld    a,-50
-;  out   ($99),a
-;  ld    a,23+128                        ;r#23 vertical screen offset
-;  out   ($99),a 
-
-;  call  SetEnemySprite.PutEnemySpriteCharacter
-
-  call  WriteSpatToVram
-  call  SetEnemySpriteCharacterAndColorData
   ret
 
 
@@ -862,7 +898,7 @@ InterruptHandlerRacingGame:
   out   ($99),a
   in    a,($99)           ;check and acknowledge vblank interrupt
   rlca
-  jp    c,vblank          ;vblank detected, so jp to that routine
+  jp    c,vblankRacingGame          ;vblank detected, so jp to that routine
  
   pop   af 
   ei

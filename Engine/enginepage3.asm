@@ -21,26 +21,8 @@ InitiateGame:
   ld    a,r
 	and		7
 	inc		a
-
 ld a,5
-
   ld    (ChangeSong?),a
-
-
-  ld    a,(CurrentRoom)                 ;racing game is bugged, we can solve with some halts to let music replayer initiate song and samples
-  cp    15
-  call  nz,.EndCheckRacingGame          ;initialise, load samples
-	halt
-  call  RePlayer_Tick                 ;initialise, load samples
-	halt
-  call  RePlayer_Tick                 ;initialise, load samples
-	call	WaitVdpReady
-	halt
-	.EndCheckRacingGame:
-
-
-
-
   call  SetInterruptHandler           	;sets Vblank
 	call	SpritesOn
   jp    LevelEngine
@@ -1498,6 +1480,11 @@ VideoReplayer:
   ld    a,(AnimateRoad?)
   or    a
   ret   z
+
+	call	.go
+	ld		a,MovementRoutines3Block
+  jp		block12                             ;CARE!!! we can only switch block34 if page 1 is in rom  
+	.go:
 
 	ld		a,(RoadCurve200PixelsTraversed?)
 	dec		a
