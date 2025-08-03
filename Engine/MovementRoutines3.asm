@@ -21,10 +21,13 @@ Phase MovementRoutinesAddress
 ;maak een zooi palettes die subtielere verschillen tonen (vooral met blauwtinten)
 ;wat als je die stroken minder breed maakt. Alsof je op zo'n grote brug rijdt met links/rechts nog een paar meter gras, maar daarna niks meer. In wat je dan weglaat kun je neem ik aan gewoon een achtergrond hebben van iets.
 
-;Je kunt ditherpatronen gebruiken om 2 kleuren minder groot te laten verschillen
+;Je kunt ditherpatronen gebruiken om 2 kleuren minder groot te laten verschillen. We kunnen een powershell tool maken om bij elke bmp de groene achtergrond te vervangen door het ditherpatroon
 ;bijvoorbeeld het gras (lichtgroen en donkergroen), je gooit in page 0 met dither 80% lichtgroen en 20% donkergroen, en in page 1 draai je dat om
+;we kunnen 1 tunnel level maken
 
 
+;btw, diepte-perspectief qua enemies is wat raar, maar dat ga je denk ik ook niet kunnen fixen. Op basis van de scaling zou je denken dat de weg maar iets van 50 m diep is of zo, maar naar 't 
+;gras en de horizon kijkend zou je denken dat 't honderden meters ver weg is (edited) 
 
 RacingGamePlayerY:  equ 161                 ;y never changes ?
 RacingGameRoutine:
@@ -37,47 +40,21 @@ RacingGameRoutine:
   inc   a
   ld    (framecounter2),a
 
+  call  .UpdateDistance
+  call  HandleCurvatureRoad
+
   call  .HandlePhase                        ;used to build up screen and initiate variables
   call  SetPlayerSprite
-
-
-
-
-;&&&&&&&&&&&&&&&&&&&&&&&&&&&
-;Uses 3 Divide calls
   call  SetEnemySprite
-;&&&&&&&&&&&&&&&&&&&&&&&&&&&
   call  PlaceNewObject                      ;new objects may be placed if all active objects distance to player < 6247
-
-
-
-
   call  .SetHorMoveSpeedAndAnimatePlayerSprite
-
-
-;  call  BackdropGreen
-;we can slightly improve this with a movementtable and HorizontalMovementtablePointer
   call  MovePlayerHorizontally
-;  call  BackdropBlack
-
-
   call  .HandleAccelerateAndDecelerate      ;speed up with trig A, brake with trig B
-  call  .UpdateDistance
   call  .UpdateRoadLinesAnimation
   call  .ChangeLineIntHeightWhenCurvingUpOrDown
-  call  HandleCurvatureRoad
   call  ChangePaletteRacingGame
-
-
-
 ;  call  .UpdateMaximumSpeedOnCurveUpOrDown
-
-;  call  BackdropGreen
-;&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-;  call  ForceMovePlayerAgainstCurves        ;This one must be faster with a table
-;&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-;  call  BackdropBlack
-
+  call  ForceMovePlayerAgainstCurves        ;This one must be faster with a table
   ret
 
   .HandlePhase:
@@ -294,12 +271,13 @@ RacingGameRoutine:
   .CurveDown:
   ld    a,(RoadCurvatureAnimationStep)
   srl   a                                 ;/2
+inc a
   ld    e,a
   ld    d,0
   ld    hl,.CurveDownLineIntHeightTable
   add   hl,de
   ld    a,(hl)
-  ld    (RacingGameNewLineIntToBeSetOnVblank),a                 ;113 is the standard, 083 is perfect for the road all the way curved up
+  ld    (RacingGameNewLineIntToBeSetOnVblank),a                 ;113 is the standard, 083 is perfect for the road all the way curved up  
   ret
 
   .EndCurveUp:
@@ -448,6 +426,9 @@ db    LineIntHeightStraightRoad+29
 db    LineIntHeightStraightRoad+30
 db    LineIntHeightStraightRoad+30
 
+
+db    LineIntHeightStraightRoad+30
+
 .CurveDownLineIntHeightTableEnd:
 
   .UpdateRoadLinesAnimation:
@@ -482,7 +463,7 @@ db    LineIntHeightStraightRoad+30
   sub   a,b
   jr    nc,.NotYet200PixelsTraversed
 
-  ld    hl,RoadCurve200PixelsTraversed?
+  ld    hl,RoadCurve200PixelsTraversed?     ;every time we traversed 200 pixels, we animate the curves with the VideoReplayer
   ld    (hl),1
   add   a,200
   .NotYet200PixelsTraversed:
@@ -692,7 +673,7 @@ SetEnemySprite:
   ;enemy y on horizon=78 on straight road. y player=161
 
   ;simulate enemy driving away from player
-  ld    bc,50                           ;enemy speed
+  ld    bc,100                           ;enemy speed
   ld    de,(RacingGameSpeed)              ;player speed
 
   ld    l,(ix+DistanceFromPlayer)
@@ -727,7 +708,7 @@ SetEnemySprite:
 ;  call  DivideBCbyDE                                ; Out: BC = result, HL = rest
 
   ld    hl,CurveUpPerspectiveYTable0                ;straight road
-  ld    a,CurveUpPerspectiveYTableBlock   	;drilling game map
+  ld    a,CurveUpPerspectiveYTableBlock   	        ;CurveUpPerspectiveYTableBlock
   call  block34                       	;CARE!!! we can only switch block34 if page 1 is in rom  
 
   ld    a,(CurrentCurve)                           ;1=right, 2=down, 3=left, 4=up, 5=right end, 6=down end, 7=left end, 8=up end
@@ -1380,7 +1361,6 @@ db CurveRightPerspectiveXTablePart2Block | dw CurveRightPerspectiveXTable77
 db CurveRightPerspectiveXTablePart2Block | dw CurveRightPerspectiveXTable78
 
 
-
 ;HorizontalMovementPointer:  db  -2,-2,-2
 MovePlayerHorizontally:
   ld    hl,(RacingGameHorScreenPosition)
@@ -1397,7 +1377,19 @@ MovePlayerHorizontally:
   add   hl,de
   ld    (RacingGameHorScreenPosition),hl
   bit   7,h
-  jp    z,.EndCheckOutOfScreenLeft    
+  jp    z,.EndCheckOutOfScreenLeft
+
+  ;we hit the left border of the screen, reduce speed by 5 every frame
+  ;Play Brake SFX
+
+  ld    hl,(RacingGameSpeed)
+  ld    de,5
+  sbc   hl,de
+  jr    nc,.EndCheckOutOfSpeedLeft
+  ld    hl,0
+  .EndCheckOutOfSpeedLeft:
+  ld    (RacingGameSpeed),hl
+
   ld    hl,0
   ld    (RacingGameHorScreenPosition),hl
   .EndCheckOutOfScreenLeft:
@@ -1406,7 +1398,19 @@ MovePlayerHorizontally:
   sbc   hl,de
   jr    c,.EndCheckOutOfScreenRight
   pop   hl
-  ld    hl,8*(256-32)
+
+  ;we hit the right border of the screen, reduce speed by 5 every frame
+  ;Play Brake SFX
+
+  ld    hl,(RacingGameSpeed)
+  ld    de,5
+  sbc   hl,de
+  jr    nc,.EndCheckOutOfSpeedRight
+  ld    hl,0
+  .EndCheckOutOfSpeedRight:
+  ld    (RacingGameSpeed),hl
+
+  ld    hl,8*(256-32)-1
   ld    (RacingGameHorScreenPosition),hl
   push  hl
   .EndCheckOutOfScreenRight:
@@ -1554,6 +1558,9 @@ ChangePaletteRacingGame:
   incbin "..\grapx\RacingGame\Palette5.SC5",$7680+7,32
 
 ForceMovePlayerAgainstCurves:
+  ld    a,ForceMovePlayerAgainstCurvesTableBlock   	        ;table block
+  call  block34                       	;CARE!!! we can only switch block34 if page 1 is in rom  
+
   ld    a,(CurrentCurve)                           ;1=right, 2=down, 3=left, 4=up, 5=right end, 6=down end, 7=left end, 8=up end
   cp    1
   jr    z,.Right
@@ -1579,23 +1586,34 @@ ForceMovePlayerAgainstCurves:
   jp    .GoLeft
 
   .Left:
-;we can use a table for this x-axis=roadcurvaturestep/2 0-75 y-axis=racinggamespeed/2 0-100. total entries 75*100=less than 2kb
+  ;we have to calculate RoadCurvatureAnimationStep*RacingGameSpeed/1666
+  ;to make table shorter: RoadCurvatureAnimationStep/4*RacingGameSpeed/416
   ld    a,(RoadCurvatureAnimationStep)              ;goes from 0-150  0=straight road, 150=all the way left
   .GoLeft:
-  ld    e,a
-  ld    d,0
-  ld    hl,(RacingGameSpeed)                        ;speed in m/p/h
-  ;we take racing speed * animation step and throw that into a table to get the value the hor screen position should change with. maximum output value should be 18, because then we can still move a tiny bit against the curve 
-  call  MultiplyHlWithDE                            ;HL = result
-  ;max value = 150 * 200 = 30000
-  push  hl
-  pop   bc
-  ld    de,1666                                     ;30000 / 1666 = 18
-  call  DivideBCbyDE                                ; Out: BC = result, HL = rest
+  srl   a                                 ;/2
+  srl   a                                 ;/4
+  ld    h,a
+  ld    l,0                               ;hl=RoadCurvatureAnimationStep/4 * 256
+  ld    de,$8000
+  add   hl,de
+  ld    de,(RacingGameSpeed)                        ;speed in m/p/h
+  add   hl,de
 
+  ld    e,(hl)
+  ld    d,0
   ld    hl,(RacingGameHorScreenPosition)
-  add   hl,bc
+  add   hl,de
   ld    (RacingGameHorScreenPosition),hl
+
+  ;17 seems to be the maximum speed here
+  ld    a,(ScrollHorizonRightCounter)
+  sub   a,e
+  ld    (ScrollHorizonRightCounter),a
+  ret   nc
+  add   a,17
+  ld    (ScrollHorizonRightCounter),a
+  ld    a,1
+  ld    (ScrollHorizonRight?),a
   ret
 
   .RightEnd:
@@ -1612,23 +1630,34 @@ ForceMovePlayerAgainstCurves:
   jp    .GoRight
 
   .Right:
+  ;we have to calculate RoadCurvatureAnimationStep*RacingGameSpeed/1666
+  ;to make table shorter: RoadCurvatureAnimationStep/4*RacingGameSpeed/416
   ld    a,(RoadCurvatureAnimationStep)              ;goes from 0-150  0=straight road, 150=all the way left
   .GoRight:
-  ld    e,a
-  ld    d,0
-  ld    hl,(RacingGameSpeed)                        ;speed in m/p/h
-  ;we take racing speed * animation step and throw that into a table to get the value the hor screen position should change with. maximum output value should be 18, because then we can still move a tiny bit against the curve 
-  call  MultiplyHlWithDE                            ;HL = result
-  ;max value = 150 * 200 = 30000
-  push  hl
-  pop   bc
-  ld    de,1666                                     ;30000 / 1666 = 18
-  call  DivideBCbyDE                                ; Out: BC = result, HL = rest
+  srl   a                                 ;/2
+  srl   a                                 ;/4
+  ld    h,a
+  ld    l,0                               ;hl=RoadCurvatureAnimationStep/4 * 256
+  ld    de,$8000
+  add   hl,de
+  ld    de,(RacingGameSpeed)                        ;speed in m/p/h
+  add   hl,de
 
+  ld    e,(hl)
+  ld    d,0
   ld    hl,(RacingGameHorScreenPosition)
-  xor   a
-  sbc   hl,bc
+  sbc   hl,de
   ld    (RacingGameHorScreenPosition),hl
+
+  ;17 seems to be the maximum speed here
+  ld    a,(ScrollHorizonLeftCounter)
+  sub   a,e
+  ld    (ScrollHorizonLeftCounter),a
+  ret   nc
+  add   a,17
+  ld    (ScrollHorizonLeftCounter),a
+  ld    a,1
+  ld    (ScrollHorizonLeft?),a
   ret
 
 
@@ -1641,15 +1670,18 @@ HalfCurveRight: equ 5
 HalfCurveLeft: equ 6
 
                     ;next distance, curve (1=right, 2=down, 3=left, 4=up, 0=end current curve)
-RacingGameEvents:                db CurveLeft         | dw 00500 | db EndCurve
-                      dw 00200 | db CurveRight       | dw 00200 | db EndCurve
-                      dw 00200 | db CurveUp         | dw 00200 | db EndCurve
-                      dw 00200 | db CurveLeft       | dw 00200 | db EndCurve
-                      dw 00200 | db CurveDown  | dw 00200 | db EndCurve
-                      dw 00200 | db CurveLeft   | dw 00200 | db EndCurve
-                      dw 00200 | db CurveRight      | dw 00200 | db EndCurve
-                      dw 00200 | db CurveDown       | dw 00200 | db EndCurve
-                      dw 60000 | db CurveUp
+RacingGameEvents:     db CurveLeft        | dw 00201 | db EndCurve | dw 00200 |
+                      db CurveDown        | dw 00100 | db EndCurve | dw 00100 |
+                      db CurveRight       | dw 00201 | db EndCurve | dw 00200 |
+                      db CurveLeft        | dw 00201 | db EndCurve | dw 00200 |
+                      db CurveRight       | dw 00201 | db EndCurve | dw 00200 |
+                      db CurveDown        | dw 00100 | db EndCurve | dw 00100 |
+                      db CurveUp          | dw 00100 | db EndCurve | dw 00100 |
+                      db CurveUp          | dw 00100 | db EndCurve | dw 00100 |
+                      db CurveRight       | dw 00201 | db EndCurve | dw 60200 |
+
+
+
 HandleCurvatureRoad:
   ld    hl,(RacingGameDistance+1)
   ld    de,(RacingGameEventDistance)

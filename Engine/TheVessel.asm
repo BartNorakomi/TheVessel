@@ -655,6 +655,11 @@ DrillingLocationsGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlo
 
 
 
+
+
+
+
+
 RacingGameTrackStraightPage0GfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
   incbin "..\grapx\RacingGame\TrackStraightPage0.sc5",7,211 * 128      ;98 lines
 	ds	128,255
@@ -687,8 +692,6 @@ RacingGameGirl1PonyMiniSpritesBlock:  			equ   ($-RomStartAddress) and (romsize-
 	include "..\grapx\racinggame\sprites\Heart\Heart.tgs.gen"
 	HeartSpriteColors:	
 	include "..\grapx\racinggame\sprites\Heart\Heart.tcs.gen"
-
-
 	dephase
 	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
 
@@ -703,7 +706,6 @@ RacingGamePlayerSpritesBlock:  			equ   ($-RomStartAddress) and (romsize-1) /Rom
 	include "..\grapx\racinggame\sprites\Player\PlayerPart2.tgs.gen"
 	PlayerPart2SpriteColors:	
 	include "..\grapx\racinggame\sprites\Player\PlayerPart2.tcs.gen"
-
 
   ;offset character, color
 SpriteOffSetsTableSlowSpeed: 
@@ -853,15 +855,6 @@ dw  PlayerPart2SpritesCharacters+04*320,PlayerPart2SpriteColors+04*160
 	dephase
 	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
 
-
-
-
-
-
-
-
-
-
 CurveUpPerspectiveYTableBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
 	phase	$8000
 CurveUpPerspectiveYTablePointer:
@@ -958,8 +951,6 @@ dw CurveUpPerspectiveYTable0,CurveUpPerspectiveYTable1,CurveUpPerspectiveYTable2
   include "..\grapx\racinggame\CurveUpAnimationPage1\59.asm"
 	dephase
 	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
-
-
 
 CurveDownPerspectiveYTableBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
 	phase	$8000
@@ -1058,11 +1049,6 @@ dw CurveDownPerspectiveYTable0,CurveDownPerspectiveYTable1,CurveDownPerspectiveY
 	dephase
 	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
 
-
-
-
-
-
 CurveUpPerspectiveXTableBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
 	phase	$8000
 CurveUpPerspectiveXTablePointer:
@@ -1160,10 +1146,6 @@ CurveUpPerspectiveXTable59:
 	dephase
 	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
 
-
-
-
-
 CurveDownPerspectiveXTableBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
 	phase	$8000
 CurveDownPerspectiveXTablePointer:
@@ -1260,10 +1242,6 @@ CurveDownPerspectiveXTable59:
   include "..\grapx\racinggame\CurveDownEndAnimationPage1\59.asm"
 	dephase
 	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
-
-
-
-
 
 CurveLeftPerspectiveXTableBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
 	phase	$8000
@@ -1433,7 +1411,6 @@ CurveLeftPerspectiveXTable78:
 	dephase
 	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
 
-
 CurveRightPerspectiveXTableBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
 	phase	$8000
 CurveRightPerspectiveXTable0:
@@ -1602,20 +1579,18 @@ CurveRightPerspectiveXTable78:
 	dephase
 	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
 
-
+ForceMovePlayerAgainstCurvesTableBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
+	phase	$8000
+  include "..\grapx\racinggame\ForceMovePlayerAgainstCurvesTable.asm"
+	dephase
+	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
 
 Division29TableBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
 	phase	$8000
 	Division29Table:
   include "..\grapx\racinggame\Division29Table.asm"
-	kut: equ $-Division29Table
-
-
 	dephase
 	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
-
-
-
 
 	include	"..\grapx\RacingGame\CurveLeftDataFiles.asm"
 	include	"..\grapx\RacingGame\CurveLeftEndDataFiles.asm"

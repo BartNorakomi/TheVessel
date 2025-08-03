@@ -391,9 +391,9 @@
 ; Sprite 6 - Mode : 2 sprites, color OR on 
   db 0
   db 0
-  db 12
-  db 12
-  db 51
+  db 28
+  db 28
+  db 115
   db 103
   db 111
   db 63
@@ -424,8 +424,8 @@
   db 0
   db 0
   db 0
-  db 18
-  db 44
+  db 34
+  db 77
   db 88
   db 80
   db 64

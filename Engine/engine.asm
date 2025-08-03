@@ -25,9 +25,9 @@ LevelEngine:
   call  HandleObjects
 ;  call  BackdropBlack
 
-  ld    a,(CurrentRoom)                 ;racing game has music outside the interrupt
-  cp    15
-  call  z,RePlayer_Tick                 ;initialise, load samples
+;  ld    a,(CurrentRoom)                 ;racing game has music outside the interrupt
+;  cp    15
+;  call  z,RePlayer_Tick                 ;initialise, load samples
 
   ld    a,(CurrentRoom)                 ;racing game has music outside the interrupt
   cp    15
@@ -122,34 +122,14 @@ vblank:
   push  de
   push  hl
 
-
-;  call  BackdropYellow
-
-
-
-  in	  a,($a8)
-  push	af					      ;store current RAM/ROM state
-  ld    a,(CurrentRoom)
-  cp    15                              ;racing game has music outside the interrupt
-  call  nz,RePlayer_Tick                ;initialise, load samples
+  in    a,($a8)                         ;store current rom/ram settings of page 1+2
+  push  af
+;  ld    a,(CurrentRoom)
+;  cp    15                              ;racing game has music outside the interrupt
+;  call  nz,RePlayer_Tick                ;initialise, load samples
+  call  RePlayer_Tick                ;initialise, load samples
   pop   af
-  out   ($a8),a                         ;restore ram/rom page settings     
-
-;  out   ($a8),a
-
-;  ld		a,1                             ;set worldmap in bank 1 at $8000
-;  out   ($fe),a          	              ;$ff = page 0 ($c000-$ffff) | $fe = page 1 ($8000-$bfff) | $fd = page 2 ($4000-$7fff) | $fc = page 3 ($0000-$3fff) 
-
-;  ld		a,2                             ;set worldmap object layer in bank 2 at $8000
-;  out   ($fe),a          	              ;$ff = page 0 ($c000-$ffff) | $fe = page 1 ($8000-$bfff) | $fd = page 2 ($4000-$7fff) | $fc = page 3 ($0000-$3fff) 
-
-;  ld    a,(page1bank)                   ;put the bank back in page 1 which was there before we ran setspritecharacter
-;  out   ($fe),a          	              ;$ff = page 0 ($c000-$ffff) | $fe = page 1 ($8000-$bfff) | $fd = page 2 ($4000-$7fff) | $fc = page 3 ($0000-$3fff) 
-
-;  pop   af
-;	ld		($7000),a                       ;recall block 2 setting
- ; pop   af
-;	ld		($6000),a                       ;recall block 1 setting
+  out   ($a8),a                         ;reset rom/ram settings of page 1+2
 	
   ld    a,(PageOnNextVblank)  ;set page
   out   ($99),a
@@ -200,9 +180,6 @@ vblank:
   cp    15
   call  z,.RacingGame
 
-;  call  BackdropBlack
-
-
   pop   hl 
   pop   de 
   pop   bc 
@@ -227,9 +204,11 @@ vblank:
   call  VideoReplayer
 ;  call  BackdropBlack
 
+  call  .AnimateAndCopyHorizon
+
+
   ld    a,(RacingGameNewLineIntToBeSetOnVblank)
   ld    (RacingGameLineIntOffset),a
-
 
   ld    a,(RoadAnimationStep)
 
@@ -298,9 +277,271 @@ sub StartRacingGameLineInt
 ;  out   ($99),a 
 
 ;  call  SetEnemySprite.PutEnemySpriteCharacter
+
   call  WriteSpatToVram
   call  SetEnemySpriteCharacterAndColorData
   ret
+
+
+
+
+
+
+
+
+
+  .AnimateAndCopyHorizon:
+  ld    a,(ScrollHorizonLeft?)
+  or    a
+  jp    nz,.ScrollHorizonLeft
+  ld    a,(ScrollHorizonRight?)
+  or    a
+  jp    nz,.ScrollHorizonRight
+  ld    a,(AnimateRoad?)                            ;2=up, 3=end up, 4=down, 5=end down
+  cp    2
+  jp    z,.CurveUp
+  cp    3
+  jp    z,.EndCurveUp
+  cp    4
+  jp    z,.CurveDown
+  cp    5
+  jp    z,.EndCurveDown
+  ret
+
+  .EndCurveUp:
+  ld    a,(RacingGameNewLineIntToBeSetOnVblank)                 ;113 is the standard, 083 is perfect for the road all the way curved up
+  dec   a
+  ld    (MoveHorizonVertically+dy),a
+  ld    hl,MoveHorizonVertically
+  call  DoCopy
+  ret
+
+  .CurveUp:
+  ld    a,(RoadCurvatureAnimationStep)
+  ;FOKKING LEIPE HACKJOB !!!!!!!!!!!!!!!!
+  cp    $21
+  ld    b,1
+  jr    c,.Set2
+  cp    $67
+  jp    nc,.Set2
+  ld    b,2
+  .Set2:
+  ;FOKKING LEIPE HACKJOB !!!!!!!!!!!!!!!!
+
+  ld    a,(RoadCurvatureAnimationStep)
+  inc a
+  srl   a                                 ;/2
+  ld    e,a
+  ld    d,0
+  ld    hl,.CurveUpLineIntHeightTable
+  add   hl,de
+  ld    a,(hl)
+
+  sub   a,b
+
+  ld    (MoveHorizonVertically+dy),a
+  ld    hl,MoveHorizonVertically
+  call  DoCopy
+  ret
+
+  .EndCurveDown:
+  ld    a,(RoadCurvatureAnimationStep)
+  ;FOKKING LEIPE HACKJOB !!!!!!!!!!!!!!!!
+  cp    $18
+  ld    b,3
+  jr    c,.Set
+  ld    b,2
+  .Set:
+  ;FOKKING LEIPE HACKJOB !!!!!!!!!!!!!!!!
+
+  ld    a,(RacingGameNewLineIntToBeSetOnVblank)                 ;113 is the standard, 083 is perfect for the road all the way curved up
+  sub   a,b
+
+  ld    (MoveHorizonVertically+dy),a
+  ld    hl,MoveHorizonVertically
+  call  DoCopy
+  ret
+
+  .CurveDown:
+;  ld    a,(RoadCurvatureAnimationStep)
+;  inc   a
+;  srl   a                                 ;/2
+;  ld    e,a
+;  ld    d,0
+;  ld    hl,.CurveDownLineIntHeightTable
+;  add   hl,de
+;  ld    a,(hl)
+;  sub   a,1
+;  ld    (MoveHorizonVertically+dy),a
+;  ld    hl,MoveHorizonVertically
+;  call  DoCopy
+;  ret
+
+  ld    a,(RacingGameNewLineIntToBeSetOnVblank)                 ;113 is the standard, 083 is perfect for the road all the way curved up
+  dec   a
+  ld    (MoveHorizonVertically+dy),a
+  ld    hl,MoveHorizonVertically
+  call  DoCopy
+  ret
+
+  .ScrollHorizonRight:
+  xor   a
+  ld    (ScrollHorizonRight?),a
+
+  ld    hl,MoveHorizonRightLoop2Pixels
+  call  DoCopy
+  ld    hl,MoveHorizonRight
+  call  DoCopy
+  ret
+
+  .ScrollHorizonLeft:
+  xor   a
+  ld    (ScrollHorizonLeft?),a
+
+  ld    hl,MoveHorizonLeftLoop2Pixels
+  call  DoCopy
+  ld    hl,MoveHorizonLeft
+  call  DoCopy
+  ret
+
+
+
+
+
+
+
+
+
+  .CurveUpLineIntHeightTable:
+db    LineIntHeightStraightRoad-0
+db    LineIntHeightStraightRoad-1
+db    LineIntHeightStraightRoad-1
+db    LineIntHeightStraightRoad-2
+db    LineIntHeightStraightRoad-3
+db    LineIntHeightStraightRoad-3
+db    LineIntHeightStraightRoad-4
+db    LineIntHeightStraightRoad-5
+db    LineIntHeightStraightRoad-5
+db    LineIntHeightStraightRoad-6
+db    LineIntHeightStraightRoad-7
+db    LineIntHeightStraightRoad-7
+db    LineIntHeightStraightRoad-8
+db    LineIntHeightStraightRoad-9
+db    LineIntHeightStraightRoad-9
+db    LineIntHeightStraightRoad-10
+db    LineIntHeightStraightRoad-11
+db    LineIntHeightStraightRoad-11
+db    LineIntHeightStraightRoad-12
+db    LineIntHeightStraightRoad-13
+db    LineIntHeightStraightRoad-13
+db    LineIntHeightStraightRoad-14
+db    LineIntHeightStraightRoad-15
+db    LineIntHeightStraightRoad-15
+db    LineIntHeightStraightRoad-16
+db    LineIntHeightStraightRoad-17
+db    LineIntHeightStraightRoad-17
+db    LineIntHeightStraightRoad-18
+db    LineIntHeightStraightRoad-19
+db    LineIntHeightStraightRoad-19
+db    LineIntHeightStraightRoad-20
+db    LineIntHeightStraightRoad-21
+db    LineIntHeightStraightRoad-21
+db    LineIntHeightStraightRoad-22
+db    LineIntHeightStraightRoad-23
+db    LineIntHeightStraightRoad-23
+db    LineIntHeightStraightRoad-24
+db    LineIntHeightStraightRoad-25
+db    LineIntHeightStraightRoad-25
+db    LineIntHeightStraightRoad-26
+db    LineIntHeightStraightRoad-27
+db    LineIntHeightStraightRoad-27
+db    LineIntHeightStraightRoad-28
+db    LineIntHeightStraightRoad-29
+db    LineIntHeightStraightRoad-29
+db    LineIntHeightStraightRoad-30
+db    LineIntHeightStraightRoad-31
+db    LineIntHeightStraightRoad-31
+db    LineIntHeightStraightRoad-32
+db    LineIntHeightStraightRoad-33
+db    LineIntHeightStraightRoad-33
+db    LineIntHeightStraightRoad-34
+db    LineIntHeightStraightRoad-35
+db    LineIntHeightStraightRoad-36
+db    LineIntHeightStraightRoad-37
+db    LineIntHeightStraightRoad-38
+db    LineIntHeightStraightRoad-39
+db    LineIntHeightStraightRoad-40
+db    LineIntHeightStraightRoad-40
+.CurveUpLineIntHeightTableEnd:
+db    LineIntHeightStraightRoad-40
+db    LineIntHeightStraightRoad-40
+
+
+  .CurveDownLineIntHeightTable:
+db    LineIntHeightStraightRoad+0
+db    LineIntHeightStraightRoad+1
+db    LineIntHeightStraightRoad+1
+db    LineIntHeightStraightRoad+2
+db    LineIntHeightStraightRoad+2
+db    LineIntHeightStraightRoad+3
+db    LineIntHeightStraightRoad+3
+db    LineIntHeightStraightRoad+4
+db    LineIntHeightStraightRoad+4
+db    LineIntHeightStraightRoad+5
+db    LineIntHeightStraightRoad+5
+db    LineIntHeightStraightRoad+6
+db    LineIntHeightStraightRoad+6
+db    LineIntHeightStraightRoad+7
+db    LineIntHeightStraightRoad+7
+db    LineIntHeightStraightRoad+8
+db    LineIntHeightStraightRoad+8
+db    LineIntHeightStraightRoad+9
+db    LineIntHeightStraightRoad+9
+db    LineIntHeightStraightRoad+10
+db    LineIntHeightStraightRoad+10
+db    LineIntHeightStraightRoad+11
+db    LineIntHeightStraightRoad+11
+db    LineIntHeightStraightRoad+12
+db    LineIntHeightStraightRoad+12
+db    LineIntHeightStraightRoad+13
+db    LineIntHeightStraightRoad+13
+db    LineIntHeightStraightRoad+14
+db    LineIntHeightStraightRoad+14
+db    LineIntHeightStraightRoad+15
+db    LineIntHeightStraightRoad+15
+db    LineIntHeightStraightRoad+16
+db    LineIntHeightStraightRoad+16
+db    LineIntHeightStraightRoad+17
+db    LineIntHeightStraightRoad+17
+db    LineIntHeightStraightRoad+18
+db    LineIntHeightStraightRoad+18
+db    LineIntHeightStraightRoad+19
+db    LineIntHeightStraightRoad+19
+db    LineIntHeightStraightRoad+20
+db    LineIntHeightStraightRoad+20
+db    LineIntHeightStraightRoad+21
+db    LineIntHeightStraightRoad+21
+db    LineIntHeightStraightRoad+22
+db    LineIntHeightStraightRoad+22
+db    LineIntHeightStraightRoad+23
+db    LineIntHeightStraightRoad+24
+db    LineIntHeightStraightRoad+24
+db    LineIntHeightStraightRoad+25
+db    LineIntHeightStraightRoad+26
+db    LineIntHeightStraightRoad+26
+db    LineIntHeightStraightRoad+27
+db    LineIntHeightStraightRoad+27
+db    LineIntHeightStraightRoad+28
+db    LineIntHeightStraightRoad+28
+db    LineIntHeightStraightRoad+29
+db    LineIntHeightStraightRoad+29
+db    LineIntHeightStraightRoad+30
+db    LineIntHeightStraightRoad+30
+
+
+db    LineIntHeightStraightRoad+30
+
+
 
 UpdateEnemySpritePattern?: ds  1
 EnemySpriteBlock: ds  1
@@ -1190,15 +1431,15 @@ LineIntRacingGame:
 	jr    nz,.Waitline1
 
 
-nop |nop |nop |nop |nop |nop |nop |nop |nop |nop |nop |			;RM:why?
+nop |nop |nop |nop |nop |nop |nop |nop |nop |nop |nop |			
 nop |nop |nop |nop |nop |nop |nop |nop |nop |nop |
 
   ld    a,(hl)            ;page
   ld    (CurrentPageOnLineInt),a
   inc   hl
-	out   ($99),a			;RM: outi perhaps? as E is always 23+128
+	out   ($99),a			
   ld    a,2+128                         ;reg 2, used to set page
-	out   ($99),a			;RM: outi perhaps? as E is always 23+128
+	out   ($99),a			
   djnz  SetRaceTrackPage
 
   ld    a,2
@@ -1212,12 +1453,9 @@ nop |nop |nop |nop |nop |nop |nop |nop |nop |nop |
   inc   hl
   ld    (PointerToSwapLines),hl
 
-
   add   a,b                             ;RacingGameLineIntOffset
   cp    210
   jr    nc,.VblankReachedPart1
-
-
 
   ld    (LineIntHeightRacingGame),a
   out   ($99),a
@@ -1225,12 +1463,241 @@ nop |nop |nop |nop |nop |nop |nop |nop |nop |nop |
   out   ($99),a 
 
   .VblankReachedPart1:
-
   pop   hl
   pop   bc
   pop   af 
   ei
   ret  
+
+
+
+
+
+
+
+
+
+
+  call  .AnimateBackground
+
+  .AnimateBackground:
+ret
+  ld    a,(ScrollHorizonLeft?)
+  or    a
+  jp    nz,.ScrollHorizonLeft
+  ld    a,(ScrollHorizonRight?)
+  or    a
+  jp    nz,.ScrollHorizonRight
+  ld    a,(AnimateRoad?)                            ;2=up, 3=end up, 4=down, 5=end down
+  cp    2
+  jp    z,.CurveUp
+  cp    3
+  jp    z,.EndCurveUp
+  cp    4
+  jp    z,.CurveDown
+  cp    5
+  jp    z,.EndCurveDown
+  ret
+
+  .EndCurveUp:
+  ld    a,(RacingGameNewLineIntToBeSetOnVblank)                 ;113 is the standard, 083 is perfect for the road all the way curved up
+  dec   a
+  ld    (MoveHorizonVertically+dy),a
+  ld    hl,MoveHorizonVertically
+  call  DoCopy
+  ret
+
+  .CurveUp:
+  ld    a,(RoadCurvatureAnimationStep)
+  ;FOKKING LEIPE HACKJOB !!!!!!!!!!!!!!!!
+  cp    $21
+  ld    b,1
+  jr    c,.Set2
+  cp    $67
+  jp    nc,.Set2
+  ld    b,2
+  .Set2:
+  ;FOKKING LEIPE HACKJOB !!!!!!!!!!!!!!!!
+
+  ld    a,(RoadCurvatureAnimationStep)
+  inc a
+  srl   a                                 ;/2
+  ld    e,a
+  ld    d,0
+  ld    hl,.CurveUpLineIntHeightTable
+  add   hl,de
+  ld    a,(hl)
+
+  sub   a,b
+
+  ld    (MoveHorizonVertically+dy),a
+  ld    hl,MoveHorizonVertically
+  call  DoCopy
+  ret
+
+  .EndCurveDown:
+  ld    a,(RoadCurvatureAnimationStep)
+  ;FOKKING LEIPE HACKJOB !!!!!!!!!!!!!!!!
+  cp    $16
+  ld    b,3
+  jr    c,.Set
+  ld    b,2
+  .Set:
+  ;FOKKING LEIPE HACKJOB !!!!!!!!!!!!!!!!
+
+  ld    a,(RacingGameNewLineIntToBeSetOnVblank)                 ;113 is the standard, 083 is perfect for the road all the way curved up
+  sub   a,b
+
+  ld    (MoveHorizonVertically+dy),a
+  ld    hl,MoveHorizonVertically
+  call  DoCopy
+  ret
+
+  .CurveDown:
+  ld    a,(RacingGameNewLineIntToBeSetOnVblank)                 ;113 is the standard, 083 is perfect for the road all the way curved up
+  dec   a
+  ld    (MoveHorizonVertically+dy),a
+  ld    hl,MoveHorizonVertically
+  call  DoCopy
+  ret
+
+  .ScrollHorizonRight:
+  xor   a
+  ld    (ScrollHorizonRight?),a
+
+  ld    hl,MoveHorizonRightLoop2Pixels
+  call  DoCopy
+  ld    hl,MoveHorizonRight
+  call  DoCopy
+  ret
+
+  .ScrollHorizonLeft:
+  xor   a
+  ld    (ScrollHorizonLeft?),a
+
+  ld    hl,MoveHorizonLeftLoop2Pixels
+  call  DoCopy
+  ld    hl,MoveHorizonLeft
+  call  DoCopy
+  ret
+
+
+
+db    LineIntHeightStraightRoad-0
+  .CurveUpLineIntHeightTable:
+db    LineIntHeightStraightRoad-0
+db    LineIntHeightStraightRoad-1
+db    LineIntHeightStraightRoad-1
+db    LineIntHeightStraightRoad-2
+db    LineIntHeightStraightRoad-3
+db    LineIntHeightStraightRoad-3
+db    LineIntHeightStraightRoad-4
+db    LineIntHeightStraightRoad-5
+db    LineIntHeightStraightRoad-5
+db    LineIntHeightStraightRoad-6
+db    LineIntHeightStraightRoad-7
+db    LineIntHeightStraightRoad-7
+db    LineIntHeightStraightRoad-8
+db    LineIntHeightStraightRoad-9
+db    LineIntHeightStraightRoad-9
+db    LineIntHeightStraightRoad-10
+db    LineIntHeightStraightRoad-11
+db    LineIntHeightStraightRoad-11
+db    LineIntHeightStraightRoad-12
+db    LineIntHeightStraightRoad-13
+db    LineIntHeightStraightRoad-13
+db    LineIntHeightStraightRoad-14
+db    LineIntHeightStraightRoad-15
+db    LineIntHeightStraightRoad-15
+db    LineIntHeightStraightRoad-16
+db    LineIntHeightStraightRoad-17
+db    LineIntHeightStraightRoad-17
+db    LineIntHeightStraightRoad-18
+db    LineIntHeightStraightRoad-19
+db    LineIntHeightStraightRoad-19
+db    LineIntHeightStraightRoad-20
+db    LineIntHeightStraightRoad-21
+db    LineIntHeightStraightRoad-21
+db    LineIntHeightStraightRoad-22
+db    LineIntHeightStraightRoad-23
+db    LineIntHeightStraightRoad-23
+db    LineIntHeightStraightRoad-24
+db    LineIntHeightStraightRoad-25
+db    LineIntHeightStraightRoad-25
+db    LineIntHeightStraightRoad-26
+db    LineIntHeightStraightRoad-27
+db    LineIntHeightStraightRoad-27
+db    LineIntHeightStraightRoad-28
+db    LineIntHeightStraightRoad-29
+db    LineIntHeightStraightRoad-29
+db    LineIntHeightStraightRoad-30
+db    LineIntHeightStraightRoad-31
+db    LineIntHeightStraightRoad-31
+db    LineIntHeightStraightRoad-32
+db    LineIntHeightStraightRoad-33
+db    LineIntHeightStraightRoad-33
+db    LineIntHeightStraightRoad-34
+db    LineIntHeightStraightRoad-35
+db    LineIntHeightStraightRoad-36
+db    LineIntHeightStraightRoad-37
+db    LineIntHeightStraightRoad-38
+db    LineIntHeightStraightRoad-39
+db    LineIntHeightStraightRoad-40
+db    LineIntHeightStraightRoad-40
+.CurveUpLineIntHeightTableEnd:
+db    LineIntHeightStraightRoad-40
+
+
+ScrollHorizonLeft?: db  0
+ScrollHorizonLeftCounter:		db	0
+ScrollHorizonRight?: db  0
+ScrollHorizonRightCounter:		db	0
+
+MoveHorizonVertically:
+	db		000,0,000,1
+	db		000,0,113,0
+	db		000,1,16,0
+	db		0,0,$d0  ;copy direction=left
+
+MoveHorizonRightLoop2Pixels:
+	db		254,0,113,0
+	db		000,0,113,0
+	db		002,0,15,0
+	db		0,0,$d0  ;copy direction=left
+
+MoveHorizonRight:
+	db		253,0,113,0
+	db		255,0,113,0
+	db		254,0,15,0
+	db		0,%0000 0100,$d0  ;copy direction=left
+
+MoveHorizonLeftLoop2Pixels:
+	db		000,0,113,0
+	db		254,0,113,0
+	db		002,0,15,0
+	db		0,0,$d0
+
+MoveHorizonLeft:
+	db		002,0,113,0
+	db		000,0,113,0
+	db		254,0,15,0
+	db		0,0,$d0
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

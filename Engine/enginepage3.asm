@@ -25,6 +25,22 @@ InitiateGame:
 ld a,5
 
   ld    (ChangeSong?),a
+
+
+  ld    a,(CurrentRoom)                 ;racing game is bugged, we can solve with some halts to let music replayer initiate song and samples
+  cp    15
+  call  nz,.EndCheckRacingGame          ;initialise, load samples
+	halt
+  call  RePlayer_Tick                 ;initialise, load samples
+	halt
+  call  RePlayer_Tick                 ;initialise, load samples
+	call	WaitVdpReady
+	halt
+	.EndCheckRacingGame:
+
+
+
+
   call  SetInterruptHandler           	;sets Vblank
 	call	SpritesOn
   jp    LevelEngine
