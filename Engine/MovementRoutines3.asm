@@ -37,7 +37,7 @@ RacingGameRoutine:
   call  VideoReplayer
   call  SetEnemySpriteCharacterAndColorData
   call  .UpdateDistance
-;  call  HandleCurvatureRoad
+  call  HandleCurvatureRoad
   call  SetPlayerSprite
   call  WriteSpatToVram
   call  SetEnemySprite
@@ -2211,6 +2211,9 @@ CheckCollisionEnemyOrHeart:
   sub   a,48
   cp    b                                   ;check collision left side enemy
   ret   nc
+
+;  ld    hl,00
+;  ld    (Object3+DistanceFromPlayer),hl
 
   ;sfx crash
   ld    a,1
