@@ -188,17 +188,17 @@ vblank:
 
 
 vblankRacingGame:
-  push  bc
+;  push  bc
   push  de
   push  hl
-  push  ix
-  push  iy
-  exx
-  ex    af,af'
-  push  af
-  push  bc
-  push  de
-  push  hl
+;  push  ix
+;  push  iy
+;  exx
+;  ex    af,af'
+;  push  af
+;  push  bc
+;  push  de
+;  push  hl
 	
   ld    a,0*32 + 31                         ;page 0
   out   ($99),a
@@ -223,45 +223,12 @@ vblankRacingGame:
 ;  ld    (TotalMinutesUntilLand),hl
 ;  .EndCheckCountdownDays:
 
-  ld    a,(CurrentRoom)
-  cp    15
-  call  z,.RacingGame
-
-  pop   hl 
-  pop   de 
-  pop   bc 
-  pop   af 
-  ex    af,af'  
-  exx
-  pop   iy 
-  pop   ix 
-  pop   hl 
-  pop   de 
-  pop   bc 
-  pop   af 
-  ei
-  ret
-
-
-
-
-
-
-  .RacingGame:
-;  call  BackdropRandom
-;  call  BackdropBlack
-
-;  call  .AnimateAndCopyHorizon
-
-
   ld    a,(RacingGameNewLineIntToBeSetOnVblank)
   ld    (RacingGameLineIntOffset),a
 
   ld    a,(RoadAnimationStep)
-
   ld    d,0
   ld    e,a
-
   add   a,a                           ;*2
   add   a,a                           ;*4
   ld    l,a
@@ -316,7 +283,24 @@ sub StartRacingGameLineInt
   out   ($99),a
   ld    a,19+128                        ;set lineinterrupt height
   out   ($99),a 
+
+;  pop   hl 
+;  pop   de 
+;  pop   bc 
+;  pop   af 
+;  ex    af,af'  
+;  exx
+;  pop   iy 
+;  pop   ix 
+  pop   hl 
+  pop   de 
+;  pop   bc 
+  pop   af 
+  ei
   ret
+
+
+
 
 
 
@@ -440,14 +424,6 @@ sub StartRacingGameLineInt
   call  DoCopy
   ret
 
-
-
-
-
-
-
-
-
   .CurveUpLineIntHeightTable:
 db    LineIntHeightStraightRoad-0
 db    LineIntHeightStraightRoad-1
@@ -512,7 +488,6 @@ db    LineIntHeightStraightRoad-40
 db    LineIntHeightStraightRoad-40
 db    LineIntHeightStraightRoad-40
 
-
   .CurveDownLineIntHeightTable:
 db    LineIntHeightStraightRoad+0
 db    LineIntHeightStraightRoad+1
@@ -574,7 +549,6 @@ db    LineIntHeightStraightRoad+29
 db    LineIntHeightStraightRoad+30
 db    LineIntHeightStraightRoad+30
 
-
 db    LineIntHeightStraightRoad+30
 
 
@@ -587,50 +561,6 @@ EnemySpriteCharacterVramAddress: ds  2
 EnemySpriteColorVramAddress: ds  2
 PutMiniSprite?: ds  1
 
-SetEnemySpriteCharacterAndColorData:
-  ld    a,(UpdateEnemySpritePattern?)
-  dec   a
-  ret   m
-  ld    (UpdateEnemySpritePattern?),a
-
-  ld    a,(EnemySpriteBlock)
-  call  block34                       	;CARE!!! we can only switch block34 if page 1 is in rom  
-
-  ld    a,(PutMiniSprite?)
-  or    a
-  jr    nz,.MiniSprite
-
-  .NormalSprite:
-  ;write sprite character
-	xor		a				;page 0/1
-  ld    hl,(EnemySpriteCharacterVramAddress)
-	call	SetVdp_Write
-  ld    hl,(EnemySpriteCharacter)
-	ld		c,$98
-	call	outix320		;write sprite character to vram
-	xor		a				;page 0/1
-  ld    hl,(EnemySpriteColorVramAddress)
-	call	SetVdp_Write
-  ld    hl,(EnemySpriteColor)
-	ld		c,$98
-	call	outix160		;write sprite color of pointer and hand to vram
-  ret
-
-  .MiniSprite:
-  ;write sprite character
-	xor		a				;page 0/1
-  ld    hl,(EnemySpriteCharacterVramAddress)
-	call	SetVdp_Write
-  ld    hl,(EnemySpriteCharacter)
-	ld		c,$98
-	call	outix64		;write sprite character to vram
-	xor		a				;page 0/1
-  ld    hl,(EnemySpriteColorVramAddress)
-	call	SetVdp_Write
-  ld    hl,(EnemySpriteColor)
-	ld		c,$98
-	call	outix32		;write sprite color of pointer and hand to vram
-  ret
 
 LineIntHeightStraightRoad:  equ 113
 RacingGameLineIntOffset:  db LineIntHeightStraightRoad     ;113 is the standard, 083 is perfect for the road all the way curved up
@@ -1403,8 +1333,10 @@ LineIntRacingGame:
   jp    z,.Part1
 
   .Part2:
-  push  bc
+;  push  bc
   push  hl
+
+  ld    hl,(PointerToSwapLines)
 
   ld    a,(CurrentPageOnLineInt)
   xor   32
@@ -1414,11 +1346,11 @@ LineIntRacingGame:
 	out   ($99),a			
 
   ld    a,(RacingGameLineIntOffset)
-  ld    b,a
+;  ld    b,a
 
-  ld    hl,(PointerToSwapLines)
-  ld    a,(hl)
-  add   a,b                             ;RacingGameLineIntOffset
+  add   a,(hl)
+;  ld    a,(hl)
+;  add   a,b                             ;RacingGameLineIntOffset
   cp    210
   jr    nc,.VblankReachedPart2
   cp    40
@@ -1435,7 +1367,7 @@ LineIntRacingGame:
   .VblankReachedPart2:
 
   pop   hl
-  pop   bc
+;  pop   bc
   pop   af 
   ei
   ret  
@@ -1510,14 +1442,7 @@ nop |nop |nop |nop |nop |nop |nop |nop |nop |nop |
 
 
 
-
-
-
-
-  call  .AnimateBackground
-
-  .AnimateBackground:
-ret
+MoveHorizonInCurves:
   ld    a,(ScrollHorizonLeft?)
   or    a
   jp    nz,.ScrollHorizonLeft

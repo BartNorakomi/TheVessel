@@ -707,6 +707,11 @@ RacingGamePlayerSpritesBlock:  			equ   ($-RomStartAddress) and (romsize-1) /Rom
 	PlayerPart2SpriteColors:	
 	include "..\grapx\racinggame\sprites\Player\PlayerPart2.tcs.gen"
 
+	PlayerFallDownSpritesCharacters:
+	include "..\grapx\racinggame\sprites\Player\PlayerFallDown.tgs.gen"
+	PlayerFallDownSpriteColors:	
+	include "..\grapx\racinggame\sprites\Player\PlayerFallDown.tcs.gen"
+
   ;offset character, color
 SpriteOffSetsTableSlowSpeed: 
 dw  PlayerSpritesCharacters+00*320,PlayerSpriteColors+00*160

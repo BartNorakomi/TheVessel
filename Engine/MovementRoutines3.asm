@@ -33,12 +33,13 @@ RacingGamePlayerY:  equ 161                 ;y never changes ?
 RacingGameRoutine:
   call  .Initiate                           ;screen on, set int handler, init variables
   .Engine:
+  call  MoveHorizonInCurves
   call  VideoReplayer
-  call  WriteSpatToVram
   call  SetEnemySpriteCharacterAndColorData
   call  .UpdateDistance
-  call  HandleCurvatureRoad
+;  call  HandleCurvatureRoad
   call  SetPlayerSprite
+  call  WriteSpatToVram
   call  SetEnemySprite
   call  PlaceNewObject                      ;new objects may be placed if all active objects distance to player < 6247
   call  .SetHorMoveSpeedAndAnimatePlayerSprite
@@ -49,6 +50,8 @@ RacingGameRoutine:
   call  ChangePaletteRacingGame
 ;  call  .UpdateMaximumSpeedOnCurveUpOrDown
   call  ForceMovePlayerAgainstCurves        ;This one must be faster with a table
+  call  CheckCollisionEnemyOrHeart          ;checks for collision and takes action
+  call  RePlayer_Tick                ;initialise, load samples
   call  PopulateControls
   ld    a,(framecounter2)
   inc   a
@@ -139,7 +142,7 @@ RacingGameRoutine:
 
 ;  ret
 
-  ld    hl,3370
+  ld    hl,9370
   ld    (Object2+DistanceFromPlayer),hl
   ld    hl,128 
   ld    (Object2+X16bit),hl
@@ -156,7 +159,7 @@ RacingGameRoutine:
   xor   a
   ld    (Object2+MiniSprite?),a
 
-  ld    hl,9370
+  ld    hl,3370
   ld    (Object4+DistanceFromPlayer),hl
   ld    hl,128 
   ld    (Object4+X16bit),hl
@@ -170,7 +173,7 @@ RacingGameRoutine:
   ld    (Object4+SpriteCharacterAddress),hl
 	ld		hl,sprcoladdr+30*16	;sprite 0 color table in VRAM
   ld    (Object4+SpriteColorAddress),hl
-  ld    a,%0000 0001                        ;bit 0 on=minisprite, bit 1 on=heart, bit 1 off=minienemy
+  ld    a,%0000 0011                        ;bit 0 on=minisprite, bit 1 on=heart, bit 1 off=minienemy
   ld    (Object4+MiniSprite?),a
 
 
@@ -182,6 +185,9 @@ RacingGameRoutine:
   call  SetInterruptHandlerRacingGame
   xor   a
   ld    (vblankintflag),a
+
+  ld    a,0
+  ld    (RacingGamePlayerFalldown?),a
   ret
 
   .UpdateMaximumSpeedOnCurveUpOrDown:
@@ -690,6 +696,7 @@ SetEnemySprite:
 
   ;simulate enemy driving away from player
   ld    bc,100                           ;enemy speed
+;  ld    bc,000                           ;enemy speed
   ld    de,(RacingGameSpeed)              ;player speed
 
   ld    l,(ix+DistanceFromPlayer)
@@ -1445,7 +1452,198 @@ MovePlayerHorizontally:
   ld    (RacingGamePlayerX),a
   ret
 
+AmountOfTimeFallDown: equ 32
+SetPlayerSpriteFallDown:
+  ld    a,1
+  ld    (freezecontrols?),a
+
+  ld    a,(RacingGamePlayerFalldown?)
+  inc   a
+  ld    (RacingGamePlayerFalldown?),a
+  cp    AmountOfTimeFallDown+50
+  jr    c,.EndCheckGetUpAgain
+  xor   a
+  ld    (RacingGamePlayerFalldown?),a
+  xor   a
+  ld    (freezecontrols?),a
+  ;set y coordinates player sprite
+  ld    a,RacingGamePlayerY
+  ld    (spat+0+(00*4)),a                 ;y sprite 0
+  ld    (spat+0+(01*4)),a                 ;y sprite 1
+  add   a,16
+  ld    (spat+0+(02*4)),a                 ;y sprite 2
+  ld    (spat+0+(03*4)),a                 ;y sprite 3
+  ld    (spat+0+(04*4)),a                 ;y sprite 4
+  ld    (spat+0+(05*4)),a                 ;y sprite 5
+  add   a,16
+  ld    (spat+0+(06*4)),a                 ;y sprite 6
+  ld    (spat+0+(07*4)),a                 ;y sprite 7
+  ld    (spat+0+(08*4)),a                 ;y sprite 8
+  ld    (spat+0+(09*4)),a                 ;y sprite 9
+  .kut:
+  jp    SetPlayerSprite
+  .EndCheckGetUpAgain:
+
+  ;quickly slow down player
+  ld    hl,(RacingGameSpeed)
+  ld    de,4
+  sbc   hl,de
+  jr    nc,.EndCheckOutOfSpeedLeft
+  ld    hl,0
+  .EndCheckOutOfSpeedLeft:
+  ld    (RacingGameSpeed),hl
+
+  ld    a,(RacingGamePlayerFalldownFacingDirection) ;1=right, 2=left
+  dec   a
+  jp    nz,.FaceRight
+
+  .FaceLeft:
+  ;set x coordinates player sprite
+  ld    a,(RacingGamePlayerX)
+  ld    (spat+1+(04*4)),a                 ;x sprite 4
+  ld    (spat+1+(05*4)),a                 ;x sprite 5
+  add   a,16
+  ld    (spat+1+(00*4)),a                 ;x sprite 0
+  ld    (spat+1+(01*4)),a                 ;x sprite 1
+  ld    (spat+1+(06*4)),a                 ;x sprite 6
+  ld    (spat+1+(07*4)),a                 ;x sprite 7
+  add   a,16
+  ld    (spat+1+(02*4)),a                 ;x sprite 2
+  ld    (spat+1+(03*4)),a                 ;x sprite 3
+  ld    (spat+1+(08*4)),a                 ;x sprite 8
+  ld    (spat+1+(09*4)),a                 ;x sprite 9
+
+  ;set y coordinates player sprite
+  ld    a,RacingGamePlayerY
+  add   a,16
+  ld    (spat+0+(00*4)),a                 ;y sprite 0
+  ld    (spat+0+(01*4)),a                 ;y sprite 1
+  ld    (spat+0+(02*4)),a                 ;y sprite 2
+  ld    (spat+0+(03*4)),a                 ;y sprite 3
+  add   a,13
+  ld    (spat+0+(04*4)),a                 ;y sprite 4
+  ld    (spat+0+(05*4)),a                 ;y sprite 5
+  add   a,3
+  ld    (spat+0+(06*4)),a                 ;y sprite 6
+  ld    (spat+0+(07*4)),a                 ;y sprite 7
+  ld    (spat+0+(08*4)),a                 ;y sprite 8
+  ld    (spat+0+(09*4)),a                 ;y sprite 9
+
+  ld    a,(framecounter2)                 ;only once every 4 frames on frame 0
+  and   3
+  ret   nz
+
+  ld    a,RacingGamePlayerSpritesBlock   	;sprites block
+  call  block34                       	;CARE!!! we can only switch block34 if page 1 is in rom  
+
+  ;write sprite character
+	xor		a				;page 0/1
+	ld		hl,sprcharaddr	;sprite 0 character table in VRAM
+	call	SetVdp_Write
+
+  ld    hl,PlayerFallDownSpritesCharacters+2*320
+  ld    a,(RacingGamePlayerFalldown?)
+  cp    AmountOfTimeFallDown
+  jr    c,.SetCharacterLeft
+  ld    hl,PlayerFallDownSpritesCharacters+3*320
+  .SetCharacterLeft:
+
+	ld		c,$98
+	call	outix320		;write sprite character to vram
+
+	xor		a				;page 0/1
+	ld		hl,sprcoladdr	;sprite 0 color table in VRAM
+	call	SetVdp_Write
+
+  ld    hl,PlayerFallDownSpriteColors+2*160
+  ld    a,(RacingGamePlayerFalldown?)
+  cp    AmountOfTimeFallDown
+  jr    c,.SetColorLeft
+  ld    hl,PlayerFallDownSpriteColors+3*160
+  .SetColorLeft:
+
+	ld		c,$98
+	call	outix160		;write sprite color of pointer and hand to vram
+  ret
+
+  .FaceRight:
+  ;set x coordinates player sprite
+  ld    a,(RacingGamePlayerX)
+  ld    (spat+1+(00*4)),a                 ;x sprite 0
+  ld    (spat+1+(01*4)),a                 ;x sprite 1
+  ld    (spat+1+(04*4)),a                 ;x sprite 4
+  ld    (spat+1+(05*4)),a                 ;x sprite 5
+  add   a,16
+  ld    (spat+1+(02*4)),a                 ;x sprite 2
+  ld    (spat+1+(03*4)),a                 ;x sprite 3
+  ld    (spat+1+(06*4)),a                 ;x sprite 6
+  ld    (spat+1+(07*4)),a                 ;x sprite 7
+  add   a,16
+  ld    (spat+1+(08*4)),a                 ;x sprite 8
+  ld    (spat+1+(09*4)),a                 ;x sprite 9
+
+  ;set y coordinates player sprite
+  ld    a,RacingGamePlayerY
+  add   a,16
+  ld    (spat+0+(00*4)),a                 ;y sprite 0
+  ld    (spat+0+(01*4)),a                 ;y sprite 1
+  ld    (spat+0+(02*4)),a                 ;y sprite 2
+  ld    (spat+0+(03*4)),a                 ;y sprite 3
+  add   a,16
+  ld    (spat+0+(04*4)),a                 ;y sprite 4
+  ld    (spat+0+(05*4)),a                 ;y sprite 5
+  ld    (spat+0+(06*4)),a                 ;y sprite 6
+  ld    (spat+0+(07*4)),a                 ;y sprite 7
+  sub   a,3
+  ld    (spat+0+(08*4)),a                 ;y sprite 8
+  ld    (spat+0+(09*4)),a                 ;y sprite 9
+
+  ld    a,(framecounter2)                 ;only once every 4 frames on frame 0
+  and   3
+  ret   nz
+
+  ld    a,RacingGamePlayerSpritesBlock   	;sprites block
+  call  block34                       	;CARE!!! we can only switch block34 if page 1 is in rom  
+
+  ;write sprite character
+	xor		a				;page 0/1
+	ld		hl,sprcharaddr	;sprite 0 character table in VRAM
+	call	SetVdp_Write
+
+  ld    hl,PlayerFallDownSpritesCharacters+0*320
+  ld    a,(RacingGamePlayerFalldown?)
+  cp    AmountOfTimeFallDown
+  jr    c,.SetCharacterRight
+  ld    hl,PlayerFallDownSpritesCharacters+1*320
+  .SetCharacterRight:
+
+	ld		c,$98
+	call	outix320		;write sprite character to vram
+
+	xor		a				;page 0/1
+	ld		hl,sprcoladdr	;sprite 0 color table in VRAM
+	call	SetVdp_Write
+
+  ld    hl,PlayerFallDownSpriteColors+0*160
+  ld    a,(RacingGamePlayerFalldown?)
+  cp    AmountOfTimeFallDown
+  jr    c,.SetColorRight
+  ld    hl,PlayerFallDownSpriteColors+1*160
+  .SetColorRight:
+
+	ld		c,$98
+	call	outix160		;write sprite color of pointer and hand to vram
+  ret
+
+
+
+
+
 SetPlayerSprite:
+  ld    a,(RacingGamePlayerFalldown?)
+  or    a
+  jp    nz,SetPlayerSpriteFallDown
+
   ;set x coordinates player sprite
   ld    a,(RacingGameHorMoveSpeed)        ;value from 0-41 where 21 is center (not moving) 0-20 is moving left, 22-41 is moving right
   srl   a                                 ;/2
@@ -1912,8 +2110,149 @@ SetInterruptHandlerRacingGame:
   ret
 
 
+SetEnemySpriteCharacterAndColorData:
+  ld    a,(UpdateEnemySpritePattern?)
+  dec   a
+  ret   m
+  ld    (UpdateEnemySpritePattern?),a
+
+  ld    a,(EnemySpriteBlock)
+  call  block34                       	;CARE!!! we can only switch block34 if page 1 is in rom  
+
+  ld    a,(PutMiniSprite?)
+  or    a
+  jr    nz,.MiniSprite
+
+  .NormalSprite:
+  ;write sprite character
+	xor		a				;page 0/1
+  ld    hl,(EnemySpriteCharacterVramAddress)
+	call	SetVdp_Write
+  ld    hl,(EnemySpriteCharacter)
+	ld		c,$98
+	call	outix320		;write sprite character to vram
+	xor		a				;page 0/1
+  ld    hl,(EnemySpriteColorVramAddress)
+	call	SetVdp_Write
+  ld    hl,(EnemySpriteColor)
+	ld		c,$98
+	call	outix160		;write sprite color of pointer and hand to vram
+  ret
+
+  .MiniSprite:
+  ;write sprite character
+	xor		a				;page 0/1
+  ld    hl,(EnemySpriteCharacterVramAddress)
+	call	SetVdp_Write
+  ld    hl,(EnemySpriteCharacter)
+	ld		c,$98
+	call	outix64		;write sprite character to vram
+	xor		a				;page 0/1
+  ld    hl,(EnemySpriteColorVramAddress)
+	call	SetVdp_Write
+  ld    hl,(EnemySpriteColor)
+	ld		c,$98
+	call	outix32		;write sprite color of pointer and hand to vram
+  ret
+
+CheckCollisionEnemyOrHeart:
+  ld    a,(RacingGamePlayerX)
+  ld    b,a
+
+  ld    a,(Object2+RacingGameObjectOn?)
+  or    a
+  call  nz,.CheckObject2
+  ld    a,(Object3+RacingGameObjectOn?)
+  or    a
+  call  nz,.CheckObject3
+  ld    a,(Object4+RacingGameObjectOn?)
+  or    a
+  ret   z
+
+  .CheckObject4:                            ;object 4 is always mini sprite: heart
+  ld    a,(spat+0+(30*4))                   ;y enemy
+  cp    RacingGamePlayerY-16+32                ;check collision bottom side of enemy
+  ret   c
+  cp    RacingGamePlayerY+10+32                ;check collision top side of enemy
+  ret   nc
+
+  ld    a,(spat+1+(30*4))                   ;x enemy
+  add   a,16-4
+  cp    b                                   ;check collision right side enemy
+  ret   c
+
+  sub   a,48-8
+  cp    b                                   ;check collision left side enemy
+  ret   nc
+
+  ld    hl,0
+  ld    (Object4+DistanceFromPlayer),hl
+  xor   a
+  ld    (Object4+RacingGameObjectOn?),a
+  ld    a,213
+  ld    (spat+0+(30*4)),a                   ;y mini sprite
+  ld    (spat+0+(31*4)),a                   ;y mini sprite
+
+  ;sfx pick up heart
+  ret
+
+  .CheckObject3:
+  ld    a,(spat+0+(20*4))                   ;y enemy
+  cp    RacingGamePlayerY-16                ;check collision bottom side of enemy
+  ret   c
+  cp    RacingGamePlayerY+10                ;check collision top side of enemy
+  ret   nc
+
+  ld    a,(spat+1+(20*4))                   ;x enemy
+  add   a,16
+  cp    b                                   ;check collision right side enemy
+  ret   c
+
+  sub   a,48
+  cp    b                                   ;check collision left side enemy
+  ret   nc
+
+  ;sfx crash
+  ld    a,1
+  ld    (RacingGamePlayerFalldown?),a
+
+  ld    a,(RacingGameHorMoveSpeed)         ;value from 0-41 where 21 is center (not moving) 0-20 is moving left, 22-41 is moving right
+  cp    21
+  ld    a,1
+  ld    (RacingGamePlayerFalldownFacingDirection),a ;1=right, 2=left
+  ret   c
+  inc   a
+  ld    (RacingGamePlayerFalldownFacingDirection),a ;1=right, 2=left
+  ret
 
 
+  .CheckObject2:
+  ld    a,(spat+0+(10*4))                   ;y enemy
+  cp    RacingGamePlayerY-16                ;check collision bottom side of enemy
+  ret   c
+  cp    RacingGamePlayerY+10                ;check collision top side of enemy
+  ret   nc
 
+  ld    a,(spat+1+(10*4))                   ;x enemy
+  add   a,16
+  cp    b                                   ;check collision right side enemy
+  ret   c
+
+  sub   a,48
+  cp    b                                   ;check collision left side enemy
+  ret   nc
+
+  ;sfx crash
+  ld    a,1
+  ld    (RacingGamePlayerFalldown?),a
+
+  ld    a,(RacingGameHorMoveSpeed)         ;value from 0-41 where 21 is center (not moving) 0-20 is moving left, 22-41 is moving right
+  cp    21
+  ld    a,1
+  ld    (RacingGamePlayerFalldownFacingDirection),a ;1=right, 2=left
+  ret   c
+  inc   a
+  ld    (RacingGamePlayerFalldownFacingDirection),a ;1=right, 2=left
+  ret
 
 dephase

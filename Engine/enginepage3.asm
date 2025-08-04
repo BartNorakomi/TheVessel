@@ -2286,6 +2286,8 @@ HalfCurve?: 								rb	1
 
 RacingGameEnemyX:						rb	1
 RacingGameEnemyY:						rb	2
+RacingGamePlayerFalldown?:	rb	1
+RacingGamePlayerFalldownFacingDirection:	rb	1
 
 
 ;RacingGameEnemy1DistanceFromPlayer:						rb	2
