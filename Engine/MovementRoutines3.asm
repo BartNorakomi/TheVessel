@@ -27,12 +27,23 @@ Phase MovementRoutinesAddress
 
 ;voor backgrounds: zie super hangon
 
+;ik maak die hitbox 20% kleiner aan alle kanten
+;oh en tevens: bij de finish is 't wel raar als ik stop en de rest vrolijk doorrijdt 
+
 ;Titel: Neon Horizon
+;ik denk dat we gears wel moeten proberen, 't is simpelweg het uitlezen van een tabel met pitches die er zo uitzien: / / /
+
+
+
+;sfx: almost out of fuel, gas, you pass an enemy, pick up heart, whipeout / fall down, starting signals, brake 
+
+
 
 RacingGamePlayerY:  equ 161                 ;y never changes ?
 RacingGameRoutine:
   call  .Initiate                           ;screen on, set int handler, init variables
   .Engine:
+  call  UpdateHud                           ;fuel, speed, distance and starting lights
   call  MoveHorizonInCurves
   call  VideoReplayer
   call  SetEnemySpriteCharacterAndColorData
@@ -48,14 +59,36 @@ RacingGameRoutine:
   call  .UpdateRoadLinesAnimation
   call  .ChangeLineIntHeightWhenCurvingUpOrDown
   call  ChangePaletteRacingGame
-;  call  .UpdateMaximumSpeedOnCurveUpOrDown
+  call  .UpdateMaximumSpeedOnCurveUpOrDown
   call  ForceMovePlayerAgainstCurves        ;This one must be faster with a table
   call  CheckCollisionEnemyOrHeart          ;checks for collision and takes action
+  call  CheckLevelFinished
   call  RePlayer_Tick                ;initialise, load samples
   call  PopulateControls
+
+;HandleFuelConsumption 
   ld    a,(framecounter2)
   inc   a
   ld    (framecounter2),a
+  and   7
+  jr    nz,.EndCheckReduceFuel
+  ld    a,(RacingGameStartingLightsOn?)
+  or    a
+  jr    nz,.EndCheckReduceFuel
+  ld    a,(RacingGameLevelFinished?)
+  or    a
+  jr    nz,.EndCheckReduceFuel
+
+  ld    a,(RacingGameFuel)            ;0-250
+  dec   a
+  jr    nz,.EndCheckOutOfFuel         ;out of fuel
+  ld    a,(RacingGameSpeed)
+  or    a
+  jr    z,.GameOver                   ;out of fuel and speed=0 then Game Over
+  jp    .EndCheckReduceFuel
+  .EndCheckOutOfFuel:
+  ld    (RacingGameFuel),a            ;0-250
+  .EndCheckReduceFuel:
 
   xor   a
   ld    hl,vblankintflag
@@ -64,6 +97,28 @@ RacingGameRoutine:
   jr    z,.checkflag
   ld    (hl),a
   jp    .Engine
+
+  .GameOver:
+  ld    hl,RacingGameGameOver
+  call  DoCopy
+
+  ld    a,(RacingGameGameOver+sy)
+  inc   a
+  cp    53
+  jr    z,.EndGameOverAnimation
+  ld    (RacingGameGameOver+sy),a
+  ld    a,(RacingGameGameOver+dy)
+  inc   a
+  ld    (RacingGameGameOver+dy),a
+  .EndGameOverAnimation:
+
+  xor   a
+  ld    hl,vblankintflag
+  .checkflag2:
+  cp    (hl)
+  jr    z,.checkflag2
+  ld    (hl),a
+  jp    .GameOver
 
   .Initiate:
   bit   0,(iy+ObjectPhase)
@@ -95,15 +150,16 @@ RacingGameRoutine:
 
   ld    a,21                              
   ld    (RacingGameHorMoveSpeed),a        ;value from 0-41 where 21 is center (not moving) 0-20 is moving left, 22-41 is moving right
-  ld    hl,112*10
+  ld    hl,90*10
   ld    (RacingGameHorScreenPosition),hl  ;HorScreenPosition / 10 = Player X
   ld    hl,0
   ld    (RacingGameDistance),hl
   ld    (RacingGameDistance+2),hl
 
+;  ld    hl,2800                           ;jump to end of level
+;  ld    (RacingGameDistance+1),hl
+
   ld    hl,0                            ;speed in m/p/h
-
-
 ;ld    hl,150                            ;speed in m/p/h
 
 ;ld hl,50
@@ -116,18 +172,35 @@ RacingGameRoutine:
   xor   a
   ld    (RoadCurveAmountPixelsTraversed),a
   ld    (UpdateEnemySpritePattern?),a
-
+  ld    (vblankintflag),a
+  ld    (RacingGamePlayerFalldown?),a
+  ld    (ScrollHorizonLeft?),a
+  ld    (ScrollHorizonRight?),a
+  ld    (ScrollHorizonLeftCounter),a
+  ld    (ScrollHorizonRightCounter),a
+  ld    (CurrentAmountOfSpeedBars),a
+  ld    (RequiredAmountOfSpeedBars),a
+  ld    (RacingGameLevelFinished?),a
+  ld    (RacingGameStartNextLevelTimer),a
+  ld    a,1
+;  ld    a,0
+  ld    (RacingGameStartingLightsOn?),a
+  ld    a,21
+  ld    (RequiredAmountOfSpeedBars),a
+  ld    (CurrentAmountOfFuelBars),a
+  ld    hl,250
+  ld    (RacingGameFuel),hl           ;0-250
   ld    a,RacingGamePlayerY
   ld    (RacingGameEnemyY),a
 
 ;  ld    hl,9370
 ;  ld    (RacingGameEnemy1DistanceFromPlayer),hl
 
-  ld    hl,6570
+  ld    hl,0 ;6570
   ld    (Object3+DistanceFromPlayer),hl
   ld    hl,128 
   ld    (Object3+X16bit),hl
-  ld    a,1
+  ld    a,0
   ld    (Object3+RacingGameObjectOn?),a
   ld    a,2                                 ;player is put on frame 0
   ld    (Object3+PutOnFrame),a
@@ -142,11 +215,11 @@ RacingGameRoutine:
 
 ;  ret
 
-  ld    hl,9370
+  ld    hl,0 ;9370
   ld    (Object2+DistanceFromPlayer),hl
   ld    hl,128 
   ld    (Object2+X16bit),hl
-  ld    a,1
+  ld    a,0
   ld    (Object2+RacingGameObjectOn?),a
   ld    a,1                                 ;player is put on frame 0
   ld    (Object2+PutOnFrame),a
@@ -159,11 +232,11 @@ RacingGameRoutine:
   xor   a
   ld    (Object2+MiniSprite?),a
 
-  ld    hl,3370
+  ld    hl,0 ;3370
   ld    (Object4+DistanceFromPlayer),hl
   ld    hl,128 
   ld    (Object4+X16bit),hl
-  ld    a,1
+  ld    a,0
   ld    (Object4+RacingGameObjectOn?),a
   ld    a,3                                 ;player is put on frame 0
   ld    (Object4+PutOnFrame),a
@@ -176,31 +249,26 @@ RacingGameRoutine:
   ld    a,%0000 0011                        ;bit 0 on=minisprite, bit 1 on=heart, bit 1 off=minienemy
   ld    (Object4+MiniSprite?),a
 
-
   call  RePlayer_Tick                 ;initialise, load samples
 	halt
   call  RePlayer_Tick                 ;initialise, load samples
 	call	WaitVdpReady
 	halt
   call  SetInterruptHandlerRacingGame
-  xor   a
-  ld    (vblankintflag),a
-
-  ld    a,0
-  ld    (RacingGamePlayerFalldown?),a
   ret
 
   .UpdateMaximumSpeedOnCurveUpOrDown:
   ld    a,200
   ld    (MaximumSpeedRacingGame),a
-  ld    a,(CurrentCurve)                ;1=right, 2=down, 3=left, 4=up, 5=right end, 6=down end, 7=left end, 8=up end
-  cp    2
-  jr    z,.UpdateMaxSpeedCurveDown
+
+  ld    a,(AnimateRoad?)                            ;2=up, 3=end up, 4=down, 5=end down
   cp    4
+  jr    z,.UpdateMaxSpeedCurveDown
+  cp    2
   jr    z,.UpdateMaxSpeedCurveUp
-  cp    6
+  cp    5
   jr    z,.UpdateMaxSpeedCurveDownEnd
-  cp    8
+  cp    3
   jr    z,.UpdateMaxSpeedCurveUpEnd
   ret
 
@@ -232,6 +300,9 @@ RacingGameRoutine:
 	ld		a,(Controls)
   and   %0010 0010                      ;check if trig b or down is pressed (brake)
   jr    nz,.Brake
+  ld    a,(RacingGameFuel)           ;0-250
+  dec   a
+  jr    z,.SlowDown
 	ld		a,(Controls)
   and   %0001 0001                      ;check if trig a or space is pressed (gas)
   jr    nz,.Gas
@@ -325,6 +396,7 @@ inc a
   ld    (RacingGameNewLineIntToBeSetOnVblank),a                 ;113 is the standard, 083 is perfect for the road all the way curved up
   ret
 
+db    LineIntHeightStraightRoad-0
   .CurveUpLineIntHeightTable:
 db    LineIntHeightStraightRoad-0
 db    LineIntHeightStraightRoad-1
@@ -386,6 +458,8 @@ db    LineIntHeightStraightRoad-39
 db    LineIntHeightStraightRoad-40
 db    LineIntHeightStraightRoad-40
 .CurveUpLineIntHeightTableEnd:
+db    LineIntHeightStraightRoad-40
+
 
   .CurveDownLineIntHeightTable:
 db    LineIntHeightStraightRoad+0
@@ -973,16 +1047,6 @@ SetEnemySprite:
   ld    a,l
   sub   16                                          ;16 pixel displacement since our sprite is 32 pixels wide and we calculate from the left instead of the middle
 
-
-
-
-
-
-
-
-
-
-
 ;ld a,112
   .SetXSpat:
   bit   0,(ix+MiniSprite?)
@@ -1063,8 +1127,7 @@ SetEnemySprite:
   ld    (PutMiniSprite?),a
   ret
 
-
-.GirlMiniSpriteOffSetPointer: dw  .MiniSpriteSize0, .MiniSpriteSize0, .MiniSpriteSize0, .MiniSpriteSize1, .MiniSpriteSize2, .MiniSpriteSize3, .MiniSpriteSize4, .MiniSpriteSize4, .MiniSpriteSize4, .MiniSpriteSize4, .MiniSpriteSize4, .MiniSpriteSize4, .MiniSpriteSize3, .MiniSpriteSize2, .MiniSpriteSize1, .MiniSpriteSize1, .MiniSpriteSize0, .MiniSpriteSize0, .MiniSpriteSize0
+.GirlMiniSpriteOffSetPointer: dw  .MiniSpriteSize0, .MiniSpriteSize0, .MiniSpriteSize0, .MiniSpriteSize1, .MiniSpriteSize2, .MiniSpriteSize3, .MiniSpriteSize4, .MiniSpriteSize4, .MiniSpriteSize4, .MiniSpriteSize4, .MiniSpriteSize4, .MiniSpriteSize3, .MiniSpriteSize2, .MiniSpriteSize2, .MiniSpriteSize1, .MiniSpriteSize1, .MiniSpriteSize0, .MiniSpriteSize0, .MiniSpriteSize0
 
   ;offset character, color
 .MiniSpriteSize4:  dw  Girl1PonyMiniSpritesCharacters+4*64,  Girl1PonyMiniSpriteColors+4*32
@@ -1160,7 +1223,7 @@ SetEnemySprite:
 ;  ld    a,(RacingGameEnemy1DistanceFromPlayer+1)      ;value from 0-36
   ld    a,(ix+DistanceFromPlayer+1)
 
-  srl   a                                 ;/2
+;  srl   a                                 ;/2
   add   a,a
   res   0,a                               ;value from 0-18 (only even)
   ld    e,a
@@ -1196,7 +1259,9 @@ SetEnemySprite:
   ld    (PutMiniSprite?),a
   ret
 
-.GirlOffSetPointer: dw  .Size14, .Size14, .Size13, .Size12, .Size11, .Size10, .Size9, .Size8, .Size7, .Size6, .Size5, .Size4, .Size3, .Size2, .Size1, .Size1, .Size0, .Size0, .Size0
+.GirlOffSetPointer: dw  .Size14, .Size14, .Size14, .Size13, .Size12, .Size11, .Size10, .Size9,  .Size8, .Size8, .Size7, .Size7, .Size7, .Size6, .Size6, .Size5, .Size5, .Size5, .Size4
+                    dw  .Size4,  .Size3,  .Size3,  .Size3,  .Size3,  .Size2,  .Size2,  .Size2,  .Size2, .Size1, .Size1, .Size1, .Size1, .Size1, .Size0, .Size0, .Size0, .Size0, .Size0
+
 
   ;offset character, color
 .Size14: dw  Girl1PonySpritesCharacters+14*320, Girl1PonySpriteColors+14*160
@@ -1413,7 +1478,7 @@ MovePlayerHorizontally:
   .EndCheckOutOfSpeedLeft:
   ld    (RacingGameSpeed),hl
 
-  ld    hl,0
+  ld    hl,0+1
   ld    (RacingGameHorScreenPosition),hl
   .EndCheckOutOfScreenLeft:
   push  hl
@@ -1460,8 +1525,20 @@ SetPlayerSpriteFallDown:
   ld    a,(RacingGamePlayerFalldown?)
   inc   a
   ld    (RacingGamePlayerFalldown?),a
+  cp    4                                 ;first 4 frames dont change spat or sprite, can only do that when it's player's "turn"
+  jr    nc,.Go
+  ld    a,(framecounter2)                 ;only once every 4 frames on frame 0
+  and   3
+  ret   nz
+  .Go:
+
   cp    AmountOfTimeFallDown+50
   jr    c,.EndCheckGetUpAgain
+
+  ld    a,(framecounter2)                 ;only once every 4 frames on frame 0
+  and   3
+  ret   nz
+
   xor   a
   ld    (RacingGamePlayerFalldown?),a
   xor   a
@@ -1480,7 +1557,6 @@ SetPlayerSpriteFallDown:
   ld    (spat+0+(07*4)),a                 ;y sprite 7
   ld    (spat+0+(08*4)),a                 ;y sprite 8
   ld    (spat+0+(09*4)),a                 ;y sprite 9
-  .kut:
   jp    SetPlayerSprite
   .EndCheckGetUpAgain:
 
@@ -1885,16 +1961,14 @@ HalfCurveLeft: equ 6
 
                     ;next distance, curve (1=right, 2=down, 3=left, 4=up, 0=end current curve)
 RacingGameEvents:     db CurveLeft        | dw 00201 | db EndCurve | dw 00200 |
-                      db CurveDown        | dw 00100 | db EndCurve | dw 00100 |
-                      db CurveRight       | dw 00201 | db EndCurve | dw 00200 |
-                      db CurveLeft        | dw 00201 | db EndCurve | dw 00200 |
-                      db CurveRight       | dw 00201 | db EndCurve | dw 00200 |
-                      db CurveDown        | dw 00100 | db EndCurve | dw 00100 |
-                      db CurveUp          | dw 00100 | db EndCurve | dw 00100 |
-                      db CurveUp          | dw 00100 | db EndCurve | dw 00100 |
-                      db CurveRight       | dw 00201 | db EndCurve | dw 60200 |
-
-
+                      db CurveRight       | dw 00200 | db EndCurve | dw 00200 |
+                      db CurveUp          | dw 00201 | db EndCurve | dw 00200 |
+                      db CurveDown        | dw 00201 | db EndCurve | dw 00200 |
+                      db CurveUp          | dw 00201 | db EndCurve | dw 00200 |
+                      db CurveDown        | dw 00200 | db EndCurve | dw 00200 |
+                      db CurveLeft        | dw 00200 | db EndCurve | dw 00800 |
+                      db CurveUp          | dw 00200 | db EndCurve | dw 00200 |
+                      db CurveDown        | dw 00201 | db EndCurve | dw 60200 |
 
 HandleCurvatureRoad:
   ld    hl,(RacingGameDistance+1)
@@ -2193,6 +2267,15 @@ CheckCollisionEnemyOrHeart:
   ld    (spat+0+(30*4)),a                   ;y mini sprite
   ld    (spat+0+(31*4)),a                   ;y mini sprite
 
+  ld    a,(RacingGameFuel)           ;0-250
+  add   a,25
+  jr    c,.OverFlow
+  cp    251
+  jr    c,.SetFuel
+  .OverFlow:
+  ld    a,250
+  .SetFuel:
+  ld    (RacingGameFuel),a           ;0-250
   ;sfx pick up heart
   ret
 
@@ -2212,11 +2295,11 @@ CheckCollisionEnemyOrHeart:
   cp    b                                   ;check collision left side enemy
   ret   nc
 
-;  ld    hl,00
-;  ld    (Object3+DistanceFromPlayer),hl
-
   ;sfx crash
-  ld    a,1
+  ld    a,(RacingGamePlayerFalldown?)
+  or    a
+  ret   nz
+  inc   a
   ld    (RacingGamePlayerFalldown?),a
 
   ld    a,(RacingGameHorMoveSpeed)         ;value from 0-41 where 21 is center (not moving) 0-20 is moving left, 22-41 is moving right
@@ -2246,7 +2329,10 @@ CheckCollisionEnemyOrHeart:
   ret   nc
 
   ;sfx crash
-  ld    a,1
+  ld    a,(RacingGamePlayerFalldown?)
+  or    a
+  ret   nz
+  inc   a
   ld    (RacingGamePlayerFalldown?),a
 
   ld    a,(RacingGameHorMoveSpeed)         ;value from 0-41 where 21 is center (not moving) 0-20 is moving left, 22-41 is moving right
@@ -2257,5 +2343,349 @@ CheckCollisionEnemyOrHeart:
   inc   a
   ld    (RacingGamePlayerFalldownFacingDirection),a ;1=right, 2=left
   ret
+
+MoveHorizonInCurves:
+  ld    a,(ScrollHorizonLeft?)
+  or    a
+  jp    nz,.ScrollHorizonLeft
+  ld    a,(ScrollHorizonRight?)
+  or    a
+  jp    nz,.ScrollHorizonRight
+  ld    a,(AnimateRoad?)                            ;2=up, 3=end up, 4=down, 5=end down
+  cp    2
+  jp    z,.CurveUp
+  cp    3
+  jp    z,.EndCurveUp
+  cp    4
+  jp    z,.CurveDown
+  cp    5
+  jp    z,.EndCurveDown
+  ret
+
+  .EndCurveUp:
+  ld    a,(RacingGameNewLineIntToBeSetOnVblank)                 ;113 is the standard, 083 is perfect for the road all the way curved up
+  dec   a
+  ld    (MoveHorizonVertically+dy),a
+  ld    hl,MoveHorizonVertically
+  call  DoCopy
+  ret
+
+  .CurveUp:
+  ld    a,(RoadCurvatureAnimationStep)
+  ;FOKKING LEIPE HACKJOB !!!!!!!!!!!!!!!!
+  cp    $21
+  ld    b,2
+  jr    c,.Set2
+  cp    $67
+  jp    nc,.Set2
+  ld    b,3
+
+  .Set2:
+  ;FOKKING LEIPE HACKJOB !!!!!!!!!!!!!!!!
+  ld    a,(RoadCurvatureAnimationStep)
+  inc   a
+  srl   a                                 ;/2
+  ld    e,a
+  ld    d,0
+  ld    hl,RacingGameRoutine.CurveUpLineIntHeightTable
+  add   hl,de
+  ld    a,(hl)
+  sub   a,b
+  ld    (MoveHorizonVertically+dy),a
+  ld    hl,MoveHorizonVertically
+  call  DoCopy
+  ret
+
+  .EndCurveDown:
+  ld    a,(RoadCurvatureAnimationStep)
+  ;FOKKING LEIPE HACKJOB !!!!!!!!!!!!!!!!
+  cp    $16
+  ld    b,3
+  jr    c,.Set
+  ld    b,2
+  .Set:
+  ;FOKKING LEIPE HACKJOB !!!!!!!!!!!!!!!!
+
+  ld    a,(RacingGameNewLineIntToBeSetOnVblank)                 ;113 is the standard, 083 is perfect for the road all the way curved up
+  sub   a,b
+
+  ld    (MoveHorizonVertically+dy),a
+  ld    hl,MoveHorizonVertically
+  call  DoCopy
+  ret
+
+  .CurveDown:
+  ld    a,(RacingGameNewLineIntToBeSetOnVblank)                 ;113 is the standard, 083 is perfect for the road all the way curved up
+  dec   a
+  ld    (MoveHorizonVertically+dy),a
+  ld    hl,MoveHorizonVertically
+  call  DoCopy
+  ret
+
+  .ScrollHorizonRight:
+  xor   a
+  ld    (ScrollHorizonRight?),a
+
+  ld    hl,MoveHorizonRightLoop2Pixels
+  call  DoCopy
+  ld    hl,MoveHorizonRight
+  call  DoCopy
+  ret
+
+  .ScrollHorizonLeft:
+  xor   a
+  ld    (ScrollHorizonLeft?),a
+
+  ld    hl,MoveHorizonLeftLoop2Pixels
+  call  DoCopy
+  ld    hl,MoveHorizonLeft
+  call  DoCopy
+  ret
+
+UpdateHud:
+  ld    a,(framecounter2)
+  and   3
+  jp    z,.Speedometer
+  dec   a
+  jp    z,.Fuelmeter
+  dec   a
+  jp    z,.Distancemeter
+
+  .StartingLights:
+  ld    a,(RacingGameStartingLightsOn?)
+  or    a
+  ret   z
+  inc   a
+  ld    (RacingGameStartingLightsOn?),a
+
+  ld    hl,freezecontrols?
+  ld    (hl),1
+
+  cp    20
+  ld    b,012                       ;sx lights
+  jr    c,.SetStartingLights
+  cp    40
+  ld    b,026                       ;sx lights
+  jr    c,.SetStartingLights
+  cp    60
+  ld    b,040                       ;sx lights
+  jr    c,.SetStartingLights
+  cp    80
+  ld    b,054                       ;sx lights
+  jr    c,.SetStartingLights
+  cp    90
+  ld    b,068                       ;sx lights
+  jr    c,.SetStartingLights
+  ld    b,082                       ;sx lights
+  xor   a
+  ld    (RacingGameStartingLightsOn?),a
+  ld    (freezecontrols?),a
+
+  .SetStartingLights:
+  ld    a,b
+  ld    (StartingLights+sx),a
+  ld    hl,StartingLights
+  call  DoCopy
+  ret
+
+  .Distancemeter:
+  ld    hl,(RacingGameDistance+1)
+  srl   h
+  rr    l                            ;hl /2
+  srl   h
+  rr    l                            ;hl /4
+  srl   h
+  rr    l                            ;hl /8
+  srl   h
+  rr    l                            ;hl /16
+  ld    a,l
+  add   a,46
+  ld    (DistanceMeter+dx),a
+  cp    230
+  jr    c,.EndCheckLevelFinished
+  ld    a,1
+  ld    (freezecontrols?),a
+  ld    (RacingGameLevelFinished?),a
+  ret
+  .EndCheckLevelFinished:
+
+  bit   0,a
+  ld    a,32
+  jr    z,.Setsy
+  ld    a,37
+  .Setsy:
+  ld    (DistanceMeter+sy),a
+
+  ld    hl,DistanceMeter
+  jp    DoCopy
+
+  .Fuelmeter:
+  ld    a,(RequiredAmountOfFuelBars)
+
+  ld    hl,(RacingGameFuel)           ;0-250
+  ld    de,RequiredBarsTable
+  add   hl,de
+  ld    a,(hl)
+  ld    (RequiredAmountOfFuelBars),a
+  ;we have 21 bars so per 11 Fuel we add 1 bar
+
+  ld    a,(RequiredAmountOfFuelBars)
+  ld    b,a
+  ld    a,(CurrentAmountOfFuelBars)
+  cp    b
+  ret   z
+  jr    c,.Add1FuelBar
+
+  .Remove1FuelBar:
+  dec   a
+  ld    (CurrentAmountOfFuelBars),a
+
+  add   a,a                           ;sy Fuel bar = 75 - (CurrentAmountOfFuelBars*2)
+  ld    b,a
+  ld    a,71                          ;remove bar is at y=71 in page 1
+  ld    (FuelBars+sy),a
+
+  ld    a,201-2
+  sub   a,b
+  ld    (FuelBars+dy),a
+
+  ld    hl,FuelBars
+  call  DoCopy
+
+  ld    a,(FuelBars+dPage)
+  xor   1
+  ld    (FuelBars+dPage),a
+
+  ld    hl,FuelBars
+  jp    DoCopy
+
+  .Add1FuelBar:
+  inc   a
+  ld    (CurrentAmountOfFuelBars),a
+  add   a,a                           ;sy Fuel bar = 75 - (CurrentAmountOfFuelBars*2)
+  ld    b,a
+  ld    a,74
+  sub   a,b
+  ld    (FuelBars+sy),a
+
+  ld    a,201
+  sub   a,b
+  ld    (FuelBars+dy),a
+
+  ld    hl,FuelBars
+  call  DoCopy
+
+  ld    a,(FuelBars+dPage)
+  xor   1
+  ld    (FuelBars+dPage),a
+
+  ld    hl,FuelBars
+  jp    DoCopy
+
+  .Speedometer:
+  ld    a,(RequiredAmountOfSpeedBars)
+
+  ld    hl,(RacingGameSpeed)           ;0-250
+  ld    de,RequiredBarsTable
+  add   hl,de
+  ld    a,(hl)
+  ld    (RequiredAmountOfSpeedBars),a
+  ;we have 21 bars so per 11 speed we add 1 bar
+
+  ld    a,(RequiredAmountOfSpeedBars)
+  ld    b,a
+  ld    a,(CurrentAmountOfSpeedBars)
+  cp    b
+  ret   z
+  jr    c,.Add1SpeedBar
+
+  .Remove1SpeedBar:
+  dec   a
+  ld    (CurrentAmountOfSpeedBars),a
+
+  add   a,a                           ;sy speed bar = 75 - (CurrentAmountOfSpeedBars*2)
+  ld    b,a
+  ld    a,71                          ;remove bar is at y=71 in page 1
+  ld    (SpeedBars+sy),a
+
+  ld    a,201-2
+  sub   a,b
+  ld    (SpeedBars+dy),a
+
+  ld    hl,SpeedBars
+  call  DoCopy
+
+  ld    a,(SpeedBars+dPage)
+  xor   1
+  ld    (SpeedBars+dPage),a
+
+  ld    hl,SpeedBars
+  jp    DoCopy
+
+  .Add1SpeedBar:
+  inc   a
+  ld    (CurrentAmountOfSpeedBars),a
+  add   a,a                           ;sy speed bar = 75 - (CurrentAmountOfSpeedBars*2)
+  ld    b,a
+  ld    a,74
+  sub   a,b
+  ld    (SpeedBars+sy),a
+
+  ld    a,201
+  sub   a,b
+  ld    (SpeedBars+dy),a
+
+  ld    hl,SpeedBars
+  call  DoCopy
+
+  ld    a,(SpeedBars+dPage)
+  xor   1
+  ld    (SpeedBars+dPage),a
+
+  ld    hl,SpeedBars
+  jp    DoCopy
+
+RequiredBarsTable:
+db 0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1
+db 1,1,1,1,1,2,2,2,2,2,2,2,2,2,2,2
+db 3,3,3,3,3,3,3,3,3,3,3,4,4,4,4,4
+db 4,4,4,4,4,4,5,5,5,5,5,5,5,5,5,5
+db 5,6,6,6,6,6,6,6,6,6,6,6,7,7,7,7
+db 7,7,7,7,7,7,7,8,8,8,8,8,8,8,8,8
+db 8,8,9,9,9,9,9,9,9,9,9,9,9,10,10,10
+db 10,10,10,10,10,10,10,10,11,11,11,11,11,11,11,11
+db 11,11,11,12,12,12,12,12,12,12,12,12,12,12,13,13
+db 13,13,13,13,13,13,13,13,13,14,14,14,14,14,14,14
+db 14,14,14,14,15,15,15,15,15,15,15,15,15,15,15,16
+db 16,16,16,16,16,16,16,16,16,16,17,17,17,17,17,17
+db 17,17,17,17,17,18,18,18,18,18,18,18,18,18,18,18
+db 19,19,19,19,19,19,19,19,19,19,19,20,20,20,20,20
+db 20,20,20,20,20,20,21,21,21,21,21,21,21,21,21,21
+db 21,21,21,21,21,21,21,21,21,21,21,21
+
+CheckLevelFinished:
+  ld    a,(RacingGameLevelFinished?)
+  or    a
+  ret   z
+
+  ld    a,(framecounter2)
+  and   7
+  ret   nz
+
+  ld    a,(RacingGameStartNextLevelTimer)
+  inc   a
+  ld    (RacingGameStartNextLevelTimer),a
+  cp    80
+  ret   nz
+
+  xor   a
+  ld    (freezecontrols?),a
+
+  pop   af
+  ld    a,15                                ;drilling game
+  ld    (CurrentRoom),a
+  ld    a,1
+  ld    (ChangeRoom?),a
+  ret    
 
 dephase

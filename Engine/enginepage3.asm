@@ -1350,6 +1350,66 @@ SetPinPoint:
 	db		023,0,035,0
 	db		0,0,$98
 
+MoveHorizonVertically:
+	db		000,0,000,1
+	db		000,0,113,0
+	db		000,1,16,0
+	db		0,0,$d0  ;copy direction=left
+
+MoveHorizonRightLoop2Pixels:
+	db		254,0,113,0
+	db		000,0,113,0
+	db		002,0,15,0
+	db		0,0,$d0  ;copy direction=left
+
+MoveHorizonRight:
+	db		253,0,113,0
+	db		255,0,113,0
+	db		254,0,15,0
+	db		0,%0000 0100,$d0  ;copy direction=left
+
+MoveHorizonLeftLoop2Pixels:
+	db		000,0,113,0
+	db		254,0,113,0
+	db		002,0,15,0
+	db		0,0,$d0
+
+MoveHorizonLeft:
+	db		002,0,113,0
+	db		000,0,113,0
+	db		254,0,15,0
+	db		0,0,$d0
+
+SpeedBars:
+	db		000,0,000,1
+	db		242,0,000,0
+	db		006,0,001,0
+	db		0,0,$d0
+
+FuelBars:
+	db		006,0,000,1
+	db		008,0,000,0
+	db		006,0,001,0
+	db		0,0,$d0
+
+DistanceMeter:
+	db		012,0,032,1
+	db		045+10,0,008,0
+	db		010,0,005,0
+	db		0,0,$d0
+
+RacingGameGameOver:
+	db		022,0,032,1
+	db		043,0,016,0
+	db		170,0,001,0
+	db		0,0,$d0
+
+StartingLights:
+	db		012,0,053,1
+	db		122,0,028,0
+	db		014,0,036,0
+	db		0,0,$d0
+
 STOPWAITSPACEPRESSED:
   call  PopulateControls
 ;
@@ -2272,7 +2332,8 @@ RacingGameHorMoveSpeed:			rb	1
 RacingGameHorScreenPosition:		rb	2
 RacingGameDistance:					rb	4
 
-RacingGameSpeed:						rb	2					;between 0 mph and 200 mph
+RacingGameSpeed:						rb	2					;between 0 mph and 250 mph
+RacingGameFuel:							rb	2					;between 0 and 250
 
 RoadLinesMovementAnimationPointer:			rb	2
 AnimateRoadPage0AndPage1Simultaneous?:			rb	1
@@ -2289,10 +2350,22 @@ RacingGameEnemyY:						rb	2
 RacingGamePlayerFalldown?:	rb	1
 RacingGamePlayerFalldownFacingDirection:	rb	1
 
-
-;RacingGameEnemy1DistanceFromPlayer:						rb	2
-
-
+ScrollHorizonLeft?: 				rb  1
+ScrollHorizonLeftCounter:		rb	1
+ScrollHorizonRight?: 				rb  1
+ScrollHorizonRightCounter:	rb	1
+LineIntHeightRacingGame: 		rb	1
+LineIntPartRaceGame:  			rb  1
+CurrentPageOnLineInt: 			rb  1
+PointerToSwapLines: 				rb  2
+CurrentAmountOfSpeedBars:		rb	1
+RequiredAmountOfSpeedBars:	rb	1
+CurrentAmountOfFuelBars:		rb	1
+RequiredAmountOfFuelBars:		rb	1
+RacingGameLevelFinished?:		rb	1
+RacingGameGameOver?:				rb	1
+RacingGameStartingLightsOn?:rb	1
+RacingGameStartNextLevelTimer:rb	1
 
 
 endenginepage3variables:  equ $+enginepage3length

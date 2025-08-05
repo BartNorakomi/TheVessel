@@ -131,23 +131,23 @@
   db 79
   db 255
 ; Sprite 4 - Mode : 2 sprites, color OR on 
+  db 7
+  db 7
+  db 7
+  db 7
+  db 7
+  db 7
+  db 7
+  db 7
+  db 7
+  db 7
+  db 15
+  db 15
+  db 15
   db 15
   db 7
   db 7
-  db 7
-  db 7
-  db 7
-  db 7
-  db 7
-  db 7
-  db 7
-  db 15
-  db 15
-  db 15
-  db 15
-  db 7
-  db 7
-  db 255
+  db 79
   db 73
   db 73
   db 73
@@ -395,23 +395,23 @@
   db 73
   db 73
 ; Sprite 12 - Mode : 2 sprites, color OR on 
+  db 7
+  db 7
+  db 7
+  db 7
+  db 7
+  db 7
+  db 7
+  db 7
+  db 7
+  db 7
+  db 15
+  db 15
+  db 15
   db 15
   db 7
   db 7
-  db 7
-  db 7
-  db 7
-  db 7
-  db 7
-  db 7
-  db 7
-  db 15
-  db 15
-  db 15
-  db 15
-  db 7
-  db 7
-  db 255
+  db 79
   db 73
   db 73
   db 73
