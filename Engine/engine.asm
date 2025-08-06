@@ -563,17 +563,17 @@ PutMiniSprite?: ds  1
 
 
 LineIntHeightStraightRoad:  equ 113
-RacingGameLineIntOffset:  db LineIntHeightStraightRoad     ;113 is the standard, 083 is perfect for the road all the way curved up
+RacingGameLineIntOffset:  ds  1     ;113 is the standard, 083 is perfect for the road all the way curved up
 
 
-RacingGameNewLineIntToBeSetOnVblank:  db  LineIntHeightStraightRoad
+RacingGameNewLineIntToBeSetOnVblank:  ds  1
 
 ;The road animation starts to look good from y=15 and onwards. the animation starts at y=3, so we can skip the first 12 lines ???
 StartRacingGameLineInt: equ 12
 
 
-RoadAnimationStep:  db  0
-RoadAnimationAddressesPointer:  dw  RoadAnimationAddresses
+RoadAnimationStep:  ds  1
+RoadAnimationAddressesPointer:  ds  2
 
 RoadAnimationAddresses:
 dw  StraightRoad01Part1 | db StraightRoad01Part1.Lenght | dw StraightRoad01Part2
@@ -1444,10 +1444,12 @@ Var1:                   equ 14
 Var2:                   equ 15
 Var3:                   equ 16
 
-RacingGameObjectOn?:    equ 1
+;on?:                    equ 0
+RacingGameCharacterSpriteBlock: equ 1 ;1 byte, block for sprite character and color data
 X16bit:                 equ 2   ;2 bytes, used for racing game
 DistanceFromPlayer:     equ 4   ;2 bytes, used for racing game
 SpatEntry:              equ 6   ;2 bytes, used for racing game
+RacingGameHorizontalMovementEnemy:     equ 8   ;1 bytes, used for racing game
 ;PutOnFrame:             equ 9
 SpriteCharacterAddress: equ 10  ;2 bytes, used for racing game
 SpriteColorAddress:     equ 12  ;2 bytes, used for racing game

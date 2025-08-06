@@ -2187,8 +2187,7 @@ OffloadResources?:								db	0
 
 
 
-RacingGameEventDistance:  dw  0000
-RacingGameEventPointer:   dw  RacingGameEvents
+
 
 
 CurrentRacingGamePalette:	db	0 ; can be removed later
@@ -2366,7 +2365,9 @@ RacingGameLevelFinished?:		rb	1
 RacingGameGameOver?:				rb	1
 RacingGameStartingLightsOn?:rb	1
 RacingGameStartNextLevelTimer:rb	1
-
+RacingGameLevel:						rb	1
+RacingGameEventDistance:  	rb	2
+RacingGameEventPointer:   	rb	2
 
 endenginepage3variables:  equ $+enginepage3length
 org variables

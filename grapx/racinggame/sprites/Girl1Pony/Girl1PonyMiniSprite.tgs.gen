@@ -303,7 +303,7 @@
   db 1
   db 7
   db 7
-  db 14
+  db 12
   db 12
   db 20
   db 7
@@ -319,7 +319,7 @@
   db 64
   db 192
   db 144
-  db 208
+  db 16
   db 112
   db 80
   db 192

@@ -675,6 +675,14 @@ RacingGameBackdropGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBl
 	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
 
 RacingGameHeartSpritesBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
+	phase	$8000
+	HeartSpritesCharacters:
+	include "..\grapx\racinggame\sprites\Heart\Heart.tgs.gen"
+	HeartSpriteColors:	
+	include "..\grapx\racinggame\sprites\Heart\Heart.tcs.gen"
+	dephase
+	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
+
 RacingGameGirl1PonySpritesBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
 RacingGameGirl1PonyMiniSpritesBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
 	phase	$8000
@@ -687,11 +695,89 @@ RacingGameGirl1PonyMiniSpritesBlock:  			equ   ($-RomStartAddress) and (romsize-
 	include "..\grapx\racinggame\sprites\Girl1Pony\Girl1PonyMiniSprite.tgs.gen"
 	Girl1PonyMiniSpriteColors:	
 	include "..\grapx\racinggame\sprites\Girl1Pony\Girl1PonyMiniSprite.tcs.gen"
+	dephase
+	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
 
-	HeartSpritesCharacters:
-	include "..\grapx\racinggame\sprites\Heart\Heart.tgs.gen"
-	HeartSpriteColors:	
-	include "..\grapx\racinggame\sprites\Heart\Heart.tcs.gen"
+RacingGameRedHeadBoySpritesBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
+RacingGameRedHeadBoyMiniSpritesBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
+	phase	$8000
+	RedHeadBoySpritesCharacters:
+	include "..\grapx\racinggame\sprites\RedHeadBoy\RedHeadBoy.tgs.gen"
+	RedHeadBoySpriteColors:	
+	include "..\grapx\racinggame\sprites\RedHeadBoy\RedHeadBoy.tcs.gen"
+
+	RedHeadBoyMiniSpritesCharacters:
+	include "..\grapx\racinggame\sprites\RedHeadBoy\RedHeadBoyMiniSprite.tgs.gen"
+	RedHeadBoyMiniSpriteColors:	
+	include "..\grapx\racinggame\sprites\RedHeadBoy\RedHeadBoyMiniSprite.tcs.gen"
+	dephase
+	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
+
+RacingGameWolfSpritesBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
+RacingGameWolfMiniSpritesBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
+	phase	$8000
+	WolfSpritesCharacters:
+	include "..\grapx\racinggame\sprites\Wolf\Wolf.tgs.gen"
+	WolfSpriteColors:	
+	include "..\grapx\racinggame\sprites\Wolf\Wolf.tcs.gen"
+
+	WolfMiniSpritesCharacters:
+	include "..\grapx\racinggame\sprites\Wolf\WolfMiniSprite.tgs.gen"
+	WolfMiniSpriteColors:	
+	include "..\grapx\racinggame\sprites\Wolf\WolfMiniSprite.tcs.gen"
+	dephase
+	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
+
+RacingGameAlienSpritesBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
+RacingGameAlienMiniSpritesBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
+	phase	$8000
+	AlienSpritesCharacters:
+	include "..\grapx\racinggame\sprites\Alien\Alien.tgs.gen"
+	AlienSpriteColors:	
+	include "..\grapx\racinggame\sprites\Alien\Alien.tcs.gen"
+
+	AlienMiniSpritesCharacters:
+	include "..\grapx\racinggame\sprites\Alien\AlienMiniSprite.tgs.gen"
+	AlienMiniSpriteColors:	
+	include "..\grapx\racinggame\sprites\Alien\AlienMiniSprite.tcs.gen"
+
+;$2200 free = 
+
+;	AlienTurnRightAndLeftCharacters:
+;	include "..\grapx\racinggame\sprites\Alien\AlienTurnRightAndLeft.tgs.gen"
+;	AlienTurnRightAndLeftColors:	
+;	include "..\grapx\racinggame\sprites\Alien\AlienTurnRightAndLeft.tcs.gen"
+
+	dephase
+	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
+
+RacingGameCapBoySpritesBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
+RacingGameCapBoyMiniSpritesBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
+	phase	$8000
+	CapBoySpritesCharacters:
+	include "..\grapx\racinggame\sprites\CapBoy\CapBoy.tgs.gen"
+	CapBoySpriteColors:	
+	include "..\grapx\racinggame\sprites\CapBoy\CapBoy.tcs.gen"
+
+	CapBoyMiniSpritesCharacters:
+	include "..\grapx\racinggame\sprites\CapBoy\CapBoyMiniSprite.tgs.gen"
+	CapBoyMiniSpriteColors:	
+	include "..\grapx\racinggame\sprites\CapBoy\CapBoyMiniSprite.tcs.gen"
+	dephase
+	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
+
+RacingGameYellowJacketBoySpritesBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
+RacingGameYellowJacketBoyMiniSpritesBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
+	phase	$8000
+	YellowJacketBoySpritesCharacters:
+	include "..\grapx\racinggame\sprites\YellowJacketBoy\YellowJacketBoy.tgs.gen"
+	YellowJacketBoySpriteColors:	
+	include "..\grapx\racinggame\sprites\YellowJacketBoy\YellowJacketBoy.tcs.gen"
+
+	YellowJacketBoyMiniSpritesCharacters:
+	include "..\grapx\racinggame\sprites\YellowJacketBoy\YellowJacketBoyMiniSprite.tgs.gen"
+	YellowJacketBoyMiniSpriteColors:	
+	include "..\grapx\racinggame\sprites\YellowJacketBoy\YellowJacketBoyMiniSprite.tcs.gen"
 	dephase
 	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
 
@@ -856,7 +942,6 @@ dw  PlayerSpritesCharacters+17*320,PlayerSpriteColors+17*160
 dw  PlayerPart2SpritesCharacters+04*320,PlayerPart2SpriteColors+04*160
 dw  PlayerPart2SpritesCharacters+04*320,PlayerPart2SpriteColors+04*160
 dw  PlayerPart2SpritesCharacters+04*320,PlayerPart2SpriteColors+04*160
-
 	dephase
 	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
 

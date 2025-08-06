@@ -38,7 +38,9 @@ Phase MovementRoutinesAddress
 ;sfx: almost out of fuel, gas, you pass an enemy, pick up heart, whipeout / fall down, starting signals, brake 
 
 
-
+MaximumSpeedUphill:       equ 210
+MaximumSpeedStraightRoad: equ 225
+MaximumSpeedDownhill:     equ 250
 RacingGamePlayerY:  equ 161                 ;y never changes ?
 RacingGameRoutine:
   call  .Initiate                           ;screen on, set int handler, init variables
@@ -51,7 +53,7 @@ RacingGameRoutine:
   call  HandleCurvatureRoad
   call  SetPlayerSprite
   call  WriteSpatToVram
-  call  SetEnemySprite
+  call  SetEnemySprite ;.HandleHorizontalMovementEnemies integrated
   call  PlaceNewObject                      ;new objects may be placed if all active objects distance to player < 6247
   call  .SetHorMoveSpeedAndAnimatePlayerSprite
   call  MovePlayerHorizontally
@@ -125,6 +127,9 @@ RacingGameRoutine:
   ret   nz
   ld    (iy+ObjectPhase),1
 
+  ld    a,1
+  ld    (RacingGameLevel),a
+
   call  SetScreenon
 
 ;  ld    a,32
@@ -148,6 +153,13 @@ RacingGameRoutine:
   ld    (spat+0+(08*4)),a                 ;y sprite 8
   ld    (spat+0+(09*4)),a                 ;y sprite 9
 
+  ld    hl,RoadAnimationAddresses
+  ld    (RoadAnimationAddressesPointer),hl
+
+  ld    a,LineIntHeightStraightRoad
+  ld    (RacingGameLineIntOffset),a
+  ld    a,LineIntHeightStraightRoad
+  ld    (RacingGameNewLineIntToBeSetOnVblank),a
   ld    a,21                              
   ld    (RacingGameHorMoveSpeed),a        ;value from 0-41 where 21 is center (not moving) 0-20 is moving left, 22-41 is moving right
   ld    hl,90*10
@@ -155,6 +167,10 @@ RacingGameRoutine:
   ld    hl,0
   ld    (RacingGameDistance),hl
   ld    (RacingGameDistance+2),hl
+  ld    (RacingGameEventDistance),hl
+
+  ld    hl,RacingGameEventsLevel1         ;pointer to curvature events of level 1
+  ld    (RacingGameEventPointer),hl
 
 ;  ld    hl,2800                           ;jump to end of level
 ;  ld    (RacingGameDistance+1),hl
@@ -164,7 +180,7 @@ RacingGameRoutine:
 
 ;ld hl,50
   ld    (RacingGameSpeed),hl
-  ld    hl,200
+  ld    hl,MaximumSpeedStraightRoad
   ld    (MaximumSpeedRacingGame),hl
 
   ld    a,112
@@ -182,8 +198,26 @@ RacingGameRoutine:
   ld    (RequiredAmountOfSpeedBars),a
   ld    (RacingGameLevelFinished?),a
   ld    (RacingGameStartNextLevelTimer),a
-  ld    a,1
-;  ld    a,0
+  ld    (RoadAnimationStep),a
+
+
+
+
+
+
+
+
+
+  ld    a,0
+
+
+
+
+
+
+
+
+
   ld    (RacingGameStartingLightsOn?),a
   ld    a,21
   ld    (RequiredAmountOfSpeedBars),a
@@ -196,33 +230,16 @@ RacingGameRoutine:
 ;  ld    hl,9370
 ;  ld    (RacingGameEnemy1DistanceFromPlayer),hl
 
-  ld    hl,0 ;6570
-  ld    (Object3+DistanceFromPlayer),hl
-  ld    hl,128 
-  ld    (Object3+X16bit),hl
-  ld    a,0
-  ld    (Object3+RacingGameObjectOn?),a
-  ld    a,2                                 ;player is put on frame 0
-  ld    (Object3+PutOnFrame),a
-  ld    hl,spat+0+(20*4)
-  ld    (Object3+SpatEntry),hl
-	ld		hl,sprcharaddr+640	;sprite 0 character table in VRAM
-  ld    (Object3+SpriteCharacterAddress),hl
-	ld		hl,sprcoladdr+320	;sprite 0 color table in VRAM
-  ld    (Object3+SpriteColorAddress),hl
-  xor   a
-  ld    (Object3+MiniSprite?),a
-
-;  ret
-
   ld    hl,0 ;9370
   ld    (Object2+DistanceFromPlayer),hl
   ld    hl,128 
   ld    (Object2+X16bit),hl
   ld    a,0
-  ld    (Object2+RacingGameObjectOn?),a
+  ld    (Object2+On?),a
   ld    a,1                                 ;player is put on frame 0
   ld    (Object2+PutOnFrame),a
+  ld    a,RacingGameCapBoySpritesBlock
+  ld    (Object2+RacingGameCharacterSpriteBlock),a
   ld    hl,spat+0+(10*4)
   ld    (Object2+SpatEntry),hl
 	ld		hl,sprcharaddr+10*32	;sprite 0 character table in VRAM
@@ -231,15 +248,38 @@ RacingGameRoutine:
   ld    (Object2+SpriteColorAddress),hl
   xor   a
   ld    (Object2+MiniSprite?),a
+  ld    (Object2+RacingGameHorizontalMovementEnemy),a
+
+  ld    hl,0 ;6570
+  ld    (Object3+DistanceFromPlayer),hl
+  ld    hl,128 
+  ld    (Object3+X16bit),hl
+  ld    a,0
+  ld    (Object3+On?),a
+  ld    a,2                                 ;player is put on frame 0
+  ld    (Object3+PutOnFrame),a
+  ld    a,RacingGameGirl1PonySpritesBlock
+  ld    (Object3+RacingGameCharacterSpriteBlock),a
+  ld    hl,spat+0+(20*4)
+  ld    (Object3+SpatEntry),hl
+	ld		hl,sprcharaddr+640	;sprite 0 character table in VRAM
+  ld    (Object3+SpriteCharacterAddress),hl
+	ld		hl,sprcoladdr+320	;sprite 0 color table in VRAM
+  ld    (Object3+SpriteColorAddress),hl
+  xor   a
+  ld    (Object3+MiniSprite?),a
+  ld    (Object3+RacingGameHorizontalMovementEnemy),a
 
   ld    hl,0 ;3370
   ld    (Object4+DistanceFromPlayer),hl
   ld    hl,128 
   ld    (Object4+X16bit),hl
   ld    a,0
-  ld    (Object4+RacingGameObjectOn?),a
+  ld    (Object4+On?),a
   ld    a,3                                 ;player is put on frame 0
   ld    (Object4+PutOnFrame),a
+  ld    a,RacingGameHeartSpritesBlock
+  ld    (Object4+RacingGameCharacterSpriteBlock),a
   ld    hl,spat+0+(30*4)
   ld    (Object4+SpatEntry),hl
 	ld		hl,sprcharaddr+30*32	;sprite 0 character table in VRAM
@@ -248,6 +288,7 @@ RacingGameRoutine:
   ld    (Object4+SpriteColorAddress),hl
   ld    a,%0000 0011                        ;bit 0 on=minisprite, bit 1 on=heart, bit 1 off=minienemy
   ld    (Object4+MiniSprite?),a
+  ld    (Object4+RacingGameHorizontalMovementEnemy),a
 
   call  RePlayer_Tick                 ;initialise, load samples
 	halt
@@ -258,37 +299,21 @@ RacingGameRoutine:
   ret
 
   .UpdateMaximumSpeedOnCurveUpOrDown:
-  ld    a,200
-  ld    (MaximumSpeedRacingGame),a
-
-  ld    a,(AnimateRoad?)                            ;2=up, 3=end up, 4=down, 5=end down
-  cp    4
-  jr    z,.UpdateMaxSpeedCurveDown
-  cp    2
-  jr    z,.UpdateMaxSpeedCurveUp
-  cp    5
-  jr    z,.UpdateMaxSpeedCurveDownEnd
-  cp    3
-  jr    z,.UpdateMaxSpeedCurveUpEnd
-  ret
-
-  .UpdateMaxSpeedCurveDown:
-  ld    a,250
+  ld    a,(RacingGameNewLineIntToBeSetOnVblank)                 ;113 is the standard, 083 is perfect for the road all the way curved up
+  cp    113
+  jr    c,.Uphill
+  cp    115
+  jr    nc,.Downhill
+  .Straight:
+  ld    a,MaximumSpeedStraightRoad
   ld    (MaximumSpeedRacingGame),a
   ret
-
-  .UpdateMaxSpeedCurveDownEnd:
-  ld    a,250
+  .Downhill:
+  ld    a,MaximumSpeedDownhill
   ld    (MaximumSpeedRacingGame),a
   ret
-
-  .UpdateMaxSpeedCurveUp:
-  ld    a,150
-  ld    (MaximumSpeedRacingGame),a
-  ret
-
-  .UpdateMaxSpeedCurveUpEnd:
-  ld    a,150
+  .Uphill:
+  ld    a,MaximumSpeedUphill
   ld    (MaximumSpeedRacingGame),a
   ret
 
@@ -660,21 +685,21 @@ PlaceNewObject:                           ;new objects may be placed if all acti
   ret   nc
 
   ld    ix,Object2                      ;enemy 1
-  bit   0,(ix+RacingGameObjectOn?)
+  bit   0,(ix+On?)
   jr    z,.SetThisObject
   ld    ix,Object3                      ;enemy 2
-  bit   0,(ix+RacingGameObjectOn?)
+  bit   0,(ix+On?)
   jr    z,.SetThisObject
   ld    ix,Object4                      ;heart or other 16x16 sprite
-  bit   0,(ix+RacingGameObjectOn?)
+  bit   0,(ix+On?)
   jr    z,.SetThisObjectMiniSprite
   ret
 
   .SetThisObjectMiniSprite:
   ld    a,r
   set   1,(ix+MiniSprite?)              ;bit 0 on=minisprite, bit 1 on=heart, bit 1 off=minienemy
-  and   1
-  jr    z,.SetThisObject
+  cp    30
+  jr    c,.SetThisObject
   res   1,(ix+MiniSprite?)              ;bit 0 on=minisprite, bit 1 on=heart, bit 1 off=minienemy
 
   .SetThisObject:
@@ -685,15 +710,186 @@ PlaceNewObject:                           ;new objects may be placed if all acti
   cp    (ix+PutOnFrame)
   ret   nz
 
-  set   0,(ix+RacingGameObjectOn?)      ;turn object on
-
   ld    a,r                             ;set random x for new enemy
   add   a,64
   ld    (ix+X16bit),a
   ld    hl,9370                         ;place enemy on the horizon
   ld    (ix+DistanceFromPlayer),l
   ld    (ix+DistanceFromPlayer+1),h
+
+  ld    (ix+RacingGameHorizontalMovementEnemy),0
+;  ld    (ix+RacingGameCharacterSpriteBlock),RacingGameAlienSpritesBlock
+;  set   0,(ix+On?)      ;turn object on
+
+  ;set sprite block
+  bit   0,(ix+MiniSprite?)              ;bit 0 on=minisprite, bit 1 on=heart, bit 1 off=minienemy
+  jr    z,.EndCheckMiniSpriteAndHeart
+  bit   1,(ix+MiniSprite?)              ;bit 0 on=minisprite, bit 1 on=heart, bit 1 off=minienemy
+  jr    z,.EndCheckMiniSpriteAndHeart
+  .Heart:
+  ld    (ix+RacingGameCharacterSpriteBlock),RacingGameHeartSpritesBlock
+  set   0,(ix+On?)      ;turn object on
   ret
+  .EndCheckMiniSpriteAndHeart:
+  ld    a,(RacingGameLevel)
+  add   a,a                             ;*2
+  add   a,a                             ;*4
+  add   a,a                             ;*8
+  ld    e,a
+  ld    d,0
+  ld    hl,EnemyFrequencyPerLevelTable-8
+  add   hl,de
+
+  ;capboy and yellowjacketboy use the standard palette and can always be placed
+  ld    a,r
+  and   7
+  ld    e,a
+  add   hl,de
+  
+  ld    a,(hl)                          ;enemy sprite block (capboy=35, RacingGameYellowJacketBoySpritesBlock=36,  RacingGameRedHeadBoySpritesBlock=32, RacingGameGirl1PonySpritesBlock=31)
+  ld    b,a
+  cp    RacingGameCapBoySpritesBlock
+  jr    nc,.PutSpriteBlock              ;nc=capboy or yellow jacket boy, so always place
+
+  ;at this point we want to place an enemy that switches the palette, first check if another enemy is in play that already is using an alternative palette
+  ld    a,(Object2+On?)
+  or    a
+  jr    z,.CheckObject3
+  ld    a,(Object2+RacingGameCharacterSpriteBlock)
+  cp    RacingGameCapBoySpritesBlock
+  jr    nc,.CheckObject3              ;nc=capboy or yellow jacket boy, so always place
+  cp    b
+  jr    z,.CheckObject3
+  jp    .PutCapBoyOrYellowJacketBoy     ;at this point we cant place a enemy that switches the palette, cuz another enemy that switches an alternative palette is already in play
+
+  .CheckObject3:
+  ld    a,(Object3+On?)
+  or    a
+  jr    z,.CheckObject4
+  ld    a,(Object3+RacingGameCharacterSpriteBlock)
+  cp    RacingGameCapBoySpritesBlock
+  jr    nc,.CheckObject4              ;nc=capboy or yellow jacket boy, so always place
+  cp    b
+  jr    z,.CheckObject4
+  jp    .PutCapBoyOrYellowJacketBoy     ;at this point we cant place a enemy that switches the palette, cuz another enemy that switches an alternative palette is already in play
+
+  .CheckObject4:
+  ld    a,(Object4+On?)
+  or    a
+  jr    z,.PutSpriteBlock
+  ld    a,(Object4+RacingGameCharacterSpriteBlock)
+  cp    RacingGameCapBoySpritesBlock
+  jr    nc,.PutSpriteBlock              ;nc=capboy or yellow jacket boy, so always place
+  cp    b
+  jr    z,.PutSpriteBlock
+  jp    .PutCapBoyOrYellowJacketBoy     ;at this point we cant place a enemy that switches the palette, cuz another enemy that switches an alternative palette is already in play
+
+  .PutSpriteBlock:
+  ld    (ix+RacingGameCharacterSpriteBlock),b
+  set   0,(ix+On?)      ;turn object on
+  ld    a,b
+  cp    RacingGameGirl1PonySpritesBlock
+  ld    hl,Girl1PonyPalette
+  jp    z,.SetPalette
+  cp    RacingGameRedHeadBoySpritesBlock
+  ld    hl,RedHeadBoyPalette
+  jp    z,.SetPalette
+  cp    RacingGameWolfSpritesBlock
+  ld    hl,WolfPalette
+  jp    z,.SetPalette
+  cp    RacingGameAlienSpritesBlock
+  ld    hl,AlienPalette
+  ret   nz
+
+  .SetPalette:
+  ld    c,$9a
+  ld    a,3
+	di
+	out		($99),a
+	ld		a,16+128
+	out		($99),a
+  outi
+  outi
+	ei
+
+  ld    a,5
+	di
+	out		($99),a
+	ld		a,16+128
+	out		($99),a
+  outi
+  outi
+	ei
+
+  ld    a,10
+	di
+	out		($99),a
+	ld		a,16+128
+	out		($99),a
+  outi
+  outi
+	ei
+
+  ld    a,12
+	di
+	out		($99),a
+	ld		a,16+128
+	out		($99),a
+  outi
+  outi
+	ei
+  ret
+
+  .PutCapBoyOrYellowJacketBoy:
+  set   0,(ix+On?)      ;turn object on
+  ld    (ix+RacingGameCharacterSpriteBlock),RacingGameCapBoySpritesBlock
+  ld    a,r
+  rrca
+  ret   c
+  ld    (ix+RacingGameCharacterSpriteBlock),RacingGameYellowJacketBoySpritesBlock
+  ret
+
+;colors 3,5,10 and 12 are unique for each enemy
+Girl1PonyPalette:
+  incbin "..\grapx\racinggame\sprites\Girl1Pony\Girl1Pony.SC5",$7680+7+3*2,2
+  incbin "..\grapx\racinggame\sprites\Girl1Pony\Girl1Pony.SC5",$7680+7+5*2,2
+  incbin "..\grapx\racinggame\sprites\Girl1Pony\Girl1Pony.SC5",$7680+7+10*2,2
+  incbin "..\grapx\racinggame\sprites\Girl1Pony\Girl1Pony.SC5",$7680+7+12*2,2
+RedHeadBoyPalette:
+  incbin "..\grapx\racinggame\sprites\RedHeadBoy\RedHeadBoy.SC5",$7680+7+3*2,2
+  incbin "..\grapx\racinggame\sprites\RedHeadBoy\RedHeadBoy.SC5",$7680+7+5*2,2
+  incbin "..\grapx\racinggame\sprites\RedHeadBoy\RedHeadBoy.SC5",$7680+7+10*2,2
+  incbin "..\grapx\racinggame\sprites\RedHeadBoy\RedHeadBoy.SC5",$7680+7+12*2,2
+WolfPalette:
+  incbin "..\grapx\racinggame\sprites\Wolf\Wolf.SC5",$7680+7+3*2,2
+  incbin "..\grapx\racinggame\sprites\Wolf\Wolf.SC5",$7680+7+5*2,2
+  incbin "..\grapx\racinggame\sprites\Wolf\Wolf.SC5",$7680+7+10*2,2
+  incbin "..\grapx\racinggame\sprites\Wolf\Wolf.SC5",$7680+7+12*2,2
+AlienPalette:
+  incbin "..\grapx\racinggame\sprites\Alien\Alien.SC5",$7680+7+3*2,2
+  incbin "..\grapx\racinggame\sprites\Alien\Alien.SC5",$7680+7+5*2,2
+  incbin "..\grapx\racinggame\sprites\Alien\Alien.SC5",$7680+7+10*2,2
+  incbin "..\grapx\racinggame\sprites\Alien\Alien.SC5",$7680+7+12*2,2
+
+;Difficulty:
+;CapBoy
+;YellowJacketBoy
+;Girl1Pony
+;RedHeadBoy
+;Wolf
+;Alien
+
+EnemyFrequencyPerLevelTable:
+  .Level1:
+;  db    RacingGameCapBoySpritesBlock,RacingGameCapBoySpritesBlock,RacingGameCapBoySpritesBlock,RacingGameCapBoySpritesBlock,RacingGameYellowJacketBoySpritesBlock,RacingGameYellowJacketBoySpritesBlock,RacingGameYellowJacketBoySpritesBlock,RacingGameGirl1PonySpritesBlock
+  .Level2:
+;  db    RacingGameCapBoySpritesBlock,RacingGameCapBoySpritesBlock,RacingGameCapBoySpritesBlock,RacingGameYellowJacketBoySpritesBlock,RacingGameYellowJacketBoySpritesBlock,RacingGameYellowJacketBoySpritesBlock,RacingGameGirl1PonySpritesBlock,RacingGameRedHeadBoySpritesBlock
+  .Level3:
+;  db    RacingGameCapBoySpritesBlock,RacingGameCapBoySpritesBlock,RacingGameYellowJacketBoySpritesBlock,RacingGameYellowJacketBoySpritesBlock,RacingGameGirl1PonySpritesBlock,RacingGameGirl1PonySpritesBlock,RacingGameRedHeadBoySpritesBlock,RacingGameRedHeadBoySpritesBlock
+
+  .Level10:
+  db    RacingGameGirl1PonySpritesBlock,RacingGameGirl1PonySpritesBlock,RacingGameRedHeadBoySpritesBlock,RacingGameRedHeadBoySpritesBlock,RacingGameWolfSpritesBlock,RacingGameWolfSpritesBlock,RacingGameAlienSpritesBlock,RacingGameAlienSpritesBlock
+
 
 RemoveEnemySprite:
   ;If enemy is out of screen bot, AND there is a mini sprite enemy in play, we remove the minisprite enemy, and we place this enemy over the minisprite
@@ -710,6 +906,9 @@ RemoveEnemySprite:
   cp    (ix+PutOnFrame)
   ret   nz
 
+  ld    (ix+RacingGameHorizontalMovementEnemy),0
+  ld    a,(Object4+RacingGameCharacterSpriteBlock)
+  ld    (ix+RacingGameCharacterSpriteBlock),a
   ld    hl,(Object4+X16bit)
   ld    (ix+X16bit),l
   ld    (ix+X16bit+1),h
@@ -722,7 +921,7 @@ RemoveEnemySprite:
   ld    hl,0
   ld    (ix+DistanceFromPlayer),l
   ld    (ix+DistanceFromPlayer+1),h  
-  ld    (ix+RacingGameObjectOn?),0
+  ld    (ix+On?),0
 
   ld    a,213
   ld    l,(ix+SpatEntry)
@@ -763,13 +962,13 @@ SetEnemySprite:
   ret
 
   .HandleObject:
-  bit   0,(ix+RacingGameObjectOn?)
+  bit   0,(ix+On?)
   ret   z
   ;distance from player to horizon = 9370
   ;enemy y on horizon=78 on straight road. y player=161
 
   ;simulate enemy driving away from player
-  ld    bc,100                           ;enemy speed
+  ld    bc,140                           ;enemy speed
 ;  ld    bc,000                           ;enemy speed
   ld    de,(RacingGameSpeed)              ;player speed
 
@@ -1103,8 +1302,7 @@ SetEnemySprite:
   ld    h,(hl)
   ld    l,e
 
-  ld    a,RacingGameHeartSpritesBlock   	;drilling game map
-;  ld    a,RacingGameGirl1PonyMiniSpritesBlock   	;drilling game map
+  ld    a,(ix+RacingGameCharacterSpriteBlock)
   ld    (EnemySpriteBlock),a
   ld    e,(hl)
   inc   hl
@@ -1135,10 +1333,6 @@ SetEnemySprite:
 .MiniSpriteSize2:  dw  Girl1PonyMiniSpritesCharacters+2*64,  Girl1PonyMiniSpriteColors+2*32
 .MiniSpriteSize1:  dw  Girl1PonyMiniSpritesCharacters+1*64,  Girl1PonyMiniSpriteColors+1*32
 .MiniSpriteSize0:  dw  Girl1PonyMiniSpritesCharacters+0*64,  Girl1PonyMiniSpriteColors+0*32
-
-
-
-
 
 .HeartOffSetPointer: dw  .HeartSize7, .HeartSize7, .HeartSize7, .HeartSize6, .HeartSize6, .HeartSize6, .HeartSize5, .HeartSize5, .HeartSize5, .HeartSize4, .HeartSize4, .HeartSize3, .HeartSize3, .HeartSize2, .HeartSize2, .HeartSize1, .HeartSize1, .HeartSize0, .HeartSize0
 
@@ -1210,6 +1404,8 @@ SetEnemySprite:
   ld    (hl),a
   .SpatSet:
 
+  call  .HandleHorizontalMovementEnemies
+
   ld    a,(framecounter2)
   and   3
   cp    (ix+PutOnFrame)
@@ -1236,8 +1432,29 @@ SetEnemySprite:
   ld    h,(hl)
   ld    l,e
 
-  ld    a,RacingGameGirl1PonySpritesBlock   	;drilling game map
-  ld    (EnemySpriteBlock),a
+  ld    a,(ix+RacingGameCharacterSpriteBlock)
+  ld    (EnemySpriteBlock),a  
+
+;  ld    a,(ix+RacingGameHorizontalMovementEnemy)  ;already steering toward player ?
+;  cp    -1
+;  jr    nz,.EndCheckMovingLeft
+;  ld    de,AlienTurnRightAndLeftCharacters+10*32
+;  ld    (EnemySpriteCharacter),de
+;  ld    de,AlienTurnRightAndLeftColors+10*16
+;  ld    (EnemySpriteColor),de
+;  jp    .EndSetCharacterAndColor
+;  .EndCheckMovingLeft:
+
+;  ld    a,(ix+RacingGameHorizontalMovementEnemy)  ;already steering toward player ?
+;  cp    1
+;  jr    nz,.EndCheckMovingRight
+;  ld    de,AlienTurnRightAndLeftCharacters
+;  ld    (EnemySpriteCharacter),de
+;  ld    de,AlienTurnRightAndLeftColors
+;  ld    (EnemySpriteColor),de
+;  jp    .EndSetCharacterAndColor
+;  .EndCheckMovingRight:
+
   ld    e,(hl)
   inc   hl
   ld    d,(hl)
@@ -1248,9 +1465,9 @@ SetEnemySprite:
   ld    d,(hl)
   ld    (EnemySpriteColor),de
 
+  .EndSetCharacterAndColor:
   ld    l,(ix+SpriteCharacterAddress)
   ld    h,(ix+SpriteCharacterAddress+1)
-
   ld    (EnemySpriteCharacterVramAddress),hl
   ld    l,(ix+SpriteColorAddress)
   ld    h,(ix+SpriteColorAddress+1)
@@ -1258,6 +1475,49 @@ SetEnemySprite:
   ld    a,(ix+MiniSprite?)
   ld    (PutMiniSprite?),a
   ret
+
+  .HandleHorizontalMovementEnemies:                ;some enemies can move horizontally
+  ld    a,(ix+RacingGameCharacterSpriteBlock)
+  cp    RacingGameAlienSpritesBlock
+  jr    z,.Alien
+  cp    RacingGameWolfSpritesBlock
+  jr    z,.Wolf
+  ret
+
+  .Wolf:                                   ;Wolf continuesly zig zags
+  ret
+
+  .Alien:                                   ;Alien moves in your direction halfway the screen
+  call  .CheckEnemyNear                     ;checks if enemy is near player, if so steer toward player
+  ld    a,(ix+X16bit)
+  add   a,(ix+RacingGameHorizontalMovementEnemy)
+  cp    30
+  ret   c
+  cp    256-20
+  ret   nc
+  ld    (ix+X16bit),a
+  ret
+
+  .CheckEnemyNear:
+  ld    l,(ix+DistanceFromPlayer)
+  ld    h,(ix+DistanceFromPlayer+1)
+  ld    de,5000
+  sbc   hl,de
+  ret   nc
+
+  ld    a,(ix+RacingGameHorizontalMovementEnemy)  ;already steering toward player ?
+  or    a
+  ret   nz
+
+  ld    a,(ix+X16bit)
+  sub   a,10
+  ld    b,a
+  ld    a,(RacingGamePlayerX)
+  cp    b
+  ld    (ix+RacingGameHorizontalMovementEnemy),-2
+  ret   c
+  ld    (ix+RacingGameHorizontalMovementEnemy),2
+  ret  
 
 .GirlOffSetPointer: dw  .Size14, .Size14, .Size14, .Size13, .Size12, .Size11, .Size10, .Size9,  .Size8, .Size8, .Size7, .Size7, .Size7, .Size6, .Size6, .Size5, .Size5, .Size5, .Size4
                     dw  .Size4,  .Size3,  .Size3,  .Size3,  .Size3,  .Size2,  .Size2,  .Size2,  .Size2, .Size1, .Size1, .Size1, .Size1, .Size1, .Size0, .Size0, .Size0, .Size0, .Size0
@@ -1960,15 +2220,15 @@ HalfCurveRight: equ 5
 HalfCurveLeft: equ 6
 
                     ;next distance, curve (1=right, 2=down, 3=left, 4=up, 0=end current curve)
-RacingGameEvents:     db CurveLeft        | dw 00201 | db EndCurve | dw 00200 |
-                      db CurveRight       | dw 00200 | db EndCurve | dw 00200 |
-                      db CurveUp          | dw 00201 | db EndCurve | dw 00200 |
-                      db CurveDown        | dw 00201 | db EndCurve | dw 00200 |
-                      db CurveUp          | dw 00201 | db EndCurve | dw 00200 |
-                      db CurveDown        | dw 00200 | db EndCurve | dw 00200 |
-                      db CurveLeft        | dw 00200 | db EndCurve | dw 00800 |
-                      db CurveUp          | dw 00200 | db EndCurve | dw 00200 |
-                      db CurveDown        | dw 00201 | db EndCurve | dw 60200 |
+RacingGameEventsLevel1:     db CurveUp          | dw 00250 | db EndCurve | dw 00250 |
+                      db CurveDown        | dw 00250 | db EndCurve | dw 00250 |
+                      db CurveUp          | dw 00350 | db EndCurve | dw 00350 |
+                      db CurveDown        | dw 00350 | db EndCurve | dw 00350 |
+                      db CurveUp          | dw 00250 | db EndCurve | dw 01250 |
+                      db CurveDown        | dw 00250 | db EndCurve | dw 00250 |
+                      db CurveLeft        | dw 00250 | db EndCurve | dw 00250 |
+                      db CurveUp          | dw 00250 | db EndCurve | dw 00250 |
+                      db CurveDown        | dw 00250 | db EndCurve | dw 60200 |
 
 HandleCurvatureRoad:
   ld    hl,(RacingGameDistance+1)
@@ -2233,13 +2493,13 @@ CheckCollisionEnemyOrHeart:
   ld    a,(RacingGamePlayerX)
   ld    b,a
 
-  ld    a,(Object2+RacingGameObjectOn?)
+  ld    a,(Object2+On?)
   or    a
   call  nz,.CheckObject2
-  ld    a,(Object3+RacingGameObjectOn?)
+  ld    a,(Object3+On?)
   or    a
   call  nz,.CheckObject3
-  ld    a,(Object4+RacingGameObjectOn?)
+  ld    a,(Object4+On?)
   or    a
   ret   z
 
@@ -2262,13 +2522,13 @@ CheckCollisionEnemyOrHeart:
   ld    hl,0
   ld    (Object4+DistanceFromPlayer),hl
   xor   a
-  ld    (Object4+RacingGameObjectOn?),a
+  ld    (Object4+On?),a
   ld    a,213
   ld    (spat+0+(30*4)),a                   ;y mini sprite
   ld    (spat+0+(31*4)),a                   ;y mini sprite
 
   ld    a,(RacingGameFuel)           ;0-250
-  add   a,25
+  add   a,50
   jr    c,.OverFlow
   cp    251
   jr    c,.SetFuel
@@ -2287,11 +2547,11 @@ CheckCollisionEnemyOrHeart:
   ret   nc
 
   ld    a,(spat+1+(20*4))                   ;x enemy
-  add   a,16
+  add   a,16-8
   cp    b                                   ;check collision right side enemy
   ret   c
 
-  sub   a,48
+  sub   a,48-16
   cp    b                                   ;check collision left side enemy
   ret   nc
 
@@ -2320,11 +2580,11 @@ CheckCollisionEnemyOrHeart:
   ret   nc
 
   ld    a,(spat+1+(10*4))                   ;x enemy
-  add   a,16
+  add   a,16-8
   cp    b                                   ;check collision right side enemy
   ret   c
 
-  sub   a,48
+  sub   a,48-16
   cp    b                                   ;check collision left side enemy
   ret   nc
 
