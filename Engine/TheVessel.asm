@@ -654,11 +654,9 @@ DrillingLocationsGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlo
 
 
 
-
-
-
-
-
+RacingGameTitleScreenGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
+  incbin "..\grapx\RacingGame\TitleScreen.sc5",7,212 * 128      ;98 lines
+	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
 
 RacingGameTrackStraightPage0GfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
   incbin "..\grapx\RacingGame\TrackStraightPage0.sc5",7,211 * 128      ;98 lines

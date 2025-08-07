@@ -136,8 +136,8 @@ EventUpgradeMenu:					db	1,$28,$7e | dw 000,000					,000        | db 255      ,M
 EventDrillingLocations:		db	1,$28,$7e | dw 000,000					,000        | db 255      ,MovementRoutines2Block| dw DrillingLocationsRoutine	| db 000,000 ,000, 000
 
 EventRacingGame:					db	1,$28,$7e | dw 000,000					,000        | db 255      ,MovementRoutines3Block| dw RacingGameRoutine					| db 000,000 ,000, 000
-
-
+EventRacingGameTitleScreen:		db	1,$28,$7e | dw 000,000			,000        | db 255      ,MovementRoutines3Block| dw RacingGameTitleScreenRoutine	| db 000,000 ,000, 000
+EventRacingGameLevelProgress: db	1,$28,$7e | dw 000,000			,000        | db 255      ,MovementRoutines3Block| dw RacingGameLevelProgressRoutine| db 000,000 ,000, 000
 
 LenghtDoCopyTable:  equ	RestoreBackgroundObject1Page1-RestoreBackgroundObject1Page0
 ResetRestoreBackgroundTables:
@@ -370,21 +370,25 @@ LoadTileMap:
 	dec		a
 	jp		z,.drillinggame
 	dec		a
-	jp		z,.upgrademenu
+;	jp		z,.upgrademenu
 	dec		a
-	jp		z,.drillinglocations
+;	jp		z,.drillinglocations
 	dec		a
-	jp		z,.racinggame
+;	jp		z,.racinggame
+	dec		a
+;	jp		z,.racinggametitlescreen
+	dec		a
+;	jp		z,.racinggamelevelprogress
 	ret
 
-	.racinggame:
-	ret
+;	.racinggame:
+;	ret
 
-	.drillinglocations:
-	ret
+;	.drillinglocations:
+;	ret
 
-	.upgrademenu:
-	ret
+;	.upgrademenu:
+;	ret
 
 	.drillinggame:
   ld    a,(slot.page1rom)              	;all RAM except page 1+2
@@ -567,6 +571,30 @@ PutObjects:															;put objects and events
 	jp		z,PutObjectsDrillingLocations
 	dec		a
 	jp		z,PutObjectsRacingGame
+	dec		a
+	jp		z,PutObjectsRacingGameTitleScreen
+	dec		a
+	jp		z,PutObjectsRacingGameLevelProgress
+	ret
+
+PutObjectsRacingGameLevelProgress:
+	xor		a																;turn off main player sprite (we don't use this at the games)
+	ld		(Object1+on?),a
+
+	ld		de,ObjEvent1										;now put events
+
+	ld		hl,EventRacingGameLevelProgress	;put racing game level progress event
+	call	PutSingleObject
+	ret
+
+PutObjectsRacingGameTitleScreen:
+	xor		a																;turn off main player sprite (we don't use this at the games)
+	ld		(Object1+on?),a
+
+	ld		de,ObjEvent1										;now put events
+
+	ld		hl,EventRacingGameTitleScreen		;put racing game title screen event
+	call	PutSingleObject
 	ret
 
 PutObjectsRacingGame:
@@ -899,6 +927,10 @@ LoadRoomGfx:
 	jp		z,LoadDrillingLocationsGfx 			;loads the drilling locations screen and sets palette
 	dec		a
 	jp		z,LoadRacingGameGfx 						;loads the racing game screen and sets palette
+	dec		a
+;	jp		z,LoadRacingGameTitleScreenGfx 						;loads the racing game screen and sets palette
+	dec		a
+;	jp		z,LoadRacingGameLevelProgressGfx 						;loads the racing game screen and sets palette
 	ret
 
 LoadRacingGameGfx:
@@ -1398,11 +1430,10 @@ DistanceMeter:
 	db		010,0,005,0
 	db		0,0,$d0
 
-RacingGameGameOver:
-	db		022,0,032,1
-	db		043,0,016,0
-	db		170,0,001,0
-	db		0,0,$d0
+RacingGameGameOverUp:
+	ds		15
+RacingGameGameOverDown:
+	ds		15
 
 StartingLights:
 	db		012,0,053,1

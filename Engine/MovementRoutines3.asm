@@ -1,6 +1,8 @@
 ;UpgradeMenuEventRoutine
 ;DrillingLocationsRoutine
 ;RacingGameRoutine
+;EventRacingGameTitleScreen
+;EventRacingGameLevelProgress
 
 Phase MovementRoutinesAddress
 
@@ -36,7 +38,8 @@ Phase MovementRoutinesAddress
 
 
 ;sfx: almost out of fuel, gas, you pass an enemy, pick up heart, whipeout / fall down, starting signals, brake 
-
+StartingLightsOn?:  equ 1
+RacingGameTitleScreenOn?:  equ 1
 
 MaximumSpeedUphill:       equ 210
 MaximumSpeedStraightRoad: equ 225
@@ -101,18 +104,29 @@ RacingGameRoutine:
   jp    .Engine
 
   .GameOver:
-  ld    hl,RacingGameGameOver
+  ld    hl,RacingGameGameOverUp
+  call  DoCopy
+  ld    hl,RacingGameGameOverDown
   call  DoCopy
 
-  ld    a,(RacingGameGameOver+sy)
-  inc   a
-  cp    53
+  ld    a,(RacingGameGameOverUp+sy)
+  dec   a
+  cp    31
   jr    z,.EndGameOverAnimation
-  ld    (RacingGameGameOver+sy),a
-  ld    a,(RacingGameGameOver+dy)
+  ld    (RacingGameGameOverUp+sy),a
+  ld    a,(RacingGameGameOverUp+dy)
+  dec   a
+  ld    (RacingGameGameOverUp+dy),a
+
+  ld    a,(RacingGameGameOverDown+sy)
   inc   a
-  ld    (RacingGameGameOver+dy),a
+  ld    (RacingGameGameOverDown+sy),a
+  ld    a,(RacingGameGameOverDown+dy)
+  inc   a
+  ld    (RacingGameGameOverDown+dy),a
   .EndGameOverAnimation:
+
+  call  .CheckBackToTitleScreen
 
   xor   a
   ld    hl,vblankintflag
@@ -121,6 +135,26 @@ RacingGameRoutine:
   jr    z,.checkflag2
   ld    (hl),a
   jp    .GameOver
+
+  .CheckBackToTitleScreen:
+  ld    a,(framecounter2)
+  inc   a
+  ld    (framecounter2),a
+  and   7
+  ret   nz
+
+  ld    a,(RacingGameStartNextLevelTimer)
+  inc   a
+  ld    (RacingGameStartNextLevelTimer),a
+  cp    80
+  ret   nz
+
+  pop   af
+  ld    a,16                                ;racing game title screen
+  ld    (CurrentRoom),a
+  ld    a,1
+  ld    (ChangeRoom?),a
+
 
   .Initiate:
   bit   0,(iy+ObjectPhase)
@@ -137,6 +171,8 @@ RacingGameRoutine:
 
 ;  ld    a,1
 ;  ld    (SetLineIntHeightOnVblankDrillingGame?),a
+
+
 
   ;set y coordinates player sprite
   ld    a,RacingGamePlayerY
@@ -201,21 +237,10 @@ RacingGameRoutine:
   ld    (RoadAnimationStep),a
 
 
-
-
-
-
-
-
-
-  ld    a,0
-
-
-
-
-
-
-
+  xor   a
+  if StartingLightsOn?
+  ld    a,1
+  endif
 
 
   ld    (RacingGameStartingLightsOn?),a
@@ -290,6 +315,11 @@ RacingGameRoutine:
   ld    (Object4+MiniSprite?),a
   ld    (Object4+RacingGameHorizontalMovementEnemy),a
 
+  ld    hl,.RacingGameGameOverUp
+  ld    de,RacingGameGameOverUp
+  ld    bc,15*2
+  ldir
+
   call  RePlayer_Tick                 ;initialise, load samples
 	halt
   call  RePlayer_Tick                 ;initialise, load samples
@@ -297,6 +327,18 @@ RacingGameRoutine:
 	halt
   call  SetInterruptHandlerRacingGame
   ret
+
+.RacingGameGameOverUp:
+	db		022,0,055,1
+	db		032,0,052,0
+	db		190,0,001,0
+	db		0,0,$d0
+.RacingGameGameOverDown:
+	db		022,0,053,1
+	db		032,0,050,0
+	db		190,0,001,0
+	db		0,0,$d0
+
 
   .UpdateMaximumSpeedOnCurveUpOrDown:
   ld    a,(RacingGameNewLineIntToBeSetOnVblank)                 ;113 is the standard, 083 is perfect for the road all the way curved up
@@ -670,7 +712,13 @@ db    LineIntHeightStraightRoad+30
   ld    (RacingGameHorMoveSpeed),a        ;value from 0-41 where 21 is center (not moving) 0-20 is moving left, 22-41 is moving right
   ret
 
+XstartingPositionEnemyTable:
+  db    28, 41, 54, 68, 81, 94, 108, 121, 134, 148, 161, 174, 188, 201, 214, 228
 PlaceNewObject:                           ;new objects may be placed if all active objects distance to player < 6247
+  ld    a,(RacingGameStartingLightsOn?)
+  or    a
+  ret   nz
+
   ld    hl,(Object2+DistanceFromPlayer)
   ld    de,6247
   sbc   hl,de
@@ -710,8 +758,19 @@ PlaceNewObject:                           ;new objects may be placed if all acti
   cp    (ix+PutOnFrame)
   ret   nz
 
+  ;X enemy has to be between 28 and 228, so make it in steps of 16, and use a table to read out starting position 
   ld    a,r                             ;set random x for new enemy
-  add   a,64
+  and   15
+  ld    e,a
+  ld    d,0
+  ld    hl,XstartingPositionEnemyTable
+  add   hl,de
+  ld    a,(hl)
+
+
+
+;  ld    a,104
+
   ld    (ix+X16bit),a
   ld    hl,9370                         ;place enemy on the horizon
   ld    (ix+DistanceFromPlayer),l
@@ -747,6 +806,11 @@ PlaceNewObject:                           ;new objects may be placed if all acti
   add   hl,de
   
   ld    a,(hl)                          ;enemy sprite block (capboy=35, RacingGameYellowJacketBoySpritesBlock=36,  RacingGameRedHeadBoySpritesBlock=32, RacingGameGirl1PonySpritesBlock=31)
+  
+  
+;  ld a,RacingGameWolfSpritesBlock
+  
+  
   ld    b,a
   cp    RacingGameCapBoySpritesBlock
   jr    nc,.PutSpriteBlock              ;nc=capboy or yellow jacket boy, so always place
@@ -966,6 +1030,8 @@ SetEnemySprite:
   ret   z
   ;distance from player to horizon = 9370
   ;enemy y on horizon=78 on straight road. y player=161
+
+  call  .HandleHorizontalMovementEnemies
 
   ;simulate enemy driving away from player
   ld    bc,140                           ;enemy speed
@@ -1404,8 +1470,6 @@ SetEnemySprite:
   ld    (hl),a
   .SpatSet:
 
-  call  .HandleHorizontalMovementEnemies
-
   ld    a,(framecounter2)
   and   3
   cp    (ix+PutOnFrame)
@@ -1484,16 +1548,46 @@ SetEnemySprite:
   jr    z,.Wolf
   ret
 
-  .Wolf:                                   ;Wolf continuesly zig zags
+  .Wolf:                                   ;Wolf continuously zig zags
+  ld    a,(ix+var3)
+  inc   a
+  and   63
+  ld    (ix+var3),a
+  ld    e,a
+  ld    d,0
+  ld    hl,.WolfXMovementTable
+  add   hl,de
+  ld    a,(ix+X16bit)
+  add   a,(hl)
+  cp    26
+  ret   c
+  cp    256-26
+  jr    c,.EndCheckWolfReachedRightBorder
+  ld    (ix+var3),32
   ret
+  .EndCheckWolfReachedRightBorder:
+  ld    (ix+X16bit),a
+  ret
+
+  ;X enemy has to be between 28 and 228, so make it in steps of.... 16 ?
+
+
+  .WolfXMovementTable:
+  ;db  +0,+1,+1,+0,+1,+1,+1,+2, +1,+2,+1,+2,+2,+1,+2,+2, +2,+2,+1,+2,+2,+1,+2,+1, +1,+0,+1,+1,+0,+1,+0,+0
+  ;db  -0,-0,-1,-0,-1,-1,-0,-1, -1,-2,-1,-2,-2,-1,-2,-2, -2,-2,-1,-2,-2,-1,-2,-1, -1,-0,-1,-1,-0,-1,-0,-0
+
+db +0,+1,+1,+2,+2,+2,+2,+3,   +3,+3,+3,+3,+4,+4,+4,+4,   +4,+4,+4,+4,+3,+3,+3,+3,   +3,+2,+2,+2,+2,+1,+1,+0
+db -0,-1,-1,-2,-2,-2,-2,-3,   -3,-3,-3,-3,-4,-4,-4,-4,   -4,-4,-4,-4,-3,-3,-3,-3,   -3,-2,-2,-2,-2,-1,-1,-0
+
+
 
   .Alien:                                   ;Alien moves in your direction halfway the screen
   call  .CheckEnemyNear                     ;checks if enemy is near player, if so steer toward player
   ld    a,(ix+X16bit)
   add   a,(ix+RacingGameHorizontalMovementEnemy)
-  cp    30
+  cp    26
   ret   c
-  cp    256-20
+  cp    256-26
   ret   nc
   ld    (ix+X16bit),a
   ret
@@ -2516,8 +2610,10 @@ CheckCollisionEnemyOrHeart:
   ret   c
 
   sub   a,48-8
+  jr    c,.CarryObject4
   cp    b                                   ;check collision left side enemy
   ret   nc
+  .CarryObject4:
 
   ld    hl,0
   ld    (Object4+DistanceFromPlayer),hl
@@ -2528,7 +2624,7 @@ CheckCollisionEnemyOrHeart:
   ld    (spat+0+(31*4)),a                   ;y mini sprite
 
   ld    a,(RacingGameFuel)           ;0-250
-  add   a,50
+  add   a,40
   jr    c,.OverFlow
   cp    251
   jr    c,.SetFuel
@@ -2541,9 +2637,9 @@ CheckCollisionEnemyOrHeart:
 
   .CheckObject3:
   ld    a,(spat+0+(20*4))                   ;y enemy
-  cp    RacingGamePlayerY-16                ;check collision bottom side of enemy
+  cp    RacingGamePlayerY-6                ;check collision bottom side of enemy
   ret   c
-  cp    RacingGamePlayerY+10                ;check collision top side of enemy
+  cp    RacingGamePlayerY+00                ;check collision top side of enemy
   ret   nc
 
   ld    a,(spat+1+(20*4))                   ;x enemy
@@ -2552,8 +2648,10 @@ CheckCollisionEnemyOrHeart:
   ret   c
 
   sub   a,48-16
+  jr    c,.CarryObject3
   cp    b                                   ;check collision left side enemy
   ret   nc
+  .CarryObject3:
 
   ;sfx crash
   ld    a,(RacingGamePlayerFalldown?)
@@ -2574,9 +2672,9 @@ CheckCollisionEnemyOrHeart:
 
   .CheckObject2:
   ld    a,(spat+0+(10*4))                   ;y enemy
-  cp    RacingGamePlayerY-16                ;check collision bottom side of enemy
+  cp    RacingGamePlayerY-6                ;check collision bottom side of enemy
   ret   c
-  cp    RacingGamePlayerY+10                ;check collision top side of enemy
+  cp    RacingGamePlayerY+00                ;check collision top side of enemy
   ret   nc
 
   ld    a,(spat+1+(10*4))                   ;x enemy
@@ -2585,8 +2683,10 @@ CheckCollisionEnemyOrHeart:
   ret   c
 
   sub   a,48-16
+  jr    c,.CarryObject2
   cp    b                                   ;check collision left side enemy
   ret   nc
+  .CarryObject2:
 
   ;sfx crash
   ld    a,(RacingGamePlayerFalldown?)
@@ -2721,32 +2821,88 @@ UpdateHud:
   ld    hl,freezecontrols?
   ld    (hl),1
 
+  cp    2
+  jr    z,.SetStartingLightsAllOff
   cp    20
-  ld    b,012                       ;sx lights
-  jr    c,.SetStartingLights
+  jr    z,.SetStartingLights1on
+  cp    38
+  jr    z,.SetStartingLightsAllOff
   cp    40
-  ld    b,026                       ;sx lights
-  jr    c,.SetStartingLights
+  jr    z,.SetStartingLights2on
+  cp    58
+  jr    z,.SetStartingLightsAllOff
   cp    60
-  ld    b,040                       ;sx lights
-  jr    c,.SetStartingLights
+  jr    z,.SetStartingLights3on
+  cp    78
+  jr    z,.SetStartingLightsAllOff
   cp    80
-  ld    b,054                       ;sx lights
-  jr    c,.SetStartingLights
+  jr    z,.SetStartingLights4on
   cp    90
-  ld    b,068                       ;sx lights
-  jr    c,.SetStartingLights
-  ld    b,082                       ;sx lights
+  ret   nz
   xor   a
   ld    (RacingGameStartingLightsOn?),a
   ld    (freezecontrols?),a
+  ld    hl,.RemoveStartingLights
+  jp    DoCopy
 
-  .SetStartingLights:
-  ld    a,b
-  ld    (StartingLights+sx),a
-  ld    hl,StartingLights
-  call  DoCopy
-  ret
+  .SetStartingLights4on:
+  ld    hl,.StartingLights4on
+  jp    DoCopy
+
+  .SetStartingLights3on:
+  ld    hl,.StartingLights3on
+  jp    DoCopy
+
+  .SetStartingLights2on:
+  ld    hl,.StartingLights2on
+  jp    DoCopy
+
+  .SetStartingLights1on:
+  ld    hl,.StartingLights1on
+  jp    DoCopy
+
+  .SetStartingLightsAllOff:
+  ld    hl,.StartingLightsAllOff
+  jp    DoCopy
+
+  .RemoveStartingLights:
+	db		0,0,0,0
+	db		.dxStartingLights,0,.dyStartingLights,0
+	db		078,0,024,0
+	db		14+14*16,0,$c0
+
+  .StartingLights4on:
+	db		092,0,077,1
+	db		.dxStartingLights+56,0,.dyStartingLights+5,0
+	db		014,0,014,0
+	db		0,0,$d0  
+
+  .StartingLights3on:
+	db		078,0,077,1
+	db		.dxStartingLights+40,0,.dyStartingLights+5,0
+	db		014,0,014,0
+	db		0,0,$d0  
+
+  .StartingLights2on:
+	db		078,0,077,1
+	db		.dxStartingLights+24,0,.dyStartingLights+5,0
+	db		014,0,014,0
+	db		0,0,$d0  
+
+  .StartingLights1on:
+	db		078,0,077,1
+	db		.dxStartingLights+8,0,.dyStartingLights+5,0
+	db		014,0,014,0
+	db		0,0,$d0  
+
+  .StartingLightsAllOff:
+	db		000,0,077,1
+	db		.dxStartingLights,0,.dyStartingLights,0
+	db		078,0,024,0
+	db		0,0,$d0  
+
+.dxStartingLights:  equ 090
+.dyStartingLights:  equ 014
 
   .Distancemeter:
   ld    hl,(RacingGameDistance+1)
@@ -2942,10 +3098,75 @@ CheckLevelFinished:
   ld    (freezecontrols?),a
 
   pop   af
+  ld    a,15                                ;racing game game
+  ld    (CurrentRoom),a
+  ld    a,1
+  ld    (ChangeRoom?),a
+
+  ld    a,(RacingGameLevel)
+  inc   a
+  ld    (RacingGameLevel),a
+  ret
+
+RacingGameTitleScreenRoutine:
+  ld    a,1
+  ld    (RacingGameLevel),a
+
+  if RacingGameTitleScreenOn?
+  else
+  jr    .StartGame
+  endif
+
+  ld    a,0*32 + 31                         ;force page 0
+	ld    (PageOnNextVblank),a
+  ld    a,1
+  ld    (framecounter),a                    ;we force framecounter to 1 so that the sf2 object handler doesn't swap page ever
+
+  call  .HandlePhase                           ;screen on, set int handler, init variables
+  call  .CheckStartGame
+  ret
+  
+  .CheckStartGame:
+;
+; bit	7	  6	  5		    4		    3		    2		  1		  0
+;		  0	  0	  trig-b	trig-a	right	  left	down	up	(joystick)
+;		  F5	F1	'M'		  space	  right	  left	down	up	(keyboard)
+;
+	ld		a,(NewPrContr)
+	bit		4,a           ;trig a pressed ?
+  ret   z
+
+  .StartGame:
   ld    a,15                                ;drilling game
   ld    (CurrentRoom),a
   ld    a,1
   ld    (ChangeRoom?),a
-  ret    
+  ret
+
+  .HandlePhase:
+  bit   0,(iy+ObjectPhase)
+  ret   nz
+  ld    (iy+ObjectPhase),1
+
+  ld    a,RacingGameTitleScreenGfxBlock     			;block to copy graphics from
+  ld    hl,$4000 + (000*128) + (000/2) - 128
+  ld    de,$0000 + (000*128) + (000/2) - 128
+  ld    bc,$0000 + (212*256) + (256/2)
+  call  CopyRomToVram                   ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
+
+  ld    hl,NeonHorizonsTitleScreenPalette
+  jp		SetPalette
+
+NeonHorizonsTitleScreenPalette:
+  incbin "..\grapx\RacingGame\TitleScreen.SC5",$7680+7,32
+
+
+
+
+
+
+RacingGameLevelProgressRoutine:
+  ret
+
 
 dephase
