@@ -140,10 +140,10 @@
   db 0
   db 1
   db 4
-  db 1
   db 0
-  db 3
-  db 3
+  db 0
+  db 2
+  db 2
   db 0
   db 0
   db 0
@@ -156,7 +156,7 @@
   db 128
   db 0
   db 192
-  db 192
+  db 64
   db 32
   db 160
   db 160
@@ -172,7 +172,7 @@
   db 1
   db 2
   db 7
-  db 0
+  db 1
   db 3
   db 1
   db 3
@@ -188,7 +188,7 @@
   db 0
   db 192
   db 96
-  db 0
+  db 128
   db 192
   db 96
   db 96
@@ -203,11 +203,11 @@
   db 0
   db 3
   db 5
-  db 1
+  db 6
   db 2
   db 0
-  db 0
-  db 0
+  db 5
+  db 1
   db 0
   db 0
   db 0
@@ -219,11 +219,11 @@
   db 128
   db 160
   db 208
-  db 192
+  db 112
   db 96
   db 32
-  db 224
-  db 224
+  db 160
+  db 160
   db 192
   db 192
   db 0
@@ -235,7 +235,7 @@
   db 1
   db 3
   db 6
-  db 6
+  db 7
   db 3
   db 7
   db 7
@@ -251,11 +251,11 @@
   db 64
   db 96
   db 48
-  db 48
+  db 176
   db 192
   db 192
-  db 0
-  db 0
+  db 64
+  db 64
   db 0
   db 0
 ; Sprite 4 - Mode : 2 sprites, color OR on 
@@ -266,13 +266,13 @@
   db 3
   db 1
   db 0
-  db 1
+  db 0
   db 11
   db 3
   db 6
   db 0
-  db 1
-  db 1
+  db 5
+  db 5
   db 1
   db 1
   db 128
@@ -285,10 +285,10 @@
   db 224
   db 232
   db 192
-  db 0
+  db 96
   db 16
-  db 128
-  db 128
+  db 208
+  db 208
   db 128
   db 128
   db 2
@@ -298,12 +298,12 @@
   db 2
   db 0
   db 3
-  db 6
+  db 7
   db 14
   db 0
   db 5
   db 7
-  db 6
+  db 2
   db 6
   db 2
   db 0
@@ -317,7 +317,7 @@
   db 0
   db 56
   db 32
-  db 224
+  db 128
   db 224
   db 112
   db 112

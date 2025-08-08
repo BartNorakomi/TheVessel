@@ -1454,6 +1454,7 @@ RacingGameHorizontalMovementEnemy:     equ 8   ;1 bytes, used for racing game
 SpriteCharacterAddress: equ 10  ;2 bytes, used for racing game
 SpriteColorAddress:     equ 12  ;2 bytes, used for racing game
 MiniSprite?:            equ 14  ;1 bytes, used for 16x16 sprites
+RacingGameEnemySpeed:   equ 15
 
 ObjectTable:
 ;           on?,  y,  x,  sprite restore table                                ,sprite data,put on frame ,movement routine block,  movement routine,							 phase,var1,var2,var3

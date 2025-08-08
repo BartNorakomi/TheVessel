@@ -2399,6 +2399,8 @@ RacingGameStartNextLevelTimer:rb	1
 RacingGameLevel:						rb	1
 RacingGameEventDistance:  	rb	2
 RacingGameEventPointer:   	rb	2
+AllowFlagToAppear?:   			rb	1
+FlagHasAppeared?:   				rb	1
 
 endenginepage3variables:  equ $+enginepage3length
 org variables

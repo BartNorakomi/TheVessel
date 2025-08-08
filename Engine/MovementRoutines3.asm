@@ -38,8 +38,9 @@ Phase MovementRoutinesAddress
 
 
 ;sfx: almost out of fuel, gas, you pass an enemy, pick up heart, whipeout / fall down, starting signals, brake 
-StartingLightsOn?:  equ 1
-RacingGameTitleScreenOn?:  equ 1
+StartingLightsOn?:  equ 0
+RacingGameTitleScreenOn?:  equ 0
+RacingGameLevelProgressScreenOn?:  equ 1
 
 MaximumSpeedUphill:       equ 210
 MaximumSpeedStraightRoad: equ 225
@@ -63,7 +64,6 @@ RacingGameRoutine:
   call  .HandleAccelerateAndDecelerate      ;speed up with trig A, brake with trig B
   call  .UpdateRoadLinesAnimation
   call  .ChangeLineIntHeightWhenCurvingUpOrDown
-  call  ChangePaletteRacingGame
   call  .UpdateMaximumSpeedOnCurveUpOrDown
   call  ForceMovePlayerAgainstCurves        ;This one must be faster with a table
   call  CheckCollisionEnemyOrHeart          ;checks for collision and takes action
@@ -161,18 +161,16 @@ RacingGameRoutine:
   ret   nz
   ld    (iy+ObjectPhase),1
 
-  ld    a,1
-  ld    (RacingGameLevel),a
-
   call  SetScreenon
+
+;  ld    a,7
+;  ld    (RacingGameLevel),a
 
 ;  ld    a,32
 ;  ld    (r23onVblank),a
 
 ;  ld    a,1
 ;  ld    (SetLineIntHeightOnVblankDrillingGame?),a
-
-
 
   ;set y coordinates player sprite
   ld    a,RacingGamePlayerY
@@ -203,13 +201,40 @@ RacingGameRoutine:
   ld    hl,0
   ld    (RacingGameDistance),hl
   ld    (RacingGameDistance+2),hl
-  ld    (RacingGameEventDistance),hl
 
+  ld    a,(RacingGameLevel)
+  dec   a
   ld    hl,RacingGameEventsLevel1         ;pointer to curvature events of level 1
+  jp    z,.SetEventPointer
+  dec   a
+  ld    hl,RacingGameEventsLevel2         ;pointer to curvature events of level 2
+  jp    z,.SetEventPointer
+  dec   a
+  ld    hl,RacingGameEventsLevel3         ;pointer to curvature events of level 3
+  jp    z,.SetEventPointer
+  dec   a
+  ld    hl,RacingGameEventsLevel4         ;pointer to curvature events of level 4
+  jp    z,.SetEventPointer
+  dec   a
+  ld    hl,RacingGameEventsLevel5         ;pointer to curvature events of level 5
+  jp    z,.SetEventPointer
+  dec   a
+  ld    hl,RacingGameEventsLevel6         ;pointer to curvature events of level 6
+  jp    z,.SetEventPointer
+  ld    hl,RacingGameEventsLevel7         ;pointer to curvature events of level 7
+  .SetEventPointer:
   ld    (RacingGameEventPointer),hl
 
-;  ld    hl,2800                           ;jump to end of level
-;  ld    (RacingGameDistance+1),hl
+
+  dec   hl
+  ld    d,(hl)
+  inc   hl
+  ld    e,(hl)
+  ld    (RacingGameEventDistance),de
+
+
+  ld    hl,2800                           ;jump to end of level
+  ld    (RacingGameDistance+1),hl
 
   ld    hl,0                            ;speed in m/p/h
 ;ld    hl,150                            ;speed in m/p/h
@@ -235,6 +260,8 @@ RacingGameRoutine:
   ld    (RacingGameLevelFinished?),a
   ld    (RacingGameStartNextLevelTimer),a
   ld    (RoadAnimationStep),a
+  ld    (AllowFlagToAppear?),a
+  ld    (FlagHasAppeared?),a
 
 
   xor   a
@@ -326,7 +353,55 @@ RacingGameRoutine:
 	call	WaitVdpReady
 	halt
   call  SetInterruptHandlerRacingGame
+  call  .SetLevelPalette
   ret
+
+.SetLevelPalette:
+  ld    a,(RacingGameLevel)
+  dec   a
+  ld    hl,.PaletteOriginal
+  jp    z,SetPalette
+  dec   a
+  ld    hl,.Palette1
+  jp    z,SetPalette
+  dec   a
+  ld    hl,.Palette2
+  jp    z,SetPalette
+  dec   a
+  ld    hl,.Palette3
+  jp    z,SetPalette
+  dec   a
+  ld    hl,.Palette4
+  jp    z,SetPalette
+  dec   a
+  ld    hl,.Palette5
+  jp    z,SetPalette
+  dec   a
+  ld    hl,.Palette6
+  jp    z,SetPalette
+  dec   a
+  ld    hl,.Palette7
+  jp    z,SetPalette
+  jp    SetPalette
+
+  .PaletteOriginal:
+  incbin "..\grapx\RacingGame\TrackStraightPalette.SC5",$7680+7,32
+  .Palette1:
+  incbin "..\grapx\RacingGame\Palette1.SC5",$7680+7,32
+  .Palette2:
+  incbin "..\grapx\RacingGame\Palette2.SC5",$7680+7,32
+  .Palette3:
+  incbin "..\grapx\RacingGame\Palette3.SC5",$7680+7,32
+  .Palette4:
+  incbin "..\grapx\RacingGame\Palette4.SC5",$7680+7,32
+  .Palette5:
+  incbin "..\grapx\RacingGame\Palette5.SC5",$7680+7,32
+;TO DO, make the last 2 palette for level 7 and level 8
+  .Palette6:
+  incbin "..\grapx\RacingGame\Palette5.SC5",$7680+7,32
+  .Palette7:
+  incbin "..\grapx\RacingGame\Palette5.SC5",$7680+7,32
+
 
 .RacingGameGameOverUp:
 	db		022,0,055,1
@@ -713,9 +788,13 @@ db    LineIntHeightStraightRoad+30
   ret
 
 XstartingPositionEnemyTable:
-  db    28, 41, 54, 68, 81, 94, 108, 121, 134, 148, 161, 174, 188, 201, 214, 228
+  db    12, 30, 44, 58, 72, 86, 100, 114, 128, 142, 156, 170, 184, 198, 212, 244 
 PlaceNewObject:                           ;new objects may be placed if all active objects distance to player < 6247
   ld    a,(RacingGameStartingLightsOn?)
+  or    a
+  ret   nz
+
+  ld    a,(FlagHasAppeared?)
   or    a
   ret   nz
 
@@ -758,7 +837,7 @@ PlaceNewObject:                           ;new objects may be placed if all acti
   cp    (ix+PutOnFrame)
   ret   nz
 
-  ;X enemy has to be between 28 and 228, so make it in steps of 16, and use a table to read out starting position 
+  ;X enemy has to be between 12 and 244, so make it in steps of 16, and use a table to read out starting position 
   ld    a,r                             ;set random x for new enemy
   and   15
   ld    e,a
@@ -767,14 +846,13 @@ PlaceNewObject:                           ;new objects may be placed if all acti
   add   hl,de
   ld    a,(hl)
 
-
-
-;  ld    a,104
-
   ld    (ix+X16bit),a
   ld    hl,9370                         ;place enemy on the horizon
   ld    (ix+DistanceFromPlayer),l
   ld    (ix+DistanceFromPlayer+1),h
+
+  ld    (ix+var3),0                     ;for now only used for girl1pony
+  ld    (ix+RacingGameEnemySpeed),140   ;racing game speed
 
   ld    (ix+RacingGameHorizontalMovementEnemy),0
 ;  ld    (ix+RacingGameCharacterSpriteBlock),RacingGameAlienSpritesBlock
@@ -790,6 +868,8 @@ PlaceNewObject:                           ;new objects may be placed if all acti
   set   0,(ix+On?)      ;turn object on
   ret
   .EndCheckMiniSpriteAndHeart:
+
+
   ld    a,(RacingGameLevel)
   add   a,a                             ;*2
   add   a,a                             ;*4
@@ -804,12 +884,41 @@ PlaceNewObject:                           ;new objects may be placed if all acti
   and   7
   ld    e,a
   add   hl,de
-  
+
+
+
+
+  ld    a,(AllowFlagToAppear?)
+  or    a
+  jr    z,.EndCheckFlagAppear
+  ld    a,1
+  ld    (FlagHasAppeared?),a
+
+  ld    a,112
+  ld    (ix+X16bit),a
+  ld    a,RacingGameFlag1SpritesBlock
+  jr    .EnemySet
+  .EndCheckFlagAppear:
+
+
+
   ld    a,(hl)                          ;enemy sprite block (capboy=35, RacingGameYellowJacketBoySpritesBlock=36,  RacingGameRedHeadBoySpritesBlock=32, RacingGameGirl1PonySpritesBlock=31)
   
   
-;  ld a,RacingGameWolfSpritesBlock
-  
+;Difficulty:
+;CapBoy
+;YellowJacketBoy
+;Girl1Pony
+;RedHeadBoy
+;Wolf
+;Alien  
+;  ld a,RacingGameYellowJacketBoySpritesBlock
+;  ld a,RacingGameAlienSpritesBlock
+;  ld a,RacingGameRedHeadBoySpritesBlock
+;  ld a,RacingGameGirl1PonySpritesBlock
+;  ld a,RacingGameCapBoySpritesBlock
+;  ld a,RacingGameFlag1SpritesBlock
+  .EnemySet:
   
   ld    b,a
   cp    RacingGameCapBoySpritesBlock
@@ -943,29 +1052,48 @@ AlienPalette:
 ;Wolf
 ;Alien
 
+Enemy1: equ RacingGameCapBoySpritesBlock
+Enemy2: equ RacingGameYellowJacketBoySpritesBlock
+Enemy3: equ RacingGameGirl1PonySpritesBlock
+Enemy4: equ RacingGameRedHeadBoySpritesBlock
+Enemy5: equ RacingGameWolfSpritesBlock
+Enemy6: equ RacingGameAlienSpritesBlock
+
 EnemyFrequencyPerLevelTable:
   .Level1:
-;  db    RacingGameCapBoySpritesBlock,RacingGameCapBoySpritesBlock,RacingGameCapBoySpritesBlock,RacingGameCapBoySpritesBlock,RacingGameYellowJacketBoySpritesBlock,RacingGameYellowJacketBoySpritesBlock,RacingGameYellowJacketBoySpritesBlock,RacingGameGirl1PonySpritesBlock
+  db    Enemy1,Enemy1,Enemy1,Enemy2,Enemy2,Enemy2,Enemy3,Enemy3
   .Level2:
-;  db    RacingGameCapBoySpritesBlock,RacingGameCapBoySpritesBlock,RacingGameCapBoySpritesBlock,RacingGameYellowJacketBoySpritesBlock,RacingGameYellowJacketBoySpritesBlock,RacingGameYellowJacketBoySpritesBlock,RacingGameGirl1PonySpritesBlock,RacingGameRedHeadBoySpritesBlock
+  db    Enemy1,Enemy1,Enemy2,Enemy2,Enemy2,Enemy3,Enemy3,Enemy4
   .Level3:
-;  db    RacingGameCapBoySpritesBlock,RacingGameCapBoySpritesBlock,RacingGameYellowJacketBoySpritesBlock,RacingGameYellowJacketBoySpritesBlock,RacingGameGirl1PonySpritesBlock,RacingGameGirl1PonySpritesBlock,RacingGameRedHeadBoySpritesBlock,RacingGameRedHeadBoySpritesBlock
-
-  .Level10:
-  db    RacingGameGirl1PonySpritesBlock,RacingGameGirl1PonySpritesBlock,RacingGameRedHeadBoySpritesBlock,RacingGameRedHeadBoySpritesBlock,RacingGameWolfSpritesBlock,RacingGameWolfSpritesBlock,RacingGameAlienSpritesBlock,RacingGameAlienSpritesBlock
-
+  db    Enemy1,Enemy1,Enemy2,Enemy2,Enemy3,Enemy3,Enemy4,Enemy4
+  .Level4:
+  db    Enemy1,Enemy2,Enemy2,Enemy3,Enemy3,Enemy4,Enemy4,Enemy5
+  .Level5:
+  db    Enemy1,Enemy2,Enemy3,Enemy3,Enemy4,Enemy4,Enemy5,Enemy5
+  .Level6:
+  db    Enemy2,Enemy3,Enemy3,Enemy4,Enemy4,Enemy5,Enemy5,Enemy6
+  .Level7:
+  db    Enemy3,Enemy4,Enemy5,Enemy5,Enemy5,Enemy6,Enemy6,Enemy6
 
 RemoveEnemySprite:
+;  ld    a,(FlagHasAppeared?)
+;  or    a
+;  jr    nz,.EndCheckEnemy1OutOfScreenBot
+
   ;If enemy is out of screen bot, AND there is a mini sprite enemy in play, we remove the minisprite enemy, and we place this enemy over the minisprite
   bit   0,(ix+MiniSprite?)              ;bit 0 on=minisprite, bit 1 on=heart, bit 1 off=minienemy
   jr    nz,.EndCheckEnemy1OutOfScreenBot
   ld    a,(Object4+MiniSprite?)         ;bit 0 on=minisprite, bit 1 on=heart, bit 1 off=minienemy
   bit   1,a
   jr    nz,.EndCheckEnemy1OutOfScreenBot
+  ld    a,(Object4+On?)         ;bit 0 on=minisprite, bit 1 on=heart, bit 1 off=minienemy
+  or    a
+  jr    z,.EndCheckEnemy1OutOfScreenBot
 
   ;We dont replace enemy with minisprite until enemy sprite pattern gets updated this frame as well, otherwise we might put a HUGE sprite there
   ld    a,(framecounter2)
-  inc   a
+  
+;  inc   a
   and   3
   cp    (ix+PutOnFrame)
   ret   nz
@@ -979,6 +1107,11 @@ RemoveEnemySprite:
   ld    hl,(Object4+DistanceFromPlayer)
   ld    (ix+DistanceFromPlayer),l
   ld    (ix+DistanceFromPlayer+1),h  
+
+
+  call  SetEnemySprite.back
+
+
   ld    ix,Object4
   .EndCheckEnemy1OutOfScreenBot:
 
@@ -1034,7 +1167,9 @@ SetEnemySprite:
   call  .HandleHorizontalMovementEnemies
 
   ;simulate enemy driving away from player
-  ld    bc,140                           ;enemy speed
+;  ld    bc,140                           ;enemy speed
+  ld    c,(ix+RacingGameEnemySpeed)
+  ld    b,0
 ;  ld    bc,000                           ;enemy speed
   ld    de,(RacingGameSpeed)              ;player speed
 
@@ -1053,6 +1188,8 @@ SetEnemySprite:
   jp    nc,RemoveEnemySprite.EndCheckEnemy1OutOfScreenBot            ;at this point enemy is out of screen top
   add   hl,de                              ;distance from player
   ;distance from player / 29 to find y using perspective table
+
+.back:
   ld    a,Division29TableBlock   	        ;table block
   call  block34                       	;CARE!!! we can only switch block34 if page 1 is in rom  
   ld    bc,Division29Table
@@ -1314,6 +1451,25 @@ SetEnemySprite:
 
 ;ld a,112
   .SetXSpat:
+
+  ld    l,(ix+X16bit)
+  bit   7,l
+  jr    nz,.RightSideOfScreen
+
+  .LeftSideOfScreen:
+  cp    256-30
+  jr    c,.EndCheckOutOfScreen
+  xor   a
+  jp    .EndCheckOutOfScreen   
+  .RightSideOfScreen:
+  cp    256-8
+  jr    c,.EndCheckOutOfScreen
+  ld    a,256-9
+
+
+  .EndCheckOutOfScreen:
+
+
   bit   0,(ix+MiniSprite?)
   jp    z,.EndCheckMiniSprite
 
@@ -1413,6 +1569,143 @@ SetEnemySprite:
 .HeartSize0:  dw  HeartSpritesCharacters+0*64,  HeartSpriteColors+0*32
 
   .EndCheckMiniSprite:
+
+  ex    af,af'
+  ld    a,(ix+RacingGameCharacterSpriteBlock)
+  cp    RacingGameFlag1SpritesBlock
+  jp    nz,.EndCheckFlag
+
+
+
+
+
+
+
+
+
+  ex    af,af'
+
+  ld    l,(ix+SpatEntry)
+  ld    h,(ix+SpatEntry+1)                ;x sprite in spat
+  inc   hl
+  add   a,16
+  ld    (hl),a
+  ld    de,4
+  add   hl,de
+  ld    (hl),a
+  add   a,16
+  add   hl,de
+  ld    (hl),a
+  add   hl,de
+  ld    (hl),a
+  sub   a,16
+  add   hl,de
+  ld    (hl),a
+  add   hl,de
+  ld    (hl),a
+  add   a,16
+  add   hl,de
+  ld    (hl),a
+  add   hl,de
+  ld    (hl),a
+  sub   a,16
+  add   hl,de
+  ld    (hl),a
+  add   hl,de
+  ld    (hl),a
+
+  ;Set Y spat
+  ld    a,(RacingGameEnemyY)
+  ld    l,(ix+SpatEntry)
+  ld    h,(ix+SpatEntry+1)                ;y sprite in spat
+;  ld    de,4
+
+  cp    216
+  jr    nz,.Not216Check7
+  inc   a
+  .Not216Check7:
+  ld    (hl),a
+  add   hl,de
+  ld    (hl),a
+  add   hl,de
+  ld    (hl),a
+  add   hl,de
+  ld    (hl),a
+  add   a,16
+  cp    216
+  jr    nz,.Not216Check5
+  inc   a
+  .Not216Check5:
+  add   hl,de
+  ld    (hl),a
+  add   hl,de
+  ld    (hl),a
+  add   hl,de
+  ld    (hl),a
+  add   hl,de
+  ld    (hl),a
+  add   a,16
+  cp    216
+  jr    nz,.Not216Check6
+  inc   a
+  .Not216Check6:
+  add   hl,de
+  ld    (hl),a
+  add   hl,de
+  ld    (hl),a
+  jp    .SpatSet
+
+
+
+
+
+
+
+
+
+
+
+
+  ex    af,af'
+  ld    l,(ix+SpatEntry)
+  ld    h,(ix+SpatEntry+1)                ;x sprite in spat
+  inc   hl
+  ld    (hl),a
+  ld    de,4
+  add   hl,de
+  ld    (hl),a
+  add   a,16
+  add   hl,de
+  ld    (hl),a
+  add   hl,de
+  ld    (hl),a
+  sub   a,16
+  add   hl,de
+  ld    (hl),a
+  add   hl,de
+  ld    (hl),a
+  add   a,16
+  add   hl,de
+  ld    (hl),a
+  add   hl,de
+  ld    (hl),a
+  sub   a,16
+  add   hl,de
+  ld    (hl),a
+  add   hl,de
+  ld    (hl),a
+
+
+
+
+
+
+
+
+
+  .EndCheckFlag:
+  ex    af,af'
+
   ld    l,(ix+SpatEntry)
   ld    h,(ix+SpatEntry+1)                ;x sprite in spat
   inc   hl
@@ -1447,10 +1740,19 @@ SetEnemySprite:
   ld    l,(ix+SpatEntry)
   ld    h,(ix+SpatEntry+1)                ;y sprite in spat
 ;  ld    de,4
+
+  cp    216
+  jr    nz,.Not216Check1
+  inc   a
+  .Not216Check1:
   ld    (hl),a
   add   hl,de
   ld    (hl),a
   add   a,16
+  cp    216
+  jr    nz,.Not216Check2
+  inc   a
+  .Not216Check2:
   add   hl,de
   ld    (hl),a
   add   hl,de
@@ -1460,6 +1762,10 @@ SetEnemySprite:
   add   hl,de
   ld    (hl),a
   add   a,16
+  cp    216
+  jr    nz,.Not216Check3
+  inc   a
+  .Not216Check3:
   add   hl,de
   ld    (hl),a
   add   hl,de
@@ -1540,13 +1846,130 @@ SetEnemySprite:
   ld    (PutMiniSprite?),a
   ret
 
+;Difficulty:
+;CapBoy
+;YellowJacketBoy
+;Girl1Pony
+;RedHeadBoy
+;Wolf
+;Alien  
   .HandleHorizontalMovementEnemies:                ;some enemies can move horizontally
   ld    a,(ix+RacingGameCharacterSpriteBlock)
   cp    RacingGameAlienSpritesBlock
-  jr    z,.Alien
+  jp    z,.Alien
   cp    RacingGameWolfSpritesBlock
-  jr    z,.Wolf
+  jp    z,.Wolf
+  cp    RacingGameRedHeadBoySpritesBlock
+  jp    z,.RedHeadBoy
+  cp    RacingGameGirl1PonySpritesBlock
+  jp    z,.Girl1Pony
+  cp    RacingGameYellowJacketBoySpritesBlock
+  jp    z,.YellowJacketBoy
+  cp    RacingGameFlag1SpritesBlock
+  jp    nc,.Flag
   ret
+
+  .Flag:
+  ld    l,(ix+DistanceFromPlayer)
+  ld    h,(ix+DistanceFromPlayer+1)
+  ld    de,9368-150
+  sbc   hl,de                           ;subtract player speed
+  jp    nc,.KeepFlagInPlayTop             ;at this point enemy is out of screen top
+
+  ld    l,(ix+DistanceFromPlayer)
+  ld    h,(ix+DistanceFromPlayer+1)
+  ld    de,850
+  sbc   hl,de                           ;subtract player speed
+  jp    c,.KeepFlagInPlayBottom         ;at this point enemy is out of screen bottom
+  ret
+
+  .KeepFlagInPlayBottom:
+  ld    hl,850
+  ld    (ix+DistanceFromPlayer),l
+  ld    (ix+DistanceFromPlayer+1),h
+  ret
+
+  .KeepFlagInPlayTop:
+  ld    hl,9368-160
+  ld    (ix+DistanceFromPlayer),l
+  ld    (ix+DistanceFromPlayer+1),h
+  ret
+
+  .YellowJacketBoy:
+  ld    a,r
+  and   1
+  ret   nz
+
+  .Girl1Pony:                                     ;always moves towards player
+  ld    a,(ix+X16bit)
+  sub   a,10
+  ld    b,a
+  ld    a,(RacingGamePlayerX)
+  cp    b
+  ld    c,-1
+  jr    c,.HorizontalMovementFound
+  ld    c,1
+  .HorizontalMovementFound:
+  ;if girl1pony is right of player, we reduce var3, otherwise increase var3. var3 points to movement table for girl1pony 
+  ld    a,(ix+var3)
+  add   a,c
+  jp    m,.EndSetVar3
+  cp    32
+  jr    z,.EndSetVar3
+  ld    (ix+var3),a
+  .EndSetVar3:
+
+  ld    a,(ix+var3)
+  ld    e,a
+  ld    d,0
+  ld    hl,.Girl1PonyMovementTable
+  add   hl,de
+  ld    a,(hl)
+  add   a,(ix+X16bit)
+  cp    26
+  ret   c
+  cp    256-26
+  ret   nc
+  ld    (ix+X16bit),a
+  ret
+
+  .Girl1PonyMovementTable:
+  db -1,-1,-1,-0,-1,-0,-0,-1 
+  db -0,-0,-0,-1,-0,-0,-0,-0 
+  db +0,+0,+0,+0,+1,+0,+0,+0
+  db +1,+0,+0,+1,+0,+1,+1,+1
+  
+  .RedHeadBoy:                                    ;red head boy moves in your direction halfway the screen
+  call  .CheckEnemyNearRedHeadBoy                     ;checks if enemy is near player, if so steer toward player
+  ld    a,(ix+X16bit)
+  add   a,(ix+RacingGameHorizontalMovementEnemy)
+  cp    26
+  ret   c
+  cp    256-26
+  ret   nc
+  ld    (ix+X16bit),a
+  ret
+
+  .CheckEnemyNearRedHeadBoy:
+  ld    l,(ix+DistanceFromPlayer)
+  ld    h,(ix+DistanceFromPlayer+1)
+  ld    de,5000
+  sbc   hl,de
+  ret   nc
+
+  ld    a,(ix+RacingGameHorizontalMovementEnemy)  ;already steering toward player ?
+  or    a
+  ret   nz
+
+  ld    a,(ix+X16bit)
+  sub   a,10
+  ld    b,a
+  ld    a,(RacingGamePlayerX)
+  cp    b
+  ld    (ix+RacingGameHorizontalMovementEnemy),-1
+  ret   c
+  ld    (ix+RacingGameHorizontalMovementEnemy),1
+  ret  
 
   .Wolf:                                   ;Wolf continuously zig zags
   ld    a,(ix+var3)
@@ -1578,8 +2001,6 @@ SetEnemySprite:
 
 db +0,+1,+1,+2,+2,+2,+2,+3,   +3,+3,+3,+3,+4,+4,+4,+4,   +4,+4,+4,+4,+3,+3,+3,+3,   +3,+2,+2,+2,+2,+1,+1,+0
 db -0,-1,-1,-2,-2,-2,-2,-3,   -3,-3,-3,-3,-4,-4,-4,-4,   -4,-4,-4,-4,-3,-3,-3,-3,   -3,-2,-2,-2,-2,-1,-1,-0
-
-
 
   .Alien:                                   ;Alien moves in your direction halfway the screen
   call  .CheckEnemyNear                     ;checks if enemy is near player, if so steer toward player
@@ -2164,42 +2585,6 @@ SetPlayerSprite:
 .XOffsetsHeadSprite:  
 db 7,7,7,8,8,8,8,8,8,8,8,8,8,8,8,8,8,9,9,9,9
 
-ChangePaletteRacingGame:
-;
-; bit	7	  6	  5		    4		    3		    2		  1		  0
-;		  0	  0	  trig-b	trig-a	right	  left	down	up	(joystick)
-;		  F5	F1	'M'		  space	  right	  left	down	up	(keyboard)
-;
-	ld		a,(NewPrContr)
-	bit		6,a           ;trig b pressed ?
-  ret   z
-
-  .ChangePalette:
-  ld    a,(CurrentRacingGamePalette)
-  add   a,32
-  cp    6*32
-  jr    nz,.notzero
-  xor   a
-  .notzero:
-  ld    (CurrentRacingGamePalette),a
-  ld    e,a
-  ld    d,0
-  ld    hl,.PaletteOriginal
-  add   hl,de
-  call  SetPalette
-  ret
-  .PaletteOriginal:
-  incbin "..\grapx\RacingGame\TrackStraightPalette.SC5",$7680+7,32
-  .Palette1:
-  incbin "..\grapx\RacingGame\Palette1.SC5",$7680+7,32
-  .Palette2:
-  incbin "..\grapx\RacingGame\Palette2.SC5",$7680+7,32
-  .Palette3:
-  incbin "..\grapx\RacingGame\Palette3.SC5",$7680+7,32
-  .Palette4:
-  incbin "..\grapx\RacingGame\Palette4.SC5",$7680+7,32
-  .Palette5:
-  incbin "..\grapx\RacingGame\Palette5.SC5",$7680+7,32
 
 ForceMovePlayerAgainstCurves:
   ld    a,ForceMovePlayerAgainstCurvesTableBlock   	        ;table block
@@ -2313,8 +2698,82 @@ CurveUp: equ 4
 HalfCurveRight: equ 5
 HalfCurveLeft: equ 6
 
+
                     ;next distance, curve (1=right, 2=down, 3=left, 4=up, 0=end current curve)
+                    dw  00500   ;distance till first curve
 RacingGameEventsLevel1:     db CurveUp          | dw 00250 | db EndCurve | dw 00250 |
+                      db CurveDown        | dw 00250 | db EndCurve | dw 00250 |
+                      db CurveUp          | dw 00350 | db EndCurve | dw 00350 |
+                      db CurveDown        | dw 00350 | db EndCurve | dw 00350 |
+                      db CurveUp          | dw 00250 | db EndCurve | dw 01250 |
+                      db CurveDown        | dw 00250 | db EndCurve | dw 00250 |
+                      db CurveLeft        | dw 00250 | db EndCurve | dw 00250 |
+                      db CurveUp          | dw 00250 | db EndCurve | dw 00250 |
+                      db CurveDown        | dw 00250 | db EndCurve | dw 60200 |
+
+                    ;next distance, curve (1=right, 2=down, 3=left, 4=up, 0=end current curve)
+                    dw  00500   ;distance till first curve
+RacingGameEventsLevel2:     db CurveUp          | dw 00250 | db EndCurve | dw 00250 |
+                      db CurveDown        | dw 00250 | db EndCurve | dw 00250 |
+                      db CurveUp          | dw 00350 | db EndCurve | dw 00350 |
+                      db CurveDown        | dw 00350 | db EndCurve | dw 00350 |
+                      db CurveUp          | dw 00250 | db EndCurve | dw 01250 |
+                      db CurveDown        | dw 00250 | db EndCurve | dw 00250 |
+                      db CurveLeft        | dw 00250 | db EndCurve | dw 00250 |
+                      db CurveUp          | dw 00250 | db EndCurve | dw 00250 |
+                      db CurveDown        | dw 00250 | db EndCurve | dw 60200 |
+
+                    ;next distance, curve (1=right, 2=down, 3=left, 4=up, 0=end current curve)
+                    dw  00500   ;distance till first curve
+RacingGameEventsLevel3:     db CurveUp          | dw 00250 | db EndCurve | dw 00250 |
+                      db CurveDown        | dw 00250 | db EndCurve | dw 00250 |
+                      db CurveUp          | dw 00350 | db EndCurve | dw 00350 |
+                      db CurveDown        | dw 00350 | db EndCurve | dw 00350 |
+                      db CurveUp          | dw 00250 | db EndCurve | dw 01250 |
+                      db CurveDown        | dw 00250 | db EndCurve | dw 00250 |
+                      db CurveLeft        | dw 00250 | db EndCurve | dw 00250 |
+                      db CurveUp          | dw 00250 | db EndCurve | dw 00250 |
+                      db CurveDown        | dw 00250 | db EndCurve | dw 60200 |
+
+                    ;next distance, curve (1=right, 2=down, 3=left, 4=up, 0=end current curve)
+                    dw  00500   ;distance till first curve
+RacingGameEventsLevel4:     db CurveUp          | dw 00250 | db EndCurve | dw 00250 |
+                      db CurveDown        | dw 00250 | db EndCurve | dw 00250 |
+                      db CurveUp          | dw 00350 | db EndCurve | dw 00350 |
+                      db CurveDown        | dw 00350 | db EndCurve | dw 00350 |
+                      db CurveUp          | dw 00250 | db EndCurve | dw 01250 |
+                      db CurveDown        | dw 00250 | db EndCurve | dw 00250 |
+                      db CurveLeft        | dw 00250 | db EndCurve | dw 00250 |
+                      db CurveUp          | dw 00250 | db EndCurve | dw 00250 |
+                      db CurveDown        | dw 00250 | db EndCurve | dw 60200 |
+
+                    ;next distance, curve (1=right, 2=down, 3=left, 4=up, 0=end current curve)
+                    dw  00500   ;distance till first curve
+RacingGameEventsLevel5:     db CurveUp          | dw 00250 | db EndCurve | dw 00250 |
+                      db CurveDown        | dw 00250 | db EndCurve | dw 00250 |
+                      db CurveUp          | dw 00350 | db EndCurve | dw 00350 |
+                      db CurveDown        | dw 00350 | db EndCurve | dw 00350 |
+                      db CurveUp          | dw 00250 | db EndCurve | dw 01250 |
+                      db CurveDown        | dw 00250 | db EndCurve | dw 00250 |
+                      db CurveLeft        | dw 00250 | db EndCurve | dw 00250 |
+                      db CurveUp          | dw 00250 | db EndCurve | dw 00250 |
+                      db CurveDown        | dw 00250 | db EndCurve | dw 60200 |
+
+                    ;next distance, curve (1=right, 2=down, 3=left, 4=up, 0=end current curve)
+                    dw  00500   ;distance till first curve
+RacingGameEventsLevel6:     db CurveUp          | dw 00250 | db EndCurve | dw 00250 |
+                      db CurveDown        | dw 00250 | db EndCurve | dw 00250 |
+                      db CurveUp          | dw 00350 | db EndCurve | dw 00350 |
+                      db CurveDown        | dw 00350 | db EndCurve | dw 00350 |
+                      db CurveUp          | dw 00250 | db EndCurve | dw 01250 |
+                      db CurveDown        | dw 00250 | db EndCurve | dw 00250 |
+                      db CurveLeft        | dw 00250 | db EndCurve | dw 00250 |
+                      db CurveUp          | dw 00250 | db EndCurve | dw 00250 |
+                      db CurveDown        | dw 00250 | db EndCurve | dw 60200 |
+
+                    ;next distance, curve (1=right, 2=down, 3=left, 4=up, 0=end current curve)
+                    dw  00500   ;distance till first curve
+RacingGameEventsLevel7:     db CurveUp          | dw 00250 | db EndCurve | dw 00250 |
                       db CurveDown        | dw 00250 | db EndCurve | dw 00250 |
                       db CurveUp          | dw 00350 | db EndCurve | dw 00350 |
                       db CurveDown        | dw 00350 | db EndCurve | dw 00350 |
@@ -2919,9 +3378,12 @@ UpdateHud:
   ld    (DistanceMeter+dx),a
   cp    230
   jr    c,.EndCheckLevelFinished
+;  ld    a,1
+;  ld    (freezecontrols?),a
+;  ld    (RacingGameLevelFinished?),a
   ld    a,1
-  ld    (freezecontrols?),a
-  ld    (RacingGameLevelFinished?),a
+  ld    (AllowFlagToAppear?),a
+
   ret
   .EndCheckLevelFinished:
 
@@ -3098,7 +3560,7 @@ CheckLevelFinished:
   ld    (freezecontrols?),a
 
   pop   af
-  ld    a,15                                ;racing game game
+  ld    a,17                                ;racing game level progress screen
   ld    (CurrentRoom),a
   ld    a,1
   ld    (ChangeRoom?),a
@@ -3137,7 +3599,7 @@ RacingGameTitleScreenRoutine:
   ret   z
 
   .StartGame:
-  ld    a,15                                ;drilling game
+  ld    a,15                                ;racing game
   ld    (CurrentRoom),a
   ld    a,1
   ld    (ChangeRoom?),a
@@ -3166,7 +3628,62 @@ NeonHorizonsTitleScreenPalette:
 
 
 RacingGameLevelProgressRoutine:
+  if RacingGameLevelProgressScreenOn?
+  else
+  jr    .StartGame
+  endif
+
+  ld    a,0*32 + 31                         ;force page 0
+	ld    (PageOnNextVblank),a
+  ld    a,1
+  ld    (framecounter),a                    ;we force framecounter to 1 so that the sf2 object handler doesn't swap page ever
+
+  call  .HandlePhase                           ;screen on, set int handler, init variables
+  call  .CheckStartGame
   ret
+  
+  .CheckStartGame:
+  ld    a,(Framecounter2)
+  inc   a
+  ld    (Framecounter2),a
+  and   3
+  ret   nz
+
+  ld    a,(RacingGameStartNextLevelTimer)
+  inc   a
+  ld    (RacingGameStartNextLevelTimer),a
+  cp    80
+  ret   nz
+
+  .StartGame:
+  ld    a,15                                ;racing game
+  ld    (CurrentRoom),a
+  ld    a,1
+  ld    (ChangeRoom?),a
+  ret
+
+  .HandlePhase:
+  bit   0,(iy+ObjectPhase)
+  ret   nz
+  ld    (iy+ObjectPhase),1
+
+  xor   a
+  ld    (RacingGameStartNextLevelTimer),a
+
+  ld    a,RacingGameLevelProgressScreenGfxBlock     			;block to copy graphics from
+  ld    hl,$4000 + (000*128) + (000/2) - 128
+  ld    de,$0000 + (000*128) + (000/2) - 128
+  ld    bc,$0000 + (212*256) + (256/2)
+  call  CopyRomToVram                   ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
+
+  ld    hl,LevelProgressScreenPalette
+  jp		SetPalette
+
+LevelProgressScreenPalette:
+  incbin "..\grapx\RacingGame\LevelProgressScreen.SC5",$7680+7,32
+
+
+
 
 
 dephase
