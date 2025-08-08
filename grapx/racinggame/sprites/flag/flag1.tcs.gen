@@ -137,20 +137,16 @@
   db 255
   db 255
   db 255
-  db 255
-  db 255
-  db 255
-  db 255
   db 15
+  db 6
+  db 6
   db 13
-  db 13
-  db 13
-  db 13
+  db 7
+  db 7
+  db 7
   db 15
-  db 255
-  db 255
-  db 255
-  db 255
+  db 15
+  db 15
   db 255
   db 255
   db 255
@@ -160,6 +156,10 @@
   db 255
   db 79
   db 79
+  db 79
+  db 78
+  db 255
+  db 255
   db 255
   db 255
   db 255
@@ -298,35 +298,35 @@
 ; Sprite 9 - Mode : 2 sprites, color OR on 
   db 255
   db 255
-  db 255
-  db 255
-  db 255
-  db 255
-  db 255
   db 15
   db 6
   db 6
-  db 13
-  db 13
-  db 13
-  db 13
-  db 13
+  db 6
+  db 6
+  db 7
+  db 7
+  db 7
+  db 7
+  db 9
+  db 7
+  db 7
+  db 7
   db 15
-  db 255
-  db 255
-  db 255
-  db 255
-  db 255
   db 255
   db 255
   db 255
   db 77
   db 77
+  db 77
+  db 77
+  db 77
+  db 78
   db 79
-  db 255
-  db 255
-  db 255
-  db 255
+  db 79
+  db 79
+  db 77
+  db 77
+  db 77
   db 255
 ; Sprite 10 - Mode : 2 sprites, color OR on 
   db 255
@@ -461,37 +461,37 @@
   db 255
   db 255
 ; Sprite 14 - Mode : 2 sprites, color OR on 
-  db 255
-  db 255
-  db 255
-  db 255
+  db 15
+  db 6
+  db 7
+  db 6
+  db 6
+  db 6
+  db 7
+  db 7
+  db 7
+  db 7
+  db 7
   db 15
   db 13
-  db 6
-  db 6
-  db 6
-  db 13
-  db 13
-  db 13
-  db 13
   db 13
   db 13
   db 15
-  db 255
-  db 255
-  db 255
-  db 255
   db 255
   db 79
-  db 77
-  db 77
-  db 77
+  db 72
+  db 79
+  db 79
+  db 79
+  db 72
+  db 79
+  db 79
+  db 79
+  db 79
   db 255
-  db 255
-  db 255
-  db 255
-  db 255
-  db 255
+  db 79
+  db 79
+  db 79
   db 255
 ; Sprite 15 - Mode : 2 sprites, color OR on 
   db 255
@@ -575,7 +575,7 @@
   db 255
   db 255
   db 255
-  db 255
+  db 15
   db 255
   db 255
   db 255
@@ -607,8 +607,8 @@
   db 255
   db 255
   db 255
-  db 255
-  db 255
+  db 15
+  db 15
   db 255
   db 255
   db 255
@@ -626,37 +626,37 @@
   db 255
   db 255
 ; Sprite 19 - Mode : 2 sprites, color OR on 
-  db 255
-  db 255
+  db 6
+  db 6
+  db 6
+  db 6
+  db 6
+  db 7
+  db 7
+  db 7
+  db 7
+  db 7
   db 15
-  db 6
-  db 6
-  db 6
-  db 13
-  db 6
-  db 13
-  db 13
-  db 13
-  db 13
-  db 13
-  db 13
+  db 7
+  db 7
+  db 7
   db 13
   db 15
-  db 255
-  db 255
-  db 255
   db 77
   db 77
   db 77
   db 79
   db 77
+  db 77
+  db 78
+  db 79
+  db 79
+  db 79
   db 255
-  db 255
-  db 255
-  db 255
-  db 255
-  db 255
-  db 255
+  db 77
+  db 77
+  db 77
+  db 79
   db 255
 ; Sprite 20 - Mode : 2 sprites, color OR on 
   db 255
@@ -737,10 +737,10 @@
   db 255
   db 255
   db 255
-  db 255
-  db 255
   db 15
-  db 13
+  db 7
+  db 7
+  db 7
   db 255
   db 255
   db 255
@@ -754,7 +754,7 @@
   db 255
   db 255
   db 255
-  db 255
+  db 72
   db 255
   db 79
 ; Sprite 23 - Mode : 2 sprites, color OR on 
@@ -768,6 +768,12 @@
   db 255
   db 255
   db 255
+  db 15
+  db 15
+  db 6
+  db 6
+  db 6
+  db 6
   db 255
   db 255
   db 255
@@ -780,42 +786,36 @@
   db 255
   db 255
   db 255
-  db 255
-  db 255
-  db 255
-  db 255
-  db 255
-  db 255
-  db 255
-  db 255
-  db 255
-  db 255
+  db 79
+  db 79
+  db 79
+  db 79
 ; Sprite 24 - Mode : 2 sprites, color OR on 
   db 6
-  db 6
-  db 6
-  db 6
-  db 6
-  db 6
-  db 6
-  db 13
-  db 13
-  db 13
-  db 13
-  db 13
-  db 13
-  db 13
-  db 13
-  db 13
+  db 7
+  db 7
+  db 7
+  db 7
+  db 7
+  db 15
+  db 7
+  db 7
+  db 15
+  db 15
+  db 15
+  db 15
+  db 15
+  db 15
+  db 15
   db 77
   db 77
   db 77
   db 77
-  db 77
-  db 77
-  db 77
+  db 78
   db 255
   db 255
+  db 79
+  db 79
   db 255
   db 255
   db 255
@@ -899,16 +899,13 @@
   db 255
   db 255
   db 255
-  db 255
-  db 255
-  db 15
-  db 13
-  db 6
-  db 6
-  db 6
-  db 255
-  db 255
-  db 255
+  db 7
+  db 7
+  db 7
+  db 7
+  db 7
+  db 7
+  db 7
   db 255
   db 255
   db 255
@@ -919,9 +916,12 @@
   db 255
   db 255
   db 79
-  db 77
-  db 77
-  db 77
+  db 72
+  db 79
+  db 79
+  db 72
+  db 79
+  db 72
 ; Sprite 28 - Mode : 2 sprites, color OR on 
   db 255
   db 255
@@ -930,64 +930,64 @@
   db 255
   db 255
   db 255
-  db 255
-  db 255
-  db 255
-  db 255
-  db 255
-  db 255
-  db 255
-  db 255
-  db 255
-  db 255
-  db 255
-  db 255
-  db 255
-  db 255
-  db 255
-  db 255
-  db 255
-  db 255
-  db 255
-  db 255
-  db 255
-  db 255
-  db 255
-  db 255
-  db 255
-; Sprite 29 - Mode : 2 sprites, color OR on 
+  db 15
+  db 15
   db 6
   db 6
   db 6
   db 6
   db 6
-  db 13
-  db 13
-  db 13
-  db 13
-  db 13
-  db 13
-  db 13
-  db 13
-  db 13
-  db 13
-  db 13
+  db 6
+  db 6
+  db 255
+  db 255
+  db 255
+  db 255
+  db 255
+  db 255
+  db 255
+  db 255
+  db 255
   db 77
   db 77
   db 77
   db 77
   db 77
   db 79
+  db 77
+; Sprite 29 - Mode : 2 sprites, color OR on 
+  db 7
+  db 7
+  db 7
+  db 7
+  db 15
+  db 7
+  db 7
+  db 7
+  db 15
+  db 7
+  db 7
+  db 7
+  db 7
+  db 13
+  db 15
+  db 8
+  db 77
+  db 77
+  db 78
+  db 79
   db 255
+  db 79
+  db 79
+  db 73
   db 255
+  db 77
+  db 77
+  db 77
+  db 77
+  db 79
   db 255
-  db 255
-  db 255
-  db 255
-  db 255
-  db 255
-  db 255
-  db 255
+  db 79
 ; Sprite 30 - Mode : 2 sprites, color OR on 
   db 255
   db 255
@@ -1061,19 +1061,16 @@
   db 255
   db 255
   db 255
-  db 255
-  db 255
-  db 15
-  db 13
-  db 6
-  db 6
-  db 6
-  db 6
-  db 6
-  db 6
-  db 255
-  db 255
-  db 255
+  db 7
+  db 7
+  db 7
+  db 7
+  db 7
+  db 7
+  db 7
+  db 7
+  db 7
+  db 7
   db 255
   db 255
   db 255
@@ -1081,78 +1078,81 @@
   db 255
   db 255
   db 79
-  db 77
-  db 77
-  db 77
-  db 77
-  db 77
-  db 77
+  db 72
+  db 79
+  db 79
+  db 72
+  db 72
+  db 79
+  db 72
+  db 72
+  db 72
 ; Sprite 33 - Mode : 2 sprites, color OR on 
   db 255
   db 255
   db 255
   db 255
+  db 15
+  db 15
+  db 6
+  db 6
+  db 6
+  db 6
+  db 6
+  db 7
+  db 6
+  db 6
+  db 13
+  db 7
   db 255
   db 255
   db 255
   db 255
   db 255
   db 255
-  db 255
-  db 255
-  db 255
-  db 255
-  db 255
-  db 255
-  db 255
-  db 255
-  db 255
-  db 255
-  db 255
-  db 255
-  db 255
-  db 255
-  db 255
-  db 255
-  db 255
-  db 255
-  db 255
-  db 255
-  db 255
-  db 255
+  db 77
+  db 77
+  db 77
+  db 77
+  db 77
+  db 77
+  db 77
+  db 77
+  db 79
+  db 77
 ; Sprite 34 - Mode : 2 sprites, color OR on 
-  db 6
-  db 6
-  db 6
-  db 13
-  db 13
-  db 13
-  db 13
-  db 13
-  db 13
-  db 13
-  db 13
-  db 13
-  db 13
-  db 13
+  db 7
+  db 7
+  db 7
+  db 7
+  db 7
+  db 7
+  db 7
+  db 15
+  db 7
+  db 7
+  db 7
+  db 7
+  db 7
   db 13
   db 15
+  db 8
+  db 78
+  db 79
+  db 79
+  db 79
+  db 79
+  db 79
+  db 73
+  db 255
+  db 77
+  db 77
   db 77
   db 77
   db 77
   db 79
   db 255
-  db 255
-  db 255
-  db 255
-  db 255
-  db 255
-  db 255
-  db 255
-  db 255
-  db 255
-  db 255
-  db 255
+  db 79
 ; Sprite 35 - Mode : 2 sprites, color OR on 
   db 255
   db 255
@@ -1223,101 +1223,101 @@
   db 255
   db 255
   db 255
-  db 255
-  db 255
-  db 255
-  db 15
-  db 13
-  db 6
-  db 6
-  db 6
-  db 6
-  db 6
-  db 6
-  db 13
-  db 13
-  db 255
-  db 255
-  db 255
-  db 255
+  db 7
+  db 7
+  db 7
+  db 7
+  db 7
+  db 7
+  db 7
+  db 7
+  db 7
+  db 7
+  db 7
+  db 7
+  db 7
   db 255
   db 255
   db 255
   db 79
-  db 77
-  db 77
-  db 77
-  db 77
-  db 77
-  db 77
+  db 72
+  db 72
   db 79
+  db 79
+  db 79
+  db 79
+  db 79
+  db 72
+  db 72
+  db 72
+  db 78
   db 79
 ; Sprite 38 - Mode : 2 sprites, color OR on 
   db 255
-  db 255
-  db 255
-  db 255
-  db 255
-  db 255
-  db 255
-  db 255
-  db 255
-  db 255
-  db 255
-  db 255
-  db 255
-  db 255
-  db 255
-  db 255
-  db 255
-  db 255
-  db 255
-  db 255
-  db 255
-  db 255
-  db 255
-  db 255
-  db 255
-  db 255
-  db 255
-  db 255
-  db 255
-  db 255
-  db 255
-  db 255
-; Sprite 39 - Mode : 2 sprites, color OR on 
+  db 15
+  db 15
+  db 6
+  db 6
+  db 6
+  db 6
+  db 6
+  db 6
+  db 7
+  db 6
   db 6
   db 13
-  db 13
-  db 13
-  db 13
-  db 13
-  db 13
-  db 13
-  db 13
-  db 13
-  db 13
-  db 13
-  db 13
-  db 13
-  db 13
+  db 7
+  db 7
   db 15
+  db 255
+  db 255
+  db 255
   db 77
   db 79
+  db 77
+  db 77
+  db 77
+  db 77
+  db 77
+  db 77
+  db 77
   db 79
-  db 79
-  db 79
-  db 79
-  db 79
-  db 79
-  db 79
-  db 79
-  db 79
-  db 79
-  db 79
-  db 79
+  db 77
+  db 78
+  db 255
+; Sprite 39 - Mode : 2 sprites, color OR on 
+  db 7
+  db 15
+  db 7
+  db 7
+  db 7
+  db 7
+  db 15
+  db 13
+  db 7
+  db 7
+  db 13
+  db 7
+  db 7
+  db 15
+  db 15
+  db 8
   db 79
   db 255
+  db 79
+  db 79
+  db 79
+  db 73
+  db 255
+  db 79
+  db 77
+  db 77
+  db 79
+  db 77
+  db 77
+  db 255
+  db 255
+  db 79
 ; Sprite 40 - Mode : 2 sprites, color OR on 
   db 255
   db 255
@@ -1366,8 +1366,8 @@
   db 255
   db 255
   db 255
-  db 255
-  db 255
+  db 15
+  db 15
   db 255
   db 255
   db 255
@@ -1385,104 +1385,104 @@
   db 255
   db 255
 ; Sprite 42 - Mode : 2 sprites, color OR on 
-  db 255
-  db 255
-  db 255
   db 15
-  db 13
-  db 6
-  db 6
-  db 6
-  db 6
-  db 6
-  db 6
-  db 6
-  db 6
-  db 6
-  db 6
-  db 13
+  db 7
+  db 7
+  db 7
+  db 7
+  db 7
+  db 7
+  db 7
+  db 7
+  db 7
+  db 7
+  db 7
+  db 7
+  db 7
+  db 7
+  db 7
   db 255
-  db 255
-  db 255
-  db 255
+  db 72
+  db 72
   db 79
-  db 77
-  db 77
-  db 77
-  db 77
-  db 77
-  db 77
-  db 77
-  db 77
-  db 77
-  db 77
+  db 79
+  db 72
+  db 72
+  db 72
+  db 79
+  db 72
+  db 72
+  db 72
+  db 78
+  db 79
+  db 79
   db 79
 ; Sprite 43 - Mode : 2 sprites, color OR on 
+  db 15
+  db 6
+  db 6
+  db 6
+  db 6
+  db 6
+  db 6
+  db 6
+  db 6
+  db 6
+  db 7
+  db 7
+  db 7
+  db 7
   db 255
   db 255
   db 255
-  db 255
-  db 255
-  db 255
-  db 255
-  db 255
-  db 255
-  db 255
-  db 255
-  db 255
-  db 255
-  db 255
-  db 255
-  db 255
-  db 255
-  db 255
-  db 255
-  db 255
-  db 255
-  db 255
-  db 255
-  db 255
-  db 255
-  db 255
-  db 255
-  db 255
-  db 255
-  db 255
+  db 79
+  db 77
+  db 77
+  db 77
+  db 77
+  db 77
+  db 77
+  db 77
+  db 77
+  db 77
+  db 77
+  db 78
+  db 78
   db 255
   db 255
 ; Sprite 44 - Mode : 2 sprites, color OR on 
+  db 15
+  db 7
+  db 7
+  db 7
+  db 7
+  db 15
   db 13
-  db 13
-  db 13
-  db 13
-  db 13
-  db 13
-  db 13
-  db 13
-  db 13
-  db 13
-  db 13
-  db 13
-  db 13
-  db 13
+  db 7
+  db 7
+  db 7
+  db 7
+  db 7
   db 13
   db 15
+  db 15
+  db 8
+  db 255
   db 79
   db 79
   db 79
+  db 73
+  db 255
   db 79
-  db 79
-  db 79
-  db 79
-  db 79
-  db 79
-  db 79
-  db 79
-  db 79
-  db 79
-  db 79
+  db 77
+  db 77
+  db 77
+  db 77
+  db 77
   db 79
   db 255
+  db 255
+  db 79
 ; Sprite 45 - Mode : 2 sprites, color OR on 
   db 255
   db 255
@@ -1497,9 +1497,9 @@
   db 255
   db 255
   db 255
-  db 255
-  db 255
   db 15
+  db 7
+  db 6
   db 255
   db 255
   db 255
@@ -1514,8 +1514,8 @@
   db 255
   db 255
   db 255
-  db 255
-  db 255
+  db 77
+  db 77
 ; Sprite 46 - Mode : 2 sprites, color OR on 
   db 255
   db 255
@@ -1528,6 +1528,11 @@
   db 255
   db 255
   db 255
+  db 15
+  db 15
+  db 15
+  db 15
+  db 6
   db 255
   db 255
   db 255
@@ -1543,111 +1548,106 @@
   db 255
   db 255
   db 255
-  db 255
-  db 255
-  db 255
-  db 255
-  db 255
-  db 255
+  db 79
 ; Sprite 47 - Mode : 2 sprites, color OR on 
-  db 13
-  db 13
-  db 6
-  db 6
-  db 6
-  db 6
-  db 6
-  db 6
-  db 6
-  db 6
-  db 6
-  db 6
-  db 6
-  db 6
-  db 6
-  db 13
+  db 7
+  db 7
+  db 7
+  db 7
+  db 7
+  db 7
+  db 7
+  db 7
+  db 7
+  db 7
+  db 7
+  db 7
+  db 7
+  db 7
+  db 15
+  db 7
+  db 72
   db 79
   db 79
-  db 77
-  db 77
-  db 77
-  db 77
-  db 77
-  db 77
-  db 77
-  db 77
-  db 77
-  db 77
-  db 77
-  db 77
-  db 77
+  db 72
+  db 72
+  db 79
+  db 79
+  db 72
+  db 72
+  db 72
+  db 72
+  db 79
+  db 79
+  db 79
+  db 255
   db 79
 ; Sprite 48 - Mode : 2 sprites, color OR on 
-  db 255
-  db 255
-  db 255
-  db 255
-  db 255
-  db 255
+  db 6
+  db 6
+  db 6
+  db 6
+  db 6
+  db 6
+  db 6
+  db 6
+  db 7
+  db 7
+  db 7
+  db 7
   db 15
   db 15
-  db 255
-  db 255
-  db 255
-  db 255
-  db 255
-  db 255
-  db 255
-  db 255
-  db 255
-  db 255
-  db 255
-  db 255
-  db 255
-  db 255
-  db 255
-  db 255
-  db 255
-  db 255
-  db 255
-  db 255
+  db 15
+  db 15
+  db 77
+  db 77
+  db 77
+  db 77
+  db 77
+  db 79
+  db 77
+  db 77
+  db 77
+  db 77
+  db 77
+  db 78
   db 255
   db 255
   db 255
   db 255
 ; Sprite 49 - Mode : 2 sprites, color OR on 
+  db 7
+  db 7
+  db 7
+  db 7
+  db 15
   db 13
-  db 13
-  db 13
-  db 13
-  db 13
-  db 13
-  db 13
-  db 13
-  db 13
-  db 13
-  db 13
-  db 13
-  db 13
-  db 13
+  db 7
+  db 7
+  db 7
+  db 7
+  db 7
+  db 7
   db 13
   db 15
+  db 15
+  db 8
   db 79
   db 79
   db 79
+  db 73
+  db 255
   db 79
-  db 79
-  db 79
-  db 79
-  db 79
-  db 79
-  db 79
-  db 79
-  db 79
-  db 79
-  db 79
+  db 77
+  db 77
+  db 77
+  db 77
+  db 77
+  db 77
   db 79
   db 255
+  db 255
+  db 79
 ; Sprite 50 - Mode : 2 sprites, color OR on 
   db 255
   db 255
@@ -1660,11 +1660,11 @@
   db 255
   db 255
   db 255
-  db 255
   db 15
-  db 13
-  db 13
-  db 6
+  db 7
+  db 7
+  db 7
+  db 7
   db 255
   db 255
   db 255
@@ -1677,9 +1677,9 @@
   db 255
   db 255
   db 255
-  db 255
-  db 79
-  db 79
+  db 77
+  db 72
+  db 77
   db 77
 ; Sprite 51 - Mode : 2 sprites, color OR on 
   db 255
@@ -1691,128 +1691,128 @@
   db 255
   db 255
   db 255
-  db 255
-  db 255
-  db 255
-  db 255
-  db 255
-  db 255
-  db 255
-  db 255
-  db 255
-  db 255
-  db 255
-  db 255
-  db 255
-  db 255
-  db 255
-  db 255
-  db 255
-  db 255
-  db 255
-  db 255
-  db 255
-  db 255
-  db 255
-; Sprite 52 - Mode : 2 sprites, color OR on 
+  db 15
+  db 15
+  db 15
   db 6
   db 6
   db 6
   db 6
-  db 6
-  db 6
-  db 6
-  db 6
-  db 6
-  db 6
-  db 6
-  db 6
-  db 6
-  db 13
-  db 13
-  db 13
-  db 77
-  db 77
-  db 77
-  db 77
-  db 77
-  db 77
-  db 77
-  db 77
-  db 77
-  db 77
-  db 77
-  db 77
-  db 77
+  db 255
+  db 255
+  db 255
+  db 255
+  db 255
+  db 255
+  db 255
+  db 255
+  db 255
+  db 255
+  db 255
+  db 255
   db 79
+  db 79
+  db 79
+  db 79
+; Sprite 52 - Mode : 2 sprites, color OR on 
+  db 7
+  db 7
+  db 7
+  db 7
+  db 7
+  db 7
+  db 7
+  db 7
+  db 7
+  db 7
+  db 7
+  db 7
+  db 7
+  db 15
+  db 7
+  db 7
+  db 79
+  db 72
+  db 72
+  db 72
+  db 79
+  db 72
+  db 72
+  db 72
+  db 72
+  db 78
+  db 79
+  db 79
+  db 79
+  db 255
   db 79
   db 79
 ; Sprite 53 - Mode : 2 sprites, color OR on 
-  db 15
-  db 15
-  db 15
-  db 15
   db 6
   db 6
   db 6
+  db 7
+  db 6
+  db 6
+  db 6
+  db 7
+  db 7
+  db 7
+  db 7
   db 15
   db 15
-  db 255
-  db 255
-  db 255
-  db 255
-  db 255
-  db 255
-  db 255
-  db 255
-  db 255
-  db 255
-  db 255
+  db 15
+  db 15
+  db 7
+  db 77
+  db 77
+  db 77
+  db 77
   db 79
-  db 79
-  db 79
-  db 255
-  db 255
-  db 255
-  db 255
+  db 77
+  db 77
+  db 77
+  db 77
+  db 78
+  db 78
   db 255
   db 255
   db 255
   db 255
   db 255
 ; Sprite 54 - Mode : 2 sprites, color OR on 
-  db 13
-  db 13
-  db 13
-  db 13
-  db 13
-  db 13
-  db 13
-  db 13
-  db 13
-  db 13
-  db 13
-  db 13
-  db 13
-  db 13
+  db 7
+  db 7
+  db 7
+  db 15
+  db 15
+  db 7
+  db 7
+  db 7
+  db 7
+  db 7
+  db 7
+  db 7
   db 13
   db 15
+  db 15
+  db 8
   db 79
   db 79
-  db 79
-  db 79
-  db 79
-  db 79
-  db 79
-  db 79
-  db 79
-  db 79
-  db 79
-  db 79
-  db 79
-  db 79
+  db 73
+  db 255
+  db 255
+  db 77
+  db 77
+  db 77
+  db 77
+  db 77
+  db 77
+  db 77
   db 79
   db 255
+  db 255
+  db 79
 ; Sprite 55 - Mode : 2 sprites, color OR on 
   db 255
   db 255
@@ -1823,13 +1823,13 @@
   db 255
   db 255
   db 255
+  db 255
   db 15
-  db 13
-  db 13
-  db 13
-  db 6
-  db 6
-  db 6
+  db 7
+  db 7
+  db 7
+  db 7
+  db 7
   db 255
   db 255
   db 255
@@ -1840,9 +1840,9 @@
   db 255
   db 255
   db 255
-  db 79
-  db 79
-  db 79
+  db 255
+  db 77
+  db 72
   db 77
   db 77
   db 77
@@ -1855,16 +1855,14 @@
   db 255
   db 255
   db 255
-  db 255
-  db 255
-  db 255
-  db 255
+  db 15
+  db 15
   db 15
   db 6
   db 6
   db 6
-  db 255
-  db 255
+  db 6
+  db 6
   db 255
   db 255
   db 255
@@ -1877,107 +1875,109 @@
   db 255
   db 255
   db 79
-  db 255
+  db 79
+  db 79
+  db 79
   db 79
 ; Sprite 57 - Mode : 2 sprites, color OR on 
-  db 6
-  db 6
-  db 6
-  db 6
-  db 6
-  db 6
-  db 6
-  db 6
-  db 6
-  db 6
-  db 6
-  db 13
-  db 13
-  db 13
-  db 13
-  db 13
-  db 77
-  db 77
-  db 77
-  db 77
-  db 77
-  db 77
-  db 77
-  db 77
-  db 77
-  db 77
-  db 77
+  db 7
+  db 7
+  db 7
+  db 7
+  db 7
+  db 7
+  db 7
+  db 7
+  db 7
+  db 7
+  db 7
+  db 7
+  db 7
+  db 15
+  db 7
+  db 7
   db 79
   db 79
   db 79
+  db 79
+  db 79
+  db 72
+  db 72
+  db 72
+  db 72
+  db 78
+  db 79
+  db 79
+  db 79
+  db 255
   db 79
   db 79
 ; Sprite 58 - Mode : 2 sprites, color OR on 
-  db 15
-  db 15
   db 6
   db 6
-  db 15
-  db 15
-  db 15
-  db 15
+  db 7
   db 6
   db 6
+  db 6
+  db 7
+  db 7
+  db 7
+  db 7
   db 15
   db 255
   db 255
+  db 255
+  db 15
+  db 7
+  db 77
+  db 77
+  db 77
+  db 79
+  db 77
+  db 77
+  db 77
+  db 77
+  db 77
+  db 78
   db 255
   db 255
   db 255
   db 255
   db 255
   db 79
-  db 79
-  db 255
-  db 255
-  db 255
-  db 255
-  db 79
-  db 79
-  db 255
-  db 255
-  db 255
-  db 255
-  db 255
-  db 255
 ; Sprite 59 - Mode : 2 sprites, color OR on 
-  db 13
-  db 13
-  db 13
-  db 13
-  db 13
-  db 13
-  db 13
-  db 13
-  db 13
-  db 13
-  db 13
-  db 13
-  db 13
-  db 13
-  db 13
+  db 7
+  db 7
+  db 7
   db 15
+  db 13
+  db 7
+  db 7
+  db 7
+  db 13
+  db 7
+  db 7
+  db 7
+  db 15
+  db 15
+  db 15
+  db 8
   db 79
   db 79
-  db 79
-  db 79
-  db 79
-  db 79
-  db 79
-  db 79
-  db 79
-  db 79
-  db 79
-  db 79
-  db 79
-  db 79
-  db 79
+  db 73
   db 255
+  db 79
+  db 77
+  db 77
+  db 77
+  db 79
+  db 77
+  db 77
+  db 77
+  db 255
+  db 255
+  db 255
+  db 79
 ; Sprite 60 - Mode : 2 sprites, color OR on 
   db 255
   db 255
@@ -1985,16 +1985,16 @@
   db 255
   db 255
   db 255
+  db 255
   db 15
-  db 13
-  db 13
-  db 13
-  db 13
-  db 6
-  db 6
-  db 6
-  db 6
-  db 6
+  db 7
+  db 7
+  db 7
+  db 7
+  db 7
+  db 7
+  db 7
+  db 7
   db 255
   db 255
   db 255
@@ -2002,10 +2002,10 @@
   db 255
   db 255
   db 255
-  db 79
-  db 79
-  db 79
-  db 79
+  db 255
+  db 77
+  db 72
+  db 77
   db 77
   db 77
   db 77
@@ -2017,19 +2017,17 @@
   db 255
   db 255
   db 255
-  db 255
-  db 255
-  db 255
+  db 15
   db 15
   db 15
   db 6
   db 6
   db 6
-  db 15
-  db 15
   db 6
-  db 255
-  db 255
+  db 6
+  db 6
+  db 6
+  db 6
   db 255
   db 255
   db 255
@@ -2041,54 +2039,70 @@
   db 79
   db 79
   db 79
-  db 255
-  db 255
+  db 79
+  db 79
+  db 79
+  db 79
   db 79
 ; Sprite 62 - Mode : 2 sprites, color OR on 
-  db 6
-  db 6
-  db 6
-  db 6
-  db 6
-  db 6
-  db 6
-  db 6
-  db 13
-  db 13
-  db 13
-  db 13
-  db 13
-  db 13
-  db 13
-  db 13
-  db 77
-  db 77
-  db 77
-  db 77
-  db 77
-  db 77
-  db 77
-  db 77
+  db 7
+  db 7
+  db 7
+  db 7
+  db 7
+  db 7
+  db 7
+  db 7
+  db 7
+  db 7
+  db 7
+  db 15
+  db 7
+  db 7
+  db 7
+  db 7
+  db 72
+  db 79
+  db 79
+  db 72
+  db 72
+  db 72
+  db 72
+  db 78
   db 79
   db 79
   db 79
-  db 79
+  db 255
   db 79
   db 79
   db 79
   db 79
 ; Sprite 63 - Mode : 2 sprites, color OR on 
-  db 6
-  db 6
-  db 6
+  db 7
+  db 7
+  db 7
+  db 7
+  db 7
+  db 7
+  db 7
+  db 7
+  db 7
   db 15
-  db 6
-  db 6
-  db 6
-  db 6
-  db 6
-  db 6
   db 15
+  db 15
+  db 15
+  db 7
+  db 7
+  db 7
+  db 77
+  db 72
+  db 77
+  db 77
+  db 77
+  db 77
+  db 77
+  db 78
+  db 78
   db 255
   db 255
   db 255
@@ -2096,91 +2110,75 @@
   db 255
   db 79
   db 79
-  db 79
-  db 255
-  db 79
-  db 79
-  db 79
-  db 79
-  db 79
-  db 79
-  db 255
-  db 255
-  db 255
-  db 255
-  db 255
-  db 255
 ; Sprite 64 - Mode : 2 sprites, color OR on 
+  db 7
+  db 7
+  db 15
   db 13
-  db 13
-  db 13
-  db 13
-  db 13
-  db 13
-  db 13
-  db 13
-  db 13
-  db 13
-  db 13
-  db 13
-  db 13
-  db 13
+  db 7
+  db 7
+  db 7
+  db 7
+  db 7
+  db 7
+  db 7
   db 13
   db 15
+  db 15
+  db 15
+  db 8
   db 79
+  db 73
+  db 255
   db 79
-  db 79
-  db 79
-  db 79
-  db 79
-  db 79
-  db 79
-  db 79
-  db 79
-  db 79
-  db 79
-  db 79
-  db 79
+  db 77
+  db 77
+  db 77
+  db 77
+  db 77
+  db 77
+  db 77
   db 79
   db 255
+  db 255
+  db 255
+  db 79
 ; Sprite 65 - Mode : 2 sprites, color OR on 
   db 255
   db 255
   db 255
+  db 255
   db 15
-  db 13
-  db 13
-  db 13
-  db 13
-  db 6
-  db 6
-  db 6
-  db 6
-  db 6
-  db 6
-  db 6
-  db 6
+  db 7
+  db 7
+  db 7
+  db 7
+  db 7
+  db 7
+  db 7
+  db 7
+  db 7
+  db 7
+  db 7
   db 255
   db 255
   db 255
   db 255
+  db 255
+  db 72
+  db 72
+  db 72
+  db 72
   db 79
   db 79
   db 79
+  db 72
+  db 72
+  db 72
   db 79
-  db 77
-  db 77
-  db 77
-  db 77
-  db 77
-  db 77
-  db 77
-  db 77
 ; Sprite 66 - Mode : 2 sprites, color OR on 
   db 255
   db 255
-  db 255
-  db 255
   db 15
   db 15
   db 15
@@ -2188,71 +2186,86 @@
   db 6
   db 6
   db 6
-  db 15
-  db 15
   db 6
   db 6
   db 6
+  db 6
+  db 6
+  db 6
+  db 6
   db 255
   db 255
   db 255
   db 255
   db 255
-  db 255
-  db 255
+  db 77
   db 79
-  db 79
-  db 79
-  db 79
-  db 255
-  db 255
-  db 79
-  db 79
+  db 77
+  db 77
+  db 77
+  db 77
+  db 77
+  db 77
+  db 77
+  db 77
   db 79
 ; Sprite 67 - Mode : 2 sprites, color OR on 
-  db 6
-  db 6
-  db 6
-  db 6
-  db 6
-  db 13
-  db 13
-  db 13
-  db 13
-  db 13
-  db 13
-  db 13
-  db 13
-  db 13
-  db 13
-  db 13
-  db 77
-  db 77
-  db 77
-  db 77
-  db 77
+  db 7
+  db 7
+  db 7
+  db 7
+  db 7
+  db 7
+  db 7
+  db 7
+  db 7
+  db 7
+  db 15
+  db 7
+  db 7
+  db 7
+  db 7
+  db 7
+  db 79
+  db 72
+  db 72
+  db 72
+  db 72
+  db 78
   db 79
   db 79
   db 79
   db 79
-  db 79
-  db 79
+  db 255
   db 79
   db 79
   db 79
   db 79
   db 79
 ; Sprite 68 - Mode : 2 sprites, color OR on 
-  db 6
-  db 6
-  db 6
-  db 6
-  db 6
-  db 6
-  db 6
-  db 6
+  db 7
+  db 7
+  db 7
+  db 7
+  db 7
+  db 7
+  db 7
   db 15
-  db 255
+  db 15
+  db 15
+  db 15
+  db 15
+  db 7
+  db 7
+  db 7
+  db 15
+  db 77
+  db 77
+  db 77
+  db 77
+  db 77
+  db 78
+  db 78
   db 255
   db 255
   db 255
@@ -2261,165 +2274,163 @@
   db 255
   db 79
   db 79
-  db 79
-  db 79
-  db 79
-  db 79
-  db 79
-  db 79
-  db 255
-  db 255
-  db 255
-  db 255
-  db 255
-  db 255
-  db 255
   db 255
 ; Sprite 69 - Mode : 2 sprites, color OR on 
+  db 7
+  db 15
   db 13
-  db 13
-  db 13
-  db 13
-  db 13
-  db 13
-  db 13
-  db 13
-  db 13
-  db 13
-  db 13
-  db 13
-  db 13
-  db 13
+  db 7
+  db 7
+  db 7
+  db 7
+  db 7
+  db 7
+  db 7
+  db 7
   db 13
   db 15
+  db 15
+  db 15
+  db 8
+  db 73
+  db 255
   db 79
-  db 79
-  db 79
-  db 79
-  db 79
-  db 79
-  db 79
-  db 79
-  db 79
-  db 79
-  db 79
-  db 79
-  db 79
-  db 79
+  db 77
+  db 77
+  db 77
+  db 77
+  db 77
+  db 77
+  db 77
+  db 77
   db 79
   db 255
+  db 255
+  db 255
+  db 79
 ; Sprite 70 - Mode : 2 sprites, color OR on 
-  db 15
-  db 13
-  db 13
-  db 13
-  db 13
-  db 6
-  db 6
-  db 6
-  db 6
-  db 6
-  db 6
-  db 6
-  db 6
-  db 6
-  db 6
-  db 6
   db 255
+  db 15
+  db 7
+  db 7
+  db 7
+  db 7
+  db 7
+  db 7
+  db 7
+  db 7
+  db 7
+  db 7
+  db 7
+  db 7
+  db 7
+  db 7
+  db 255
+  db 255
+  db 72
+  db 72
+  db 72
+  db 72
   db 79
   db 79
   db 79
+  db 72
+  db 72
+  db 72
   db 79
-  db 77
-  db 77
-  db 77
-  db 77
-  db 77
-  db 77
-  db 77
-  db 77
-  db 77
-  db 77
-  db 77
+  db 72
+  db 72
+  db 72
 ; Sprite 71 - Mode : 2 sprites, color OR on 
-  db 255
   db 15
   db 15
-  db 15
-  db 6
-  db 6
-  db 6
-  db 6
-  db 15
   db 6
   db 6
   db 6
   db 6
   db 6
   db 6
-  db 15
+  db 6
+  db 6
+  db 6
+  db 6
+  db 6
+  db 6
+  db 6
+  db 6
   db 255
   db 255
-  db 255
-  db 255
+  db 77
   db 79
+  db 77
+  db 77
+  db 77
+  db 77
+  db 77
+  db 77
+  db 77
+  db 77
   db 79
-  db 79
-  db 79
-  db 255
-  db 79
-  db 79
-  db 79
-  db 79
-  db 79
-  db 79
-  db 255
+  db 77
+  db 77
+  db 77
 ; Sprite 72 - Mode : 2 sprites, color OR on 
-  db 6
-  db 6
-  db 6
-  db 13
-  db 13
-  db 13
-  db 13
-  db 13
-  db 13
-  db 13
-  db 13
-  db 13
-  db 13
-  db 13
-  db 13
-  db 13
-  db 77
-  db 77
-  db 77
-  db 79
-  db 79
-  db 79
-  db 79
-  db 79
-  db 79
-  db 79
-  db 79
-  db 79
-  db 79
-  db 79
-  db 79
-  db 79
-; Sprite 73 - Mode : 2 sprites, color OR on 
-  db 6
-  db 6
-  db 6
-  db 6
-  db 6
-  db 6
+  db 7
+  db 7
+  db 7
+  db 7
+  db 7
+  db 7
+  db 7
+  db 7
   db 15
+  db 7
+  db 7
+  db 7
+  db 7
+  db 7
+  db 7
+  db 15
+  db 72
+  db 72
+  db 72
+  db 78
+  db 79
+  db 79
+  db 79
+  db 79
   db 255
+  db 79
+  db 79
+  db 79
+  db 79
+  db 79
+  db 73
   db 255
-  db 255
-  db 255
-  db 255
+; Sprite 73 - Mode : 2 sprites, color OR on 
+  db 7
+  db 7
+  db 7
+  db 7
+  db 7
+  db 7
+  db 7
+  db 15
+  db 15
+  db 15
+  db 7
+  db 7
+  db 7
+  db 7
+  db 7
+  db 15
+  db 77
+  db 77
+  db 77
+  db 78
+  db 78
+  db 79
+  db 79
   db 255
   db 255
   db 255
@@ -2428,48 +2439,37 @@
   db 79
   db 79
   db 79
-  db 79
-  db 79
-  db 255
-  db 255
-  db 255
-  db 255
-  db 255
-  db 255
-  db 255
-  db 255
-  db 255
   db 255
 ; Sprite 74 - Mode : 2 sprites, color OR on 
+  db 15
   db 13
-  db 13
-  db 13
-  db 13
-  db 13
-  db 13
-  db 13
-  db 13
-  db 13
-  db 13
-  db 13
-  db 13
-  db 13
+  db 7
+  db 7
+  db 7
+  db 7
+  db 7
+  db 7
+  db 7
+  db 7
   db 13
   db 15
   db 15
+  db 15
+  db 8
+  db 8
+  db 255
   db 79
-  db 79
-  db 79
-  db 79
-  db 79
-  db 79
-  db 79
-  db 79
-  db 79
-  db 79
-  db 79
-  db 79
-  db 79
+  db 77
+  db 77
+  db 77
+  db 77
+  db 77
+  db 77
+  db 77
+  db 77
   db 79
   db 255
   db 255
+  db 255
+  db 79
+  db 79

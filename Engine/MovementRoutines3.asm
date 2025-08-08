@@ -233,7 +233,7 @@ RacingGameRoutine:
   ld    (RacingGameEventDistance),de
 
 
-  ld    hl,2800                           ;jump to end of level
+  ld    hl,3000                           ;jump to end of level
   ld    (RacingGameDistance+1),hl
 
   ld    hl,0                            ;speed in m/p/h
@@ -1588,7 +1588,7 @@ SetEnemySprite:
   ld    l,(ix+SpatEntry)
   ld    h,(ix+SpatEntry+1)                ;x sprite in spat
   inc   hl
-  add   a,16
+  add   a,8
   ld    (hl),a
   ld    de,4
   add   hl,de
@@ -1598,7 +1598,7 @@ SetEnemySprite:
   ld    (hl),a
   add   hl,de
   ld    (hl),a
-  sub   a,16
+  sub   a,16+7
   add   hl,de
   ld    (hl),a
   add   hl,de
@@ -1608,7 +1608,7 @@ SetEnemySprite:
   ld    (hl),a
   add   hl,de
   ld    (hl),a
-  sub   a,16
+  sub   a,16-5
   add   hl,de
   ld    (hl),a
   add   hl,de
@@ -1654,47 +1654,6 @@ SetEnemySprite:
   add   hl,de
   ld    (hl),a
   jp    .SpatSet
-
-
-
-
-
-
-
-
-
-
-
-
-  ex    af,af'
-  ld    l,(ix+SpatEntry)
-  ld    h,(ix+SpatEntry+1)                ;x sprite in spat
-  inc   hl
-  ld    (hl),a
-  ld    de,4
-  add   hl,de
-  ld    (hl),a
-  add   a,16
-  add   hl,de
-  ld    (hl),a
-  add   hl,de
-  ld    (hl),a
-  sub   a,16
-  add   hl,de
-  ld    (hl),a
-  add   hl,de
-  ld    (hl),a
-  add   a,16
-  add   hl,de
-  ld    (hl),a
-  add   hl,de
-  ld    (hl),a
-  sub   a,16
-  add   hl,de
-  ld    (hl),a
-  add   hl,de
-  ld    (hl),a
-
 
 
 
@@ -3112,6 +3071,10 @@ CheckCollisionEnemyOrHeart:
   ret   nc
   .CarryObject3:
 
+  ld    a,(Object3+RacingGameCharacterSpriteBlock)
+  cp    RacingGameFlag1SpritesBlock
+  jr    z,.FlagPickedUp
+
   ;sfx crash
   ld    a,(RacingGamePlayerFalldown?)
   or    a
@@ -3147,6 +3110,10 @@ CheckCollisionEnemyOrHeart:
   ret   nc
   .CarryObject2:
 
+  ld    a,(Object2+RacingGameCharacterSpriteBlock)
+  cp    RacingGameFlag1SpritesBlock
+  jr    z,.FlagPickedUp
+
   ;sfx crash
   ld    a,(RacingGamePlayerFalldown?)
   or    a
@@ -3161,6 +3128,12 @@ CheckCollisionEnemyOrHeart:
   ret   c
   inc   a
   ld    (RacingGamePlayerFalldownFacingDirection),a ;1=right, 2=left
+  ret
+
+  .FlagPickedUp:
+  ld    a,1
+  ld    (freezecontrols?),a
+  ld    (RacingGameLevelFinished?),a  
   ret
 
 MoveHorizonInCurves:
