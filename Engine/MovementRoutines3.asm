@@ -38,8 +38,8 @@ Phase MovementRoutinesAddress
 
 
 ;sfx: almost out of fuel, gas, you pass an enemy, pick up heart, whipeout / fall down, starting signals, brake 
-StartingLightsOn?:  equ 0
-RacingGameTitleScreenOn?:  equ 0
+StartingLightsOn?:  equ 1
+RacingGameTitleScreenOn?:  equ 1
 RacingGameLevelProgressScreenOn?:  equ 1
 
 MaximumSpeedUphill:       equ 210
@@ -54,7 +54,7 @@ RacingGameRoutine:
   call  VideoReplayer
   call  SetEnemySpriteCharacterAndColorData
   call  .UpdateDistance
-  call  HandleCurvatureRoad
+;  call  HandleCurvatureRoad
   call  SetPlayerSprite
   call  WriteSpatToVram
   call  SetEnemySprite ;.HandleHorizontalMovementEnemies integrated
@@ -233,8 +233,8 @@ RacingGameRoutine:
   ld    (RacingGameEventDistance),de
 
 
-  ld    hl,3000                           ;jump to end of level
-  ld    (RacingGameDistance+1),hl
+;  ld    hl,3000                           ;jump to end of level
+;  ld    (RacingGameDistance+1),hl
 
   ld    hl,0                            ;speed in m/p/h
 ;ld    hl,150                            ;speed in m/p/h
@@ -1849,6 +1849,10 @@ SetEnemySprite:
   ret
 
   .KeepFlagInPlayTop:
+  ld    a,(RacingGameLevelFinished?)
+  or    a
+  ret   nz
+
   ld    hl,9368-160
   ld    (ix+DistanceFromPlayer),l
   ld    (ix+DistanceFromPlayer+1),h
@@ -2659,11 +2663,23 @@ HalfCurveLeft: equ 6
 
 
                     ;next distance, curve (1=right, 2=down, 3=left, 4=up, 0=end current curve)
-                    dw  00500   ;distance till first curve
+                    dw  00200   ;distance till first curve
 RacingGameEventsLevel1:     db CurveUp          | dw 00250 | db EndCurve | dw 00250 |
                       db CurveDown        | dw 00250 | db EndCurve | dw 00250 |
                       db CurveUp          | dw 00350 | db EndCurve | dw 00350 |
                       db CurveDown        | dw 00350 | db EndCurve | dw 00350 |
+                      db CurveLeft        | dw 00250 | db EndCurve | dw 01250 |
+                      db CurveDown        | dw 00250 | db EndCurve | dw 00250 |
+                      db CurveLeft        | dw 00250 | db EndCurve | dw 00250 |
+                      db CurveUp          | dw 00250 | db EndCurve | dw 00250 |
+                      db CurveDown        | dw 00250 | db EndCurve | dw 60200 |
+
+                    ;next distance, curve (1=right, 2=down, 3=left, 4=up, 0=end current curve)
+                    dw  00500   ;distance till first curve
+RacingGameEventsLevel2:     db CurveRight          | dw 00250 | db EndCurve | dw 00250 |
+                      db CurveDown        | dw 00250 | db EndCurve | dw 00250 |
+                      db CurveUp          | dw 00350 | db EndCurve | dw 00350 |
+                      db CurveLeft        | dw 00350 | db EndCurve | dw 00350 |
                       db CurveUp          | dw 00250 | db EndCurve | dw 01250 |
                       db CurveDown        | dw 00250 | db EndCurve | dw 00250 |
                       db CurveLeft        | dw 00250 | db EndCurve | dw 00250 |
@@ -2672,10 +2688,10 @@ RacingGameEventsLevel1:     db CurveUp          | dw 00250 | db EndCurve | dw 00
 
                     ;next distance, curve (1=right, 2=down, 3=left, 4=up, 0=end current curve)
                     dw  00500   ;distance till first curve
-RacingGameEventsLevel2:     db CurveUp          | dw 00250 | db EndCurve | dw 00250 |
-                      db CurveDown        | dw 00250 | db EndCurve | dw 00250 |
-                      db CurveUp          | dw 00350 | db EndCurve | dw 00350 |
-                      db CurveDown        | dw 00350 | db EndCurve | dw 00350 |
+RacingGameEventsLevel3:     db HalfCurveRight          | dw 00250 | db EndCurve | dw 00250 |
+                      db HalfCurveLeft        | dw 00250 | db EndCurve | dw 00250 |
+                      db HalfCurveLeft          | dw 00350 | db EndCurve | dw 00350 |
+                      db CurveRight        | dw 00350 | db EndCurve | dw 00350 |
                       db CurveUp          | dw 00250 | db EndCurve | dw 01250 |
                       db CurveDown        | dw 00250 | db EndCurve | dw 00250 |
                       db CurveLeft        | dw 00250 | db EndCurve | dw 00250 |
@@ -2684,23 +2700,11 @@ RacingGameEventsLevel2:     db CurveUp          | dw 00250 | db EndCurve | dw 00
 
                     ;next distance, curve (1=right, 2=down, 3=left, 4=up, 0=end current curve)
                     dw  00500   ;distance till first curve
-RacingGameEventsLevel3:     db CurveUp          | dw 00250 | db EndCurve | dw 00250 |
-                      db CurveDown        | dw 00250 | db EndCurve | dw 00250 |
-                      db CurveUp          | dw 00350 | db EndCurve | dw 00350 |
-                      db CurveDown        | dw 00350 | db EndCurve | dw 00350 |
-                      db CurveUp          | dw 00250 | db EndCurve | dw 01250 |
-                      db CurveDown        | dw 00250 | db EndCurve | dw 00250 |
-                      db CurveLeft        | dw 00250 | db EndCurve | dw 00250 |
-                      db CurveUp          | dw 00250 | db EndCurve | dw 00250 |
-                      db CurveDown        | dw 00250 | db EndCurve | dw 60200 |
-
-                    ;next distance, curve (1=right, 2=down, 3=left, 4=up, 0=end current curve)
-                    dw  00500   ;distance till first curve
-RacingGameEventsLevel4:     db CurveUp          | dw 00250 | db EndCurve | dw 00250 |
-                      db CurveDown        | dw 00250 | db EndCurve | dw 00250 |
-                      db CurveUp          | dw 00350 | db EndCurve | dw 00350 |
-                      db CurveDown        | dw 00350 | db EndCurve | dw 00350 |
-                      db CurveUp          | dw 00250 | db EndCurve | dw 01250 |
+RacingGameEventsLevel4:     db HalfCurveLeft          | dw 00250 | db EndCurve | dw 00250 |
+                      db HalfCurveLeft        | dw 00250 | db EndCurve | dw 00250 |
+                      db HalfCurveRight          | dw 00350 | db EndCurve | dw 00350 |
+                      db HalfCurveRight        | dw 00350 | db EndCurve | dw 00350 |
+                      db CurveLeft          | dw 00250 | db EndCurve | dw 01250 |
                       db CurveDown        | dw 00250 | db EndCurve | dw 00250 |
                       db CurveLeft        | dw 00250 | db EndCurve | dw 00250 |
                       db CurveUp          | dw 00250 | db EndCurve | dw 00250 |
@@ -2710,8 +2714,8 @@ RacingGameEventsLevel4:     db CurveUp          | dw 00250 | db EndCurve | dw 00
                     dw  00500   ;distance till first curve
 RacingGameEventsLevel5:     db CurveUp          | dw 00250 | db EndCurve | dw 00250 |
                       db CurveDown        | dw 00250 | db EndCurve | dw 00250 |
-                      db CurveUp          | dw 00350 | db EndCurve | dw 00350 |
-                      db CurveDown        | dw 00350 | db EndCurve | dw 00350 |
+                      db CurveLeft          | dw 00350 | db EndCurve | dw 00350 |
+                      db CurveLeft        | dw 00350 | db EndCurve | dw 00350 |
                       db CurveUp          | dw 00250 | db EndCurve | dw 01250 |
                       db CurveDown        | dw 00250 | db EndCurve | dw 00250 |
                       db CurveLeft        | dw 00250 | db EndCurve | dw 00250 |
@@ -2720,10 +2724,10 @@ RacingGameEventsLevel5:     db CurveUp          | dw 00250 | db EndCurve | dw 00
 
                     ;next distance, curve (1=right, 2=down, 3=left, 4=up, 0=end current curve)
                     dw  00500   ;distance till first curve
-RacingGameEventsLevel6:     db CurveUp          | dw 00250 | db EndCurve | dw 00250 |
+RacingGameEventsLevel6:     db CurveRight          | dw 00250 | db EndCurve | dw 00250 |
                       db CurveDown        | dw 00250 | db EndCurve | dw 00250 |
-                      db CurveUp          | dw 00350 | db EndCurve | dw 00350 |
-                      db CurveDown        | dw 00350 | db EndCurve | dw 00350 |
+                      db CurveRight          | dw 00350 | db EndCurve | dw 00350 |
+                      db CurveLeft        | dw 00350 | db EndCurve | dw 00350 |
                       db CurveUp          | dw 00250 | db EndCurve | dw 01250 |
                       db CurveDown        | dw 00250 | db EndCurve | dw 00250 |
                       db CurveLeft        | dw 00250 | db EndCurve | dw 00250 |
@@ -3348,27 +3352,26 @@ UpdateHud:
   rr    l                            ;hl /16
   ld    a,l
   add   a,46
-  ld    (DistanceMeter+dx),a
   cp    230
-  jr    c,.EndCheckLevelFinished
-;  ld    a,1
-;  ld    (freezecontrols?),a
-;  ld    (RacingGameLevelFinished?),a
-  ld    a,1
-  ld    (AllowFlagToAppear?),a
-
-  ret
-  .EndCheckLevelFinished:
-
+  jr    nc,.EndOfLevelFlagMayAppear
+  ld    (DistanceMeter+dx),a
   bit   0,a
   ld    a,32
   jr    z,.Setsy
   ld    a,37
   .Setsy:
   ld    (DistanceMeter+sy),a
-
   ld    hl,DistanceMeter
   jp    DoCopy
+
+  .EndOfLevelFlagMayAppear:
+
+  ld    hl,3800                           ;jump to end of level
+  ld    (RacingGameDistance+1),hl
+
+  ld    a,1
+  ld    (AllowFlagToAppear?),a
+  ret
 
   .Fuelmeter:
   ld    a,(RequiredAmountOfFuelBars)
