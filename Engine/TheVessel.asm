@@ -657,6 +657,10 @@ RacingGameLevelProgressScreenGfxBlock:  			equ   ($-RomStartAddress) and (romsiz
   incbin "..\grapx\RacingGame\LevelProgressScreen.sc5",7,212 * 128      ;98 lines
 	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
 
+RacingGameTitleScreenSmokeAnimationGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
+  incbin "..\grapx\RacingGame\TitleScreenSmokeAnimation.sc5",7,081 * 128      ;98 lines
+	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
+
 RacingGameTitleScreenGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
   incbin "..\grapx\RacingGame\TitleScreen.sc5",7,212 * 128      ;98 lines
 	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
@@ -791,9 +795,9 @@ RacingGameFlag1MiniSpritesBlock:  			equ   ($-RomStartAddress) and (romsize-1) /
 	include "..\grapx\racinggame\sprites\Flag\Flag1.tcs.gen"
 
 	Flag1MiniSpritesCharacters:
-;	include "..\grapx\racinggame\sprites\Flag\Flag1MiniSprite.tgs.gen"
+	include "..\grapx\racinggame\sprites\Flag\FlagMiniSprite.tgs.gen"
 	Flag1MiniSpriteColors:	
-;	include "..\grapx\racinggame\sprites\Flag\Flag1MiniSprite.tcs.gen"
+	include "..\grapx\racinggame\sprites\Flag\FlagMiniSprite.tcs.gen"
 	dephase
 	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
 

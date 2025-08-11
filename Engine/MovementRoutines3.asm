@@ -54,7 +54,7 @@ RacingGameRoutine:
   call  VideoReplayer
   call  SetEnemySpriteCharacterAndColorData
   call  .UpdateDistance
-;  call  HandleCurvatureRoad
+  call  HandleCurvatureRoad
   call  SetPlayerSprite
   call  WriteSpatToVram
   call  SetEnemySprite ;.HandleHorizontalMovementEnemies integrated
@@ -187,6 +187,17 @@ RacingGameRoutine:
   ld    (spat+0+(08*4)),a                 ;y sprite 8
   ld    (spat+0+(09*4)),a                 ;y sprite 9
 
+  xor   a
+  ld    (MoveHorizonVertically+dy),a
+
+  ld    hl,6247                         ;highest difficulty
+;  ld    hl,5000                         ;average difficulty
+;  ld    hl,3800                         ;when curving down, so we don't get 8+ sprites per spriteline
+  ld    (FrequencyEnemiesAppear),hl
+
+  ld    a,42
+  ld    (CloudsY),a
+
   ld    hl,RoadAnimationAddresses
   ld    (RoadAnimationAddressesPointer),hl
 
@@ -233,7 +244,7 @@ RacingGameRoutine:
   ld    (RacingGameEventDistance),de
 
 
-;  ld    hl,3000                           ;jump to end of level
+;  ld    hl,2800                           ;jump to end of level
 ;  ld    (RacingGameDistance+1),hl
 
   ld    hl,0                            ;speed in m/p/h
@@ -798,16 +809,17 @@ PlaceNewObject:                           ;new objects may be placed if all acti
   or    a
   ret   nz
 
+  ld    de,(FrequencyEnemiesAppear)
+;  ld    de,6247                         ;highest difficulty
+;  ld    de,5000                         ;average difficulty
+;  ld    de,3800                         ;when curving down, so we don't get 8+ sprites per spriteline
   ld    hl,(Object2+DistanceFromPlayer)
-  ld    de,6247
   sbc   hl,de
   ret   nc
   ld    hl,(Object3+DistanceFromPlayer)
-  ld    de,6247
   sbc   hl,de
   ret   nc
   ld    hl,(Object4+DistanceFromPlayer)
-  ld    de,6247
   sbc   hl,de
   ret   nc
 
@@ -845,6 +857,12 @@ PlaceNewObject:                           ;new objects may be placed if all acti
   ld    hl,XstartingPositionEnemyTable
   add   hl,de
   ld    a,(hl)
+
+
+;ld a,244
+;ld a,12
+
+
 
   ld    (ix+X16bit),a
   ld    hl,9370                         ;place enemy on the horizon
@@ -913,6 +931,7 @@ PlaceNewObject:                           ;new objects may be placed if all acti
 ;Wolf
 ;Alien  
 ;  ld a,RacingGameYellowJacketBoySpritesBlock
+;  ld a,RacingGameWolfSpritesBlock
 ;  ld a,RacingGameAlienSpritesBlock
 ;  ld a,RacingGameRedHeadBoySpritesBlock
 ;  ld a,RacingGameGirl1PonySpritesBlock
@@ -1264,6 +1283,8 @@ SetEnemySprite:
   sub   39                                          ;y top at horizon is 82
   cp    124
   jp    c,.EndCheckClippingBot
+
+
   sub   123
   ld    l,a
   ld    h,0
@@ -1299,6 +1320,36 @@ SetEnemySprite:
   add   hl,bc
   ld    a,l
   sub   16                                          ;16 pixel displacement since our sprite is 32 pixels wide and we calculate from the left instead of the middle
+
+
+
+
+
+
+
+  ld    l,(ix+X16bit)
+  bit   7,l
+  jp    nz,.RightSideOfScreenClippingBot
+
+  .LeftSideOfScreenClippingBot:
+  cp    256-40
+  jp    c,.SetXSpat
+  xor   a
+  jp    .SetXSpat   
+  .RightSideOfScreenClippingBot:
+  cp    32
+  jr    c,.Clipping
+  cp    256-16
+  jp    c,.SetXSpat
+  .Clipping:
+  ld    a,256-17
+
+
+
+
+
+
+
   jp    .SetXSpat
 
   .EndCheckClippingBot:
@@ -1345,7 +1396,15 @@ SetEnemySprite:
   .CurveLeftEndFoundX:
   ld    a,(RoadCurvatureAnimationStep)              ;75 steps
   ld    e,a
+
+  ld    a,(HalfCurve?)
+  or    a
   ld    a,150
+  jr    z,.LeftCurveFound
+  ld    a,75
+  .LeftCurveFound:
+
+;  ld    a,150
   sub   e
   jp    .Go4
 
@@ -1372,7 +1431,15 @@ SetEnemySprite:
   .CurveRightEndFoundX:
   ld    a,(RoadCurvatureAnimationStep)              ;75 steps
   ld    e,a
+
+  ld    a,(HalfCurve?)
+  or    a
   ld    a,150
+  jr    z,.RightCurveFound
+  ld    a,75
+  .RightCurveFound:
+
+;  ld    a,150
   sub   e
   jp    .Go5
 
@@ -1452,24 +1519,101 @@ SetEnemySprite:
 ;ld a,112
   .SetXSpat:
 
+
+
+
+
   ld    l,(ix+X16bit)
   bit   7,l
   jr    nz,.RightSideOfScreen
 
   .LeftSideOfScreen:
+
+
+;  ld    l,(ix+DistanceFromPlayer)
+;  ld    h,(ix+DistanceFromPlayer+1)
+;  ld    de,1000
+;  sbc   hl,de
+;  jr    nc,.endcheckclippingbotandleft
+;  cp    240
+;  jp    nc,.EndCheckOutOfScreen
+;  xor   a
+;  .endcheckclippingbotandleft:  
+
+
+  ex    af,af'
+  ld    a,(CurrentCurve)                            ;1=right, 2=down, 3=left, 4=up, 5=right end, 6=down end, 7=left end, 8=up end
+  cp    1
+  jr    z,.Skip
+  cp    5
+  jr    z,.Skip
+  ex    af,af'
+  jr    .DontSkip
+  .Skip:
+  ex    af,af'
+  cp    256-16
+  jp    c,.EndCheckOutOfScreen
+  ld    a,256-17
+  jp    .EndCheckOutOfScreen   
+  .DontSkip:
+
+
   cp    256-30
   jr    c,.EndCheckOutOfScreen
   xor   a
   jp    .EndCheckOutOfScreen   
   .RightSideOfScreen:
-  cp    256-8
+
+
+
+
+
+
+  ex    af,af'
+  ld    a,(CurrentCurve)                            ;1=right, 2=down, 3=left, 4=up, 5=right end, 6=down end, 7=left end, 8=up end
+  cp    3
+  jr    z,.Skip2
+  cp    7
+  jr    z,.Skip2
+  ex    af,af'
+  jr    .DontSkip2
+  .Skip2:
+  ex    af,af'
+  cp    256-16
+  jp    c,.EndCheckOutOfScreen
+  ld    a,0
+  jp    .EndCheckOutOfScreen   
+  .DontSkip2:
+
+
+
+
+
+
+  cp    256-16
   jr    c,.EndCheckOutOfScreen
-  ld    a,256-9
+  ld    a,256-17
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+;so these values here are fine at the bottom of the screen. you could have a separate check for bottom or top of screen, and use the above values only for top
+;  .RightSideOfScreen:
+;  cp    256-8
+;  jr    c,.EndCheckOutOfScreen
+;  ld    a,256-9
   .EndCheckOutOfScreen:
-
-
   bit   0,(ix+MiniSprite?)
   jp    z,.EndCheckMiniSprite
 
@@ -1890,9 +2034,16 @@ SetEnemySprite:
   ld    a,(hl)
   add   a,(ix+X16bit)
   cp    26
-  ret   c
+  jr    nc,.EndCheckLeftBoundaryGirl1Pony
+  ld    a,26
+  .EndCheckLeftBoundaryGirl1Pony:
+
   cp    256-26
-  ret   nc
+  jr    c,.EndCheckRightBoundaryGirl1Pony
+  ld    a,256-26
+  .EndCheckRightBoundaryGirl1Pony:
+
+
   ld    (ix+X16bit),a
   ret
 
@@ -1906,17 +2057,32 @@ SetEnemySprite:
   call  .CheckEnemyNearRedHeadBoy                     ;checks if enemy is near player, if so steer toward player
   ld    a,(ix+X16bit)
   add   a,(ix+RacingGameHorizontalMovementEnemy)
+
+
+
   cp    26
-  ret   c
+  jr    nc,.EndCheckLeftBoundaryRedHeadBoy
+  ld    a,26
+  .EndCheckLeftBoundaryRedHeadBoy:
+
   cp    256-26
-  ret   nc
+  jr    c,.EndCheckRightBoundaryRedHeadBoy
+  ld    a,256-26
+  .EndCheckRightBoundaryRedHeadBoy:
+
+
+
+;  cp    26
+;  ret   c
+;  cp    256-26
+;  ret   nc
   ld    (ix+X16bit),a
   ret
 
   .CheckEnemyNearRedHeadBoy:
   ld    l,(ix+DistanceFromPlayer)
   ld    h,(ix+DistanceFromPlayer+1)
-  ld    de,5000
+  ld    de,8000
   sbc   hl,de
   ret   nc
 
@@ -1945,13 +2111,30 @@ SetEnemySprite:
   add   hl,de
   ld    a,(ix+X16bit)
   add   a,(hl)
+
+
+
+
   cp    26
-  ret   c
+  jr    nc,.EndCheckLeftBoundaryWolf
+  ld    a,26
+  .EndCheckLeftBoundaryWolf:
+
   cp    256-26
-  jr    c,.EndCheckWolfReachedRightBorder
-  ld    (ix+var3),32
-  ret
-  .EndCheckWolfReachedRightBorder:
+  jr    c,.EndCheckRightBoundaryWolf
+   ld    (ix+var3),32
+  ld    a,256-26
+  .EndCheckRightBoundaryWolf:
+
+
+
+;  cp    26
+;  ret   c
+;  cp    256-26
+;  jr    c,.EndCheckWolfReachedRightBorder
+;  ld    (ix+var3),32
+;  ret
+;  .EndCheckWolfReachedRightBorder:
   ld    (ix+X16bit),a
   ret
 
@@ -1969,10 +2152,26 @@ db -0,-1,-1,-2,-2,-2,-2,-3,   -3,-3,-3,-3,-4,-4,-4,-4,   -4,-4,-4,-4,-3,-3,-3,-3
   call  .CheckEnemyNear                     ;checks if enemy is near player, if so steer toward player
   ld    a,(ix+X16bit)
   add   a,(ix+RacingGameHorizontalMovementEnemy)
+;  cp    26
+;  ret   c
+;  cp    256-26
+;  ret   nc
+
+
+
   cp    26
-  ret   c
+  jr    nc,.EndCheckLeftBoundaryAlien
+  ld    a,26
+  .EndCheckLeftBoundaryAlien:
+
   cp    256-26
-  ret   nc
+  jr    c,.EndCheckRightBoundaryAlien
+  ld    a,256-26
+  .EndCheckRightBoundaryAlien:
+
+
+
+
   ld    (ix+X16bit),a
   ret
 
@@ -2602,7 +2801,7 @@ ForceMovePlayerAgainstCurves:
   sub   a,e
   ld    (ScrollHorizonRightCounter),a
   ret   nc
-  add   a,17
+  add   a,19
   ld    (ScrollHorizonRightCounter),a
   ld    a,1
   ld    (ScrollHorizonRight?),a
@@ -2646,7 +2845,7 @@ ForceMovePlayerAgainstCurves:
   sub   a,e
   ld    (ScrollHorizonLeftCounter),a
   ret   nc
-  add   a,17
+  add   a,19
   ld    (ScrollHorizonLeftCounter),a
   ld    a,1
   ld    (ScrollHorizonLeft?),a
@@ -2660,15 +2859,20 @@ CurveLeft: equ 3
 CurveUp: equ 4
 HalfCurveRight: equ 5
 HalfCurveLeft: equ 6
-
+FrequencyEnemiesMin:  equ 7
+FrequencyEnemiesAverage: equ 8
+FrequencyEnemiesMax: equ 9
 
                     ;next distance, curve (1=right, 2=down, 3=left, 4=up, 0=end current curve)
-                    dw  00200   ;distance till first curve
-RacingGameEventsLevel1:     db CurveUp          | dw 00250 | db EndCurve | dw 00250 |
+                    dw  00000   ;distance till first curve
+RacingGameEventsLevel1:     
+;                      db FrequencyEnemiesMin   | dw 00002 ;BUGGGGGGGGGGGGGGGGGGGED
+                      db CurveRight          | dw 00250 | db EndCurve | dw 00250 |
+;                      db FrequencyEnemiesMax   | dw 00002
                       db CurveDown        | dw 00250 | db EndCurve | dw 00250 |
                       db CurveUp          | dw 00350 | db EndCurve | dw 00350 |
-                      db CurveDown        | dw 00350 | db EndCurve | dw 00350 |
-                      db CurveLeft        | dw 00250 | db EndCurve | dw 01250 |
+                      db CurveLeft        | dw 00350 | db EndCurve | dw 00350 |
+                      db CurveRight        | dw 00250 | db EndCurve | dw 01250 |
                       db CurveDown        | dw 00250 | db EndCurve | dw 00250 |
                       db CurveLeft        | dw 00250 | db EndCurve | dw 00250 |
                       db CurveUp          | dw 00250 | db EndCurve | dw 00250 |
@@ -2705,7 +2909,7 @@ RacingGameEventsLevel4:     db HalfCurveLeft          | dw 00250 | db EndCurve |
                       db HalfCurveRight          | dw 00350 | db EndCurve | dw 00350 |
                       db HalfCurveRight        | dw 00350 | db EndCurve | dw 00350 |
                       db CurveLeft          | dw 00250 | db EndCurve | dw 01250 |
-                      db CurveDown        | dw 00250 | db EndCurve | dw 00250 |
+                      db CurveRight        | dw 00250 | db EndCurve | dw 00250 |
                       db CurveLeft        | dw 00250 | db EndCurve | dw 00250 |
                       db CurveUp          | dw 00250 | db EndCurve | dw 00250 |
                       db CurveDown        | dw 00250 | db EndCurve | dw 60200 |
@@ -2714,7 +2918,7 @@ RacingGameEventsLevel4:     db HalfCurveLeft          | dw 00250 | db EndCurve |
                     dw  00500   ;distance till first curve
 RacingGameEventsLevel5:     db CurveUp          | dw 00250 | db EndCurve | dw 00250 |
                       db CurveDown        | dw 00250 | db EndCurve | dw 00250 |
-                      db CurveLeft          | dw 00350 | db EndCurve | dw 00350 |
+                      db CurveRight          | dw 00350 | db EndCurve | dw 00350 |
                       db CurveLeft        | dw 00350 | db EndCurve | dw 00350 |
                       db CurveUp          | dw 00250 | db EndCurve | dw 01250 |
                       db CurveDown        | dw 00250 | db EndCurve | dw 00250 |
@@ -2741,7 +2945,7 @@ RacingGameEventsLevel7:     db CurveUp          | dw 00250 | db EndCurve | dw 00
                       db CurveUp          | dw 00350 | db EndCurve | dw 00350 |
                       db CurveDown        | dw 00350 | db EndCurve | dw 00350 |
                       db CurveUp          | dw 00250 | db EndCurve | dw 01250 |
-                      db CurveDown        | dw 00250 | db EndCurve | dw 00250 |
+                      db CurveRight        | dw 00250 | db EndCurve | dw 00250 |
                       db CurveLeft        | dw 00250 | db EndCurve | dw 00250 |
                       db CurveUp          | dw 00250 | db EndCurve | dw 00250 |
                       db CurveDown        | dw 00250 | db EndCurve | dw 60200 |
@@ -2766,6 +2970,14 @@ HandleCurvatureRoad:
   add   hl,de
   ld    (RacingGameEventDistance),hl
 
+;EndCurve: equ 0
+;CurveRight: equ 1
+;CurveDown: equ 2
+;CurveLeft: equ 3
+;CurveUp: equ 4
+;HalfCurveRight: equ 5
+;HalfCurveLeft: equ 6
+
   ld    hl,HalfCurve?
   or    a
   jp    z,.CurveEnd
@@ -2781,7 +2993,29 @@ HandleCurvatureRoad:
   ld    (hl),1
   dec   a
   jp    z,.CurveRight
-  jp    .CurveLeft
+  dec   a
+  jp    z,.CurveLeft
+  dec   a
+  jp    z,.FrequencyEnemiesMin
+  dec   a
+  jp    z,.FrequencyEnemiesAverage
+  dec   a
+  jp    z,.FrequencyEnemiesMax
+
+  .FrequencyEnemiesMax:
+  ld    hl,6247                         ;highest difficulty
+  ld    (FrequencyEnemiesAppear),hl
+  ret
+
+  .FrequencyEnemiesAverage:
+  ld    hl,5000                         ;average difficulty
+  ld    (FrequencyEnemiesAppear),hl
+  ret
+
+  .FrequencyEnemiesMin:
+  ld    hl,3800                         ;lowest diffculty (also for curving down, so we don't get 8+ sprites per spriteline)
+  ld    (FrequencyEnemiesAppear),hl
+  ret
 
   .CurveEnd:
   ld    a,(CurrentCurve)                           ;1=right, 2=down, 3=left, 4=up, 5=right end, 6=down end, 7=left end, 8=up end
@@ -2864,6 +3098,8 @@ HandleCurvatureRoad:
   ret
 
   .CurveUp:
+  ld    hl,.BackUpHorizon
+  call  DoCopy
   xor   a
   ld    (RoadCurvatureAnimationStep),a
   ld    a,2
@@ -2878,7 +3114,15 @@ HandleCurvatureRoad:
 	ld		(RoadAnimationIndexesBlock),a
   ret
 
+  .BackUpHorizon:
+	db		000,0,112,0
+	db		000,0,000,1
+	db		000,1,16,0
+	db		0,0,$d0  ;copy direction=left
+
   .CurveDown:
+  ld    hl,.BackUpHorizon
+  call  DoCopy
   xor   a
   ld    (RoadCurvatureAnimationStep),a
   ld    a,4
@@ -3159,16 +3403,81 @@ MoveHorizonInCurves:
   ret
 
   .EndCurveUp:
+  ld    a,(MoveHorizonVertically+dy)
+  ld    c,a
+
   ld    a,(RacingGameNewLineIntToBeSetOnVblank)                 ;113 is the standard, 083 is perfect for the road all the way curved up
   dec   a
   ld    (MoveHorizonVertically+dy),a
+
+
+
+;move clouds down
+  cp    c
+  jr    nz,.NewYDown2
+  ld    a,(PreviousRoadCurvatureAnimationStep)
+  ld    b,a
+  ld    a,(RoadCurvatureAnimationStep)
+  cp    b
+  ret   z
+  ld    (PreviousRoadCurvatureAnimationStep),a
+  ld    a,(ScrollClouds?)
+  inc   a
+  ld    (ScrollClouds?),a
+  and   7
+  jr    nz,.NewYDown2
+  ;move clouds down
+  ld    a,(CloudsY)
+  inc   a
+  ld    (CloudsY),a
+
+  ld    a,(CloudsY)
+  add   a,13
+  ld    (MoveCloudsDown+sy),a
+  inc   a
+  ld    (MoveCloudsDown+dy),a
+  ld    hl,MoveCloudsDown
+  jp    DoCopy
+
+  .NewYDown2:
+
+
+
+
+
+
   ld    hl,MoveHorizonVertically
   call  DoCopy
   ret
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   .CurveUp:
   ld    a,(RoadCurvatureAnimationStep)
   ;FOKKING LEIPE HACKJOB !!!!!!!!!!!!!!!!
+
+  cp    108
+  ld    b,1
+  jr    nc,.Set2
+
   cp    $21
   ld    b,2
   jr    c,.Set2
@@ -3178,16 +3487,54 @@ MoveHorizonInCurves:
 
   .Set2:
   ;FOKKING LEIPE HACKJOB !!!!!!!!!!!!!!!!
+
+  ld    a,(AnimateRoad?)
+  or    a
+  ld    c,0
+  jr    z,.SetRoadCurvatureAnimationStep
+  ld    c,1
+  .SetRoadCurvatureAnimationStep:
+
   ld    a,(RoadCurvatureAnimationStep)
-  inc   a
+  add   a,c
   srl   a                                 ;/2
   ld    e,a
   ld    d,0
   ld    hl,RacingGameRoutine.CurveUpLineIntHeightTable
   add   hl,de
+
+
+
+
+;move clouds up
+  ld    a,(MoveHorizonVertically+dy)
+  ld    c,a
   ld    a,(hl)
   sub   a,b
   ld    (MoveHorizonVertically+dy),a
+  cp    c
+  jr    nz,.NewYUp
+  ld    a,(PreviousRoadCurvatureAnimationStep)
+  ld    b,a
+  ld    a,(RoadCurvatureAnimationStep)
+  cp    b
+  ret   z
+  ld    (PreviousRoadCurvatureAnimationStep),a
+  ld    a,(ScrollClouds?)
+  inc   a
+  ld    (ScrollClouds?),a
+  and   7
+  jr    nz,.NewYUp
+  ;move clouds up
+  ld    a,(CloudsY)
+  ld    (MoveCloudsUp+sy),a
+  dec   a
+  ld    (CloudsY),a
+  ld    (MoveCloudsUp+dy),a
+  ld    hl,MoveCloudsUp
+  jp    DoCopy
+
+  .NewYUp:
   ld    hl,MoveHorizonVertically
   call  DoCopy
   ret
@@ -3202,18 +3549,116 @@ MoveHorizonInCurves:
   .Set:
   ;FOKKING LEIPE HACKJOB !!!!!!!!!!!!!!!!
 
+
+  ld    a,(MoveHorizonVertically+dy)
+  ld    c,a
+
+
   ld    a,(RacingGameNewLineIntToBeSetOnVblank)                 ;113 is the standard, 083 is perfect for the road all the way curved up
   sub   a,b
 
   ld    (MoveHorizonVertically+dy),a
+
+
+
+
+
+
+
+
+
+
+
+;move clouds up
+  cp    c
+  jr    nz,.NewYUp2
+  ld    a,(PreviousRoadCurvatureAnimationStep)
+  ld    b,a
+  ld    a,(RoadCurvatureAnimationStep)
+  cp    b
+  ret   z
+  ld    (PreviousRoadCurvatureAnimationStep),a
+  ld    a,(ScrollClouds?)
+  inc   a
+  ld    (ScrollClouds?),a
+  and   7
+  jr    nz,.NewYUp2
+  ;move clouds up
+  ld    a,(CloudsY)
+  ld    (MoveCloudsUp+sy),a
+  dec   a
+  ld    (CloudsY),a
+  ld    (MoveCloudsUp+dy),a
+  ld    hl,MoveCloudsUp
+  jp    DoCopy
+
+  .NewYUp2:
+
+
+
+
+
+
+
+
+
+
+
+
+
   ld    hl,MoveHorizonVertically
   call  DoCopy
   ret
 
   .CurveDown:
+  ld    a,(MoveHorizonVertically+dy)
+  ld    c,a
+
   ld    a,(RacingGameNewLineIntToBeSetOnVblank)                 ;113 is the standard, 083 is perfect for the road all the way curved up
   dec   a
   ld    (MoveHorizonVertically+dy),a
+
+
+
+
+
+
+;move clouds down
+  cp    c
+  jr    nz,.NewYDown
+  ld    a,(PreviousRoadCurvatureAnimationStep)
+  ld    b,a
+  ld    a,(RoadCurvatureAnimationStep)
+  cp    b
+  ret   z
+  ld    (PreviousRoadCurvatureAnimationStep),a
+  ld    a,(ScrollClouds?)
+  inc   a
+  ld    (ScrollClouds?),a
+  and   7
+  jr    nz,.NewYDown
+  ;move clouds down
+  ld    a,(CloudsY)
+  inc   a
+  ld    (CloudsY),a
+
+  ld    a,(CloudsY)
+  add   a,13
+  ld    (MoveCloudsDown+sy),a
+  inc   a
+  ld    (MoveCloudsDown+dy),a
+  ld    hl,MoveCloudsDown
+  jp    DoCopy
+
+  .NewYDown:
+
+
+
+
+
+
+
+
   ld    hl,MoveHorizonVertically
   call  DoCopy
   ret
@@ -3222,21 +3667,56 @@ MoveHorizonInCurves:
   xor   a
   ld    (ScrollHorizonRight?),a
 
+  ld    a,(ScrollClouds?)
+  inc   a
+  ld    (ScrollClouds?),a
+  and   3
+  jr    z,.ScrollCloudsRight
+
   ld    hl,MoveHorizonRightLoop2Pixels
   call  DoCopy
   ld    hl,MoveHorizonRight
   call  DoCopy
   ret
 
+  .ScrollCloudsRight:
+  ld    a,(CloudsY)
+  ld    (MoveCloudsRightLoop2Pixels+sy),a
+  ld    (MoveCloudsRightLoop2Pixels+dy),a
+  ld    (MoveCloudsRight+sy),a
+  ld    (MoveCloudsRight+dy),a
+
+  ld    hl,MoveCloudsRightLoop2Pixels
+  call  DoCopy
+  ld    hl,MoveCloudsRight
+  jp    DoCopy
+
   .ScrollHorizonLeft:
   xor   a
   ld    (ScrollHorizonLeft?),a
 
+  ld    a,(ScrollClouds?)
+  inc   a
+  ld    (ScrollClouds?),a
+  and   3
+  jr    z,.ScrollCloudsLeft
+
   ld    hl,MoveHorizonLeftLoop2Pixels
   call  DoCopy
   ld    hl,MoveHorizonLeft
+  jp    DoCopy
+
+  .ScrollCloudsLeft:
+  ld    a,(CloudsY)
+  ld    (MoveCloudsLeftLoop2Pixels+sy),a
+  ld    (MoveCloudsLeftLoop2Pixels+dy),a
+  ld    (MoveCloudsLeft+sy),a
+  ld    (MoveCloudsLeft+dy),a
+
+  ld    hl,MoveCloudsLeftLoop2Pixels
   call  DoCopy
-  ret
+  ld    hl,MoveCloudsLeft
+  jp    DoCopy
 
 UpdateHud:
   ld    a,(framecounter2)
@@ -3366,7 +3846,7 @@ UpdateHud:
 
   .EndOfLevelFlagMayAppear:
 
-  ld    hl,3800                           ;jump to end of level
+  ld    hl,3000                           ;stay at end of level
   ld    (RacingGameDistance+1),hl
 
   ld    a,1
@@ -3555,15 +4035,56 @@ RacingGameTitleScreenRoutine:
   jr    .StartGame
   endif
 
-  ld    a,0*32 + 31                         ;force page 0
-	ld    (PageOnNextVblank),a
   ld    a,1
   ld    (framecounter),a                    ;we force framecounter to 1 so that the sf2 object handler doesn't swap page ever
+  ld    a,0*32 + 31                         ;force page 0
+	ld    (PageOnNextVblank),a
 
   call  .HandlePhase                           ;screen on, set int handler, init variables
+  call  .GoAnimateSmoke
   call  .CheckStartGame
   ret
   
+  .GoAnimateSmoke:
+  ld    a,(AnimateSmokeSpeed)
+  inc   a
+  and   7
+  ld    (AnimateSmokeSpeed),a
+  ret   nz
+
+  ld    a,(Framecounter2)
+  inc   a
+  ld    (Framecounter2),a
+  and   7
+
+  ld    hl,TitleScreenAnimateSmoke
+  ld    b,000                                 ;sx
+  jp    z,.AnimateSmoke
+  dec   a
+  ld    b,016                                 ;sx
+  jp    z,.AnimateSmoke
+  dec   a
+  ld    b,032                                 ;sx
+  jp    z,.AnimateSmoke
+  dec   a
+  ld    b,048                                 ;sx
+  jp    z,.AnimateSmoke
+  dec   a
+  ld    b,064                                 ;sx
+  jp    z,.AnimateSmoke
+  dec   a
+  ld    b,080                                 ;sx
+  jp    z,.AnimateSmoke
+  dec   a
+  ld    b,096                                 ;sx
+  jp    z,.AnimateSmoke
+  ld    b,112                                 ;sx
+
+  .AnimateSmoke:
+  ld    a,b
+  ld    (TitleScreenAnimateSmoke+sx),a
+  jp    DoCopy
+
   .CheckStartGame:
 ;
 ; bit	7	  6	  5		    4		    3		    2		  1		  0
@@ -3590,6 +4111,12 @@ RacingGameTitleScreenRoutine:
   ld    hl,$4000 + (000*128) + (000/2) - 128
   ld    de,$0000 + (000*128) + (000/2) - 128
   ld    bc,$0000 + (212*256) + (256/2)
+  call  CopyRomToVram                   ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
+
+  ld    a,RacingGameTitleScreenSmokeAnimationGfxBlock     			;block to copy graphics from
+  ld    hl,$4000 + (000*128) + (000/2) - 128
+  ld    de,$8000 + (000*128) + (000/2) - 128
+  ld    bc,$0000 + (081*256) + (128/2)
   call  CopyRomToVram                   ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
 
   ld    hl,NeonHorizonsTitleScreenPalette

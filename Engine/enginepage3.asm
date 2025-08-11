@@ -1384,7 +1384,7 @@ SetPinPoint:
 
 MoveHorizonVertically:
 	db		000,0,000,1
-	db		000,0,113,0
+	db		000,0,000,0
 	db		000,1,16,0
 	db		0,0,$d0  ;copy direction=left
 
@@ -1411,6 +1411,50 @@ MoveHorizonLeft:
 	db		000,0,113,0
 	db		254,0,15,0
 	db		0,0,$d0
+
+
+MoveCloudsLeftLoop2Pixels:
+	db		000,0,042,0
+	db		254,0,042,0
+	db		002,0,15,0
+	db		0,0,$d0
+
+MoveCloudsLeft:
+	db		002,0,042,0
+	db		000,0,042,0
+	db		254,0,15,0
+	db		0,0,$d0
+
+MoveCloudsRightLoop2Pixels:
+	db		254,0,042,0
+	db		000,0,042,0
+	db		002,0,15,0
+	db		0,0,$d0  ;copy direction=left
+
+MoveCloudsRight:
+	db		253,0,042,0
+	db		255,0,042,0
+	db		254,0,15,0
+	db		0,%0000 0100,$d0  ;copy direction=left
+
+
+
+MoveCloudsUp:
+	db		000,0,042,0
+	db		000,0,041,0
+	db		000,1,16,0
+	db		0,0,$d0
+
+
+
+MoveCloudsDown:
+	db		000,0,056,0
+	db		000,0,057,0
+	db		000,1,16,0
+	db		0,%0000 1000,$d0  ;copy direction=up
+
+
+
 
 SpeedBars:
 	db		000,0,000,1
@@ -1439,6 +1483,12 @@ StartingLights:
 	db		012,0,053,1
 	db		122,0,028,0
 	db		014,0,036,0
+	db		0,0,$d0
+
+TitleScreenAnimateSmoke:
+	db		000,0,000,1
+	db		148,0,027,0
+	db		016,0,081,0
 	db		0,0,$d0
 
 STOPWAITSPACEPRESSED:
@@ -2401,6 +2451,11 @@ RacingGameEventDistance:  	rb	2
 RacingGameEventPointer:   	rb	2
 AllowFlagToAppear?:   			rb	1
 FlagHasAppeared?:   				rb	1
+AnimateSmokeSpeed:   				rb	1
+FrequencyEnemiesAppear:   	rb	2
+ScrollClouds?:   						rb	1
+PreviousRoadCurvatureAnimationStep:   						rb	1
+CloudsY:   									rb	1
 
 endenginepage3variables:  equ $+enginepage3length
 org variables
