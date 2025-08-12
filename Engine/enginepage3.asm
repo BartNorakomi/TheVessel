@@ -1413,25 +1413,54 @@ MoveHorizonLeft:
 	db		0,0,$d0
 
 
-MoveCloudsLeftLoop2Pixels:
+
+MoveLayer3LeftLoop2Pixels:
 	db		000,0,042,0
 	db		254,0,042,0
 	db		002,0,15,0
 	db		0,0,$d0
 
-MoveCloudsLeft:
+MoveLayer3Left:
 	db		002,0,042,0
 	db		000,0,042,0
 	db		254,0,15,0
 	db		0,0,$d0
 
-MoveCloudsRightLoop2Pixels:
+
+
+
+MoveLayer2LeftLoop2Pixels:
+	db		000,0,042,0
+	db		254,0,042,0
+	db		002,0,15,0
+	db		0,0,$d0
+
+MoveLayer2Left:
+	db		002,0,042,0
+	db		000,0,042,0
+	db		254,0,15,0
+	db		0,0,$d0
+
+MoveLayer2RightLoop2Pixels:
 	db		254,0,042,0
 	db		000,0,042,0
 	db		002,0,15,0
 	db		0,0,$d0  ;copy direction=left
 
-MoveCloudsRight:
+MoveLayer2Right:
+	db		253,0,042,0
+	db		255,0,042,0
+	db		254,0,15,0
+	db		0,%0000 0100,$d0  ;copy direction=left
+
+
+MoveLayer3RightLoop2Pixels:
+	db		254,0,042,0
+	db		000,0,042,0
+	db		002,0,15,0
+	db		0,0,$d0  ;copy direction=left
+
+MoveLayer3Right:
 	db		253,0,042,0
 	db		255,0,042,0
 	db		254,0,15,0
@@ -1439,20 +1468,31 @@ MoveCloudsRight:
 
 
 
-MoveCloudsUp:
+MoveLayer2Up:
+	db		000,0,042,0
+	db		000,0,041,0
+	db		000,1,16,0
+	db		0,0,$d0
+
+MoveLayer3Up:
 	db		000,0,042,0
 	db		000,0,041,0
 	db		000,1,16,0
 	db		0,0,$d0
 
 
-
-MoveCloudsDown:
+MoveLayer2Down:
 	db		000,0,056,0
 	db		000,0,057,0
 	db		000,1,16,0
 	db		0,%0000 1000,$d0  ;copy direction=up
 
+
+MoveLayer3Down:
+	db		000,0,056,0
+	db		000,0,057,0
+	db		000,1,16,0
+	db		0,%0000 1000,$d0  ;copy direction=up
 
 
 
@@ -2453,9 +2493,12 @@ AllowFlagToAppear?:   			rb	1
 FlagHasAppeared?:   				rb	1
 AnimateSmokeSpeed:   				rb	1
 FrequencyEnemiesAppear:   	rb	2
-ScrollClouds?:   						rb	1
 PreviousRoadCurvatureAnimationStep:   						rb	1
-CloudsY:   									rb	1
+AmountOfScrollingLayers:   	rb	1
+ScrollLayer2?:   						rb	1
+ScrollLayer3?:   						rb	1
+Layer2Y:   									rb	1
+Layer3Y:   									rb	1
 
 endenginepage3variables:  equ $+enginepage3length
 org variables

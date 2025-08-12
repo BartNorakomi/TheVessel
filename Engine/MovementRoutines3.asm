@@ -38,9 +38,9 @@ Phase MovementRoutinesAddress
 
 
 ;sfx: almost out of fuel, gas, you pass an enemy, pick up heart, whipeout / fall down, starting signals, brake 
-StartingLightsOn?:  equ 1
-RacingGameTitleScreenOn?:  equ 1
-RacingGameLevelProgressScreenOn?:  equ 1
+StartingLightsOn?:  equ 0
+RacingGameTitleScreenOn?:  equ 0
+RacingGameLevelProgressScreenOn?:  equ 0
 
 MaximumSpeedUphill:       equ 210
 MaximumSpeedStraightRoad: equ 225
@@ -194,9 +194,6 @@ RacingGameRoutine:
 ;  ld    hl,5000                         ;average difficulty
 ;  ld    hl,3800                         ;when curving down, so we don't get 8+ sprites per spriteline
   ld    (FrequencyEnemiesAppear),hl
-
-  ld    a,42
-  ld    (CloudsY),a
 
   ld    hl,RoadAnimationAddresses
   ld    (RoadAnimationAddressesPointer),hl
@@ -358,19 +355,37 @@ RacingGameRoutine:
   ld    bc,15*2
   ldir
 
+  call  .LoadBackground
+  call  .SetLevelPalette
+
+  ld    a,97
+  ld    (Layer2Y),a
+  ld    a,81
+  ld    (Layer3Y),a
+  ld    a,3
+  ld    (AmountOfScrollingLayers),a
+
   call  RePlayer_Tick                 ;initialise, load samples
 	halt
   call  RePlayer_Tick                 ;initialise, load samples
 	call	WaitVdpReady
 	halt
   call  SetInterruptHandlerRacingGame
-  call  .SetLevelPalette
   ret
+
+  .LoadBackground:
+  ld    hl,$4000 + (000*128) + (000/2) - 128
+  ld    de,$0000 + (000*128) + (000/2) - 128
+  ld    bc,$0000 + (128*256) + (256/2)
+  ld    a,RacingGameFourMoutainsGfxBlock         	        ;block to copy graphics from
+  jp    CopyRomToVram                       ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
+
 
 .SetLevelPalette:
   ld    a,(RacingGameLevel)
   dec   a
-  ld    hl,.PaletteOriginal
+;  ld    hl,.PaletteOriginal
+  ld    hl,.PaletteFourMountains
   jp    z,SetPalette
   dec   a
   ld    hl,.Palette1
@@ -394,6 +409,9 @@ RacingGameRoutine:
   ld    hl,.Palette7
   jp    z,SetPalette
   jp    SetPalette
+
+  .PaletteFourMountains:
+  incbin "..\grapx\RacingGame\backgrounds\FourMountains.SC5",$7680+7,32
 
   .PaletteOriginal:
   incbin "..\grapx\RacingGame\TrackStraightPalette.SC5",$7680+7,32
@@ -2870,8 +2888,8 @@ RacingGameEventsLevel1:
                       db CurveRight          | dw 00250 | db EndCurve | dw 00250 |
 ;                      db FrequencyEnemiesMax   | dw 00002
                       db CurveDown        | dw 00250 | db EndCurve | dw 00250 |
-                      db CurveUp          | dw 00350 | db EndCurve | dw 00350 |
-                      db CurveLeft        | dw 00350 | db EndCurve | dw 00350 |
+                      db CurveLeft          | dw 00350 | db EndCurve | dw 00350 |
+                      db CurveDown        | dw 00350 | db EndCurve | dw 00350 |
                       db CurveRight        | dw 00250 | db EndCurve | dw 01250 |
                       db CurveDown        | dw 00250 | db EndCurve | dw 00250 |
                       db CurveLeft        | dw 00250 | db EndCurve | dw 00250 |
@@ -3412,7 +3430,7 @@ MoveHorizonInCurves:
 
 
 
-;move clouds down
+;move Layer2 down
   cp    c
   jr    nz,.NewYDown2
   ld    a,(PreviousRoadCurvatureAnimationStep)
@@ -3421,22 +3439,22 @@ MoveHorizonInCurves:
   cp    b
   ret   z
   ld    (PreviousRoadCurvatureAnimationStep),a
-  ld    a,(ScrollClouds?)
+  ld    a,(ScrollLayer2?)
   inc   a
-  ld    (ScrollClouds?),a
+  ld    (ScrollLayer2?),a
   and   7
   jr    nz,.NewYDown2
-  ;move clouds down
-  ld    a,(CloudsY)
+  ;move Layer2 down
+  ld    a,(Layer2Y)
   inc   a
-  ld    (CloudsY),a
+  ld    (Layer2Y),a
 
-  ld    a,(CloudsY)
+  ld    a,(Layer2Y)
   add   a,13
-  ld    (MoveCloudsDown+sy),a
+  ld    (MoveLayer2Down+sy),a
   inc   a
-  ld    (MoveCloudsDown+dy),a
-  ld    hl,MoveCloudsDown
+  ld    (MoveLayer2Down+dy),a
+  ld    hl,MoveLayer2Down
   jp    DoCopy
 
   .NewYDown2:
@@ -3506,7 +3524,7 @@ MoveHorizonInCurves:
 
 
 
-;move clouds up
+;move Layer2 up
   ld    a,(MoveHorizonVertically+dy)
   ld    c,a
   ld    a,(hl)
@@ -3520,18 +3538,18 @@ MoveHorizonInCurves:
   cp    b
   ret   z
   ld    (PreviousRoadCurvatureAnimationStep),a
-  ld    a,(ScrollClouds?)
+  ld    a,(ScrollLayer2?)
   inc   a
-  ld    (ScrollClouds?),a
+  ld    (ScrollLayer2?),a
   and   7
   jr    nz,.NewYUp
-  ;move clouds up
-  ld    a,(CloudsY)
-  ld    (MoveCloudsUp+sy),a
+  ;move Layer2 up
+  ld    a,(Layer2Y)
+  ld    (MoveLayer2Up+sy),a
   dec   a
-  ld    (CloudsY),a
-  ld    (MoveCloudsUp+dy),a
-  ld    hl,MoveCloudsUp
+  ld    (Layer2Y),a
+  ld    (MoveLayer2Up+dy),a
+  ld    hl,MoveLayer2Up
   jp    DoCopy
 
   .NewYUp:
@@ -3556,20 +3574,13 @@ MoveHorizonInCurves:
 
   ld    a,(RacingGameNewLineIntToBeSetOnVblank)                 ;113 is the standard, 083 is perfect for the road all the way curved up
   sub   a,b
-
   ld    (MoveHorizonVertically+dy),a
 
 
 
 
 
-
-
-
-
-
-
-;move clouds up
+;move Layer2 up
   cp    c
   jr    nz,.NewYUp2
   ld    a,(PreviousRoadCurvatureAnimationStep)
@@ -3578,18 +3589,37 @@ MoveHorizonInCurves:
   cp    b
   ret   z
   ld    (PreviousRoadCurvatureAnimationStep),a
-  ld    a,(ScrollClouds?)
+
+  ld    a,(ScrollLayer3?)
   inc   a
-  ld    (ScrollClouds?),a
+  ld    (ScrollLayer3?),a
+  and   31
+  jr    nz,.EndCheckScrollLayer3BackUp
+
+  ld    a,(Layer3Y)
+  ld    (MoveLayer3Up+sy),a
+  dec   a
+  ld    (Layer3Y),a
+  ld    (MoveLayer3Up+dy),a
+  ld    hl,MoveLayer3Up
+  jp    DoCopy
+
+
+  .EndCheckScrollLayer3BackUp:
+
+
+  ld    a,(ScrollLayer2?)
+  inc   a
+  ld    (ScrollLayer2?),a
   and   7
   jr    nz,.NewYUp2
-  ;move clouds up
-  ld    a,(CloudsY)
-  ld    (MoveCloudsUp+sy),a
+  ;move Layer2 up
+  ld    a,(Layer2Y)
+  ld    (MoveLayer2Up+sy),a
   dec   a
-  ld    (CloudsY),a
-  ld    (MoveCloudsUp+dy),a
-  ld    hl,MoveCloudsUp
+  ld    (Layer2Y),a
+  ld    (MoveLayer2Up+dy),a
+  ld    hl,MoveLayer2Up
   jp    DoCopy
 
   .NewYUp2:
@@ -3623,7 +3653,7 @@ MoveHorizonInCurves:
 
 
 
-;move clouds down
+;move Layer2 down
   cp    c
   jr    nz,.NewYDown
   ld    a,(PreviousRoadCurvatureAnimationStep)
@@ -3632,22 +3662,44 @@ MoveHorizonInCurves:
   cp    b
   ret   z
   ld    (PreviousRoadCurvatureAnimationStep),a
-  ld    a,(ScrollClouds?)
+
+  ld    a,(ScrollLayer3?)
   inc   a
-  ld    (ScrollClouds?),a
+  ld    (ScrollLayer3?),a
+  and   31
+  jr    nz,.EndCheckScrollLayer3Down
+  ;move Layer3 down
+  ld    a,(Layer3Y)
+  inc   a
+  ld    (Layer3Y),a
+
+  ld    a,(Layer3Y)
+  add   a,13
+  ld    (MoveLayer3Down+sy),a
+  inc   a
+  ld    (MoveLayer3Down+dy),a
+  ld    hl,MoveLayer3Down
+  jp    DoCopy
+
+
+  .EndCheckScrollLayer3Down:
+
+  ld    a,(ScrollLayer2?)
+  inc   a
+  ld    (ScrollLayer2?),a
   and   7
   jr    nz,.NewYDown
-  ;move clouds down
-  ld    a,(CloudsY)
+  ;move Layer2 down
+  ld    a,(Layer2Y)
   inc   a
-  ld    (CloudsY),a
+  ld    (Layer2Y),a
 
-  ld    a,(CloudsY)
+  ld    a,(Layer2Y)
   add   a,13
-  ld    (MoveCloudsDown+sy),a
+  ld    (MoveLayer2Down+sy),a
   inc   a
-  ld    (MoveCloudsDown+dy),a
-  ld    hl,MoveCloudsDown
+  ld    (MoveLayer2Down+dy),a
+  ld    hl,MoveLayer2Down
   jp    DoCopy
 
   .NewYDown:
@@ -3667,11 +3719,17 @@ MoveHorizonInCurves:
   xor   a
   ld    (ScrollHorizonRight?),a
 
-  ld    a,(ScrollClouds?)
+  ld    a,(ScrollLayer3?)
   inc   a
-  ld    (ScrollClouds?),a
+  ld    (ScrollLayer3?),a
+  and   7
+  jr    z,.ScrollLayer3Right
+
+  ld    a,(ScrollLayer2?)
+  inc   a
+  ld    (ScrollLayer2?),a
   and   3
-  jr    z,.ScrollCloudsRight
+  jr    z,.ScrollLayer2Right
 
   ld    hl,MoveHorizonRightLoop2Pixels
   call  DoCopy
@@ -3679,43 +3737,81 @@ MoveHorizonInCurves:
   call  DoCopy
   ret
 
-  .ScrollCloudsRight:
-  ld    a,(CloudsY)
-  ld    (MoveCloudsRightLoop2Pixels+sy),a
-  ld    (MoveCloudsRightLoop2Pixels+dy),a
-  ld    (MoveCloudsRight+sy),a
-  ld    (MoveCloudsRight+dy),a
+  .ScrollLayer3Right:
+  ld    a,(AmountOfScrollingLayers)
+  cp    3
+  ret   nz
 
-  ld    hl,MoveCloudsRightLoop2Pixels
+  ld    a,(Layer3Y)
+  ld    (MoveLayer3RightLoop2Pixels+sy),a
+  ld    (MoveLayer3RightLoop2Pixels+dy),a
+  ld    (MoveLayer3Right+sy),a
+  ld    (MoveLayer3Right+dy),a
+
+  ld    hl,MoveLayer3RightLoop2Pixels
   call  DoCopy
-  ld    hl,MoveCloudsRight
+  ld    hl,MoveLayer3Right
+  jp    DoCopy
+
+  .ScrollLayer2Right:
+  ld    a,(Layer2Y)
+  ld    (MoveLayer2RightLoop2Pixels+sy),a
+  ld    (MoveLayer2RightLoop2Pixels+dy),a
+  ld    (MoveLayer2Right+sy),a
+  ld    (MoveLayer2Right+dy),a
+
+  ld    hl,MoveLayer2RightLoop2Pixels
+  call  DoCopy
+  ld    hl,MoveLayer2Right
   jp    DoCopy
 
   .ScrollHorizonLeft:
   xor   a
   ld    (ScrollHorizonLeft?),a
 
-  ld    a,(ScrollClouds?)
+  ld    a,(ScrollLayer3?)
   inc   a
-  ld    (ScrollClouds?),a
+  ld    (ScrollLayer3?),a
+  and   7
+  jr    z,.ScrollLayer3Left
+
+  ld    a,(ScrollLayer2?)
+  inc   a
+  ld    (ScrollLayer2?),a
   and   3
-  jr    z,.ScrollCloudsLeft
+  jr    z,.ScrollLayer2Left
 
   ld    hl,MoveHorizonLeftLoop2Pixels
   call  DoCopy
   ld    hl,MoveHorizonLeft
   jp    DoCopy
 
-  .ScrollCloudsLeft:
-  ld    a,(CloudsY)
-  ld    (MoveCloudsLeftLoop2Pixels+sy),a
-  ld    (MoveCloudsLeftLoop2Pixels+dy),a
-  ld    (MoveCloudsLeft+sy),a
-  ld    (MoveCloudsLeft+dy),a
+  .ScrollLayer3Left:
+  ld    a,(AmountOfScrollingLayers)
+  cp    3
+  ret   nz
 
-  ld    hl,MoveCloudsLeftLoop2Pixels
+  ld    a,(Layer3Y)
+  ld    (MoveLayer3LeftLoop2Pixels+sy),a
+  ld    (MoveLayer3LeftLoop2Pixels+dy),a
+  ld    (MoveLayer3Left+sy),a
+  ld    (MoveLayer3Left+dy),a
+
+  ld    hl,MoveLayer3LeftLoop2Pixels
   call  DoCopy
-  ld    hl,MoveCloudsLeft
+  ld    hl,MoveLayer3Left
+  jp    DoCopy
+
+  .ScrollLayer2Left:
+  ld    a,(Layer2Y)
+  ld    (MoveLayer2LeftLoop2Pixels+sy),a
+  ld    (MoveLayer2LeftLoop2Pixels+dy),a
+  ld    (MoveLayer2Left+sy),a
+  ld    (MoveLayer2Left+dy),a
+
+  ld    hl,MoveLayer2LeftLoop2Pixels
+  call  DoCopy
+  ld    hl,MoveLayer2Left
   jp    DoCopy
 
 UpdateHud:
