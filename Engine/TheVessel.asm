@@ -652,9 +652,36 @@ DrillingLocationsGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlo
 
 
 
-RacingGameFourMoutainsGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
+RacingGameFourMountainsGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
   incbin "..\grapx\RacingGame\backgrounds\FourMountains.sc5",7,212 * 128      ;98 lines
 	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
+
+RacingGameNightCityGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
+  incbin "..\grapx\RacingGame\backgrounds\NightCity.sc5",7,212 * 128      ;98 lines
+	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
+
+RacingGameOldTownGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
+  incbin "..\grapx\RacingGame\backgrounds\OldTown.sc5",7,212 * 128      ;98 lines
+	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
+
+RacingGamePalaceCityGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
+  incbin "..\grapx\RacingGame\backgrounds\PalaceCity.sc5",7,212 * 128      ;98 lines
+	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
+
+RacingGamePurpleCityGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
+  incbin "..\grapx\RacingGame\backgrounds\PurpleCity.sc5",7,212 * 128      ;98 lines
+	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
+
+RacingGameSnowCityGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
+  incbin "..\grapx\RacingGame\backgrounds\SnowCity.sc5",7,212 * 128      ;98 lines
+	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
+
+RacingGameTronCityGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
+  incbin "..\grapx\RacingGame\backgrounds\TronCity.sc5",7,212 * 128      ;98 lines
+	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
+
+
+
 
 RacingGameLevelProgressScreenGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
   incbin "..\grapx\RacingGame\LevelProgressScreen.sc5",7,212 * 128      ;98 lines

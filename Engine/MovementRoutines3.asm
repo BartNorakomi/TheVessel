@@ -54,7 +54,7 @@ RacingGameRoutine:
   call  VideoReplayer
   call  SetEnemySpriteCharacterAndColorData
   call  .UpdateDistance
-  call  HandleCurvatureRoad
+;  call  HandleCurvatureRoad
   call  SetPlayerSprite
   call  WriteSpatToVram
   call  SetEnemySprite ;.HandleHorizontalMovementEnemies integrated
@@ -355,15 +355,14 @@ RacingGameRoutine:
   ld    bc,15*2
   ldir
 
+
+ld a,1
+  ld    (RacingGameLevel),a
+
+
   call  .LoadBackground
   call  .SetLevelPalette
-
-  ld    a,97
-  ld    (Layer2Y),a
-  ld    a,81
-  ld    (Layer3Y),a
-  ld    a,3
-  ld    (AmountOfScrollingLayers),a
+  call  .SetAmountOfScrollingLayers
 
   call  RePlayer_Tick                 ;initialise, load samples
 	halt
@@ -373,64 +372,150 @@ RacingGameRoutine:
   call  SetInterruptHandlerRacingGame
   ret
 
+  .SetAmountOfScrollingLayers:
+  ld    a,(RacingGameLevel)
+  dec   a
+  jp    z,.Level1FourMountains
+  dec   a
+  jp    z,.Level2NightCity
+  dec   a
+  jp    z,.Level3OldTown
+  dec   a
+  jp    z,.Level4PalaceCity
+  dec   a
+  jp    z,.Level5PurpleCity
+  dec   a
+  jp    z,.Level6SnowCity
+  .Level7TronCity:
+  ld    a,3
+  ld    (AmountOfScrollingLayers),a
+  ld    a,96
+  ld    (Layer2Y),a
+  ld    a,80
+  ld    (Layer3Y),a
+  ret
+
+  .Level6SnowCity:
+  ld    a,3
+  ld    (AmountOfScrollingLayers),a
+  ld    a,96
+  ld    (Layer2Y),a
+  ld    a,80
+  ld    (Layer3Y),a
+  ret
+
+  .Level5PurpleCity:
+  ld    a,3
+  ld    (AmountOfScrollingLayers),a
+  ld    a,96
+  ld    (Layer2Y),a
+  ld    a,80
+  ld    (Layer3Y),a
+  ret
+
+  .Level4PalaceCity:
+  ld    a,3
+  ld    (AmountOfScrollingLayers),a
+  ld    a,96
+  ld    (Layer2Y),a
+  ld    a,80
+  ld    (Layer3Y),a
+  ret
+
+  .Level3OldTown:
+  ld    a,3
+  ld    (AmountOfScrollingLayers),a
+  ld    a,96
+  ld    (Layer2Y),a
+  ld    a,80
+  ld    (Layer3Y),a
+  ret
+
+  .Level2NightCity:
+  ld    a,3
+  ld    (AmountOfScrollingLayers),a
+  ld    a,96
+  ld    (Layer2Y),a
+  ld    a,80
+  ld    (Layer3Y),a
+  ret
+
+  .Level1FourMountains:
+  ld    a,3
+  ld    (AmountOfScrollingLayers),a
+  ld    a,96
+  ld    (Layer2Y),a
+  ld    a,80
+  ld    (Layer3Y),a
+  ret
+
+
+
   .LoadBackground:
+  ld    a,(RacingGameLevel)
+  dec   a
+  ld    b,RacingGameFourMountainsGfxBlock         	        ;block to copy graphics from
+  jp    z,.SetBackground
+  dec   a
+  ld    b,RacingGameNightCityGfxBlock         	        ;block to copy graphics from
+  jp    z,.SetBackground
+  dec   a
+  ld    b,RacingGameOldTownGfxBlock         	        ;block to copy graphics from
+  jp    z,.SetBackground
+  dec   a
+  ld    b,RacingGamePalaceCityGfxBlock         	        ;block to copy graphics from
+  jp    z,.SetBackground
+  dec   a
+  ld    b,RacingGamePurpleCityGfxBlock         	        ;block to copy graphics from
+  jp    z,.SetBackground
+  dec   a
+  ld    b,RacingGameSnowCityGfxBlock         	        ;block to copy graphics from
+  jp    z,.SetBackground
+  ld    b,RacingGameTronCityGfxBlock         	        ;block to copy graphics from
+  .SetBackground:
+  ld    a,b
   ld    hl,$4000 + (000*128) + (000/2) - 128
   ld    de,$0000 + (000*128) + (000/2) - 128
   ld    bc,$0000 + (128*256) + (256/2)
-  ld    a,RacingGameFourMoutainsGfxBlock         	        ;block to copy graphics from
   jp    CopyRomToVram                       ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
-
 
 .SetLevelPalette:
   ld    a,(RacingGameLevel)
   dec   a
-;  ld    hl,.PaletteOriginal
   ld    hl,.PaletteFourMountains
   jp    z,SetPalette
   dec   a
-  ld    hl,.Palette1
+  ld    hl,.PaletteNightCity
   jp    z,SetPalette
   dec   a
-  ld    hl,.Palette2
+  ld    hl,.PaletteOldTown
   jp    z,SetPalette
   dec   a
-  ld    hl,.Palette3
+  ld    hl,.PalettePalaceCity
   jp    z,SetPalette
   dec   a
-  ld    hl,.Palette4
+  ld    hl,.PalettePurpleCity
   jp    z,SetPalette
   dec   a
-  ld    hl,.Palette5
+  ld    hl,.PaletteSnowCity
   jp    z,SetPalette
-  dec   a
-  ld    hl,.Palette6
-  jp    z,SetPalette
-  dec   a
-  ld    hl,.Palette7
-  jp    z,SetPalette
+  ld    hl,.PaletteTronCity
   jp    SetPalette
 
   .PaletteFourMountains:
   incbin "..\grapx\RacingGame\backgrounds\FourMountains.SC5",$7680+7,32
-
-  .PaletteOriginal:
-  incbin "..\grapx\RacingGame\TrackStraightPalette.SC5",$7680+7,32
-  .Palette1:
-  incbin "..\grapx\RacingGame\Palette1.SC5",$7680+7,32
-  .Palette2:
-  incbin "..\grapx\RacingGame\Palette2.SC5",$7680+7,32
-  .Palette3:
-  incbin "..\grapx\RacingGame\Palette3.SC5",$7680+7,32
-  .Palette4:
-  incbin "..\grapx\RacingGame\Palette4.SC5",$7680+7,32
-  .Palette5:
-  incbin "..\grapx\RacingGame\Palette5.SC5",$7680+7,32
-;TO DO, make the last 2 palette for level 7 and level 8
-  .Palette6:
-  incbin "..\grapx\RacingGame\Palette5.SC5",$7680+7,32
-  .Palette7:
-  incbin "..\grapx\RacingGame\Palette5.SC5",$7680+7,32
-
+  .PaletteNightCity:
+  incbin "..\grapx\RacingGame\backgrounds\NightCity.SC5",$7680+7,32
+  .PaletteOldTown:
+  incbin "..\grapx\RacingGame\backgrounds\OldTown.SC5",$7680+7,32
+  .PalettePalaceCity:
+  incbin "..\grapx\RacingGame\backgrounds\PalaceCity.SC5",$7680+7,32
+  .PalettePurpleCity:
+  incbin "..\grapx\RacingGame\backgrounds\PurpleCity.SC5",$7680+7,32
+  .PaletteSnowCity:
+  incbin "..\grapx\RacingGame\backgrounds\SnowCity.SC5",$7680+7,32
+  .PaletteTronCity:
+  incbin "..\grapx\RacingGame\backgrounds\TronCity.SC5",$7680+7,32
 
 .RacingGameGameOverUp:
 	db		022,0,055,1
@@ -3926,7 +4011,18 @@ UpdateHud:
   rr    l                            ;hl /8
   srl   h
   rr    l                            ;hl /16
+
+  srl   h
+  rr    l                            ;hl /16
+
   ld    a,l
+
+
+;*1.5
+  srl  a          ; Divide by 2 (A = A/2)
+  add  a, l       ; Add original value (A = orig + orig/2)
+
+
   add   a,46
   cp    230
   jr    nc,.EndOfLevelFlagMayAppear
