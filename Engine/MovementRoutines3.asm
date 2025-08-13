@@ -38,7 +38,7 @@ Phase MovementRoutinesAddress
 
 
 ;sfx: almost out of fuel, gas, you pass an enemy, pick up heart, whipeout / fall down, starting signals, brake 
-StartingLightsOn?:  equ 0
+StartingLightsOn?:  equ 1
 RacingGameTitleScreenOn?:  equ 0
 RacingGameLevelProgressScreenOn?:  equ 0
 
@@ -70,6 +70,9 @@ RacingGameRoutine:
   call  CheckLevelFinished
   call  RePlayer_Tick                ;initialise, load samples
   call  PopulateControls
+
+;  jr    .GameOver                   ;out of fuel and speed=0 then Game Over
+
 
 ;HandleFuelConsumption 
   ld    a,(framecounter2)
@@ -241,7 +244,7 @@ RacingGameRoutine:
   ld    (RacingGameEventDistance),de
 
 
-;  ld    hl,2800                           ;jump to end of level
+;  ld    hl,4700                           ;jump to end of level
 ;  ld    (RacingGameDistance+1),hl
 
   ld    hl,0                            ;speed in m/p/h
@@ -363,6 +366,7 @@ ld a,1
   call  .LoadBackground
   call  .SetLevelPalette
   call  .SetAmountOfScrollingLayers
+  call  .SetDistanceMeterIconBackgroundColor
 
   call  RePlayer_Tick                 ;initialise, load samples
 	halt
@@ -371,6 +375,68 @@ ld a,1
 	halt
   call  SetInterruptHandlerRacingGame
   ret
+
+  .SetDistanceMeterIconBackgroundColor:
+  ld    a,(RacingGameLevel)
+  dec   a
+  ld    hl,.DistanceMeterIconFourMountains
+  jp    z,DoCopy
+  dec   a
+  ld    hl,.DistanceMeterIconNightCity
+  jp    z,DoCopy
+  dec   a
+  ld    hl,.DistanceMeterIconOldTown
+  jp    z,DoCopy
+  dec   a
+  ld    hl,.DistanceMeterIconPalaceCity
+  jp    z,DoCopy
+  dec   a
+  ld    hl,.DistanceMeterIconPurpleCity
+  jp    z,DoCopy
+  dec   a
+  ld    hl,.DistanceMeterIconSnowCity
+  jp    z,DoCopy
+  ld    hl,.DistanceMeterIconTronCity
+  jp    DoCopy
+
+  .DistanceMeterIconFourMountains:
+	db		106,0,077,1
+	db		012,0,032,1
+	db		010,0,10,0
+	db		0,0,$d0
+  .DistanceMeterIconNightCity:
+	db		116,0,077,1
+	db		012,0,032,1
+	db		010,0,10,0
+	db		0,0,$d0
+  .DistanceMeterIconOldTown:
+	db		126,0,077,1
+	db		012,0,032,1
+	db		010,0,10,0
+	db		0,0,$d0
+  .DistanceMeterIconPalaceCity:
+	db		126,0,077,1
+	db		012,0,032,1
+	db		010,0,10,0
+	db		0,0,$d0
+  .DistanceMeterIconPurpleCity:
+	db		126,0,077,1
+	db		012,0,032,1
+	db		010,0,10,0
+	db		0,0,$d0
+  .DistanceMeterIconSnowCity:
+	db		126,0,077,1
+	db		012,0,032,1
+	db		010,0,10,0
+	db		0,0,$d0
+  .DistanceMeterIconTronCity:
+	db		116,0,077,1
+	db		012,0,032,1
+	db		010,0,10,0
+	db		0,0,$d0
+
+
+
 
   .SetAmountOfScrollingLayers:
   ld    a,(RacingGameLevel)
@@ -521,12 +587,12 @@ ld a,1
 	db		022,0,055,1
 	db		032,0,052,0
 	db		190,0,001,0
-	db		0,0,$d0
+	db		0,0,$98
 .RacingGameGameOverDown:
 	db		022,0,053,1
 	db		032,0,050,0
 	db		190,0,001,0
-	db		0,0,$d0
+	db		0,0,$98
 
 
   .UpdateMaximumSpeedOnCurveUpOrDown:
@@ -2124,7 +2190,7 @@ SetEnemySprite:
   ld    a,(ix+var3)
   add   a,c
   jp    m,.EndSetVar3
-  cp    32
+  cp    64
   jr    z,.EndSetVar3
   ld    (ix+var3),a
   .EndSetVar3:
@@ -2156,6 +2222,11 @@ SetEnemySprite:
   db +0,+0,+0,+0,+1,+0,+0,+0
   db +1,+0,+0,+1,+0,+1,+1,+1
   
+  db -1,-1,-1,-0,-1,-0,-0,-1 
+  db -0,-0,-0,-1,-0,-0,-0,-0 
+  db +0,+0,+0,+0,+1,+0,+0,+0
+  db +1,+0,+0,+1,+0,+1,+1,+1
+
   .RedHeadBoy:                                    ;red head boy moves in your direction halfway the screen
   call  .CheckEnemyNearRedHeadBoy                     ;checks if enemy is near player, if so steer toward player
   ld    a,(ix+X16bit)
@@ -3919,6 +3990,8 @@ UpdateHud:
   ld    (hl),1
 
   cp    2
+  jr    z,.SetStartingLightsBackupBackground
+  cp    3
   jr    z,.SetStartingLightsAllOff
   cp    20
   jr    z,.SetStartingLights1on
@@ -3962,11 +4035,17 @@ UpdateHud:
   ld    hl,.StartingLightsAllOff
   jp    DoCopy
 
+  .SetStartingLightsBackupBackground:
+  ld    hl,.StartingLightsBackupBackground
+  jp    DoCopy
+
+
+
   .RemoveStartingLights:
-	db		0,0,0,0
+	db		136,0,077,1
 	db		.dxStartingLights,0,.dyStartingLights,0
 	db		078,0,024,0
-	db		14+14*16,0,$c0
+	db		0,0,$d0
 
   .StartingLights4on:
 	db		092,0,077,1
@@ -3996,7 +4075,13 @@ UpdateHud:
 	db		000,0,077,1
 	db		.dxStartingLights,0,.dyStartingLights,0
 	db		078,0,024,0
-	db		0,0,$d0  
+	db		0,0,$98  
+
+  .StartingLightsBackupBackground:
+	db		.dxStartingLights,0,.dyStartingLights,0
+	db		136,0,077,1
+	db		078,0,024,0
+	db		0,0,$98  
 
 .dxStartingLights:  equ 090
 .dyStartingLights:  equ 014
@@ -4019,12 +4104,12 @@ UpdateHud:
 
 
 ;*1.5
-  srl  a          ; Divide by 2 (A = A/2)
-  add  a, l       ; Add original value (A = orig + orig/2)
+;  srl  a          ; Divide by 2 (A = A/2)
+;  add  a, l       ; Add original value (A = orig + orig/2)
 
 
-  add   a,46
-  cp    230
+  add   a,70
+  cp    218
   jr    nc,.EndOfLevelFlagMayAppear
   ld    (DistanceMeter+dx),a
   bit   0,a
@@ -4038,7 +4123,7 @@ UpdateHud:
 
   .EndOfLevelFlagMayAppear:
 
-  ld    hl,3000                           ;stay at end of level
+  ld    hl,4800                           ;stay at end of level
   ld    (RacingGameDistance+1),hl
 
   ld    a,1
