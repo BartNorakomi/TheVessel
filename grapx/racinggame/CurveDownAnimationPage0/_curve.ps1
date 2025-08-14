@@ -11,7 +11,7 @@ $COLOR_GRASS = 0    # Grass
 $COLOR_ROAD  = 2    # Road
 $COLOR_EDGE  = 14   # Road Edges
 $COLOR_LINEINROAD = 1   # Lines in Road
-$COLOR_BLUE  = 6    # Sky
+$COLOR_BLUE  = 0    # Sky
 
 # Road dimensions
 $roadWidthBottom = 250

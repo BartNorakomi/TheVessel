@@ -652,36 +652,41 @@ DrillingLocationsGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlo
 
 
 
+
+
+
+
 RacingGameFourMountainsGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
-  incbin "..\grapx\RacingGame\backgrounds\FourMountains.sc5",7,212 * 128      ;98 lines
-	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
-
 RacingGameNightCityGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
-  incbin "..\grapx\RacingGame\backgrounds\NightCity.sc5",7,212 * 128      ;98 lines
-	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
-
 RacingGameOldTownGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
-  incbin "..\grapx\RacingGame\backgrounds\OldTown.sc5",7,212 * 128      ;98 lines
-	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
-
 RacingGamePalaceCityGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
-  incbin "..\grapx\RacingGame\backgrounds\PalaceCity.sc5",7,212 * 128      ;98 lines
-	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
-
 RacingGamePurpleCityGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
-  incbin "..\grapx\RacingGame\backgrounds\PurpleCity.sc5",7,212 * 128      ;98 lines
-	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
-
 RacingGameSnowCityGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
-  incbin "..\grapx\RacingGame\backgrounds\SnowCity.sc5",7,212 * 128      ;98 lines
-	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
-
 RacingGameTronCityGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
-  incbin "..\grapx\RacingGame\backgrounds\TronCity.sc5",7,212 * 128      ;98 lines
+RacingGameCongratulationsGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
+	phase	$4000
+	FourMountainsPart1Address:
+  incbin "..\grapx\RacingGame\backgrounds\FourMountainsPart1.sc5.pck"
+	NightCityPart1Address:
+  incbin "..\grapx\RacingGame\backgrounds\NightCityPart1.sc5.pck"
+	OldTownPart1Address:
+  incbin "..\grapx\RacingGame\backgrounds\OldTownPart1.sc5.pck"
+	PalaceCityPart1Address:
+  incbin "..\grapx\RacingGame\backgrounds\PalaceCityPart1.sc5.pck"
+	PurpleCityPart1Address:
+  incbin "..\grapx\RacingGame\backgrounds\PurpleCityPart1.sc5.pck"
+	TronCityPart1Address:
+  incbin "..\grapx\RacingGame\backgrounds\TronCityPart1.sc5.pck"
+	SnowCityPart1Address:
+  incbin "..\grapx\RacingGame\backgrounds\SnowCityPart1.sc5.pck"
+	CongratulationsPart1Address:
+  incbin "..\grapx\RacingGame\Congratulations\CongratulationsTotalPart1.sc5.pck"
+	CongratulationsPart2Address:
+  incbin "..\grapx\RacingGame\Congratulations\CongratulationsTotalPart2.sc5.pck"
 	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
 
-
-
+	dephase
+	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
 
 RacingGameLevelProgressScreenGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
   incbin "..\grapx\RacingGame\LevelProgressScreen.sc5",7,212 * 128      ;98 lines
@@ -708,6 +713,7 @@ RacingGameTrackStraightPage1GfxBlock:  			equ   ($-RomStartAddress) and (romsize
 RacingGameBackdropGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
   incbin "..\grapx\RacingGame\RoadMSXSize\backdrop.sc5",7,015 * 128      ;98 lines
 	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
+
 
 RacingGameGirl1PonySpritesBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
 RacingGameGirl1PonyMiniSpritesBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize

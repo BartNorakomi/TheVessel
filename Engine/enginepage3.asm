@@ -138,6 +138,7 @@ EventDrillingLocations:		db	1,$28,$7e | dw 000,000					,000        | db 255     
 EventRacingGame:					db	1,$28,$7e | dw 000,000					,000        | db 255      ,MovementRoutines3Block| dw RacingGameRoutine					| db 000,000 ,000, 000
 EventRacingGameTitleScreen:		db	1,$28,$7e | dw 000,000			,000        | db 255      ,MovementRoutines3Block| dw RacingGameTitleScreenRoutine	| db 000,000 ,000, 000
 EventRacingGameLevelProgress: db	1,$28,$7e | dw 000,000			,000        | db 255      ,MovementRoutines3Block| dw RacingGameLevelProgressRoutine| db 000,000 ,000, 000
+EventRacingGameCongratulations: db	1,$28,$7e | dw 000,000			,000        | db 255      ,MovementRoutines3Block| dw RacingGameCongratulationsRoutine| db 000,000 ,000, 000
 
 LenghtDoCopyTable:  equ	RestoreBackgroundObject1Page1-RestoreBackgroundObject1Page0
 ResetRestoreBackgroundTables:
@@ -379,6 +380,8 @@ LoadTileMap:
 ;	jp		z,.racinggametitlescreen
 	dec		a
 ;	jp		z,.racinggamelevelprogress
+	dec		a
+;	jp		z,.racinggameCongratulations
 	ret
 
 ;	.racinggame:
@@ -575,6 +578,18 @@ PutObjects:															;put objects and events
 	jp		z,PutObjectsRacingGameTitleScreen
 	dec		a
 	jp		z,PutObjectsRacingGameLevelProgress
+	dec		a
+	jp		z,PutObjectsRacingGameCongratulations
+	ret
+
+PutObjectsRacingGameCongratulations:
+	xor		a																;turn off main player sprite (we don't use this at the games)
+	ld		(Object1+on?),a
+
+	ld		de,ObjEvent1										;now put events
+
+	ld		hl,EventRacingGameCongratulations	;put racing game level progress event
+	call	PutSingleObject
 	ret
 
 PutObjectsRacingGameLevelProgress:
@@ -931,6 +946,8 @@ LoadRoomGfx:
 ;	jp		z,LoadRacingGameTitleScreenGfx 						;loads the racing game screen and sets palette
 	dec		a
 ;	jp		z,LoadRacingGameLevelProgressGfx 						;loads the racing game screen and sets palette
+	dec		a
+;	jp		z,LoadRacingGameCongratulationsGfx 						;loads the racing game screen and sets palette
 	ret
 
 LoadRacingGameGfx:
@@ -1233,6 +1250,55 @@ CopyRomToVram:
   ret
 
 
+CopyRamToVram:
+  in    a,($a8)                         ;store current rom/ram settings of page 1+2
+  push  af
+  ld		a,(memblocks.1)
+  push  af
+  ld		a,(memblocks.2)
+  push  af
+
+  ld    a,(slot.page1rom)              	;all RAM except page 1
+  out   ($a8),a      
+
+  ld    (AddressToWriteFrom),hl
+  ld    (AddressToWriteTo),de
+  ld    (NXAndNY),bc
+  call  CopyRomToVram.AddressesSet
+
+  pop   af
+  call  block34
+  pop   af
+  call  block12
+  pop   af
+  out   ($a8),a                         ;reset rom/ram settings of page 1+2
+  ret
+
+SetGfxAt8000InRam:
+  ex    af,af'                          ;store rom block
+
+  in    a,($a8)                         ;store current rom/ram settings of page 1+2
+  push  af
+  ld		a,(memblocks.1)
+  push  af
+  ld		a,(memblocks.2)
+  push  af
+
+  ld    a,(slot.page1rom)              	;all RAM except page 1
+  out   ($a8),a      
+  ex    af,af'
+  call  block12                       	;CARE!!! we can only switch block34 if page 1 is in rom  
+
+	ld		de,$8000
+	call	Depack                          ;In: HL: source, DE: destination
+
+  pop   af
+  call  block34
+  pop   af
+  call  block12
+  pop   af
+  out   ($a8),a                         ;reset rom/ram settings of page 1+2
+  ret
 
 
 

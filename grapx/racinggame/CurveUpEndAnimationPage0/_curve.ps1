@@ -10,7 +10,7 @@ $totalHeight = $height + $extraHeight
 $COLOR_GRASS = 0    # Grass
 $COLOR_LINEINROAD = 1   # Lines in Road
 $COLOR_ROAD  = 2    # Road
-$COLOR_BLUE  = 6    # Sky
+$COLOR_BLUE  = 0    # Sky
 $COLOR_EDGE  = 14   # Road Edges
 
 # Road dimensions

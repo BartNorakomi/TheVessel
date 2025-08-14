@@ -4,4 +4,4 @@ TronCityV1
 PurpleCityV3
 OldTownV1
 nightcityv1
-palacecityv1
+palacecityv2

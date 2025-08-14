@@ -38,7 +38,7 @@ Phase MovementRoutinesAddress
 
 
 ;sfx: almost out of fuel, gas, you pass an enemy, pick up heart, whipeout / fall down, starting signals, brake 
-StartingLightsOn?:  equ 1
+StartingLightsOn?:  equ 0
 RacingGameTitleScreenOn?:  equ 0
 RacingGameLevelProgressScreenOn?:  equ 0
 
@@ -54,7 +54,7 @@ RacingGameRoutine:
   call  VideoReplayer
   call  SetEnemySpriteCharacterAndColorData
   call  .UpdateDistance
-;  call  HandleCurvatureRoad
+  call  HandleCurvatureRoad
   call  SetPlayerSprite
   call  WriteSpatToVram
   call  SetEnemySprite ;.HandleHorizontalMovementEnemies integrated
@@ -166,8 +166,8 @@ RacingGameRoutine:
 
   call  SetScreenon
 
-;  ld    a,7
-;  ld    (RacingGameLevel),a
+ld a,7
+  ld    (RacingGameLevel),a
 
 ;  ld    a,32
 ;  ld    (r23onVblank),a
@@ -359,8 +359,7 @@ RacingGameRoutine:
   ldir
 
 
-ld a,1
-  ld    (RacingGameLevel),a
+
 
 
   call  .LoadBackground
@@ -394,9 +393,9 @@ ld a,1
   ld    hl,.DistanceMeterIconPurpleCity
   jp    z,DoCopy
   dec   a
-  ld    hl,.DistanceMeterIconSnowCity
-  jp    z,DoCopy
   ld    hl,.DistanceMeterIconTronCity
+  jp    z,DoCopy
+  ld    hl,.DistanceMeterIconSnowCity
   jp    DoCopy
 
   .DistanceMeterIconFourMountains:
@@ -435,9 +434,6 @@ ld a,1
 	db		010,0,10,0
 	db		0,0,$d0
 
-
-
-
   .SetAmountOfScrollingLayers:
   ld    a,(RacingGameLevel)
   dec   a
@@ -451,59 +447,42 @@ ld a,1
   dec   a
   jp    z,.Level5PurpleCity
   dec   a
-  jp    z,.Level6SnowCity
-  .Level7TronCity:
-  ld    a,3
+  jp    z,.Level6TronCity
+
+  .Level7SnowCity:
+  ld    a,2
   ld    (AmountOfScrollingLayers),a
-  ld    a,96
+  ld    a,42
   ld    (Layer2Y),a
-  ld    a,80
-  ld    (Layer3Y),a
   ret
 
-  .Level6SnowCity:
-  ld    a,3
+  .Level6TronCity:
+  ld    a,1
   ld    (AmountOfScrollingLayers),a
-  ld    a,96
-  ld    (Layer2Y),a
-  ld    a,80
-  ld    (Layer3Y),a
   ret
 
   .Level5PurpleCity:
-  ld    a,3
+  ld    a,2
   ld    (AmountOfScrollingLayers),a
-  ld    a,96
+  ld    a,42
   ld    (Layer2Y),a
-  ld    a,80
-  ld    (Layer3Y),a
   ret
 
   .Level4PalaceCity:
-  ld    a,3
-  ld    (AmountOfScrollingLayers),a
-  ld    a,96
-  ld    (Layer2Y),a
-  ld    a,80
-  ld    (Layer3Y),a
   ret
 
   .Level3OldTown:
   ld    a,3
   ld    (AmountOfScrollingLayers),a
-  ld    a,96
+  ld    a,65
   ld    (Layer2Y),a
-  ld    a,80
+  ld    a,42
   ld    (Layer3Y),a
   ret
 
   .Level2NightCity:
-  ld    a,3
+  ld    a,1
   ld    (AmountOfScrollingLayers),a
-  ld    a,96
-  ld    (Layer2Y),a
-  ld    a,80
-  ld    (Layer3Y),a
   ret
 
   .Level1FourMountains:
@@ -520,30 +499,40 @@ ld a,1
   .LoadBackground:
   ld    a,(RacingGameLevel)
   dec   a
+  ld    hl,FourMountainsPart1Address
   ld    b,RacingGameFourMountainsGfxBlock         	        ;block to copy graphics from
   jp    z,.SetBackground
   dec   a
+  ld    hl,NightCityPart1Address
   ld    b,RacingGameNightCityGfxBlock         	        ;block to copy graphics from
   jp    z,.SetBackground
   dec   a
+  ld    hl,OldTownPart1Address
   ld    b,RacingGameOldTownGfxBlock         	        ;block to copy graphics from
   jp    z,.SetBackground
   dec   a
+  ld    hl,PalaceCityPart1Address
   ld    b,RacingGamePalaceCityGfxBlock         	        ;block to copy graphics from
   jp    z,.SetBackground
   dec   a
+  ld    hl,PurpleCityPart1Address
   ld    b,RacingGamePurpleCityGfxBlock         	        ;block to copy graphics from
   jp    z,.SetBackground
   dec   a
-  ld    b,RacingGameSnowCityGfxBlock         	        ;block to copy graphics from
-  jp    z,.SetBackground
+  ld    hl,TronCityPart1Address
   ld    b,RacingGameTronCityGfxBlock         	        ;block to copy graphics from
+  jp    z,.SetBackground
+  ld    hl,SnowCityPart1Address
+  ld    b,RacingGameSnowCityGfxBlock         	        ;block to copy graphics from
   .SetBackground:
+
   ld    a,b
-  ld    hl,$4000 + (000*128) + (000/2) - 128
+  call  SetGfxAt8000InRam                             ;in: hl=adress in rom page 1, a=block, out: puts gfx in page 2 in ram at $8000
+
+  ld    hl,$8000 + (000*128) + (000/2) - 128
   ld    de,$0000 + (000*128) + (000/2) - 128
   ld    bc,$0000 + (128*256) + (256/2)
-  jp    CopyRomToVram                       ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
+  jp    CopyRamToVram                       ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
 
 .SetLevelPalette:
   ld    a,(RacingGameLevel)
@@ -563,9 +552,9 @@ ld a,1
   ld    hl,.PalettePurpleCity
   jp    z,SetPalette
   dec   a
-  ld    hl,.PaletteSnowCity
-  jp    z,SetPalette
   ld    hl,.PaletteTronCity
+  jp    z,SetPalette
+  ld    hl,.PaletteSnowCity
   jp    SetPalette
 
   .PaletteFourMountains:
@@ -3038,76 +3027,79 @@ FrequencyEnemiesAverage: equ 8
 FrequencyEnemiesMax: equ 9
 
                     ;next distance, curve (1=right, 2=down, 3=left, 4=up, 0=end current curve)
-                    dw  00000   ;distance till first curve
+                    dw  01300   ;distance till first curve
 RacingGameEventsLevel1:     
 ;                      db FrequencyEnemiesMin   | dw 00002 ;BUGGGGGGGGGGGGGGGGGGGED
                       db CurveRight          | dw 00250 | db EndCurve | dw 00250 |
 ;                      db FrequencyEnemiesMax   | dw 00002
-                      db CurveDown        | dw 00250 | db EndCurve | dw 00250 |
-                      db CurveLeft          | dw 00350 | db EndCurve | dw 00350 |
-                      db CurveDown        | dw 00350 | db EndCurve | dw 00350 |
-                      db CurveRight        | dw 00250 | db EndCurve | dw 01250 |
-                      db CurveDown        | dw 00250 | db EndCurve | dw 00250 |
-                      db CurveLeft        | dw 00250 | db EndCurve | dw 00250 |
-                      db CurveUp          | dw 00250 | db EndCurve | dw 00250 |
-                      db CurveDown        | dw 00250 | db EndCurve | dw 60200 |
-
-                    ;next distance, curve (1=right, 2=down, 3=left, 4=up, 0=end current curve)
-                    dw  00500   ;distance till first curve
-RacingGameEventsLevel2:     db CurveRight          | dw 00250 | db EndCurve | dw 00250 |
-                      db CurveDown        | dw 00250 | db EndCurve | dw 00250 |
-                      db CurveUp          | dw 00350 | db EndCurve | dw 00350 |
-                      db CurveLeft        | dw 00350 | db EndCurve | dw 00350 |
-                      db CurveUp          | dw 00250 | db EndCurve | dw 01250 |
-                      db CurveDown        | dw 00250 | db EndCurve | dw 00250 |
-                      db CurveLeft        | dw 00250 | db EndCurve | dw 00250 |
-                      db CurveUp          | dw 00250 | db EndCurve | dw 00250 |
-                      db CurveDown        | dw 00250 | db EndCurve | dw 60200 |
-
-                    ;next distance, curve (1=right, 2=down, 3=left, 4=up, 0=end current curve)
-                    dw  00500   ;distance till first curve
-RacingGameEventsLevel3:     db HalfCurveRight          | dw 00250 | db EndCurve | dw 00250 |
-                      db HalfCurveLeft        | dw 00250 | db EndCurve | dw 00250 |
-                      db HalfCurveLeft          | dw 00350 | db EndCurve | dw 00350 |
+                      db CurveLeft        | dw 00450 | db EndCurve | dw 00350 |
+                      db CurveDown          | dw 00350 | db EndCurve | dw 00550 |
                       db CurveRight        | dw 00350 | db EndCurve | dw 00350 |
-                      db CurveUp          | dw 00250 | db EndCurve | dw 01250 |
+                      db CurveDown        | dw 00250 | db EndCurve | dw 01250 |
                       db CurveDown        | dw 00250 | db EndCurve | dw 00250 |
                       db CurveLeft        | dw 00250 | db EndCurve | dw 00250 |
                       db CurveUp          | dw 00250 | db EndCurve | dw 00250 |
                       db CurveDown        | dw 00250 | db EndCurve | dw 60200 |
 
                     ;next distance, curve (1=right, 2=down, 3=left, 4=up, 0=end current curve)
-                    dw  00500   ;distance till first curve
+                    dw  00350   ;distance till first curve
+                    dw  00000   ;distance till first curve
+RacingGameEventsLevel2:
+
+
+                      db CurveUp          | dw 00150 | db EndCurve | dw 00250 |
+
+                      db HalfCurveRight          | dw 00350 | db EndCurve | dw 00120 |
+                      db HalfCurveLeft        | dw 00400 | db EndCurve | dw 00120 |
+                      db CurveUp          | dw 00550 | db EndCurve | dw 00250 |
+                      db CurveLeft        | dw 00250 | db EndCurve | dw 00500 |
+                      db CurveDown          | dw 00250 | db EndCurve | dw 01000 |
+                      db CurveRight        | dw 00250 | db EndCurve | dw 02250 |
+                      db CurveLeft        | dw 00250 | db EndCurve | dw 00250 |
+                      db CurveUp          | dw 00250 | db EndCurve | dw 00250 |
+                      db CurveDown        | dw 00250 | db EndCurve | dw 60200 |
+
+                    ;next distance, curve (1=right, 2=down, 3=left, 4=up, 0=end current curve)
+                    dw  00300   ;distance till first curve
+RacingGameEventsLevel3: 
+                      db HalfCurveRight          | dw 00550 | db EndCurve | dw 00550 |
+                      db CurveLeft        | dw 00250 | db EndCurve | dw 00250 |
+                      db HalfCurveRight   | dw 00250 | db EndCurve | dw 00250 |
+                      db CurveRight       | dw 00350 | db EndCurve | dw 00350 |
+                      db CurveUp          | dw 00550 | db EndCurve | dw 00150 |
+                      db CurveDown        | dw 00750 | db EndCurve | dw 02250 |
+                      db CurveLeft        | dw 00250 | db EndCurve | dw 00250 |
+                      db CurveUp          | dw 00250 | db EndCurve | dw 00250 |
+                      db CurveDown        | dw 00250 | db EndCurve | dw 60200 |
+
+                    ;next distance, curve (1=right, 2=down, 3=left, 4=up, 0=end current curve)
+                    dw  30500   ;distance till first curve
 RacingGameEventsLevel4:     db HalfCurveLeft          | dw 00250 | db EndCurve | dw 00250 |
-                      db HalfCurveLeft        | dw 00250 | db EndCurve | dw 00250 |
-                      db HalfCurveRight          | dw 00350 | db EndCurve | dw 00350 |
-                      db HalfCurveRight        | dw 00350 | db EndCurve | dw 00350 |
-                      db CurveLeft          | dw 00250 | db EndCurve | dw 01250 |
-                      db CurveRight        | dw 00250 | db EndCurve | dw 00250 |
-                      db CurveLeft        | dw 00250 | db EndCurve | dw 00250 |
-                      db CurveUp          | dw 00250 | db EndCurve | dw 00250 |
-                      db CurveDown        | dw 00250 | db EndCurve | dw 60200 |
 
                     ;next distance, curve (1=right, 2=down, 3=left, 4=up, 0=end current curve)
-                    dw  00500   ;distance till first curve
-RacingGameEventsLevel5:     db CurveUp          | dw 00250 | db EndCurve | dw 00250 |
+                    dw  00400   ;distance till first curve
+RacingGameEventsLevel5:
+                      db CurveUp          | dw 00650 | db EndCurve | dw 00250 |
                       db CurveDown        | dw 00250 | db EndCurve | dw 00250 |
                       db CurveRight          | dw 00350 | db EndCurve | dw 00350 |
                       db CurveLeft        | dw 00350 | db EndCurve | dw 00350 |
-                      db CurveUp          | dw 00250 | db EndCurve | dw 01250 |
-                      db CurveDown        | dw 00250 | db EndCurve | dw 00250 |
-                      db CurveLeft        | dw 00250 | db EndCurve | dw 00250 |
-                      db CurveUp          | dw 00250 | db EndCurve | dw 00250 |
+                      db CurveUp          | dw 00250 | db EndCurve | dw 00200 |
+                      db HalfCurveRight        | dw 00120 | db EndCurve | dw 00120 |
+                      db HalfCurveLeft        | dw 00120 | db EndCurve | dw 00120 |
+                      db HalfCurveRight        | dw 00120 | db EndCurve | dw 00120 |
+                      db HalfCurveLeft        | dw 00120 | db EndCurve | dw 00120 |
+                      db CurveUp          | dw 00250 | db EndCurve | dw 02250 |
                       db CurveDown        | dw 00250 | db EndCurve | dw 60200 |
 
                     ;next distance, curve (1=right, 2=down, 3=left, 4=up, 0=end current curve)
-                    dw  00500   ;distance till first curve
-RacingGameEventsLevel6:     db CurveRight          | dw 00250 | db EndCurve | dw 00250 |
-                      db CurveDown        | dw 00250 | db EndCurve | dw 00250 |
+                    dw  00100   ;distance till first curve
+RacingGameEventsLevel6:
+                      db CurveRight          | dw 00250 | db EndCurve | dw 00250 |
+                      db CurveDown        | dw 00450 | db EndCurve | dw 00250 |
                       db CurveRight          | dw 00350 | db EndCurve | dw 00350 |
-                      db CurveLeft        | dw 00350 | db EndCurve | dw 00350 |
-                      db CurveUp          | dw 00250 | db EndCurve | dw 01250 |
-                      db CurveDown        | dw 00250 | db EndCurve | dw 00250 |
+                      db CurveLeft        | dw 00750 | db EndCurve | dw 00350 |
+                      db CurveUp          | dw 00650 | db EndCurve | dw 00250 |
+                      db CurveRight        | dw 00650 | db EndCurve | dw 02250 |
                       db CurveLeft        | dw 00250 | db EndCurve | dw 00250 |
                       db CurveUp          | dw 00250 | db EndCurve | dw 00250 |
                       db CurveDown        | dw 00250 | db EndCurve | dw 60200 |
@@ -3115,14 +3107,16 @@ RacingGameEventsLevel6:     db CurveRight          | dw 00250 | db EndCurve | dw
                     ;next distance, curve (1=right, 2=down, 3=left, 4=up, 0=end current curve)
                     dw  00500   ;distance till first curve
 RacingGameEventsLevel7:     db CurveUp          | dw 00250 | db EndCurve | dw 00250 |
+                      db HalfCurveRight        | dw 00120 | db EndCurve | dw 00120 |
+                      db HalfCurveLeft        | dw 00120 | db EndCurve | dw 00120 |
+                      db HalfCurveRight        | dw 00120 | db EndCurve | dw 00120 |
+                      db HalfCurveLeft        | dw 00120 | db EndCurve | dw 00120 |
+                      db CurveRight        | dw 00320 | db EndCurve | dw 00220 |
+                      db HalfCurveLeft        | dw 00120 | db EndCurve | dw 00120 |
+                      db HalfCurveRight        | dw 00120 | db EndCurve | dw 00120 |
+                      db HalfCurveLeft        | dw 00120 | db EndCurve | dw 00120 |
                       db CurveDown        | dw 00250 | db EndCurve | dw 00250 |
-                      db CurveUp          | dw 00350 | db EndCurve | dw 00350 |
-                      db CurveDown        | dw 00350 | db EndCurve | dw 00350 |
-                      db CurveUp          | dw 00250 | db EndCurve | dw 01250 |
-                      db CurveRight        | dw 00250 | db EndCurve | dw 00250 |
-                      db CurveLeft        | dw 00250 | db EndCurve | dw 00250 |
-                      db CurveUp          | dw 00250 | db EndCurve | dw 00250 |
-                      db CurveDown        | dw 00250 | db EndCurve | dw 60200 |
+                      db CurveRight        | dw 00750 | db EndCurve | dw 05250 |
 
 HandleCurvatureRoad:
   ld    hl,(RacingGameDistance+1)
@@ -3204,6 +3198,8 @@ HandleCurvatureRoad:
   .CurveDownEnd:
   xor   a
   ld    (RoadCurvatureAnimationStep),a
+  ld    (ScrollLayer2?),a
+  ld    (ScrollLayer3?),a
   ld    a,1
   ld    (AnimateRoadPage0AndPage1Simultaneous?),a
   ld    a,6                                         ;set new curve as previous
@@ -3259,6 +3255,8 @@ HandleCurvatureRoad:
   .CurveUpEnd:
   xor   a
   ld    (RoadCurvatureAnimationStep),a
+  ld    (ScrollLayer2?),a
+  ld    (ScrollLayer3?),a
   ld    a,3
   ld    (AnimateRoad?),a                            ;2=up, 3=end up, 4=down, 5=end down
   ld    a,8                                         ;set new curve as previous
@@ -3276,6 +3274,8 @@ HandleCurvatureRoad:
   call  DoCopy
   xor   a
   ld    (RoadCurvatureAnimationStep),a
+  ld    (ScrollLayer2?),a
+  ld    (ScrollLayer3?),a
   ld    a,2
   ld    (AnimateRoad?),a                            ;2=up, 3=end up, 4=down, 5=end down
   ld    a,4                                         ;set new curve as previous
@@ -3299,6 +3299,8 @@ HandleCurvatureRoad:
   call  DoCopy
   xor   a
   ld    (RoadCurvatureAnimationStep),a
+  ld    (ScrollLayer2?),a
+  ld    (ScrollLayer3?),a
   ld    a,4
   ld    (AnimateRoad?),a                            ;2=up, 3=end up, 4=down, 5=end down
   ld    a,2                                         ;set new curve as previous
@@ -3595,6 +3597,41 @@ MoveHorizonInCurves:
   cp    b
   ret   z
   ld    (PreviousRoadCurvatureAnimationStep),a
+
+
+
+
+  ld    a,(ScrollLayer3?)
+  inc   a
+  ld    (ScrollLayer3?),a
+  and   31
+  jr    nz,.EndCheckScrollLayer3Down2
+  ;move Layer3 down
+  ld    a,(Layer3Y)
+  inc   a
+  ld    (Layer3Y),a
+
+  ld    a,(Layer3Y)
+  add   a,13
+  ld    (MoveLayer3Down+sy),a
+  inc   a
+  ld    (MoveLayer3Down+dy),a
+
+  ld    a,(AmountOfScrollingLayers)
+  cp    3
+  ret   nz
+
+  ld    hl,MoveLayer3Down
+  jp    DoCopy
+
+
+  .EndCheckScrollLayer3Down2:
+
+
+
+
+
+
   ld    a,(ScrollLayer2?)
   inc   a
   ld    (ScrollLayer2?),a
@@ -3610,6 +3647,11 @@ MoveHorizonInCurves:
   ld    (MoveLayer2Down+sy),a
   inc   a
   ld    (MoveLayer2Down+dy),a
+
+  ld    a,(AmountOfScrollingLayers)
+  cp    2
+  ret   c
+
   ld    hl,MoveLayer2Down
   jp    DoCopy
 
@@ -3694,6 +3736,44 @@ MoveHorizonInCurves:
   cp    b
   ret   z
   ld    (PreviousRoadCurvatureAnimationStep),a
+
+
+
+
+
+
+  ld    a,(ScrollLayer3?)
+  inc   a
+  ld    (ScrollLayer3?),a
+  and   31
+  jr    nz,.EndCheckScrollLayer3Up
+  ;move Layer3 up
+
+
+  ld    a,(Layer3Y)
+  ld    (MoveLayer3Up+sy),a
+  dec   a
+  ld    (Layer3Y),a
+  ld    (MoveLayer3Up+dy),a
+
+  ld    a,(AmountOfScrollingLayers)
+  cp    3
+  ret   nz
+
+  ld    hl,MoveLayer3Up
+  jp    DoCopy
+
+
+  .EndCheckScrollLayer3Up:
+
+
+
+
+
+
+
+
+
   ld    a,(ScrollLayer2?)
   inc   a
   ld    (ScrollLayer2?),a
@@ -3705,6 +3785,11 @@ MoveHorizonInCurves:
   dec   a
   ld    (Layer2Y),a
   ld    (MoveLayer2Up+dy),a
+
+  ld    a,(AmountOfScrollingLayers)
+  cp    2
+  ret   c
+
   ld    hl,MoveLayer2Up
   jp    DoCopy
 
@@ -3757,6 +3842,11 @@ MoveHorizonInCurves:
   dec   a
   ld    (Layer3Y),a
   ld    (MoveLayer3Up+dy),a
+
+  ld    a,(AmountOfScrollingLayers)
+  cp    3
+  ret   nz
+
   ld    hl,MoveLayer3Up
   jp    DoCopy
 
@@ -3775,6 +3865,11 @@ MoveHorizonInCurves:
   dec   a
   ld    (Layer2Y),a
   ld    (MoveLayer2Up+dy),a
+
+  ld    a,(AmountOfScrollingLayers)
+  cp    2
+  ret   c
+
   ld    hl,MoveLayer2Up
   jp    DoCopy
 
@@ -3834,6 +3929,11 @@ MoveHorizonInCurves:
   ld    (MoveLayer3Down+sy),a
   inc   a
   ld    (MoveLayer3Down+dy),a
+
+  ld    a,(AmountOfScrollingLayers)
+  cp    3
+  ret   nz
+
   ld    hl,MoveLayer3Down
   jp    DoCopy
 
@@ -3855,6 +3955,11 @@ MoveHorizonInCurves:
   ld    (MoveLayer2Down+sy),a
   inc   a
   ld    (MoveLayer2Down+dy),a
+
+  ld    a,(AmountOfScrollingLayers)
+  cp    2
+  ret   c
+
   ld    hl,MoveLayer2Down
   jp    DoCopy
 
@@ -3910,6 +4015,10 @@ MoveHorizonInCurves:
   jp    DoCopy
 
   .ScrollLayer2Right:
+  ld    a,(AmountOfScrollingLayers)
+  cp    2
+  ret   c
+
   ld    a,(Layer2Y)
   ld    (MoveLayer2RightLoop2Pixels+sy),a
   ld    (MoveLayer2RightLoop2Pixels+dy),a
@@ -3959,6 +4068,10 @@ MoveHorizonInCurves:
   jp    DoCopy
 
   .ScrollLayer2Left:
+  ld    a,(AmountOfScrollingLayers)
+  cp    2
+  ret   c
+
   ld    a,(Layer2Y)
   ld    (MoveLayer2LeftLoop2Pixels+sy),a
   ld    (MoveLayer2LeftLoop2Pixels+dy),a
@@ -4042,44 +4155,44 @@ UpdateHud:
 
 
   .RemoveStartingLights:
-	db		136,0,077,1
+	db		136,0,104,1
 	db		.dxStartingLights,0,.dyStartingLights,0
 	db		078,0,024,0
 	db		0,0,$d0
 
   .StartingLights4on:
-	db		092,0,077,1
+	db		092,0,104,1
 	db		.dxStartingLights+56,0,.dyStartingLights+5,0
 	db		014,0,014,0
 	db		0,0,$d0  
 
   .StartingLights3on:
-	db		078,0,077,1
+	db		078,0,104,1
 	db		.dxStartingLights+40,0,.dyStartingLights+5,0
 	db		014,0,014,0
 	db		0,0,$d0  
 
   .StartingLights2on:
-	db		078,0,077,1
+	db		078,0,104,1
 	db		.dxStartingLights+24,0,.dyStartingLights+5,0
 	db		014,0,014,0
 	db		0,0,$d0  
 
   .StartingLights1on:
-	db		078,0,077,1
+	db		078,0,104,1
 	db		.dxStartingLights+8,0,.dyStartingLights+5,0
 	db		014,0,014,0
 	db		0,0,$d0  
 
   .StartingLightsAllOff:
-	db		000,0,077,1
+	db		000,0,104,1
 	db		.dxStartingLights,0,.dyStartingLights,0
 	db		078,0,024,0
 	db		0,0,$98  
 
   .StartingLightsBackupBackground:
 	db		.dxStartingLights,0,.dyStartingLights,0
-	db		136,0,077,1
+	db		136,0,104,1
 	db		078,0,024,0
 	db		0,0,$98  
 
@@ -4461,6 +4574,54 @@ RacingGameLevelProgressRoutine:
 
 LevelProgressScreenPalette:
   incbin "..\grapx\RacingGame\LevelProgressScreen.SC5",$7680+7,32
+
+RacingGameCongratulationsRoutine:
+  ld    a,0*32 + 31                         ;force page 0
+	ld    (PageOnNextVblank),a
+  ld    a,1
+  ld    (framecounter),a                    ;we force framecounter to 1 so that the sf2 object handler doesn't swap page ever
+
+  call  .HandlePhase                           ;screen on, set int handler, init variables
+;  call  .CheckStartGame
+  ret
+
+  .HandlePhase:
+  bit   0,(iy+ObjectPhase)
+  ret   nz
+  ld    (iy+ObjectPhase),1
+
+  ld    hl,CongratulationsPart1Address
+  ld    a,RacingGameCongratulationsGfxBlock
+  call  SetGfxAt8000InRam                             ;in: hl=adress in rom page 1, a=block, out: puts gfx in page 2 in ram at $8000
+
+  ld    hl,$8000 + (000*128) + (000/2) - 128
+  ld    de,$0000 + (000*128) + (000/2) - 128
+  ld    bc,$0000 + (128*256) + (256/2)
+  call  CopyRamToVram                       ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
+
+  ld    hl,CongratulationsPart2Address
+  ld    a,RacingGameCongratulationsGfxBlock
+  call  SetGfxAt8000InRam                             ;in: hl=adress in rom page 1, a=block, out: puts gfx in page 2 in ram at $8000
+
+  ld    hl,$8000 + (000*128) + (000/2) - 128
+  ld    de,$0000 + (128*128) + (000/2) - 128
+  ld    bc,$0000 + (084*256) + (256/2)
+  call  CopyRamToVram                       ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
+
+  xor   a
+  ld    (CopyPageToPage212High+sPage),a
+  ld    a,1
+  ld    (CopyPageToPage212High+dPage),a
+  ld    hl,CopyPageToPage212High
+  call  DoCopy
+
+  ld    hl,CongratulationsPalette
+  jp    SetPalette
+
+CongratulationsPalette:
+  incbin "..\grapx\RacingGame\Congratulations\CongratulationsTotal.SC5",$7680+7,32
+
+
 
 
 
