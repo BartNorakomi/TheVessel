@@ -472,9 +472,8 @@ if MusicOn?
   call  LoadSamplesAndPlaySong0
 endif
 
-	ld		a,0
+	ld		a,3
 	ld		(RacingGameDifficulty),a							;0=rookie, 1=pro, 2=elite, 3=legend
-
 	ld		a,3
 	ld		(RacingGameDifficultyUnlocked),a			;0=rookie, 1=rookie+pro, 2=rookie+pro+elite, 3=rookie+pro+elite+legend
 

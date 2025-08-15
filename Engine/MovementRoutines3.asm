@@ -39,9 +39,9 @@ Phase MovementRoutinesAddress
 
 
 ;sfx: almost out of fuel, gas, you pass an enemy, pick up heart, whipeout / fall down, starting signals, brake 
-StartingLightsOn?:  equ 1
-RacingGameTitleScreenOn?:  equ 1
-RacingGameLevelProgressScreenOn?:  equ 1
+StartingLightsOn?:  equ 0
+RacingGameTitleScreenOn?:  equ 0
+RacingGameLevelProgressScreenOn?:  equ 0
 
 MaximumSpeedUphill:       equ 210
 MaximumSpeedStraightRoad: equ 225
@@ -168,8 +168,8 @@ RacingGameRoutine:
 
 ;  call  SetScreenon
 
-;ld a,3
-;  ld    (RacingGameLevel),a               ;1=fourmountains, 2=nightcity, 3=oldtown, 4=palacecity, 5=purplecity, 6=troncity, 7=snowcity
+ld a,7
+  ld    (RacingGameLevel),a               ;1=fourmountains, 2=nightcity, 3=oldtown, 4=palacecity, 5=purplecity, 6=troncity, 7=snowcity
 
 ;  ld    a,32
 ;  ld    (r23onVblank),a
@@ -5030,6 +5030,8 @@ RacingGameCongratulationsRoutine:
   ld    hl,.PutTheEnd
   jp    z,DoCopy
 
+  cp    102
+  ret   c
   ld    a,1
   ld    (AbleToEndCongratulationsRoutine?),a
   ret
