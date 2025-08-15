@@ -2565,6 +2565,11 @@ ScrollLayer2?:   						rb	1
 ScrollLayer3?:   						rb	1
 Layer2Y:   									rb	1
 Layer3Y:   									rb	1
+RacingGameDifficulty:				rb	1			;0=rookie, 1=pro, 2=elite, 3=legend
+RacingGameDifficultyUnlocked:	rb	1		;0=rookie, 1=rookie+pro, 2=rookie+pro+elite, 3=rookie+pro+elite+legend
+RacingGameDifficultyUnlocked?:	rb	1		;did we just unlock a new difficulty ?
+RacingGameKissCounter:			rb	1
+AbleToEndCongratulationsRoutine?:			rb	1
 
 endenginepage3variables:  equ $+enginepage3length
 org variables

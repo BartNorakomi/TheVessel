@@ -1,8 +1,9 @@
 ;UpgradeMenuEventRoutine
 ;DrillingLocationsRoutine
 ;RacingGameRoutine
-;EventRacingGameTitleScreen
-;EventRacingGameLevelProgress
+;RacingGameTitleScreenRoutine
+;RacingGameLevelProgressRoutine
+;RacingGameCongratulationsRoutine
 
 Phase MovementRoutinesAddress
 
@@ -38,9 +39,9 @@ Phase MovementRoutinesAddress
 
 
 ;sfx: almost out of fuel, gas, you pass an enemy, pick up heart, whipeout / fall down, starting signals, brake 
-StartingLightsOn?:  equ 0
-RacingGameTitleScreenOn?:  equ 0
-RacingGameLevelProgressScreenOn?:  equ 0
+StartingLightsOn?:  equ 1
+RacingGameTitleScreenOn?:  equ 1
+RacingGameLevelProgressScreenOn?:  equ 1
 
 MaximumSpeedUphill:       equ 210
 MaximumSpeedStraightRoad: equ 225
@@ -70,6 +71,7 @@ RacingGameRoutine:
   call  CheckLevelFinished
   call  RePlayer_Tick                ;initialise, load samples
   call  PopulateControls
+  call  SetScreenonWithDelay
 
 ;  jr    .GameOver                   ;out of fuel and speed=0 then Game Over
 
@@ -164,10 +166,10 @@ RacingGameRoutine:
   ret   nz
   ld    (iy+ObjectPhase),1
 
-  call  SetScreenon
+;  call  SetScreenon
 
-ld a,7
-  ld    (RacingGameLevel),a
+;ld a,3
+;  ld    (RacingGameLevel),a               ;1=fourmountains, 2=nightcity, 3=oldtown, 4=palacecity, 5=purplecity, 6=troncity, 7=snowcity
 
 ;  ld    a,32
 ;  ld    (r23onVblank),a
@@ -1063,6 +1065,10 @@ PlaceNewObject:                           ;new objects may be placed if all acti
 
 
 
+;Flag can NOT appear as a minisprite
+  bit   0,(ix+MiniSprite?)              ;bit 0 on=minisprite, bit 1 on=heart, bit 1 off=minienemy
+  jr    nz,.EndCheckFlagAppear
+;Flag can NOT appear as a minisprite!
 
   ld    a,(AllowFlagToAppear?)
   or    a
@@ -2191,15 +2197,26 @@ SetEnemySprite:
   add   hl,de
   ld    a,(hl)
   add   a,(ix+X16bit)
-  cp    26
+
+;  cp    26
+  cp    14
   jr    nc,.EndCheckLeftBoundaryGirl1Pony
-  ld    a,26
+;  ld    a,26
+  ld    a,14
   .EndCheckLeftBoundaryGirl1Pony:
 
-  cp    256-26
+;  cp    256-26
+  cp    256-16
   jr    c,.EndCheckRightBoundaryGirl1Pony
-  ld    a,256-26
+;  ld    a,256-26
+  ld    a,256-16
   .EndCheckRightBoundaryGirl1Pony:
+
+
+
+
+
+
 
 
   ld    (ix+X16bit),a
@@ -2223,15 +2240,20 @@ SetEnemySprite:
 
 
 
-  cp    26
+;  cp    26
+  cp    14
   jr    nc,.EndCheckLeftBoundaryRedHeadBoy
-  ld    a,26
+;  ld    a,26
+  ld    a,14
   .EndCheckLeftBoundaryRedHeadBoy:
 
-  cp    256-26
+;  cp    256-26
+  cp    256-16
   jr    c,.EndCheckRightBoundaryRedHeadBoy
-  ld    a,256-26
+;  ld    a,256-26
+  ld    a,256-16
   .EndCheckRightBoundaryRedHeadBoy:
+
 
 
 
@@ -2278,16 +2300,22 @@ SetEnemySprite:
 
 
 
-  cp    26
+;  cp    26
+  cp    14
   jr    nc,.EndCheckLeftBoundaryWolf
-  ld    a,26
+;  ld    a,26
+  ld    a,14
   .EndCheckLeftBoundaryWolf:
 
-  cp    256-26
+;  cp    256-26
+  cp    256-16
   jr    c,.EndCheckRightBoundaryWolf
    ld    (ix+var3),32
-  ld    a,256-26
+;  ld    a,256-26
+  ld    a,256-16
   .EndCheckRightBoundaryWolf:
+
+
 
 
 
@@ -2322,14 +2350,18 @@ db -0,-1,-1,-2,-2,-2,-2,-3,   -3,-3,-3,-3,-4,-4,-4,-4,   -4,-4,-4,-4,-3,-3,-3,-3
 
 
 
-  cp    26
+;  cp    26
+  cp    14
   jr    nc,.EndCheckLeftBoundaryAlien
-  ld    a,26
+;  ld    a,26
+  ld    a,14
   .EndCheckLeftBoundaryAlien:
 
-  cp    256-26
+;  cp    256-26
+  cp    256-16
   jr    c,.EndCheckRightBoundaryAlien
-  ld    a,256-26
+;  ld    a,256-26
+  ld    a,256-16
   .EndCheckRightBoundaryAlien:
 
 
@@ -3028,7 +3060,12 @@ FrequencyEnemiesMax: equ 9
 
                     ;next distance, curve (1=right, 2=down, 3=left, 4=up, 0=end current curve)
                     dw  01300   ;distance till first curve
+;                    dw  00000   ;distance till first curve
 RacingGameEventsLevel1:     
+
+;                      db CurveRight        | dw 06350 | db EndCurve | dw 00350 |
+
+
 ;                      db FrequencyEnemiesMin   | dw 00002 ;BUGGGGGGGGGGGGGGGGGGGED
                       db CurveRight          | dw 00250 | db EndCurve | dw 00250 |
 ;                      db FrequencyEnemiesMax   | dw 00002
@@ -3106,7 +3143,8 @@ RacingGameEventsLevel6:
 
                     ;next distance, curve (1=right, 2=down, 3=left, 4=up, 0=end current curve)
                     dw  00500   ;distance till first curve
-RacingGameEventsLevel7:     db CurveUp          | dw 00250 | db EndCurve | dw 00250 |
+RacingGameEventsLevel7:     
+                      db CurveUp          | dw 00250 | db EndCurve | dw 00250 |
                       db HalfCurveRight        | dw 00120 | db EndCurve | dw 00120 |
                       db HalfCurveLeft        | dw 00120 | db EndCurve | dw 00120 |
                       db HalfCurveRight        | dw 00120 | db EndCurve | dw 00120 |
@@ -3465,8 +3503,21 @@ CheckCollisionEnemyOrHeart:
   ld    (spat+0+(30*4)),a                   ;y mini sprite
   ld    (spat+0+(31*4)),a                   ;y mini sprite
 
+	ld		a,(RacingGameDifficulty)							;0=rookie, 1=pro, 2=elite, 3=legend
+  ld    b,45                                ;amount of fuel per heart
+  or    a
+  jr    z,.DifficultyFound
+  ld    b,40                                ;amount of fuel per heart
+  dec   a
+  jr    z,.DifficultyFound
+  ld    b,35                                ;amount of fuel per heart
+  dec   a
+  jr    z,.DifficultyFound
+  ld    b,30                                ;amount of fuel per heart
+  .DifficultyFound:
+
   ld    a,(RacingGameFuel)           ;0-250
-  add   a,40
+  add   a,b
   jr    c,.OverFlow
   cp    251
   jr    c,.SetFuel
@@ -4414,6 +4465,13 @@ CheckLevelFinished:
   ld    a,(RacingGameLevel)
   inc   a
   ld    (RacingGameLevel),a
+
+  cp    8
+  ret   nz
+  ld    a,18                                ;racing game congratulations
+  ld    (CurrentRoom),a
+  ld    a,1
+  ld    (ChangeRoom?),a
   ret
 
 RacingGameTitleScreenRoutine:
@@ -4422,7 +4480,7 @@ RacingGameTitleScreenRoutine:
 
   if RacingGameTitleScreenOn?
   else
-  jr    .StartGame
+  jp    .StartGame
   endif
 
   ld    a,1
@@ -4430,11 +4488,48 @@ RacingGameTitleScreenRoutine:
   ld    a,0*32 + 31                         ;force page 0
 	ld    (PageOnNextVblank),a
 
+  call  BlinkCurrentDifficulty
+  call  .ChooseDifficulty
   call  .HandlePhase                           ;screen on, set int handler, init variables
   call  .GoAnimateSmoke
   call  .CheckStartGame
   ret
-  
+
+  .ChooseDifficulty:
+;
+; bit	7	  6	  5		    4		    3		    2		  1		  0
+;		  0	  0	  trig-b	trig-a	right	  left	down	up	(joystick)
+;		  F5	F1	'M'		  space	  right	  left	down	up	(keyboard)
+;
+	ld		a,(NewPrContr)
+	bit		3,a           ;right pressed ?
+  jr    nz,.RightPressed
+	bit		2,a           ;left pressed ?
+  ret   z
+
+  .LeftPressed:
+	ld		a,(RacingGameDifficulty)							;0=rookie, 1=pro, 2=elite, 3=legend
+  dec   a
+  ret   m
+	ld		(RacingGameDifficulty),a							;0=rookie, 1=pro, 2=elite, 3=legend
+  call  .SetDifficulties
+  ret
+
+  .RightPressed:
+  ld    a,(RacingGameDifficultyUnlocked)          ;0=rookie, 1=rookie+pro, 2=rookie+pro+elite, 3=rookie+pro+elite+legend
+  or    a
+  ret   z
+  inc   a
+  ld    b,a
+
+	ld		a,(RacingGameDifficulty)							;0=rookie, 1=pro, 2=elite, 3=legend
+  inc   a
+  cp    b
+  ret   nc
+	ld		(RacingGameDifficulty),a							;0=rookie, 1=pro, 2=elite, 3=legend
+  call  .SetDifficulties
+  ret
+
   .GoAnimateSmoke:
   ld    a,(AnimateSmokeSpeed)
   inc   a
@@ -4497,23 +4592,291 @@ RacingGameTitleScreenRoutine:
   ret   nz
   ld    (iy+ObjectPhase),1
 
-  ld    a,RacingGameTitleScreenGfxBlock     			;block to copy graphics from
-  ld    hl,$4000 + (000*128) + (000/2) - 128
+  ld    hl,TitleScreenPart1Address
+  ld    a,RacingGameTitleScreenGfxBlock
+  call  SetGfxAt8000InRam                             ;in: hl=adress in rom page 1, a=block, out: puts gfx in page 2 in ram at $8000
+
+  ld    hl,$8000 + (000*128) + (000/2) - 128
   ld    de,$0000 + (000*128) + (000/2) - 128
-  ld    bc,$0000 + (212*256) + (256/2)
-  call  CopyRomToVram                   ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
+  ld    bc,$0000 + (128*256) + (256/2)
+  call  CopyRamToVram                       ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
+
+  ld    hl,TitleScreenPart2Address
+  ld    a,RacingGameTitleScreenGfxBlock
+  call  SetGfxAt8000InRam                             ;in: hl=adress in rom page 1, a=block, out: puts gfx in page 2 in ram at $8000
+
+  ld    hl,$8000 + (000*128) + (000/2) - 128
+  ld    de,$0000 + (128*128) + (000/2) - 128
+  ld    bc,$0000 + (084*256) + (256/2)
+  call  CopyRamToVram                       ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
+
+  ld    hl,SmokeAnimationPart1Address
+  ld    a,RacingGameTitleScreenSmokeAnimationGfxBlock
+  call  SetGfxAt8000InRam                             ;in: hl=adress in rom page 1, a=block, out: puts gfx in page 2 in ram at $8000
 
   ld    a,RacingGameTitleScreenSmokeAnimationGfxBlock     			;block to copy graphics from
-  ld    hl,$4000 + (000*128) + (000/2) - 128
+  ld    hl,$8000 + (000*128) + (000/2) - 128
   ld    de,$8000 + (000*128) + (000/2) - 128
   ld    bc,$0000 + (081*256) + (128/2)
-  call  CopyRomToVram                   ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
+  call  CopyRamToVram                       ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
+
+  ld    hl,RookieProEliteLegendPart1Address
+  ld    a,RookieProEliteLegendGfxBlock
+  call  SetGfxAt8000InRam                             ;in: hl=adress in rom page 1, a=block, out: puts gfx in page 2 in ram at $8000
+
+  ld    a,RacingGameTitleScreenSmokeAnimationGfxBlock     			;block to copy graphics from
+  ld    hl,$8000 + (000*128) + (000/2) - 128
+  ld    de,$8000 + (081*128) + (000/2) - 128
+  ld    bc,$0000 + (020*256) + (256/2)
+  call  CopyRamToVram                       ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
+
+  call  .SetDifficulties
 
   ld    hl,NeonHorizonsTitleScreenPalette
   jp		SetPalette
 
+  .SetDifficulties:
+  ld    a,(RacingGameDifficultyUnlocked)          ;0=rookie, 1=rookie+pro, 2=rookie+pro+elite, 3=rookie+pro+elite+legend
+  or    a
+  ret   z
+  dec   a
+  ld    hl,.RookieAndPro
+  jp    z,DoCopy
+  dec   a
+  ld    hl,.RookieAndProAndElite
+  jp    z,DoCopy
+  ld    hl,.RookieAndProAndEliteAndLegend
+  jp    DoCopy
+
+  .RookieAndPro:
+  db    020,000,081,001                 ;sx,--,sy,spage
+  db    080,000,201,000                 ;dx,--,dy,dpage
+  db    098,000,010,000                 ;nx,--,ny,--
+  db    000,000,$98              				;transparant copy
+  .RookieAndProAndElite:
+  db    020,000,081,001                 ;sx,--,sy,spage
+  db    050,000,201,000                 ;dx,--,dy,dpage
+  db    158,000,010,000                 ;nx,--,ny,--
+  db    000,000,$98              				;transparant copy
+  .RookieAndProAndEliteAndLegend:
+  db    020,000,081,001                 ;sx,--,sy,spage
+  db    020,000,201,000                 ;dx,--,dy,dpage
+  db    218,000,010,000                 ;nx,--,ny,--
+  db    000,000,$98              				;transparant copy
+
+BlinkCurrentDifficulty:
+  ld    a,(RacingGameDifficultyUnlocked)          ;0=rookie, 1=rookie+pro, 2=rookie+pro+elite, 3=rookie+pro+elite+legend
+  or    a
+  ret   z
+  dec   a
+  jp    z,BlinkRookiePro
+  dec   a
+  jp    z,BlinkRookieProElite
+
+BlinkRookieProEliteLegend:
+	ld		a,(RacingGameDifficulty)							;0=rookie, 1=pro, 2=elite, 3=legend
+  or    a
+  jp    z,.BlinkRookie
+  dec   a
+  jp    z,.BlinkPro
+  dec   a
+  jp    z,.BlinkElite
+
+  .BlinkLegend:
+  ld    a,(Framecounter2)
+  and   3
+  ld    hl,.BlinkLegendOn
+  cp    2
+  jp    c,DoCopy
+  ld    hl,.BlinkLegendOff
+  jp    DoCopy
+
+  .BlinkElite:
+  ld    a,(Framecounter2)
+  and   3
+  ld    hl,.BlinkEliteOn
+  cp    2
+  jp    c,DoCopy
+  ld    hl,.BlinkEliteOff
+  jp    DoCopy
+
+  .BlinkPro:
+  ld    a,(Framecounter2)
+  and   3
+  ld    hl,.BlinkProOn
+  cp    2
+  jp    c,DoCopy
+  ld    hl,.BlinkProOff
+  jp    DoCopy
+
+  .BlinkRookie:
+  ld    a,(Framecounter2)
+  and   3
+  ld    hl,.BlinkRookieOn
+  cp    2
+  jp    c,DoCopy
+  ld    hl,.BlinkRookieOff
+  jp    DoCopy
+
+  .BlinkLegendOn:
+  db    200,000,081,001                 ;sx,--,sy,spage
+  db    200,000,201,000                 ;dx,--,dy,dpage
+  db    038,000,010,000                 ;nx,--,ny,--
+  db    000,000,$98              				;transparant copy 
+  .BlinkLegendOff:
+  db    200,000,091,001                 ;sx,--,sy,spage
+  db    200,000,201,000                 ;dx,--,dy,dpage
+  db    038,000,010,000                 ;nx,--,ny,--
+  db    000,000,$98              				;transparant copy 
+
+  .BlinkEliteOn:
+  db    140,000,081,001                 ;sx,--,sy,spage
+  db    140,000,201,000                 ;dx,--,dy,dpage
+  db    038,000,010,000                 ;nx,--,ny,--
+  db    000,000,$98              				;transparant copy 
+  .BlinkEliteOff:
+  db    140,000,091,001                 ;sx,--,sy,spage
+  db    140,000,201,000                 ;dx,--,dy,dpage
+  db    038,000,010,000                 ;nx,--,ny,--
+  db    000,000,$98              				;transparant copy 
+
+  .BlinkProOn:
+  db    080,000,081,001                 ;sx,--,sy,spage
+  db    080,000,201,000                 ;dx,--,dy,dpage
+  db    038,000,010,000                 ;nx,--,ny,--
+  db    000,000,$98              				;transparant copy 
+  .BlinkProOff:
+  db    080,000,091,001                 ;sx,--,sy,spage
+  db    080,000,201,000                 ;dx,--,dy,dpage
+  db    038,000,010,000                 ;nx,--,ny,--
+  db    000,000,$98              				;transparant copy 
+
+  .BlinkRookieOn:
+  db    020,000,081,001                 ;sx,--,sy,spage
+  db    020,000,201,000                 ;dx,--,dy,dpage
+  db    038,000,010,000                 ;nx,--,ny,--
+  db    000,000,$98              				;transparant copy 
+  .BlinkRookieOff:
+  db    020,000,091,001                 ;sx,--,sy,spage
+  db    020,000,201,000                 ;dx,--,dy,dpage
+  db    038,000,010,000                 ;nx,--,ny,--
+  db    000,000,$98              				;transparant copy 
+
+BlinkRookieProElite:
+	ld		a,(RacingGameDifficulty)							;0=rookie, 1=pro, 2=elite, 3=legend
+  or    a
+  jp    z,.BlinkRookie
+  dec   a
+  jp    z,.BlinkPro
+
+  .BlinkElite:
+  ld    a,(Framecounter2)
+  and   3
+  ld    hl,.BlinkEliteOn
+  cp    2
+  jp    c,DoCopy
+  ld    hl,.BlinkEliteOff
+  jp    DoCopy
+
+  .BlinkPro:
+  ld    a,(Framecounter2)
+  and   3
+  ld    hl,.BlinkProOn
+  cp    2
+  jp    c,DoCopy
+  ld    hl,.BlinkProOff
+  jp    DoCopy
+
+  .BlinkRookie:
+  ld    a,(Framecounter2)
+  and   3
+  ld    hl,.BlinkRookieOn
+  cp    2
+  jp    c,DoCopy
+  ld    hl,.BlinkRookieOff
+  jp    DoCopy
+
+  .BlinkEliteOn:
+  db    140,000,081,001                 ;sx,--,sy,spage
+  db    170,000,201,000                 ;dx,--,dy,dpage
+  db    038,000,010,000                 ;nx,--,ny,--
+  db    000,000,$98              				;transparant copy 
+  .BlinkEliteOff:
+  db    140,000,091,001                 ;sx,--,sy,spage
+  db    170,000,201,000                 ;dx,--,dy,dpage
+  db    038,000,010,000                 ;nx,--,ny,--
+  db    000,000,$98              				;transparant copy 
+
+  .BlinkProOn:
+  db    080,000,081,001                 ;sx,--,sy,spage
+  db    110,000,201,000                 ;dx,--,dy,dpage
+  db    038,000,010,000                 ;nx,--,ny,--
+  db    000,000,$98              				;transparant copy 
+  .BlinkProOff:
+  db    080,000,091,001                 ;sx,--,sy,spage
+  db    110,000,201,000                 ;dx,--,dy,dpage
+  db    038,000,010,000                 ;nx,--,ny,--
+  db    000,000,$98              				;transparant copy 
+
+  .BlinkRookieOn:
+  db    020,000,081,001                 ;sx,--,sy,spage
+  db    050,000,201,000                 ;dx,--,dy,dpage
+  db    038,000,010,000                 ;nx,--,ny,--
+  db    000,000,$98              				;transparant copy 
+  .BlinkRookieOff:
+  db    020,000,091,001                 ;sx,--,sy,spage
+  db    050,000,201,000                 ;dx,--,dy,dpage
+  db    038,000,010,000                 ;nx,--,ny,--
+  db    000,000,$98              				;transparant copy 
+
+BlinkRookiePro:
+	ld		a,(RacingGameDifficulty)							;0=rookie, 1=pro, 2=elite, 3=legend
+  or    a
+  jp    z,.BlinkRookie
+
+  .BlinkPro:
+  ld    a,(Framecounter2)
+  and   3
+  ld    hl,.BlinkProOn
+  cp    2
+  jp    c,DoCopy
+  ld    hl,.BlinkProOff
+  jp    DoCopy
+
+  .BlinkRookie:
+  ld    a,(Framecounter2)
+  and   3
+  ld    hl,.BlinkRookieOn
+  cp    2
+  jp    c,DoCopy
+  ld    hl,.BlinkRookieOff
+  jp    DoCopy
+
+  .BlinkProOn:
+  db    080,000,081,001                 ;sx,--,sy,spage
+  db    140,000,201,000                 ;dx,--,dy,dpage
+  db    038,000,010,000                 ;nx,--,ny,--
+  db    000,000,$98              				;transparant copy 
+  .BlinkProOff:
+  db    080,000,091,001                 ;sx,--,sy,spage
+  db    140,000,201,000                 ;dx,--,dy,dpage
+  db    038,000,010,000                 ;nx,--,ny,--
+  db    000,000,$98              				;transparant copy 
+
+  .BlinkRookieOn:
+  db    020,000,081,001                 ;sx,--,sy,spage
+  db    080,000,201,000                 ;dx,--,dy,dpage
+  db    038,000,010,000                 ;nx,--,ny,--
+  db    000,000,$98              				;transparant copy 
+  .BlinkRookieOff:
+  db    020,000,091,001                 ;sx,--,sy,spage
+  db    080,000,201,000                 ;dx,--,dy,dpage
+  db    038,000,010,000                 ;nx,--,ny,--
+  db    000,000,$98              				;transparant copy 
+
+
 NeonHorizonsTitleScreenPalette:
-  incbin "..\grapx\RacingGame\TitleScreen.SC5",$7680+7,32
+  incbin "..\grapx\RacingGame\TitleScreen\TitleScreen.SC5",$7680+7,32
 
 
 
@@ -4576,19 +4939,197 @@ LevelProgressScreenPalette:
   incbin "..\grapx\RacingGame\LevelProgressScreen.SC5",$7680+7,32
 
 RacingGameCongratulationsRoutine:
-  ld    a,0*32 + 31                         ;force page 0
-	ld    (PageOnNextVblank),a
   ld    a,1
   ld    (framecounter),a                    ;we force framecounter to 1 so that the sf2 object handler doesn't swap page ever
 
+  ;tailored to confetti
+  ld    a,(framecounter2)
+  inc   a
+  ld    (framecounter2),a
+
+  call  .HandleKiss
+  call  .HandleConfetti
   call  .HandlePhase                           ;screen on, set int handler, init variables
-;  call  .CheckStartGame
+  call  .CheckBackToTitleScreen
+  ret
+
+  .CheckBackToTitleScreen:
+  ld    a,(AbleToEndCongratulationsRoutine?)
+  or    a
+  ret   z
+
+;
+; bit	7	  6	  5		    4		    3		    2		  1		  0
+;		  0	  0	  trig-b	trig-a	right	  left	down	up	(joystick)
+;		  F5	F1	'M'		  space	  right	  left	down	up	(keyboard)
+;
+	ld		a,(NewPrContr)
+	bit		4,a           ;trig a pressed ?
+  ret   z
+
+  .StartGame:
+  ld    a,16                                ;racing game title screen
+  ld    (CurrentRoom),a
+  ld    a,1
+  ld    (ChangeRoom?),a
+  ret
+
+  .HandleKiss:
+  call  .SetPage
+  ld    a,(framecounter2)
+  and   15
+  ret   nz
+
+  ld    a,(RacingGameKissCounter)
+  inc   a
+  ret   z
+  ld    (RacingGameKissCounter),a
+  ret
+
+  .SetPage:
+  ld    a,0*32 + 31                         ;force page 0
+	ld    (PageOnNextVblank),a
+  ld    a,(RacingGameKissCounter)
+  cp    20
+  ret   c
+
+  ld    a,(RacingGameDifficulty)            ;0=rookie, 1=pro, 2=elite, 3=legend
+  or    a
+  jp    z,.CheckPutTextNewDifficultyUnlocked
+
+  ld    a,1*32 + 31                         ;force page 0
+	ld    (PageOnNextVblank),a
+  ld    a,(RacingGameKissCounter)
+  cp    40
+  ret   c
+
+  ld    a,(RacingGameDifficulty)            ;0=rookie, 1=pro, 2=elite, 3=legend
+  dec   a
+  jp    z,.CheckPutTextNewDifficultyUnlocked
+
+  ld    a,2*32 + 31                         ;force page 0
+	ld    (PageOnNextVblank),a
+  ld    a,(RacingGameKissCounter)
+  cp    60
+  ret   c
+
+  ld    a,(RacingGameDifficulty)            ;0=rookie, 1=pro, 2=elite, 3=legend
+  cp    2
+  jp    z,.CheckPutTextNewDifficultyUnlocked
+
+  ld    a,3*32 + 31                         ;force page 0
+	ld    (PageOnNextVblank),a
+
+  ld    a,(RacingGameKissCounter)
+  cp    80
+  ld    hl,.PutHeart
+  jp    z,DoCopy
+
+  ld    a,(RacingGameKissCounter)
+  cp    100
+  ld    hl,.PutTheEnd
+  jp    z,DoCopy
+
+  ld    a,1
+  ld    (AbleToEndCongratulationsRoutine?),a
+  ret
+
+  .PutHeart:
+  db    106,000,212,002                 ;sx,--,sy,spage
+  db    108,000,068,003                 ;dx,--,dy,dpage
+  db    035,000,030,000                 ;nx,--,ny,--
+  db    000,000,$98              				;transparant copy
+
+  .PutTheEnd:
+  db    000,000,212,002                 ;sx,--,sy,spage
+  db    076,000,040,003                 ;dx,--,dy,dpage
+  db    106,000,039,000                 ;nx,--,ny,--
+  db    000,000,$d0              				;transparant copy
+
+  .CheckPutTextNewDifficultyUnlocked:
+  ld    a,1
+  ld    (AbleToEndCongratulationsRoutine?),a
+
+  ld    a,(RacingGameDifficultyUnlocked?)   ;did we just unlock a new difficulty ?
+  or    a
+  ret   z
+
+  ld    a,(framecounter2)
+  and   3
+  ld    hl,.ShowTextNewDifficultyUnlockedPage0
+  jp    z,DoCopy
+  dec   a
+  ld    hl,.ShowTextNewDifficultyUnlockedPage1
+  jp    z,DoCopy
+  dec   a
+  ld    hl,.ShowTextNewDifficultyUnlockedPage2
+  jp    z,DoCopy
+  ld    hl,.ShowTextNewDifficultyUnlockedPage3
+  jp    DoCopy
+
+  .ShowTextNewDifficultyUnlockedPage0:
+  db    144,000,213,002                 ;sx,--,sy,spage
+  db    078,000,053,000                 ;dx,--,dy,dpage
+  db    098,000,023,000                 ;nx,--,ny,--
+  db    000,000,$98              				;transparant copy
+  .ShowTextNewDifficultyUnlockedPage1:
+  db    144,000,213,002                 ;sx,--,sy,spage
+  db    078,000,053,001                 ;dx,--,dy,dpage
+  db    098,000,023,000                 ;nx,--,ny,--
+  db    000,000,$98              				;transparant copy
+  .ShowTextNewDifficultyUnlockedPage2:
+  db    144,000,213,002                 ;sx,--,sy,spage
+  db    078,000,053,002                 ;dx,--,dy,dpage
+  db    098,000,023,000                 ;nx,--,ny,--
+  db    000,000,$98              				;transparant copy
+  .ShowTextNewDifficultyUnlockedPage3:
+  db    144,000,213,002                 ;sx,--,sy,spage
+  db    078,000,053,003                 ;dx,--,dy,dpage
+  db    098,000,023,000                 ;nx,--,ny,--
+  db    000,000,$98              				;transparant copy
+
+  .HandleConfetti:
+  ld    hl,spat
+  ld    de,4
+  ld    b,32
+
+  .loop:
+  ld    a,(hl)                                ;y sprite
+  add   a,1
+  cp    212
+  jr    c,.EndCheckOverflow
+  xor   a
+  .EndCheckOverflow:
+  ld    (hl),a                                ;y sprite
+  add   hl,de                                 ;next sprite
+  djnz  .loop
+
+  ld    a,(framecounter2)
+  and   3
+  ret   nz
+
+  ;x loop
+  ld    hl,spat+1                             ;x
+  ld    de,4
+  ld    b,32
+
+  .xloop:
+  ld    a,(hl)                                ;y sprite
+  add   a,1
+  ld    (hl),a                                ;y sprite
+  add   hl,de                                 ;next sprite
+  djnz  .xloop
   ret
 
   .HandlePhase:
   bit   0,(iy+ObjectPhase)
   ret   nz
   ld    (iy+ObjectPhase),1
+
+  xor   a
+  ld    (AbleToEndCongratulationsRoutine?),a
+
+  call  .SetConfettiSprites
 
   ld    hl,CongratulationsPart1Address
   ld    a,RacingGameCongratulationsGfxBlock
@@ -4615,8 +5156,158 @@ RacingGameCongratulationsRoutine:
   ld    hl,CopyPageToPage212High
   call  DoCopy
 
+  ld    a,2
+  ld    (CopyPageToPage212High+dPage),a
+  ld    hl,CopyPageToPage212High
+  call  DoCopy
+
+  ld    hl,CongratulationsPose1And2Address
+  ld    a,RacingGamePose1And2GfxBlock
+  call  SetGfxAt8000InRam                             ;in: hl=adress in rom page 1, a=block, out: puts gfx in page 2 in ram at $8000
+
+  ld    hl,$8000 + (000*128) + (128/2) - 128
+  ld    de,$8000 + (084*128) + (064/2) - 128
+  ld    bc,$0000 + (128*256) + (128/2)
+  call  CopyRamToVram                       ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
+
+  ld    a,3
+  ld    (CopyPageToPage212High+dPage),a
+  ld    hl,CopyPageToPage212High
+  call  DoCopy
+
+  ld    hl,CongratulationsPose3And4Address
+  ld    a,RacingGamePose3And4GfxBlock
+  call  SetGfxAt8000InRam                             ;in: hl=adress in rom page 1, a=block, out: puts gfx in page 2 in ram at $8000
+
+  ld    a,1
+  ld    (Vdp_Write_HighPage?),a
+  ld    hl,$8000 + (000*128) + (000/2) - 128
+  ld    de,$0000 + (084*128) + (064/2) - 128
+  ld    bc,$0000 + (128*256) + (128/2)
+  call  CopyRamToVram                       ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
+  xor   a
+  ld    (Vdp_Write_HighPage?),a
+
+;  ld    hl,CongratulationsPose3And4Address
+;  ld    a,RacingGamePose3And4GfxBlock
+;  call  SetGfxAt8000InRam                             ;in: hl=adress in rom page 1, a=block, out: puts gfx in page 2 in ram at $8000
+
+  ld    a,1
+  ld    (Vdp_Write_HighPage?),a
+  ld    hl,$8000 + (000*128) + (128/2) - 128
+  ld    de,$8000 + (084*128) + (064/2) - 128
+  ld    bc,$0000 + (128*256) + (128/2)
+  call  CopyRamToVram                       ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
+  xor   a
+  ld    (Vdp_Write_HighPage?),a
+
+  ld    hl,TheEndAndHeartAddress
+  ld    a,RacingGameTheEndAndHeartGfxBlock
+  call  SetGfxAt8000InRam                             ;in: hl=adress in rom page 1, a=block, out: puts gfx in page 2 in ram at $8000
+
+  ld    a,1
+  ld    (Vdp_Write_HighPage?),a
+  ld    hl,$8000 + (000*128) + (000/2) - 128
+  ld    de,$0000 + (212*128) + (000/2) - 128
+  ld    bc,$0000 + (039*256) + (256/2)
+  call  CopyRamToVram                       ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
+  xor   a
+  ld    (Vdp_Write_HighPage?),a
+
+  xor   a
+  ld    (RacingGameKissCounter),a
+
+  call  .CheckNewDifficultyUnlocked
+
   ld    hl,CongratulationsPalette
   jp    SetPalette
+
+  .CheckNewDifficultyUnlocked:
+  xor   a
+  ld    (RacingGameDifficultyUnlocked?),a
+
+  ld    a,(RacingGameDifficulty)            ;0=rookie, 1=pro, 2=elite, 3=legend
+  ld    b,a
+  ld    a,(RacingGameDifficultyUnlocked)    ;0=rookie, 1=rookie+pro, 2=rookie+pro+elite, 3=rookie+pro+elite+legend
+  cp    b
+  ret   nz
+  inc   a
+  cp    4
+  ret   z                                   ;already max difficulty unlocked
+  ld    (RacingGameDifficultyUnlocked),a    ;0=rookie, 1=rookie+pro, 2=rookie+pro+elite, 3=rookie+pro+elite+legend
+
+  ld    a,1
+  ld    (RacingGameDifficultyUnlocked?),a   ;did we just unlock a new difficulty ?
+  ret
+
+  .SetConfettiSprites:
+  ;write sprite character
+	xor		a				;page 0/1
+	ld		hl,sprcharaddr	;sprite 0 character table in VRAM
+	call	SetVdp_Write
+
+  ;set character data 32 sprites
+  ld    hl,.ConfettiSprite
+  ld		c,$98
+  call	outix256		;write sprite character to vram
+  ld    hl,.ConfettiSprite
+  call	outix256		;write sprite character to vram
+  ld    hl,.ConfettiSprite
+  call	outix256		;write sprite character to vram
+  ld    hl,.ConfettiSprite
+  call	outix256		;write sprite character to vram
+
+  xor		a				;page 0/1
+  ld		hl,sprcoladdr	;sprite 0 color table in VRAM
+  call	SetVdp_Write
+
+  ld    c,4                           ;4*8 sprites
+  .colorloop2:
+  ld    a,3                           ;color
+  call  .SetColor
+  ld    a,5                           ;color
+  call  .SetColor
+  ld    a,6                           ;color
+  call  .SetColor
+  ld    a,7                           ;color
+  call  .SetColor
+  ld    a,10                           ;color
+  call  .SetColor
+  ld    a,12                           ;color
+  call  .SetColor
+  ld    a,13                           ;color
+  call  .SetColor
+  ld    a,14                           ;color
+  call  .SetColor
+  dec   c
+  jr    nz,.colorloop2
+
+  ld    hl,.ConfettiSpat
+  ld    de,Spat
+  ld    bc,32*4
+  ldir
+  ret
+
+  .SetColor:
+  ld    b,16                          ;amount of colors/bytes per sprite
+  .colorloop:
+  out   ($98),a
+  djnz  .colorloop
+  ret
+
+  .ConfettiSprite:
+  incbin "..\grapx\RacingGame\Congratulations\sprconv FOR SINGLE SPRITES\confetti.spr",0,32*8
+
+  .ConfettiSpat:
+	db		000,117,00,0	,006,185,04,0	,013,166,08,0	,019,230,12,0
+	db		026,253,16,0	,033,169,20,0	,039,035,24,0	,046,108,28,0
+	db		053,129,32,0	,059,123,36,0	,066,161,40,0	,072,014,44,0
+	db		079,142,48,0	,086,152,52,0	,092,148,56,0	,099,087,60,0
+
+	db		106,004,64,0	,112,176,68,0	,119,111,72,0	,125,255,76,0
+	db		132,149,80,0	,139,079,84,0	,145,253,88,0	,152,023,92,0
+	db		159,069,96,0	,165,134,100,0	,172,221,104,0	,178,123,108,0
+	db		185,086,112,0	,192,214,116,0	,198,055,120,0	,205,163,124,0
 
 CongratulationsPalette:
   incbin "..\grapx\RacingGame\Congratulations\CongratulationsTotal.SC5",$7680+7,32

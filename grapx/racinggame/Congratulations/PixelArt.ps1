@@ -7,7 +7,7 @@
 Add-Type -AssemblyName System.Drawing
 
 # Easy modification: offset added to detected block size
-$BlockSizeOffset = +0
+$BlockSizeOffset = +2
 
 function Colors-AreClose {
     param (
