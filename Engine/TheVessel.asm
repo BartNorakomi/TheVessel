@@ -751,6 +751,21 @@ RacingGameGirl1PonyMiniSpritesBlock:  			equ   ($-RomStartAddress) and (romsize-
 	dephase
 	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
 
+RacingGameGirl1PonyLookingRightSpritesBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
+RacingGameGirl1PonyLookingRightMiniSpritesBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
+	phase	$8000
+	Girl1PonyLookingRightSpritesCharacters:
+	include "..\grapx\racinggame\sprites\Girl1PonyLookingRight\Girl1Pony.tgs.gen"
+	Girl1PonyLookingRightSpriteColors:	
+	include "..\grapx\racinggame\sprites\Girl1PonyLookingRight\Girl1Pony.tcs.gen"
+
+	Girl1PonyLookingRightMiniSpritesCharacters:
+	include "..\grapx\racinggame\sprites\Girl1PonyLookingRight\Girl1PonyMiniSprite.tgs.gen"
+	Girl1PonyLookingRightMiniSpriteColors:	
+	include "..\grapx\racinggame\sprites\Girl1PonyLookingRight\Girl1PonyMiniSprite.tcs.gen"
+	dephase
+	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
+
 RacingGameRedHeadBoySpritesBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
 RacingGameRedHeadBoyMiniSpritesBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
 	phase	$8000

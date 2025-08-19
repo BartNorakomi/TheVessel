@@ -7,8 +7,11 @@
 
 Phase MovementRoutinesAddress
 
-;let girl 1 pony je aankijken
 ;animate flagholder ?
+;level progress screen
+;save file
+;sfx
+;obstacle course
 
 ;wat als je die stroken minder breed maakt. Alsof je op zo'n grote brug rijdt met links/rechts nog een paar meter gras, maar daarna niks meer. In wat je dan weglaat kun je neem ik aan gewoon een achtergrond hebben van iets.
 ;oh en tevens: bij de finish is 't wel raar als ik stop en de rest vrolijk doorrijdt 
@@ -26,8 +29,8 @@ Phase MovementRoutinesAddress
 
 ;sfx: almost out of fuel, gas, you pass an enemy, pick up heart, whipeout / fall down, starting signals, brake 
 StartingLightsOn?:  equ 1
-RacingGameTitleScreenOn?:  equ 1
-RacingGameLevelProgressScreenOn?:  equ 1
+RacingGameTitleScreenOn?:  equ 0
+RacingGameLevelProgressScreenOn?:  equ 0
 
 MaximumSpeedUphill:       equ 210
 MaximumSpeedStraightRoad: equ 225
@@ -156,8 +159,8 @@ RacingGameRoutine:
 
 ;  call  SetScreenon
 
-;ld a,7
-;  ld    (RacingGameLevel),a               ;1=fourmountains, 2=nightcity, 3=oldtown, 4=palacecity, 5=purplecity, 6=troncity, 7=snowcity
+ld a,5
+  ld    (RacingGameLevel),a               ;1=fourmountains, 2=nightcity, 3=oldtown, 4=palacecity, 5=purplecity, 6=troncity, 7=snowcity
 
 ;  ld    a,32
 ;  ld    (r23onVblank),a
@@ -353,6 +356,7 @@ RacingGameRoutine:
 
 
   call  .LoadBackground
+  call  .LoadRavinePalaceCity
   call  .SetLevelPalette
   call  .SetAmountOfScrollingLayers
   call  .SetDistanceMeterIconBackgroundColor
@@ -484,7 +488,39 @@ RacingGameRoutine:
   ld    (Layer3Y),a
   ret
 
+  .LoadRavinePalaceCity:
+  ld    a,(RacingGameLevel)
+  cp    4
+  ret   nz
+  ld    hl,.RavinePalaceCity1
+  call  DoCopy
+  ld    hl,.RavinePalaceCity2
+  call  DoCopy
+  ld    hl,.RavinePalaceCity3
+  call  DoCopy
+  ld    hl,.RavinePalaceCity4
+  jp    DoCopy
 
+  .RavinePalaceCity1:
+	db		000,0,093,1
+	db		000,0,128,0
+	db		087,0,011,0
+	db		0,0,$98
+  .RavinePalaceCity2:
+	db		000,0,093,1
+	db		000,0,128,1
+	db		087,0,011,0
+	db		0,0,$98
+  .RavinePalaceCity3:
+	db		087,0,093,1
+	db		256-87,0,128,0
+	db		087,0,011,0
+	db		0,0,$98
+  .RavinePalaceCity4:
+	db		087,0,093,1
+	db		256-87,0,128,1
+	db		087,0,011,0
+	db		0,0,$98
 
   .LoadBackground:
   ld    a,(RacingGameLevel)
@@ -2118,6 +2154,8 @@ SetEnemySprite:
   jp    z,.RedHeadBoy
   cp    RacingGameGirl1PonySpritesBlock
   jp    z,.Girl1Pony
+  cp    RacingGameGirl1PonyLookingRightSpritesBlock
+  jp    z,.Girl1Pony
   cp    RacingGameYellowJacketBoySpritesBlock
   jp    z,.YellowJacketBoy
   cp    RacingGameFlag1SpritesBlock
@@ -2166,8 +2204,10 @@ SetEnemySprite:
   ld    a,(RacingGamePlayerX)
   cp    b
   ld    c,-1
+  ld    b,RacingGameGirl1PonySpritesBlock
   jr    c,.HorizontalMovementFound
   ld    c,1
+  ld    b,RacingGameGirl1PonyLookingRightSpritesBlock
   .HorizontalMovementFound:
   ;if girl1pony is right of player, we reduce var3, otherwise increase var3. var3 points to movement table for girl1pony 
   ld    a,(ix+var3)
@@ -2200,14 +2240,12 @@ SetEnemySprite:
   ld    a,256-16
   .EndCheckRightBoundaryGirl1Pony:
 
-
-
-
-
-
-
-
   ld    (ix+X16bit),a
+
+  ld    a,(ix+RacingGameCharacterSpriteBlock)
+  cp    RacingGameGirl1PonyLookingRightSpritesBlock+1
+  ret   nc
+  ld    (ix+RacingGameCharacterSpriteBlock),b
   ret
 
   .Girl1PonyMovementTable:
@@ -4212,24 +4250,52 @@ UpdateHud:
   ld    (hl),1
 
   cp    2
-  jr    z,.SetStartingLightsBackupBackground
+  ld    hl,.StartingLightsBackupBackground
+  jp    z,DoCopy
   cp    3
-  jr    z,.SetStartingLightsAllOff
+  ld    hl,.StartingLightsAllOff
+  jp    z,DoCopy
   cp    20
-  jr    z,.SetStartingLights1on
-  cp    38
-  jr    z,.SetStartingLightsAllOff
+  ld    hl,.SetStartingLights1on_A
+  jp    z,DoCopy
+  cp    21
+  ld    hl,.SetStartingLights1on_B
+  jp    z,DoCopy
+  cp    22
+  ld    hl,.SetStartingLights1on_C
+  jp    z,DoCopy
+
   cp    40
-  jr    z,.SetStartingLights2on
-  cp    58
-  jr    z,.SetStartingLightsAllOff
+  ld    hl,.SetStartingLights2on_A
+  jp    z,DoCopy
+  cp    41
+  ld    hl,.SetStartingLights2on_B
+  jp    z,DoCopy
+  cp    42
+  ld    hl,.SetStartingLights2on_C
+  jp    z,DoCopy
+
   cp    60
-  jr    z,.SetStartingLights3on
-  cp    78
-  jr    z,.SetStartingLightsAllOff
+  ld    hl,.SetStartingLights3on_A
+  jp    z,DoCopy
+  cp    61
+  ld    hl,.SetStartingLights3on_B
+  jp    z,DoCopy
+  cp    62
+  ld    hl,.SetStartingLights3on_C
+  jp    z,DoCopy
+
   cp    80
-  jr    z,.SetStartingLights4on
-  cp    90
+  ld    hl,.SetStartingLights4on_A
+  jp    z,DoCopy
+  cp    81
+  ld    hl,.SetStartingLights4on_B
+  jp    z,DoCopy
+  cp    82
+  ld    hl,.SetStartingLights4on_C
+  jp    z,DoCopy
+
+  cp    93
   ret   nz
   xor   a
   ld    (RacingGameStartingLightsOn?),a
@@ -4237,60 +4303,76 @@ UpdateHud:
   ld    hl,.RemoveStartingLights
   jp    DoCopy
 
-  .SetStartingLights4on:
-  ld    hl,.StartingLights4on
-  jp    DoCopy
-
-  .SetStartingLights3on:
-  ld    hl,.StartingLights3on
-  jp    DoCopy
-
-  .SetStartingLights2on:
-  ld    hl,.StartingLights2on
-  jp    DoCopy
-
-  .SetStartingLights1on:
-  ld    hl,.StartingLights1on
-  jp    DoCopy
-
-  .SetStartingLightsAllOff:
-  ld    hl,.StartingLightsAllOff
-  jp    DoCopy
-
-  .SetStartingLightsBackupBackground:
-  ld    hl,.StartingLightsBackupBackground
-  jp    DoCopy
-
-
-
   .RemoveStartingLights:
 	db		136,0,104,1
 	db		.dxStartingLights,0,.dyStartingLights,0
 	db		078,0,024,0
 	db		0,0,$d0
 
-  .StartingLights4on:
+  .SetStartingLights4on_A:
+	db		078,0,104,1
+	db		.dxStartingLights+56,0,.dyStartingLights+5,0
+	db		014,0,015,0
+	db		0,0,$d0  
+  .SetStartingLights4on_B:
 	db		092,0,104,1
 	db		.dxStartingLights+56,0,.dyStartingLights+5,0
-	db		014,0,014,0
+	db		014,0,015,0
+	db		0,0,$d0  
+  .SetStartingLights4on_C:
+	db		106,0,104,1
+	db		.dxStartingLights+56,0,.dyStartingLights+5,0
+	db		014,0,015,0
 	db		0,0,$d0  
 
-  .StartingLights3on:
+
+  .SetStartingLights3on_A:
 	db		078,0,104,1
 	db		.dxStartingLights+40,0,.dyStartingLights+5,0
-	db		014,0,014,0
+	db		014,0,015,0
+	db		0,0,$d0  
+  .SetStartingLights3on_B:
+	db		092,0,104,1
+	db		.dxStartingLights+40,0,.dyStartingLights+5,0
+	db		014,0,015,0
+	db		0,0,$d0  
+  .SetStartingLights3on_C:
+	db		106,0,104,1
+	db		.dxStartingLights+40,0,.dyStartingLights+5,0
+	db		014,0,015,0
 	db		0,0,$d0  
 
-  .StartingLights2on:
+
+  .SetStartingLights2on_A:
 	db		078,0,104,1
 	db		.dxStartingLights+24,0,.dyStartingLights+5,0
-	db		014,0,014,0
+	db		014,0,015,0
+	db		0,0,$d0  
+  .SetStartingLights2on_B:
+	db		092,0,104,1
+	db		.dxStartingLights+24,0,.dyStartingLights+5,0
+	db		014,0,015,0
+	db		0,0,$d0  
+  .SetStartingLights2on_C:
+	db		106,0,104,1
+	db		.dxStartingLights+24,0,.dyStartingLights+5,0
+	db		014,0,015,0
 	db		0,0,$d0  
 
-  .StartingLights1on:
+  .SetStartingLights1on_A:
 	db		078,0,104,1
 	db		.dxStartingLights+8,0,.dyStartingLights+5,0
-	db		014,0,014,0
+	db		014,0,015,0
+	db		0,0,$d0  
+  .SetStartingLights1on_B:
+	db		092,0,104,1
+	db		.dxStartingLights+8,0,.dyStartingLights+5,0
+	db		014,0,015,0
+	db		0,0,$d0  
+  .SetStartingLights1on_C:
+	db		106,0,104,1
+	db		.dxStartingLights+8,0,.dyStartingLights+5,0
+	db		014,0,015,0
 	db		0,0,$d0  
 
   .StartingLightsAllOff:
