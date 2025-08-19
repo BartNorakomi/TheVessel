@@ -3,7 +3,7 @@
         "height": 4300,
         "width": 2
     },
-    "activeFile": "map01.tmx",
+    "activeFile": "C:/Users/bartf/OneDrive/Usas2/Archived20250314/maps/BU16.tmx",
     "expandedProjectPaths": [
         "."
     ],
@@ -22,6 +22,29 @@
         "C:/Users/bartf/Documents/GitHub/MSXHeroes/maps/TilesGentleAutumn.tsx": {
             "scaleInDock": 1
         },
+        "C:/Users/bartf/OneDrive/Usas2/Archived20250314/maps/BT12.tmx": {
+            "scale": 1.5,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 402.66666666666663,
+                "y": 948
+            }
+        },
+        "C:/Users/bartf/OneDrive/Usas2/Archived20250314/maps/BU16.tmx": {
+            "scale": 1.5,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 90.66666666666663,
+                "y": 52
+            }
+        },
+        "C:/Users/bartf/OneDrive/Usas2/Archived20250314/maps/tilesheets/roomObjects.tsx": {
+            "dynamicWrapping": true,
+            "scaleInDock": 1
+        },
+        "C:/Users/bartf/OneDrive/Usas2/Archived20250314/maps/tilesheets/tsKarniMata.tsx": {
+            "scaleInDock": 2
+        },
         "map01.tmx": {
             "scale": 3,
             "selectedLayer": 0,
@@ -34,32 +57,32 @@
             "scale": 2,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 128.25,
-                "y": 8192.25
+                "x": 128,
+                "y": 8192.5
             }
         },
         "map03.tmx": {
             "scale": 1.5,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 128.33333333333331,
-                "y": 8192.333333333332
+                "x": 127.99999999999997,
+                "y": 8192
             }
         },
         "map04.tmx": {
             "scale": 1.5,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 128.33333333333331,
-                "y": 8192.333333333332
+                "x": 127.99999999999997,
+                "y": 8192
             }
         },
         "map05.tmx": {
             "scale": 1,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 127.5,
-                "y": 8192.5
+                "x": 127,
+                "y": 8193
             }
         },
         "tileset.tsx": {
@@ -68,24 +91,25 @@
         }
     },
     "last.imagePath": "C:/Users/bartf/Documents/GitHub/TheVessel/grapx/drillinggame/maps",
+    "loadedWorlds": [
+        "C:/Users/bartf/OneDrive/Usas2/Archived20250314/maps/KarniMata.world"
+    ],
     "map.lastUsedFormat": "tmx",
     "map.width": 8,
     "openFiles": [
-        "tileset.tsx",
-        "map02.tmx",
-        "map03.tmx",
-        "map04.tmx",
-        "map05.tmx",
-        "map01.tmx"
+        "C:/Users/bartf/OneDrive/Usas2/Archived20250314/maps/BT12.tmx",
+        "C:/Users/bartf/OneDrive/Usas2/Archived20250314/maps/BU16.tmx"
     ],
     "project": "drillinggame.tiled-project",
     "recentFiles": [
-        "tileset.tsx",
-        "map02.tmx",
-        "map03.tmx",
-        "map04.tmx",
-        "map05.tmx",
+        "C:/Users/bartf/OneDrive/Usas2/Archived20250314/maps/BT12.tmx",
+        "C:/Users/bartf/OneDrive/Usas2/Archived20250314/maps/BU16.tmx",
         "map01.tmx",
+        "map05.tmx",
+        "map04.tmx",
+        "map03.tmx",
+        "map02.tmx",
+        "tileset.tsx",
         "C:/Users/bartf/Documents/GitHub/MSXHeroes/maps/GentleAutumnMap01.tmx"
     ],
     "tileset.lastUsedFormat": "tsx"

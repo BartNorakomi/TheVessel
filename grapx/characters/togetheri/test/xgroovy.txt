@@ -1,0 +1,2 @@
+changed date of save file not properly displayed (instead the current date was always displayed)
+changed background color of save file text wasn't transparant

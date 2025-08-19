@@ -7,41 +7,27 @@
 
 Phase MovementRoutinesAddress
 
+;let girl 1 pony je aankijken
+;animate flagholder ?
+
+;wat als je die stroken minder breed maakt. Alsof je op zo'n grote brug rijdt met links/rechts nog een paar meter gras, maar daarna niks meer. In wat je dan weglaat kun je neem ik aan gewoon een achtergrond hebben van iets.
+;oh en tevens: bij de finish is 't wel raar als ik stop en de rest vrolijk doorrijdt 
 ;IDEA maak een slalom parcours
 ;IDEA laat gaten in de road verschijnen waar visjes uitspringen
-;1 minder animatiestap links en rechts op top speed (bij lage snelheid kan dat ook. Dus je kunt de rotaties houden, maar de scope moet kleiner naarmate je sneller rijdt)
-;snelheid van de weg mag wel hoger
-;groentinten omgedraaid bij het graspalette
-;Mss iets qua banden wat enige beweging suggereert.
-
 ;heuvels mogen dieper/hoger
 ;aan de horizon, zou ik qua gfx experimenteren met een raster.
-;horizon verticaal meescrollen in de up/down curves
 ;maak een zooi palettes die subtielere verschillen tonen (vooral met blauwtinten)
-;wat als je die stroken minder breed maakt. Alsof je op zo'n grote brug rijdt met links/rechts nog een paar meter gras, maar daarna niks meer. In wat je dan weglaat kun je neem ik aan gewoon een achtergrond hebben van iets.
-
 ;Je kunt ditherpatronen gebruiken om 2 kleuren minder groot te laten verschillen. We kunnen een powershell tool maken om bij elke bmp de groene achtergrond te vervangen door het ditherpatroon
 ;bijvoorbeeld het gras (lichtgroen en donkergroen), je gooit in page 0 met dither 80% lichtgroen en 20% donkergroen, en in page 1 draai je dat om
-;we kunnen 1 tunnel level maken
-
-
-;btw, diepte-perspectief qua enemies is wat raar, maar dat ga je denk ik ook niet kunnen fixen. Op basis van de scaling zou je denken dat de weg maar iets van 50 m diep is of zo, maar naar 't 
-;gras en de horizon kijkend zou je denken dat 't honderden meters ver weg is (edited) 
-
 ;voor backgrounds: zie super hangon
-
-;ik maak die hitbox 20% kleiner aan alle kanten
-;oh en tevens: bij de finish is 't wel raar als ik stop en de rest vrolijk doorrijdt 
-
-;Titel: Neon Horizon
 ;ik denk dat we gears wel moeten proberen, 't is simpelweg het uitlezen van een tabel met pitches die er zo uitzien: / / /
 
 
 
 ;sfx: almost out of fuel, gas, you pass an enemy, pick up heart, whipeout / fall down, starting signals, brake 
-StartingLightsOn?:  equ 0
-RacingGameTitleScreenOn?:  equ 0
-RacingGameLevelProgressScreenOn?:  equ 0
+StartingLightsOn?:  equ 1
+RacingGameTitleScreenOn?:  equ 1
+RacingGameLevelProgressScreenOn?:  equ 1
 
 MaximumSpeedUphill:       equ 210
 MaximumSpeedStraightRoad: equ 225
@@ -88,6 +74,9 @@ RacingGameRoutine:
   ld    a,(RacingGameLevelFinished?)
   or    a
   jr    nz,.EndCheckReduceFuel
+  ld    a,(RacingGameSpeed)
+  or    a
+  jr    z,.EndCheckReduceFuel
 
   ld    a,(RacingGameFuel)            ;0-250
   dec   a
@@ -160,7 +149,6 @@ RacingGameRoutine:
   ld    a,1
   ld    (ChangeRoom?),a
 
-
   .Initiate:
   bit   0,(iy+ObjectPhase)
   ret   nz
@@ -168,8 +156,8 @@ RacingGameRoutine:
 
 ;  call  SetScreenon
 
-ld a,7
-  ld    (RacingGameLevel),a               ;1=fourmountains, 2=nightcity, 3=oldtown, 4=palacecity, 5=purplecity, 6=troncity, 7=snowcity
+;ld a,7
+;  ld    (RacingGameLevel),a               ;1=fourmountains, 2=nightcity, 3=oldtown, 4=palacecity, 5=purplecity, 6=troncity, 7=snowcity
 
 ;  ld    a,32
 ;  ld    (r23onVblank),a
@@ -1881,7 +1869,7 @@ SetEnemySprite:
   ex    af,af'
   ld    a,(ix+RacingGameCharacterSpriteBlock)
   cp    RacingGameFlag1SpritesBlock
-  jp    nz,.EndCheckFlag
+  jp    c,.EndCheckFlag
 
 
 
@@ -2649,6 +2637,65 @@ MovePlayerHorizontally:
   ld    (RacingGamePlayerX),a
   ret
 
+SetPlayerThumbsUp:
+  ld    a,(framecounter2)                 ;only once every 4 frames on frame 0
+  and   3
+  ret   nz
+
+  ;set y coordinates player sprite
+  ld    a,RacingGamePlayerY
+  ld    (spat+0+(00*4)),a                 ;y sprite 0
+  ld    (spat+0+(01*4)),a                 ;y sprite 1
+  ld    (spat+0+(02*4)),a                 ;y sprite 2
+  ld    (spat+0+(03*4)),a                 ;y sprite 3
+  add   a,16
+  ld    (spat+0+(04*4)),a                 ;y sprite 4
+  ld    (spat+0+(05*4)),a                 ;y sprite 5
+  ld    (spat+0+(06*4)),a                 ;y sprite 6
+  ld    (spat+0+(07*4)),a                 ;y sprite 7
+  add   a,16
+  ld    (spat+0+(08*4)),a                 ;y sprite 8
+  ld    (spat+0+(09*4)),a                 ;y sprite 9
+  ld    (spat+0+(10*4)),a                 ;y sprite 8
+  ld    (spat+0+(11*4)),a                 ;y sprite 9
+
+  ld    a,(RacingGamePlayerX)
+  ld    (spat+1+(00*4)),a                 ;x sprite 0
+  ld    (spat+1+(01*4)),a                 ;x sprite 1
+  ld    (spat+1+(04*4)),a                 ;x sprite 4
+  ld    (spat+1+(05*4)),a                 ;x sprite 5
+  ld    (spat+1+(08*4)),a                 ;x sprite 8
+  ld    (spat+1+(09*4)),a                 ;x sprite 9
+  add   a,16
+  ld    (spat+1+(02*4)),a                 ;x sprite 2
+  ld    (spat+1+(03*4)),a                 ;x sprite 3
+  ld    (spat+1+(06*4)),a                 ;x sprite 6
+  ld    (spat+1+(07*4)),a                 ;x sprite 7
+  ld    (spat+1+(10*4)),a                 ;x sprite 0
+  ld    (spat+1+(11*4)),a                 ;x sprite 1
+
+  ld    a,RacingGamePlayerThumbsUpSpritesBlock   	;sprites block
+  call  block34                       	;CARE!!! we can only switch block34 if page 1 is in rom  
+
+  ;write sprite character
+	xor		a				;page 0/1
+	ld		hl,sprcharaddr	;sprite 0 character table in VRAM
+	call	SetVdp_Write
+
+  ld    hl,PlayerThumbsUpSpritesCharacters
+	ld		c,$98
+	call	outix384		;write sprite character to vram
+
+	xor		a				;page 0/1
+	ld		hl,sprcoladdr	;sprite 0 color table in VRAM
+	call	SetVdp_Write
+
+  ld    hl,PlayerThumbsUpSpriteColors
+	ld		c,$98
+	call	outix192		;write sprite color of pointer and hand to vram
+  ret  
+
+
 AmountOfTimeFallDown: equ 32
 SetPlayerSpriteFallDown:
   ld    a,1
@@ -2851,6 +2898,14 @@ SetPlayerSprite:
   ld    a,(RacingGamePlayerFalldown?)
   or    a
   jp    nz,SetPlayerSpriteFallDown
+
+  ld    a,(RacingGameLevelFinished?)
+  or    a
+  jp    z,.EndCheckRacingGameFinished
+  ld    a,(RacingGameSpeed)
+  or    a
+  jp    z,SetPlayerThumbsUp  
+  .EndCheckRacingGameFinished:
 
   ;set x coordinates player sprite
   ld    a,(RacingGameHorMoveSpeed)        ;value from 0-41 where 21 is center (not moving) 0-20 is moving left, 22-41 is moving right
@@ -3060,41 +3115,31 @@ FrequencyEnemiesMax: equ 9
 
                     ;next distance, curve (1=right, 2=down, 3=left, 4=up, 0=end current curve)
                     dw  01300   ;distance till first curve
-;                    dw  00000   ;distance till first curve
+;                    dw  00010   ;distance till first curve
 RacingGameEventsLevel1:     
-
-;                      db CurveRight        | dw 06350 | db EndCurve | dw 00350 |
-
-
-;                      db FrequencyEnemiesMin   | dw 00002 ;BUGGGGGGGGGGGGGGGGGGGED
                       db CurveRight          | dw 00250 | db EndCurve | dw 00250 |
-;                      db FrequencyEnemiesMax   | dw 00002
                       db CurveLeft        | dw 00450 | db EndCurve | dw 00350 |
-                      db CurveDown          | dw 00350 | db EndCurve | dw 00550 |
+                      db CurveDown          | dw 00000 |  db FrequencyEnemiesMin   | dw 0000 ;BUGGGGGGGGGGGGGGGGGGGED
+                      db CurveDown          | dw 00350 | db EndCurve | dw 00150 |
+                      db FrequencyEnemiesMax   | dw 00100
                       db CurveRight        | dw 00350 | db EndCurve | dw 00350 |
-                      db CurveDown        | dw 00250 | db EndCurve | dw 01250 |
-                      db CurveDown        | dw 00250 | db EndCurve | dw 00250 |
-                      db CurveLeft        | dw 00250 | db EndCurve | dw 00250 |
-                      db CurveUp          | dw 00250 | db EndCurve | dw 00250 |
-                      db CurveDown        | dw 00250 | db EndCurve | dw 60200 |
+                      db CurveDown          | dw 00000 |  db FrequencyEnemiesMin   | dw 0000 ;BUGGGGGGGGGGGGGGGGGGGED
+                      db CurveDown        | dw 00250 | db EndCurve | dw 00150 |
+                      db FrequencyEnemiesMax   | dw 02002
 
                     ;next distance, curve (1=right, 2=down, 3=left, 4=up, 0=end current curve)
                     dw  00350   ;distance till first curve
-                    dw  00000   ;distance till first curve
+;                    dw  00000   ;distance till first curve
 RacingGameEventsLevel2:
-
-
                       db CurveUp          | dw 00150 | db EndCurve | dw 00250 |
-
                       db HalfCurveRight          | dw 00350 | db EndCurve | dw 00120 |
                       db HalfCurveLeft        | dw 00400 | db EndCurve | dw 00120 |
                       db CurveUp          | dw 00550 | db EndCurve | dw 00250 |
                       db CurveLeft        | dw 00250 | db EndCurve | dw 00500 |
-                      db CurveDown          | dw 00250 | db EndCurve | dw 01000 |
-                      db CurveRight        | dw 00250 | db EndCurve | dw 02250 |
-                      db CurveLeft        | dw 00250 | db EndCurve | dw 00250 |
-                      db CurveUp          | dw 00250 | db EndCurve | dw 00250 |
-                      db CurveDown        | dw 00250 | db EndCurve | dw 60200 |
+                      db CurveDown          | dw 00000 |  db FrequencyEnemiesMin   | dw 0000 ;BUGGGGGGGGGGGGGGGGGGGED
+                      db CurveDown          | dw 00250 | db EndCurve | dw 00150 |
+                      db FrequencyEnemiesMax   | dw 02002
+
 
                     ;next distance, curve (1=right, 2=down, 3=left, 4=up, 0=end current curve)
                     dw  00300   ;distance till first curve
@@ -3104,10 +3149,9 @@ RacingGameEventsLevel3:
                       db HalfCurveRight   | dw 00250 | db EndCurve | dw 00250 |
                       db CurveRight       | dw 00350 | db EndCurve | dw 00350 |
                       db CurveUp          | dw 00550 | db EndCurve | dw 00150 |
-                      db CurveDown        | dw 00750 | db EndCurve | dw 02250 |
-                      db CurveLeft        | dw 00250 | db EndCurve | dw 00250 |
-                      db CurveUp          | dw 00250 | db EndCurve | dw 00250 |
-                      db CurveDown        | dw 00250 | db EndCurve | dw 60200 |
+                      db CurveDown          | dw 00000 |  db FrequencyEnemiesMin   | dw 0000 ;BUGGGGGGGGGGGGGGGGGGGED
+                      db CurveDown        | dw 00750 | db EndCurve | dw 00150 |
+                      db FrequencyEnemiesMax   | dw 02002
 
                     ;next distance, curve (1=right, 2=down, 3=left, 4=up, 0=end current curve)
                     dw  30500   ;distance till first curve
@@ -3117,7 +3161,9 @@ RacingGameEventsLevel4:     db HalfCurveLeft          | dw 00250 | db EndCurve |
                     dw  00400   ;distance till first curve
 RacingGameEventsLevel5:
                       db CurveUp          | dw 00650 | db EndCurve | dw 00250 |
-                      db CurveDown        | dw 00250 | db EndCurve | dw 00250 |
+                      db CurveDown          | dw 00000 |  db FrequencyEnemiesMin   | dw 0000 ;BUGGGGGGGGGGGGGGGGGGGED
+                      db CurveDown        | dw 00250 | db EndCurve | dw 00150 |
+                      db FrequencyEnemiesMax   | dw 00100
                       db CurveRight          | dw 00350 | db EndCurve | dw 00350 |
                       db CurveLeft        | dw 00350 | db EndCurve | dw 00350 |
                       db CurveUp          | dw 00250 | db EndCurve | dw 00200 |
@@ -3132,14 +3178,14 @@ RacingGameEventsLevel5:
                     dw  00100   ;distance till first curve
 RacingGameEventsLevel6:
                       db CurveRight          | dw 00250 | db EndCurve | dw 00250 |
-                      db CurveDown        | dw 00450 | db EndCurve | dw 00250 |
+                      db CurveDown          | dw 00000 |  db FrequencyEnemiesMin   | dw 0000 ;BUGGGGGGGGGGGGGGGGGGGED
+                      db CurveDown        | dw 00450 | db EndCurve | dw 00150 |
+                      db FrequencyEnemiesMax   | dw 00100
                       db CurveRight          | dw 00350 | db EndCurve | dw 00350 |
                       db CurveLeft        | dw 00750 | db EndCurve | dw 00350 |
                       db CurveUp          | dw 00650 | db EndCurve | dw 00250 |
                       db CurveRight        | dw 00650 | db EndCurve | dw 02250 |
-                      db CurveLeft        | dw 00250 | db EndCurve | dw 00250 |
-                      db CurveUp          | dw 00250 | db EndCurve | dw 00250 |
-                      db CurveDown        | dw 00250 | db EndCurve | dw 60200 |
+
 
                     ;next distance, curve (1=right, 2=down, 3=left, 4=up, 0=end current curve)
                     dw  00500   ;distance till first curve
@@ -3153,7 +3199,9 @@ RacingGameEventsLevel7:
                       db HalfCurveLeft        | dw 00120 | db EndCurve | dw 00120 |
                       db HalfCurveRight        | dw 00120 | db EndCurve | dw 00120 |
                       db HalfCurveLeft        | dw 00120 | db EndCurve | dw 00120 |
-                      db CurveDown        | dw 00250 | db EndCurve | dw 00250 |
+                      db CurveDown          | dw 00000 |  db FrequencyEnemiesMin   | dw 0000 ;BUGGGGGGGGGGGGGGGGGGGED
+                      db CurveDown        | dw 00250 | db EndCurve | dw 00150 |
+                      db FrequencyEnemiesMax   | dw 00000
                       db CurveRight        | dw 00750 | db EndCurve | dw 05250 |
 
 HandleCurvatureRoad:
@@ -3548,7 +3596,7 @@ CheckCollisionEnemyOrHeart:
 
   ld    a,(Object3+RacingGameCharacterSpriteBlock)
   cp    RacingGameFlag1SpritesBlock
-  jr    z,.FlagPickedUp
+  jr    nc,.FlagPickedUpObject3
 
   ;sfx crash
   ld    a,(RacingGamePlayerFalldown?)
@@ -3587,7 +3635,7 @@ CheckCollisionEnemyOrHeart:
 
   ld    a,(Object2+RacingGameCharacterSpriteBlock)
   cp    RacingGameFlag1SpritesBlock
-  jr    z,.FlagPickedUp
+  jr    nc,.FlagPickedUpObject2
 
   ;sfx crash
   ld    a,(RacingGamePlayerFalldown?)
@@ -3605,7 +3653,17 @@ CheckCollisionEnemyOrHeart:
   ld    (RacingGamePlayerFalldownFacingDirection),a ;1=right, 2=left
   ret
 
-  .FlagPickedUp:
+  .FlagPickedUpObject3:
+  ld    a,RacingGameFlagHolderWIthoutFlagSpritesBlock
+  ld    (Object3+RacingGameCharacterSpriteBlock),a
+  ld    a,1
+  ld    (freezecontrols?),a
+  ld    (RacingGameLevelFinished?),a  
+  ret
+
+  .FlagPickedUpObject2:
+  ld    a,RacingGameFlagHolderWIthoutFlagSpritesBlock
+  ld    (Object2+RacingGameCharacterSpriteBlock),a
   ld    a,1
   ld    (freezecontrols?),a
   ld    (RacingGameLevelFinished?),a  
@@ -4475,6 +4533,8 @@ CheckLevelFinished:
   ret
 
 RacingGameTitleScreenRoutine:
+  xor   a
+  ld    (freezecontrols?),a
   ld    a,1
   ld    (RacingGameLevel),a
 

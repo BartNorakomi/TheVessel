@@ -472,9 +472,9 @@ if MusicOn?
   call  LoadSamplesAndPlaySong0
 endif
 
-	ld		a,3
+	ld		a,0
 	ld		(RacingGameDifficulty),a							;0=rookie, 1=pro, 2=elite, 3=legend
-	ld		a,3
+	ld		a,1
 	ld		(RacingGameDifficultyUnlocked),a			;0=rookie, 1=rookie+pro, 2=rookie+pro+elite, 3=rookie+pro+elite+legend
 
   jp    InitiateGame
@@ -669,7 +669,6 @@ RacingGamePurpleCityGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /Rom
 RacingGameSnowCityGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
 RacingGameTronCityGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
 RacingGameCongratulationsGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
-RacingGamePose1And2GfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
 	phase	$4000
 	FourMountainsPart1Address:
   incbin "..\grapx\RacingGame\backgrounds\FourMountainsPart1.sc5.pck"
@@ -689,8 +688,6 @@ RacingGamePose1And2GfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomB
   incbin "..\grapx\RacingGame\Congratulations\CongratulationsTotalPart1.sc5.pck"
 	CongratulationsPart2Address:
   incbin "..\grapx\RacingGame\Congratulations\CongratulationsTotalPart2.sc5.pck"
-	CongratulationsPose1And2Address:
-  incbin "..\grapx\RacingGame\Congratulations\Pose1And2Part1.sc5.pck"
 	.CheckBlockFull:	dw	$+$8000
 	dephase
 	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
@@ -700,6 +697,7 @@ RacingGameTheEndAndHeartGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) 
 RacingGameTitleScreenGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
 RacingGameTitleScreenSmokeAnimationGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
 RookieProEliteLegendGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
+RacingGamePose1And2GfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
 	phase	$4000
 	CongratulationsPose3And4Address:
   incbin "..\grapx\RacingGame\Congratulations\Pose3And4Part1.sc5.pck"
@@ -713,6 +711,8 @@ RookieProEliteLegendGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /Rom
   incbin "..\grapx\RacingGame\TitleScreen\TitleScreenSmokeAnimationPart1.sc5.pck"
 	RookieProEliteLegendPart1Address:
   incbin "..\grapx\RacingGame\TitleScreen\TitleScreenRookieProEliteLegendPart1.sc5.pck"
+	CongratulationsPose1And2Address:
+  incbin "..\grapx\RacingGame\Congratulations\Pose1And2Part1.sc5.pck"
 	.CheckBlockFull:	dw	$+$8000
 	dephase
 	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
@@ -858,6 +858,27 @@ RacingGameFlag1MiniSpritesBlock:  			equ   ($-RomStartAddress) and (romsize-1) /
 	dephase
 	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
 
+RacingGameFlagHolderWIthoutFlagSpritesBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
+RacingGameFlagHolderWIthoutFlagMiniSpritesBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
+RacingGamePlayerThumbsUpSpritesBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
+	phase	$8000
+	FlagHolderWIthoutFlagSpritesCharacters:
+	include "..\grapx\racinggame\sprites\FlagHolderWIthoutFlag\Flag1.tgs.gen"
+	FlagHolderWIthoutFlagSpriteColors:	
+	include "..\grapx\racinggame\sprites\FlagHolderWIthoutFlag\Flag1.tcs.gen"
+
+	FlagHolderWIthoutFlagMiniSpritesCharacters:
+	include "..\grapx\racinggame\sprites\FlagHolderWIthoutFlag\FlagMiniSprite.tgs.gen"
+	FlagHolderWIthoutFlagMiniSpriteColors:	
+	include "..\grapx\racinggame\sprites\FlagHolderWIthoutFlag\FlagMiniSprite.tcs.gen"
+
+	PlayerThumbsUpSpritesCharacters:
+	include "..\grapx\racinggame\sprites\Player\PlayerThumbsUp.tgs.gen"
+	PlayerThumbsUpSpriteColors:	
+	include "..\grapx\racinggame\sprites\Player\PlayerThumbsUp.tcs.gen"
+
+	dephase
+	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
 
 
 RacingGamePlayerSpritesBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
