@@ -10,6 +10,18 @@ Phase MovementRoutinesAddress
 ;animate flagholder ?
 ;sfx
 ;muziek
+;game over in een bocht = bug
+
+;bier = toetsen omgedraaid
+;een vogel NPC
+
+
+
+;diamantjes = 50% fuel erbij, kan alleen verschijnen als je <50% fuel hebt
+;sterretje: Spook-modus → je voertuig wordt transparant en kan 10 seconden lang door andere racers heen rijden (geen botsingen).
+;een inktvlek zoals bij penguin adventure die het beeld ff zwart maakt ... 2 seconden hooguit
+
+
 
 ;wat als je die stroken minder breed maakt. Alsof je op zo'n grote brug rijdt met links/rechts nog een paar meter gras, maar daarna niks meer. In wat je dan weglaat kun je neem ik aan gewoon een achtergrond hebben van iets.
 ;oh en tevens: bij de finish is 't wel raar als ik stop en de rest vrolijk doorrijdt 
@@ -75,9 +87,9 @@ RacingGameRoutine:
   ld    a,(RacingGameLevelFinished?)
   or    a
   jr    nz,.EndCheckReduceFuel
-  ld    a,(RacingGameSpeed)
-  or    a
-  jr    z,.EndCheckReduceFuel
+;  ld    a,(RacingGameSpeed)
+;  or    a
+;  jr    z,.EndCheckReduceFuel
 
   ld    a,(RacingGameFuel)            ;0-250
   dec   a
