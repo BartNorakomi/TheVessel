@@ -8,9 +8,8 @@
 Phase MovementRoutinesAddress
 
 ;animate flagholder ?
-;save file
 ;sfx
-;obstacle course
+;muziek
 
 ;wat als je die stroken minder breed maakt. Alsof je op zo'n grote brug rijdt met links/rechts nog een paar meter gras, maar daarna niks meer. In wat je dan weglaat kun je neem ik aan gewoon een achtergrond hebben van iets.
 ;oh en tevens: bij de finish is 't wel raar als ik stop en de rest vrolijk doorrijdt 
@@ -158,7 +157,7 @@ RacingGameRoutine:
 
 ;  call  SetScreenon
 
-;ld a,7
+;ld a,6
 ;  ld    (RacingGameLevel),a               ;1=fourmountains, 2=nightcity, 3=oldtown, 4=palacecity, 5=purplecity, 6=troncity, 7=snowcity
 
 ;  ld    a,32
@@ -265,7 +264,8 @@ RacingGameRoutine:
   ld    (RoadAnimationStep),a
   ld    (AllowFlagToAppear?),a
   ld    (FlagHasAppeared?),a
-
+  ld    (RoadBlockEventOn?),a
+  ld    (EnemiesOffEvent?),a
 
   xor   a
   if StartingLightsOn?
@@ -992,6 +992,10 @@ PlaceNewObject:                           ;new objects may be placed if all acti
   or    a
   ret   nz
 
+  ld    a,(EnemiesOffEvent?)
+  or    a
+  ret   nz
+
   ld    de,(FrequencyEnemiesAppear)
 ;  ld    de,6247                         ;highest difficulty
 ;  ld    de,5000                         ;average difficulty
@@ -1018,9 +1022,16 @@ PlaceNewObject:                           ;new objects may be placed if all acti
   ret
 
   .SetThisObjectMiniSprite:
+  ld    a,(RoadBlockEventOn?)
+  or    a
+  ld    b,30
+  jr    z,.EndCheckRoadBlockEvent3
+  ld    b,20
+  .EndCheckRoadBlockEvent3:
+
   ld    a,r
   set   1,(ix+MiniSprite?)              ;bit 0 on=minisprite, bit 1 on=heart, bit 1 off=minienemy
-  cp    30
+  cp    b ;30
   jr    c,.SetThisObject
   res   1,(ix+MiniSprite?)              ;bit 0 on=minisprite, bit 1 on=heart, bit 1 off=minienemy
 
@@ -1054,6 +1065,15 @@ PlaceNewObject:                           ;new objects may be placed if all acti
 
   ld    (ix+var3),0                     ;for now only used for girl1pony
   ld    (ix+RacingGameEnemySpeed),140   ;racing game speed
+
+
+  ld    a,(RoadBlockEventOn?)
+  or    a
+  jp    z,.EndCheckRoadBlockEvent
+  ld    (ix+RacingGameEnemySpeed),000   ;racing game speed
+  .EndCheckRoadBlockEvent:
+
+
 
   ld    (ix+RacingGameHorizontalMovementEnemy),0
 ;  ld    (ix+RacingGameCharacterSpriteBlock),RacingGameAlienSpritesBlock
@@ -1105,11 +1125,14 @@ PlaceNewObject:                           ;new objects may be placed if all acti
   jr    .EnemySet
   .EndCheckFlagAppear:
 
+  ld    a,(RoadBlockEventOn?)
+  or    a
+  jp    z,.EndCheckRoadBlockEvent2
+  ld    a,RacingGameRoadBlockSpritesBlock
+  jp    .EnemySet
+  .EndCheckRoadBlockEvent2:
 
-
-  ld    a,(hl)                          ;enemy sprite block (capboy=35, RacingGameYellowJacketBoySpritesBlock=36,  RacingGameRedHeadBoySpritesBlock=32, RacingGameGirl1PonySpritesBlock=31)
-  
-  
+  ld    a,(hl)                          ;enemy sprite block (capboy=35, RacingGameYellowJacketBoySpritesBlock=36,  RacingGameRedHeadBoySpritesBlock=32, RacingGameGirl1PonySpritesBlock=31)  
 ;Difficulty:
 ;CapBoy
 ;YellowJacketBoy
@@ -1124,6 +1147,7 @@ PlaceNewObject:                           ;new objects may be placed if all acti
 ;  ld a,RacingGameGirl1PonySpritesBlock
 ;  ld a,RacingGameCapBoySpritesBlock
 ;  ld a,RacingGameFlag1SpritesBlock
+;  ld a,RacingGameRoadBlockSpritesBlock
   .EnemySet:
   
   ld    b,a
@@ -3149,6 +3173,9 @@ HalfCurveLeft: equ 6
 FrequencyEnemiesMin:  equ 7
 FrequencyEnemiesAverage: equ 8
 FrequencyEnemiesMax: equ 9
+RoadBlockEventOn: equ 10
+RoadBlockEventOff: equ 11
+EnemiesOffEvent: equ 12
 
                     ;next distance, curve (1=right, 2=down, 3=left, 4=up, 0=end current curve)
                     dw  01300   ;distance till first curve
@@ -3191,8 +3218,11 @@ RacingGameEventsLevel3:
                       db FrequencyEnemiesMax   | dw 02002
 
                     ;next distance, curve (1=right, 2=down, 3=left, 4=up, 0=end current curve)
-                    dw  30500   ;distance till first curve
-RacingGameEventsLevel4:     db HalfCurveLeft          | dw 00250 | db EndCurve | dw 00250 |
+                    dw  00000   ;distance till first curve
+RacingGameEventsLevel4:     
+                    db RoadBlockEventOn          | dw 02210
+                    db EnemiesOffEvent           | dw 00200
+                    db RoadBlockEventOff         | dw 20550
 
                     ;next distance, curve (1=right, 2=down, 3=left, 4=up, 0=end current curve)
                     dw  00400   ;distance till first curve
@@ -3213,14 +3243,20 @@ RacingGameEventsLevel5:
 
                     ;next distance, curve (1=right, 2=down, 3=left, 4=up, 0=end current curve)
                     dw  00100   ;distance till first curve
+                    dw  00000   ;distance till first curve
 RacingGameEventsLevel6:
+                    db RoadBlockEventOn          | dw 00200
+                    db CurveUp          | dw 00300 | db EndCurve | dw 00250 |
+                    db EnemiesOffEvent           | dw 00100
+                    db RoadBlockEventOff         | dw 00000
+
                       db CurveRight          | dw 00250 | db EndCurve | dw 00250 |
                       db CurveDown          | dw 00000 |  db FrequencyEnemiesMin   | dw 0000 ;BUGGGGGGGGGGGGGGGGGGGED
                       db CurveDown        | dw 00450 | db EndCurve | dw 00150 |
                       db FrequencyEnemiesMax   | dw 00100
                       db CurveRight          | dw 00350 | db EndCurve | dw 00350 |
                       db CurveLeft        | dw 00750 | db EndCurve | dw 00350 |
-                      db CurveUp          | dw 00650 | db EndCurve | dw 00250 |
+                      db CurveUp          | dw 00850 | db EndCurve | dw 03250 |
                       db CurveRight        | dw 00650 | db EndCurve | dw 02250 |
 
 
@@ -3292,6 +3328,28 @@ HandleCurvatureRoad:
   jp    z,.FrequencyEnemiesAverage
   dec   a
   jp    z,.FrequencyEnemiesMax
+  dec   a
+  jp    z,.RoadBlockEventOn
+  dec   a
+  jp    z,.RoadBlockEventOff
+  dec   a
+  jp    z,.EnemiesOffEvent
+
+  .EnemiesOffEvent:
+  ld    a,1
+  ld    (EnemiesOffEvent?),a
+  ret
+
+  .RoadBlockEventOff:
+  xor   a
+  ld    (RoadBlockEventOn?),a
+  ld    (EnemiesOffEvent?),a
+  ret
+
+  .RoadBlockEventOn:
+  ld    a,1
+  ld    (RoadBlockEventOn?),a
+  ret
 
   .FrequencyEnemiesMax:
   ld    hl,6247                         ;highest difficulty
@@ -4629,11 +4687,33 @@ RacingGameTitleScreenRoutine:
   ld    a,0*32 + 31                         ;force page 0
 	ld    (PageOnNextVblank),a
 
+  call  .LoadDifficultyUnlocked
   call  BlinkCurrentDifficulty
   call  .ChooseDifficulty
   call  .HandlePhase                           ;screen on, set int handler, init variables
   call  .GoAnimateSmoke
   call  .CheckStartGame
+  ret
+
+  .LoadDifficultyUnlocked:
+  ld    a,(slot.page12rom)            	;all RAM except page 1+2
+  out   ($a8),a
+  ld    a,RacingGameSaveFileBlock       	;drilling game map
+  call  block34                       	;CARE!!! we can only switch block34 if page 1 is in rom  
+  ld    a,($8000)                           ;bit 0 on=pro unlocked, bit 1 on=elite unlocked, bit 2 on=legend unlocked
+  bit   2,a
+  ld    b,3
+  jr    z,.SetDifficultyUnlocked
+  bit   1,a
+  ld    b,2
+  jr    z,.SetDifficultyUnlocked
+  bit   0,a
+  ld    b,1
+  jr    z,.SetDifficultyUnlocked
+  ld    b,0
+  .SetDifficultyUnlocked:
+	ld		a,b
+	ld		(RacingGameDifficultyUnlocked),a			;0=rookie, 1=rookie+pro, 2=rookie+pro+elite, 3=rookie+pro+elite+legend
   ret
 
   .ChooseDifficulty:
@@ -5057,6 +5137,8 @@ RacingGameLevelProgressRoutine:
   add   a,2
   ld    (RacingGameStartNextLevelTimer),a
   ret   nz
+
+  .StartGame:
   ld    a,15                                ;racing game
   ld    (CurrentRoom),a
   ld    a,1
@@ -5612,6 +5694,8 @@ RacingGameCongratulationsRoutine:
 
   ld    a,1
   ld    (RacingGameDifficultyUnlocked?),a   ;did we just unlock a new difficulty ?
+
+  call  RacingGameSaveNewDifficultyUnlocked
   ret
 
   .SetConfettiSprites:

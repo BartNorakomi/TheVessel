@@ -243,7 +243,6 @@ SaveDrillingGameMap:
   ld    a,(slot.page12rom)            	;all RAM except page 1+2
   out   ($a8),a
 
-
   ld    a,(DigSiteSelected)
 	dec		a
   ld    l,DrillingGameMap01Block       	;drilling game map
@@ -289,6 +288,36 @@ SaveDrillingGameMap:
 	ld		a,MovementRoutinesBlock
   call  block12                             ;CARE!!! we can only switch block34 if page 1 is in rom  
 	ret
+
+RacingGameSaveNewDifficultyUnlocked:
+  ld    a,(slot.page12rom)            	;all RAM except page 1+2
+  out   ($a8),a
+  ld    a,RacingGameSaveFileBlock       	;drilling game map
+  call  block12                       	;CARE!!! we can only switch block34 if page 1 is in rom  
+
+  ld    a,(RacingGameDifficultyUnlocked)    ;0=rookie, 1=rookie+pro, 2=rookie+pro+elite, 3=rookie+pro+elite+legend
+	cp		1
+	ld		hl,.ProUnlocked
+	jr		z,.GoSave
+	cp		2
+	ld		hl,.EliteUnlocked
+	jr		z,.GoSave
+	ld		hl,.LegendUnlocked
+
+	.GoSave:
+	ld		de,$4000												;bit 0 on=pro unlocked, bit 1 on=elite unlocked, bit 2 on=legend unlocked
+	ld		bc,1
+	call	FlashWrite                           ;in: hl->source, de->destination, bc->amount
+
+  ld    a,MovementRoutines3Block       	;drilling game map
+  call  block12                       	;CARE!!! we can only switch block34 if page 1 is in rom  
+	ret
+
+.ProUnlocked:			db	%1111 1110
+.EliteUnlocked:		db	%1111 1100
+.LegendUnlocked:	db	%1111 1000
+
+
 
 FlashWrite6000hto8000h:                           ;in: hl->source, de->destination, bc->amount
   ld    a,$AA                         ; magic bytes (om per ongeluk schrijven te voorkomen)
@@ -2570,6 +2599,8 @@ RacingGameDifficultyUnlocked:	rb	1		;0=rookie, 1=rookie+pro, 2=rookie+pro+elite,
 RacingGameDifficultyUnlocked?:	rb	1		;did we just unlock a new difficulty ?
 RacingGameKissCounter:			rb	1
 AbleToEndCongratulationsRoutine?:			rb	1
+RoadBlockEventOn?:					rb	1
+EnemiesOffEvent?:					rb	1
 
 endenginepage3variables:  equ $+enginepage3length
 org variables

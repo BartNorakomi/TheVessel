@@ -474,8 +474,8 @@ endif
 
 	ld		a,0
 	ld		(RacingGameDifficulty),a							;0=rookie, 1=pro, 2=elite, 3=legend
-	ld		a,2
-	ld		(RacingGameDifficultyUnlocked),a			;0=rookie, 1=rookie+pro, 2=rookie+pro+elite, 3=rookie+pro+elite+legend
+;	ld		a,2
+;	ld		(RacingGameDifficultyUnlocked),a			;0=rookie, 1=rookie+pro, 2=rookie+pro+elite, 3=rookie+pro+elite+legend
 
   jp    InitiateGame
 
@@ -535,6 +535,10 @@ DrillingGameMap05Block:  				equ   ($-RomStartAddress) and (romsize-1) /RomBlock
   incbin "..\grapx\drillinggame\maps\map05.map"
 	DrillingGameMap05Size:	equ	$-DrillingGameMap05Address
 	dephase
+	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of 16kb block
+
+RacingGameSaveFileBlock:  				equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
+	db	%1111 1111		;bit 0 on=pro unlocked, bit 1 on=elite unlocked, bit 2 on=legend unlocked
 	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of 16kb block
 
 ArcadeHall1TileMapBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
@@ -762,6 +766,21 @@ RacingGameBackdropGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBl
 	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
 
 
+RacingGameRoadBlockSpritesBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
+RacingGameRoadBlockMiniSpritesBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
+	phase	$8000
+	RoadBlockSpritesCharacters:
+	include "..\grapx\racinggame\sprites\RoadBlock\RoadBlock.tgs.gen"
+	RoadBlockSpriteColors:	
+	include "..\grapx\racinggame\sprites\RoadBlock\RoadBlock.tcs.gen"
+
+	RoadBlockMiniSpritesCharacters:
+	include "..\grapx\racinggame\sprites\RoadBlock\RoadBlockMiniSprite.tgs.gen"
+	RoadBlockMiniSpriteColors:	
+	include "..\grapx\racinggame\sprites\RoadBlock\RoadBlockMiniSprite.tcs.gen"
+	dephase
+	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
+
 RacingGameGirl1PonySpritesBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
 RacingGameGirl1PonyMiniSpritesBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
 	phase	$8000
@@ -917,9 +936,10 @@ RacingGamePlayerThumbsUpSpritesBlock:  			equ   ($-RomStartAddress) and (romsize
 	include "..\grapx\racinggame\sprites\Player\PlayerThumbsUp.tgs.gen"
 	PlayerThumbsUpSpriteColors:	
 	include "..\grapx\racinggame\sprites\Player\PlayerThumbsUp.tcs.gen"
-
 	dephase
 	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
+
+
 
 
 RacingGamePlayerSpritesBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
