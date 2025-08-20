@@ -8,7 +8,6 @@
 Phase MovementRoutinesAddress
 
 ;animate flagholder ?
-;level progress screen
 ;save file
 ;sfx
 ;obstacle course
@@ -29,8 +28,8 @@ Phase MovementRoutinesAddress
 
 ;sfx: almost out of fuel, gas, you pass an enemy, pick up heart, whipeout / fall down, starting signals, brake 
 StartingLightsOn?:  equ 1
-RacingGameTitleScreenOn?:  equ 0
-RacingGameLevelProgressScreenOn?:  equ 0
+RacingGameTitleScreenOn?:  equ 1
+RacingGameLevelProgressScreenOn?:  equ 1
 
 MaximumSpeedUphill:       equ 210
 MaximumSpeedStraightRoad: equ 225
@@ -159,8 +158,8 @@ RacingGameRoutine:
 
 ;  call  SetScreenon
 
-ld a,5
-  ld    (RacingGameLevel),a               ;1=fourmountains, 2=nightcity, 3=oldtown, 4=palacecity, 5=purplecity, 6=troncity, 7=snowcity
+;ld a,7
+;  ld    (RacingGameLevel),a               ;1=fourmountains, 2=nightcity, 3=oldtown, 4=palacecity, 5=purplecity, 6=troncity, 7=snowcity
 
 ;  ld    a,32
 ;  ld    (r23onVblank),a
@@ -5031,54 +5030,285 @@ RacingGameLevelProgressRoutine:
   jr    .StartGame
   endif
 
-  ld    a,0*32 + 31                         ;force page 0
-	ld    (PageOnNextVblank),a
+;ld a,6
+;  ld    (RacingGameLevel),a
+
   ld    a,1
   ld    (framecounter),a                    ;we force framecounter to 1 so that the sf2 object handler doesn't swap page ever
 
   call  .HandlePhase                           ;screen on, set int handler, init variables
-  call  .CheckStartGame
   ret
   
-  .CheckStartGame:
-  ld    a,(Framecounter2)
-  inc   a
-  ld    (Framecounter2),a
-  and   3
-  ret   nz
+  .HandlePhase:
+  ld    a,(iy+ObjectPhase)
+  or    a
+  jp    z,.Phase0                           ;build up
+  dec   a
+  jp    z,.Phase1                           ;wait
+  dec   a
+  jp    z,.Phase2                           ;scroll current level out of screen left
+  dec   a
+  jp    z,.Phase3                           ;scroll next level in screen from the right
+  dec   a
+  jp    z,.Phase4                           ;wait and start game
 
+  .Phase4:                                  ;wait
   ld    a,(RacingGameStartNextLevelTimer)
-  inc   a
+  add   a,2
   ld    (RacingGameStartNextLevelTimer),a
-  cp    80
   ret   nz
-
-  .StartGame:
   ld    a,15                                ;racing game
   ld    (CurrentRoom),a
   ld    a,1
   ld    (ChangeRoom?),a
   ret
 
-  .HandlePhase:
-  bit   0,(iy+ObjectPhase)
+  .Phase3:                                  ;scroll next level in screen from the right
+	ld    a,(PageOnNextVblank)                ;check current page
+  cp    0*32 + 31
+  ld    a,1
+  jr    z,.SetDPage2
+  xor   a
+  .SetDPage2:
+  ld    (FreeToUseFastCopy0+dPage),a
+
+  ld    hl,FreeToUseFastCopy0
+  call  DoCopy
+
+	ld    a,(PageOnNextVblank)                ;swap page 
+  xor   32
+	ld    (PageOnNextVblank),a
+  ld    a,(FreeToUseFastCopy0+dx)
+  sub   a,2
+  ld    (FreeToUseFastCopy0+dx),a
+  cp    94
   ret   nz
+  ld    (iy+ObjectPhase),4
+  ret
+
+  .Phase2:                                  ;scroll current level out of screen left
+	ld    a,(PageOnNextVblank)                ;check current page
+  cp    0*32 + 31
+  ld    a,1
+  jr    z,.SetDPage
+  xor   a
+  .SetDPage:
+  ld    (FreeToUseFastCopy0+dPage),a
+
+  ld    hl,FreeToUseFastCopy0
+  call  DoCopy
+
+	ld    a,(PageOnNextVblank)                ;swap page 
+  xor   32
+	ld    (PageOnNextVblank),a
+  ld    a,(FreeToUseFastCopy0+dx)
+  sub   a,2
+  ld    (FreeToUseFastCopy0+dx),a
+  cp    -2
+  ret   nz
+  ld    (iy+ObjectPhase),3
+  xor   a                                   ;copy direction=right (normal)
+  ld    (FreeToUseFastCopy0+copydirection),a  
+  xor   a
+  ld    (FreeToUseFastCopy0+sx),a
+  ld    a,64
+  ld    (FreeToUseFastCopy0+sy),a
+  ld    a,254
+  ld    (FreeToUseFastCopy0+dx),a
+  call  .SetNextLevelIconPalette
+  ret
+
+  .Phase1:                                  ;wait
+  ld    a,(RacingGameStartNextLevelTimer)
+  add   a,2
+  ld    (RacingGameStartNextLevelTimer),a
+
+  ret   nz
+  ld    (iy+ObjectPhase),2
+	ld    a,%0000 0100  ;copy direction=left
+  ld    (FreeToUseFastCopy0+copydirection),a
+  ld    a,64+2
+  ld    (FreeToUseFastCopy0+sx),a
+  xor   a
+  ld    (FreeToUseFastCopy0+sy),a
+  ld    a,94+64+4
+  ld    (FreeToUseFastCopy0+dx),a
+  ld    a,74
+  ld    (FreeToUseFastCopy0+dy),a
+  ld    a,64+4
+  ld    (FreeToUseFastCopy0+nx),a
+  ld    a,64
+  ld    (FreeToUseFastCopy0+ny),a
+  ld    a,2
+  ld    (FreeToUseFastCopy0+sPage),a
+  ret
+
+  .Phase0:                                  ;build up
   ld    (iy+ObjectPhase),1
 
   xor   a
   ld    (RacingGameStartNextLevelTimer),a
+  ld    a,0*32 + 31                         ;force page 0
+	ld    (PageOnNextVblank),a
 
-  ld    a,RacingGameLevelProgressScreenGfxBlock     			;block to copy graphics from
-  ld    hl,$4000 + (000*128) + (000/2) - 128
-  ld    de,$0000 + (000*128) + (000/2) - 128
-  ld    bc,$0000 + (212*256) + (256/2)
-  call  CopyRomToVram                   ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
+  ld    hl,.ClearPage0
+  call  DoCopy
+  ld    hl,.BlueWindowPart1
+  call  DoCopy
+  call  SetCurrentLevelIconInPage2
+  ld    hl,.BlueWindowPart2
+  call  DoCopy
+  call  SetNextLevelIconInPage2
+  ld    hl,.BlueWindowPart3
+  call  DoCopy
+  call  SetCurrentLevelIconInPage0
+  ld    hl,.CopyPage0ToPage1
+  call  DoCopy
+  call  .SetCurrentLevelIconPalette
+  ret
 
-  ld    hl,LevelProgressScreenPalette
+  .SetNextLevelIconPalette:
+  ld    a,(RacingGameLevel)
+  jr    .next
+  .SetCurrentLevelIconPalette:
+  ld    a,(RacingGameLevel)
+  dec   a
+  .next:
+  dec   a
+  ld    hl,.Level1Palette
+  jp		z,SetPalette
+  dec   a
+  ld    hl,.Level2Palette
+  jp		z,SetPalette
+  dec   a
+  ld    hl,.Level3Palette
+  jp		z,SetPalette
+  dec   a
+  ld    hl,.Level4Palette
+  jp		z,SetPalette
+  dec   a
+  ld    hl,.Level5Palette
+  jp		z,SetPalette
+  dec   a
+  ld    hl,.Level6Palette
+  jp		z,SetPalette
+  ld    hl,.Level7Palette
   jp		SetPalette
 
-LevelProgressScreenPalette:
-  incbin "..\grapx\RacingGame\LevelProgressScreen.SC5",$7680+7,32
+  .Level1Palette:
+  incbin "..\grapx\RacingGame\LevelProgressScreen\Level1.SC5",$7680+7,32
+  .Level2Palette:
+  incbin "..\grapx\RacingGame\LevelProgressScreen\Level2.SC5",$7680+7,32
+  .Level3Palette:
+  incbin "..\grapx\RacingGame\LevelProgressScreen\Level3.SC5",$7680+7,32
+  .Level4Palette:
+  incbin "..\grapx\RacingGame\LevelProgressScreen\Level4.SC5",$7680+7,32
+  .Level5Palette:
+  incbin "..\grapx\RacingGame\LevelProgressScreen\Level5.SC5",$7680+7,32
+  .Level6Palette:
+  incbin "..\grapx\RacingGame\LevelProgressScreen\Level6.SC5",$7680+7,32
+  .Level7Palette:
+  incbin "..\grapx\RacingGame\LevelProgressScreen\Level7.SC5",$7680+7,32
+
+  .ClearPage0:
+	db		0,0,0,0
+	db		0,0,0,0
+	db		0,1,212,0
+	db		15+15*16,0,$80	
+  .BlueWindowPart1:
+	db		0,0,0,0
+	db		0,0,63,0
+	db		0,1,086,0
+	db		12+12*16,0,$80	
+  .BlueWindowPart2:
+	db		0,0,0,0
+	db		0,0,66,0
+	db		0,1,080,0
+	db		13+13*16,0,$80	
+  .BlueWindowPart3:
+	db		0,0,0,0
+	db		0,0,69,0
+	db		0,1,074,0
+	db		14+14*16,0,$80	
+  .CopyPage0ToPage1:
+	db		0,0,0,0
+	db		0,0,0,1
+	db		0,1,212,0
+	db		0,0,$d0	
+
+SetNextLevelIconAdresses:
+  ld    a,(RacingGameLevel)
+  jr    SetCurrentLevelIconAdresses.next
+SetCurrentLevelIconAdresses:
+  ld    a,(RacingGameLevel)
+  dec   a
+  .next:
+  dec   a
+  ld    hl,LevelProgressLevel1Address
+  ld    b,LevelProgressLevel1GfxBlock
+  jp		z,.go
+  dec   a
+  ld    hl,LevelProgressLevel2Address
+  ld    b,LevelProgressLevel2GfxBlock
+  jp		z,.go
+  dec   a
+  ld    hl,LevelProgressLevel3Address
+  ld    b,LevelProgressLevel3GfxBlock
+  jp		z,.go
+  dec   a
+  ld    hl,LevelProgressLevel4Address
+  ld    b,LevelProgressLevel4GfxBlock
+  jp		z,.go
+  dec   a
+  ld    hl,LevelProgressLevel5Address
+  ld    b,LevelProgressLevel5GfxBlock
+  jp		z,.go
+  dec   a
+  ld    hl,LevelProgressLevel6Address
+  ld    b,LevelProgressLevel6GfxBlock
+  jp		z,.go
+  ld    hl,LevelProgressLevel7Address
+  ld    b,LevelProgressLevel7GfxBlock
+  .go:
+  ld    a,b
+  ret
+
+SetCurrentLevelIconInPage0:
+  call  SetCurrentLevelIconAdresses
+  call  SetGfxAt8000InRam                             ;in: hl=adress in rom page 1, a=block, out: puts gfx in page 2 in ram at $8000
+
+  ld    hl,$8000 + (000*128) + (000/2) - 128
+  ld    de,$0000 + (074*128) + (096/2) - 128
+  ld    bc,$0000 + (064*256) + (068/2)
+  jp    CopyRamToVram                       ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
+
+SetCurrentLevelIconInPage2:
+  call  SetCurrentLevelIconAdresses
+  call  SetGfxAt8000InRam                             ;in: hl=adress in rom page 1, a=block, out: puts gfx in page 2 in ram at $8000
+
+  ld    a,1
+  ld    (Vdp_Write_HighPage?),a
+  ld    hl,$8000 + (000*128) + (000/2) - 128
+  ld    de,$0000 + (000*128) + (000/2) - 128
+  ld    bc,$0000 + (064*256) + (068/2)
+  call  CopyRamToVram                       ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
+  xor   a
+  ld    (Vdp_Write_HighPage?),a
+  ret
+
+SetNextLevelIconInPage2:
+  call  SetNextLevelIconAdresses
+  call  SetGfxAt8000InRam                             ;in: hl=adress in rom page 1, a=block, out: puts gfx in page 2 in ram at $8000
+
+  ld    a,1
+  ld    (Vdp_Write_HighPage?),a
+  ld    hl,$8000 + (000*128) + (000/2) - 128
+  ld    de,$0000 + (064*128) + (000/2) - 128
+  ld    bc,$0000 + (064*256) + (068/2)
+  call  CopyRamToVram                       ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
+  xor   a
+  ld    (Vdp_Write_HighPage?),a
+  ret
 
 RacingGameCongratulationsRoutine:
   ld    a,1

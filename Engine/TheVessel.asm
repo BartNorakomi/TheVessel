@@ -474,7 +474,7 @@ endif
 
 	ld		a,0
 	ld		(RacingGameDifficulty),a							;0=rookie, 1=pro, 2=elite, 3=legend
-	ld		a,1
+	ld		a,2
 	ld		(RacingGameDifficultyUnlocked),a			;0=rookie, 1=rookie+pro, 2=rookie+pro+elite, 3=rookie+pro+elite+legend
 
   jp    InitiateGame
@@ -713,6 +713,32 @@ RacingGamePose1And2GfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomB
   incbin "..\grapx\RacingGame\TitleScreen\TitleScreenRookieProEliteLegendPart1.sc5.pck"
 	CongratulationsPose1And2Address:
   incbin "..\grapx\RacingGame\Congratulations\Pose1And2Part1.sc5.pck"
+	.CheckBlockFull:	dw	$+$8000
+	dephase
+	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
+
+LevelProgressLevel1GfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
+LevelProgressLevel2GfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
+LevelProgressLevel3GfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
+LevelProgressLevel4GfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
+LevelProgressLevel5GfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
+LevelProgressLevel6GfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
+LevelProgressLevel7GfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
+	phase	$4000
+	LevelProgressLevel1Address:
+  incbin "..\grapx\RacingGame\LevelProgressScreen\level1Part1.sc5.pck"
+	LevelProgressLevel2Address:
+  incbin "..\grapx\RacingGame\LevelProgressScreen\level2Part1.sc5.pck"
+	LevelProgressLevel3Address:
+  incbin "..\grapx\RacingGame\LevelProgressScreen\level3Part1.sc5.pck"
+	LevelProgressLevel4Address:
+  incbin "..\grapx\RacingGame\LevelProgressScreen\level4Part1.sc5.pck"
+	LevelProgressLevel5Address:
+  incbin "..\grapx\RacingGame\LevelProgressScreen\level5Part1.sc5.pck"
+	LevelProgressLevel6Address:
+  incbin "..\grapx\RacingGame\LevelProgressScreen\level6Part1.sc5.pck"
+	LevelProgressLevel7Address:
+  incbin "..\grapx\RacingGame\LevelProgressScreen\level7Part1.sc5.pck"
 	.CheckBlockFull:	dw	$+$8000
 	dephase
 	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
