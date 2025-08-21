@@ -10,29 +10,13 @@ Phase MovementRoutinesAddress
 ;animate flagholder ?
 ;sfx
 ;muziek
-;game over in een bocht = bug
-
-;bier = toetsen omgedraaid
 ;een vogel NPC
-
 
 
 ;diamantjes = 50% fuel erbij, kan alleen verschijnen als je <50% fuel hebt
 ;sterretje: Spook-modus → je voertuig wordt transparant en kan 10 seconden lang door andere racers heen rijden (geen botsingen).
-;een inktvlek zoals bij penguin adventure die het beeld ff zwart maakt ... 2 seconden hooguit
+;heb wel 't idee dat ook in de eerste levels je echt wel scheutig mag zijn met hills. Dat is altijd het selling point van outrun geweest
 
-
-
-;wat als je die stroken minder breed maakt. Alsof je op zo'n grote brug rijdt met links/rechts nog een paar meter gras, maar daarna niks meer. In wat je dan weglaat kun je neem ik aan gewoon een achtergrond hebben van iets.
-;oh en tevens: bij de finish is 't wel raar als ik stop en de rest vrolijk doorrijdt 
-;IDEA maak een slalom parcours
-;IDEA laat gaten in de road verschijnen waar visjes uitspringen
-;heuvels mogen dieper/hoger
-;aan de horizon, zou ik qua gfx experimenteren met een raster.
-;maak een zooi palettes die subtielere verschillen tonen (vooral met blauwtinten)
-;Je kunt ditherpatronen gebruiken om 2 kleuren minder groot te laten verschillen. We kunnen een powershell tool maken om bij elke bmp de groene achtergrond te vervangen door het ditherpatroon
-;bijvoorbeeld het gras (lichtgroen en donkergroen), je gooit in page 0 met dither 80% lichtgroen en 20% donkergroen, en in page 1 draai je dat om
-;voor backgrounds: zie super hangon
 ;ik denk dat we gears wel moeten proberen, 't is simpelweg het uitlezen van een tabel met pitches die er zo uitzien: / / /
 
 
@@ -102,6 +86,9 @@ RacingGameRoutine:
   ld    (RacingGameFuel),a            ;0-250
   .EndCheckReduceFuel:
 
+  ld    a,r
+  ld    (RacingGameRandomValue),a
+
   xor   a
   ld    hl,vblankintflag
   .checkflag:
@@ -169,7 +156,7 @@ RacingGameRoutine:
 
 ;  call  SetScreenon
 
-;ld a,6
+;ld a,1
 ;  ld    (RacingGameLevel),a               ;1=fourmountains, 2=nightcity, 3=oldtown, 4=palacecity, 5=purplecity, 6=troncity, 7=snowcity
 
 ;  ld    a,32
@@ -278,6 +265,8 @@ RacingGameRoutine:
   ld    (FlagHasAppeared?),a
   ld    (RoadBlockEventOn?),a
   ld    (EnemiesOffEvent?),a
+  ld    (RacingGameInvulnerableOn?),a
+  ld    (CurrentCurve),a
 
   xor   a
   if StartingLightsOn?
@@ -1034,12 +1023,27 @@ PlaceNewObject:                           ;new objects may be placed if all acti
   ret
 
   .SetThisObjectMiniSprite:
-  ld    a,(RoadBlockEventOn?)
-  or    a
-  ld    b,30
-  jr    z,.EndCheckRoadBlockEvent3
-  ld    b,20
-  .EndCheckRoadBlockEvent3:
+  ld    a,(RacingGameLevel)
+  dec   a
+  ld    b,60                            ;level 1
+  jr    z,.SetFrequencyHeart
+  dec   a
+  ld    b,40                            ;level 2
+  jr    z,.SetFrequencyHeart
+  dec   a
+  ld    b,35                            ;level 3
+  jr    z,.SetFrequencyHeart
+  dec   a
+  ld    b,35                            ;level 4
+  jr    z,.SetFrequencyHeart
+  dec   a
+  ld    b,35                            ;level 5
+  jr    z,.SetFrequencyHeart
+  dec   a
+  ld    b,40                            ;level 6
+  ld    b,30                            ;level 7
+
+  .SetFrequencyHeart:
 
   ld    a,r
   set   1,(ix+MiniSprite?)              ;bit 0 on=minisprite, bit 1 on=heart, bit 1 off=minienemy
@@ -1097,8 +1101,27 @@ PlaceNewObject:                           ;new objects may be placed if all acti
   bit   1,(ix+MiniSprite?)              ;bit 0 on=minisprite, bit 1 on=heart, bit 1 off=minienemy
   jr    z,.EndCheckMiniSpriteAndHeart
   .Heart:
-  ld    (ix+RacingGameCharacterSpriteBlock),RacingGameHeartSpritesBlock
   set   0,(ix+On?)      ;turn object on
+
+  ;10/256 chance for a star
+  ld    (ix+RacingGameCharacterSpriteBlock),RacingGameStarSpritesBlock
+  ld    a,(RacingGameRandomValue)
+  cp    8
+  ret   c
+
+  ;if fuel>120 spawn heart
+  ld    (ix+RacingGameCharacterSpriteBlock),RacingGameHeartSpritesBlock
+
+  ld    a,(RacingGameFuel)           ;0-250
+  cp    140
+  ret   nc  
+
+  ;if fuel<140 spawn diamond with 20/256 chance
+  ld    a,(RacingGameRandomValue)
+  cp    100
+  ret   c
+
+  ld    (ix+RacingGameCharacterSpriteBlock),RacingGameDiamondSpritesBlock
   ret
   .EndCheckMiniSpriteAndHeart:
 
@@ -2988,6 +3011,91 @@ SetPlayerSprite:
   ld    hl,.XOffsetsHeadSprite            ;21 offset * 4 bytes per offset = 84 bytes
   add   hl,de
 
+;ld a,1
+;  ld    (RacingGameInvulnerableOn?),a
+
+
+  ld    a,(RacingGameInvulnerableOn?)
+  or    a
+  jp    z,.EndCheckInvulnerableOn
+
+  ld    a,(framecounter2)
+  rrca
+  jp    c,.EndCheckInvulnerableOn
+
+  ld    a,(RacingGameInvulnerableTimer)
+  inc   a
+  ld    (RacingGameInvulnerableTimer),a
+  jp    nz,.EndCheckEndInvulnarable
+
+  xor   a
+  ld    (RacingGameInvulnerableOn?),a
+  jp    .PlayerVisible
+
+  .EndCheckEndInvulnarable:
+  cp    200
+  jr    c,.NormalFlickering
+
+  sub   200
+  ld    e,a
+  ld    d,0
+  push  hl
+  ld    hl,.FlickerTable
+  add   hl,de
+  bit   0,(hl)
+  pop   hl
+  jr    z,.PlayerInvisible
+  jp    .PlayerVisible
+
+  .FlickerTable:
+db 0,1,0,1,1,0,1,1,1,0,1,1,1,1,0,1,1,1,1,1,0,1,1,1,1,1,1,0,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,1,0,1,1,1,1,1
+
+
+
+  .NormalFlickering:
+  rrca
+  jr    c,.PlayerInvisible
+
+  .PlayerVisible:
+  ;set y coordinates player sprite
+  ld    a,RacingGamePlayerY
+  ld    (spat+0+(00*4)),a                 ;y sprite 0
+  ld    (spat+0+(01*4)),a                 ;y sprite 1
+  add   a,16
+  ld    (spat+0+(02*4)),a                 ;y sprite 2
+  ld    (spat+0+(03*4)),a                 ;y sprite 3
+  ld    (spat+0+(04*4)),a                 ;y sprite 4
+  ld    (spat+0+(05*4)),a                 ;y sprite 5
+  add   a,16
+  ld    (spat+0+(06*4)),a                 ;y sprite 6
+  ld    (spat+0+(07*4)),a                 ;y sprite 7
+  ld    (spat+0+(08*4)),a                 ;y sprite 8
+  ld    (spat+0+(09*4)),a                 ;y sprite 9
+  jp    .EndCheckInvulnerableOn
+
+  .PlayerInvisible:
+  ;set y coordinates player sprite
+  ld    a,213
+  ld    (spat+0+(00*4)),a                 ;y sprite 0
+  ld    (spat+0+(01*4)),a                 ;y sprite 1
+  ld    (spat+0+(02*4)),a                 ;y sprite 2
+  ld    (spat+0+(03*4)),a                 ;y sprite 3
+  ld    (spat+0+(04*4)),a                 ;y sprite 4
+  ld    (spat+0+(05*4)),a                 ;y sprite 5
+  ld    (spat+0+(06*4)),a                 ;y sprite 6
+  ld    (spat+0+(07*4)),a                 ;y sprite 7
+  ld    (spat+0+(08*4)),a                 ;y sprite 8
+  ld    (spat+0+(09*4)),a                 ;y sprite 9
+
+  .EndCheckInvulnerableOn:
+
+
+
+
+
+
+
+
   ld    a,(RacingGamePlayerX)
   ld    (spat+1+(02*4)),a                 ;x sprite 2
   ld    (spat+1+(03*4)),a                 ;x sprite 3
@@ -3190,44 +3298,92 @@ RoadBlockEventOff: equ 11
 EnemiesOffEvent: equ 12
 
                     ;next distance, curve (1=right, 2=down, 3=left, 4=up, 0=end current curve)
-                    dw  01300   ;distance till first curve
+                    dw  00100   ;distance till first curve
 ;                    dw  00010   ;distance till first curve
 RacingGameEventsLevel1:     
+                      db CurveDown          | dw 00000 |  db FrequencyEnemiesMin   | dw 0000 ;BUGGGGGGGGGGGGGGGGGGGED
+                      db CurveDown          | dw 00200 | db EndCurve | dw 00130 |
+                      db FrequencyEnemiesMax   | dw 00000
+
                       db CurveRight          | dw 00250 | db EndCurve | dw 00250 |
+
+                      db CurveDown          | dw 00000 |  db FrequencyEnemiesMin   | dw 0000 ;BUGGGGGGGGGGGGGGGGGGGED
+                      db CurveDown          | dw 00200 | db EndCurve | dw 00130 |
+                      db FrequencyEnemiesMax   | dw 00000
+
                       db CurveLeft        | dw 00450 | db EndCurve | dw 00350 |
                       db CurveDown          | dw 00000 |  db FrequencyEnemiesMin   | dw 0000 ;BUGGGGGGGGGGGGGGGGGGGED
                       db CurveDown          | dw 00350 | db EndCurve | dw 00150 |
                       db FrequencyEnemiesMax   | dw 00100
                       db CurveRight        | dw 00350 | db EndCurve | dw 00350 |
                       db CurveDown          | dw 00000 |  db FrequencyEnemiesMin   | dw 0000 ;BUGGGGGGGGGGGGGGGGGGGED
-                      db CurveDown        | dw 00250 | db EndCurve | dw 00150 |
+                      db CurveDown        | dw 00150 | db EndCurve | dw 00150 |
+                      db FrequencyEnemiesMax   | dw 00500
+
+                      db CurveDown          | dw 00000 |  db FrequencyEnemiesMin   | dw 0000 ;BUGGGGGGGGGGGGGGGGGGGED
+                      db CurveDown          | dw 00160 | db EndCurve | dw 00130 |
+                      db FrequencyEnemiesMax   | dw 00000
+
                       db FrequencyEnemiesMax   | dw 02002
 
                     ;next distance, curve (1=right, 2=down, 3=left, 4=up, 0=end current curve)
-                    dw  00350   ;distance till first curve
+                    dw  00150   ;distance till first curve
 ;                    dw  00000   ;distance till first curve
 RacingGameEventsLevel2:
-                      db CurveUp          | dw 00150 | db EndCurve | dw 00250 |
-                      db HalfCurveRight          | dw 00350 | db EndCurve | dw 00120 |
-                      db HalfCurveLeft        | dw 00400 | db EndCurve | dw 00120 |
-                      db CurveUp          | dw 00550 | db EndCurve | dw 00250 |
-                      db CurveLeft        | dw 00250 | db EndCurve | dw 00500 |
+                      db CurveUp          | dw 00150 | db EndCurve | dw 00150 |
                       db CurveDown          | dw 00000 |  db FrequencyEnemiesMin   | dw 0000 ;BUGGGGGGGGGGGGGGGGGGGED
                       db CurveDown          | dw 00250 | db EndCurve | dw 00150 |
-                      db FrequencyEnemiesMax   | dw 02002
+                      db FrequencyEnemiesMax   | dw 00000
+
+                      db HalfCurveRight          | dw 00350 | db EndCurve | dw 00120 |
+                      db HalfCurveLeft        | dw 00400 | db EndCurve | dw 00120 |
+
+                      db CurveDown          | dw 00000 |  db FrequencyEnemiesMin   | dw 0000 ;BUGGGGGGGGGGGGGGGGGGGED
+                      db CurveDown          | dw 00150 | db EndCurve | dw 00150 |
+                      db FrequencyEnemiesMax   | dw 00000
+
+                      db CurveUp          | dw 00550 | db EndCurve | dw 00150 |
+
+                      db CurveDown          | dw 00000 |  db FrequencyEnemiesMin   | dw 0000 ;BUGGGGGGGGGGGGGGGGGGGED
+                      db CurveDown          | dw 00150 | db EndCurve | dw 00150 |
+                      db FrequencyEnemiesMax   | dw 00000
+
+                      db CurveLeft        | dw 00250 | db EndCurve | dw 00400 |
+                      db CurveDown          | dw 00000 |  db FrequencyEnemiesMin   | dw 0000 ;BUGGGGGGGGGGGGGGGGGGGED
+                      db CurveDown          | dw 00150 | db EndCurve | dw 00150 |
+                      db FrequencyEnemiesMax   | dw 00000
+
+                      db CurveUp          | dw 00350 | db EndCurve | dw 05150 |
 
 
                     ;next distance, curve (1=right, 2=down, 3=left, 4=up, 0=end current curve)
-                    dw  00300   ;distance till first curve
+                    dw  00200   ;distance till first curve
 RacingGameEventsLevel3: 
-                      db HalfCurveRight          | dw 00550 | db EndCurve | dw 00550 |
+                      db CurveDown          | dw 00000 |  db FrequencyEnemiesMin   | dw 0000 ;BUGGGGGGGGGGGGGGGGGGGED
+                      db CurveDown          | dw 00130 | db EndCurve | dw 00130 |
+                      db FrequencyEnemiesMax   | dw 00000
+
+                      db HalfCurveRight          | dw 00250 | db EndCurve | dw 00120 |
+
+                      db CurveDown          | dw 00000 |  db FrequencyEnemiesMin   | dw 0000 ;BUGGGGGGGGGGGGGGGGGGGED
+                      db CurveDown          | dw 00130 | db EndCurve | dw 00130 |
+                      db FrequencyEnemiesMax   | dw 00000
+
+                      db CurveUp          | dw 00150 | db EndCurve | dw 00150 |
+
                       db CurveLeft        | dw 00250 | db EndCurve | dw 00250 |
-                      db HalfCurveRight   | dw 00250 | db EndCurve | dw 00250 |
+                      db CurveUp          | dw 00150 | db EndCurve | dw 00150 |
                       db CurveRight       | dw 00350 | db EndCurve | dw 00350 |
                       db CurveUp          | dw 00550 | db EndCurve | dw 00150 |
                       db CurveDown          | dw 00000 |  db FrequencyEnemiesMin   | dw 0000 ;BUGGGGGGGGGGGGGGGGGGGED
-                      db CurveDown        | dw 00750 | db EndCurve | dw 00150 |
-                      db FrequencyEnemiesMax   | dw 02002
+                      db CurveDown        | dw 00150 | db EndCurve | dw 00130 |
+                      db FrequencyEnemiesMax   | dw 00000
+                      db CurveUp          | dw 00450 | db EndCurve | dw 00150 |
+
+                      db CurveDown          | dw 00000 |  db FrequencyEnemiesMin   | dw 0000 ;BUGGGGGGGGGGGGGGGGGGGED
+                      db CurveDown          | dw 00130 | db EndCurve | dw 00130 |
+                      db FrequencyEnemiesMax   | dw 00000
+                      db CurveUp          | dw 00150 | db EndCurve | dw 05150 |
 
                     ;next distance, curve (1=right, 2=down, 3=left, 4=up, 0=end current curve)
                     dw  00000   ;distance till first curve
@@ -3622,17 +3778,23 @@ CheckCollisionEnemyOrHeart:
   ld    a,(RacingGamePlayerX)
   ld    b,a
 
+  ld    a,(RacingGameInvulnerableOn?)
+  or    a
+  jr    nz,.InvulnerableOn
+
   ld    a,(Object2+On?)
   or    a
   call  nz,.CheckObject2
   ld    a,(Object3+On?)
   or    a
   call  nz,.CheckObject3
+
+  .InvulnerableOn:
   ld    a,(Object4+On?)
   or    a
   ret   z
 
-  .CheckObject4:                            ;object 4 is always mini sprite: heart
+  .CheckObject4:                            ;object 4 is always mini sprite: heart, diamond or star
   ld    a,(spat+0+(30*4))                   ;y enemy
   cp    RacingGamePlayerY-16+32                ;check collision bottom side of enemy
   ret   c
@@ -3658,6 +3820,21 @@ CheckCollisionEnemyOrHeart:
   ld    (spat+0+(30*4)),a                   ;y mini sprite
   ld    (spat+0+(31*4)),a                   ;y mini sprite
 
+  ld    a,(Object4+RacingGameCharacterSpriteBlock)
+  cp    RacingGameHeartSpritesBlock
+  jr    z,.Heart
+  ld    b,100
+  cp    RacingGameDiamondSpritesBlock
+  jr    z,.DifficultyFound
+
+  .Star:
+  ld    a,1
+  ld    (RacingGameInvulnerableOn?),a
+  xor   a
+  ld    (RacingGameInvulnerableTimer),a
+  ret
+
+  .Heart:
 	ld		a,(RacingGameDifficulty)							;0=rookie, 1=pro, 2=elite, 3=legend
   ld    b,45                                ;amount of fuel per heart
   or    a

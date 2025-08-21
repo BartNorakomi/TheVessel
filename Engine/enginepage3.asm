@@ -2601,6 +2601,9 @@ RacingGameKissCounter:			rb	1
 AbleToEndCongratulationsRoutine?:			rb	1
 RoadBlockEventOn?:					rb	1
 EnemiesOffEvent?:					rb	1
+RacingGameInvulnerableOn?:			rb	1
+RacingGameInvulnerableTimer:		rb	1
+RacingGameRandomValue:		rb	1
 
 endenginepage3variables:  equ $+enginepage3length
 org variables

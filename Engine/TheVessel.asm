@@ -903,6 +903,25 @@ RacingGameHeartSpritesBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomB
 	dephase
 	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
 
+RacingGameStarSpritesBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
+	phase	$8000
+	StarSpritesCharacters:
+	include "..\grapx\racinggame\sprites\Heart\Star.tgs.gen"
+	StarSpriteColors:	
+	include "..\grapx\racinggame\sprites\Heart\Star.tcs.gen"
+	dephase
+	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
+
+RacingGameDiamondSpritesBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
+	phase	$8000
+	DiamondSpritesCharacters:
+	include "..\grapx\racinggame\sprites\Heart\Diamond.tgs.gen"
+	DiamondSpriteColors:	
+	include "..\grapx\racinggame\sprites\Heart\Diamond.tcs.gen"
+	dephase
+	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
+
+
 RacingGameFlag1SpritesBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
 RacingGameFlag1MiniSpritesBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
 	phase	$8000
@@ -958,6 +977,10 @@ RacingGamePlayerSpritesBlock:  			equ   ($-RomStartAddress) and (romsize-1) /Rom
 	include "..\grapx\racinggame\sprites\Player\PlayerFallDown.tgs.gen"
 	PlayerFallDownSpriteColors:	
 	include "..\grapx\racinggame\sprites\Player\PlayerFallDown.tcs.gen"
+
+	PlayerEmptySpritesCharacters:
+	ds	320,0
+
 
   ;offset character, color
 SpriteOffSetsTableSlowSpeed: 
