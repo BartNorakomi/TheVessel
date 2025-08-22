@@ -140,6 +140,9 @@ EventRacingGameTitleScreen:		db	1,$28,$7e | dw 000,000			,000        | db 255   
 EventRacingGameLevelProgress: db	1,$28,$7e | dw 000,000			,000        | db 255      ,MovementRoutines3Block| dw RacingGameLevelProgressRoutine| db 000,000 ,000, 000
 EventRacingGameCongratulations: db	1,$28,$7e | dw 000,000			,000        | db 255      ,MovementRoutines3Block| dw RacingGameCongratulationsRoutine| db 000,000 ,000, 000
 
+EventBasketBallGame:			db	1,$28,$7e | dw 000,000					,000        | db 255      ,MovementRoutines2Block| dw BasketBallGameRoutine					| db 000,000 ,000, 000
+EventPenguinBikeRaceGame:	db	1,$28,$7e | dw 000,000					,000        | db 255      ,MovementRoutines2Block| dw PenguinBikeRaceGameRoutine		| db 000,000 ,000, 000
+
 LenghtDoCopyTable:  equ	RestoreBackgroundObject1Page1-RestoreBackgroundObject1Page0
 ResetRestoreBackgroundTables:
   ld    ix,RestoreBackgroundObject1Page0
@@ -411,7 +414,17 @@ LoadTileMap:
 ;	jp		z,.racinggamelevelprogress
 	dec		a
 ;	jp		z,.racinggameCongratulations
+	dec		a
+;	jp		z,.basketballgame
+	dec		a
+;	jp		z,.penguinbikeracegame
 	ret
+
+;	.penguinbikeracegame:
+;	ret
+
+;	.basketballgame:
+;	ret
 
 ;	.racinggame:
 ;	ret
@@ -609,6 +622,30 @@ PutObjects:															;put objects and events
 	jp		z,PutObjectsRacingGameLevelProgress
 	dec		a
 	jp		z,PutObjectsRacingGameCongratulations
+	dec		a
+	jp		z,PutObjectsBasketBallGame
+	dec		a
+	jp		z,PutObjectsPenguinBikeRaceGame
+	ret
+
+PutObjectsPenguinBikeRaceGame:
+	xor		a																;turn off main player sprite (we don't use this at the games)
+	ld		(Object1+on?),a
+
+	ld		de,ObjEvent1										;now put events
+
+	ld		hl,EventPenguinBikeRaceGame	;put racing game level progress event
+	call	PutSingleObject
+	ret
+
+PutObjectsBasketBallGame:
+	xor		a																;turn off main player sprite (we don't use this at the games)
+	ld		(Object1+on?),a
+
+	ld		de,ObjEvent1										;now put events
+
+	ld		hl,EventBasketBallGame	;put racing game level progress event
+	call	PutSingleObject
 	ret
 
 PutObjectsRacingGameCongratulations:
@@ -977,6 +1014,10 @@ LoadRoomGfx:
 ;	jp		z,LoadRacingGameLevelProgressGfx 						;loads the racing game screen and sets palette
 	dec		a
 ;	jp		z,LoadRacingGameCongratulationsGfx 						;loads the racing game screen and sets palette
+	dec		a
+;	jp		z,BasketBallGamesGfx 						;loads the basketball game
+	dec		a
+;	jp		z,PenguinBikeRaceGamesGfx 						;loads the penguinbikerace game
 	ret
 
 LoadRacingGameGfx:

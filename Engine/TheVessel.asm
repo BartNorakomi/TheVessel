@@ -659,7 +659,24 @@ DrillingLocationsGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlo
   incbin "..\grapx\DrillingLocations\DrillingLocations.SC5",7,212 * 128      ;98 lines
 	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
 
+ArcadeMachineGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
+BasketBallCourtGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
+PenguinBikeRaceGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
+	phase	$4000
+	ArcadeMachinePart1Address:
+  incbin "..\grapx\ArcadeMachine\ArcadeMachinePart1.sc5.pck"
+	CourtPart1Address:
+  incbin "..\grapx\BasketBall\courtPart1.sc5.pck"
+	CourtPart2Address:
+  incbin "..\grapx\BasketBall\courtPart2.sc5.pck"
+	PenguinBikeRacePart1Address:
+  incbin "..\grapx\penguinbikerace\PenguinBikeRacePart1.sc5.pck"
+	PenguinBikeRacePart2Address:
+  incbin "..\grapx\penguinbikerace\PenguinBikeRacePart2.sc5.pck"
 
+	.CheckBlockFull:	dw	$+$8000
+	dephase
+	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
 
 
 
@@ -957,9 +974,6 @@ RacingGamePlayerThumbsUpSpritesBlock:  			equ   ($-RomStartAddress) and (romsize
 	include "..\grapx\racinggame\sprites\Player\PlayerThumbsUp.tcs.gen"
 	dephase
 	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
-
-
-
 
 RacingGamePlayerSpritesBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
 	phase	$8000
