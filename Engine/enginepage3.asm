@@ -142,6 +142,7 @@ EventRacingGameCongratulations: db	1,$28,$7e | dw 000,000			,000        | db 255
 
 EventBasketBallGame:			db	1,$28,$7e | dw 000,000					,000        | db 255      ,MovementRoutines2Block| dw BasketBallGameRoutine					| db 000,000 ,000, 000
 EventPenguinBikeRaceGame:	db	1,$28,$7e | dw 000,000					,000        | db 255      ,MovementRoutines2Block| dw PenguinBikeRaceGameRoutine		| db 000,000 ,000, 000
+EventBlockHitGame:				db	1,$28,$7e | dw 000,000					,000        | db 255      ,MovementRoutines2Block| dw BlockHitGameRoutine		| db 000,000 ,000, 000
 
 LenghtDoCopyTable:  equ	RestoreBackgroundObject1Page1-RestoreBackgroundObject1Page0
 ResetRestoreBackgroundTables:
@@ -418,7 +419,12 @@ LoadTileMap:
 ;	jp		z,.basketballgame
 	dec		a
 ;	jp		z,.penguinbikeracegame
+	dec		a
+;	jp		z,.blockhitgame
 	ret
+
+;	.blockhitgame:
+;	ret
 
 ;	.penguinbikeracegame:
 ;	ret
@@ -626,6 +632,18 @@ PutObjects:															;put objects and events
 	jp		z,PutObjectsBasketBallGame
 	dec		a
 	jp		z,PutObjectsPenguinBikeRaceGame
+	dec		a
+	jp		z,PutObjectsBlockHitGame
+	ret
+
+PutObjectsBlockHitGame:
+	xor		a																;turn off main player sprite (we don't use this at the games)
+	ld		(Object1+on?),a
+
+	ld		de,ObjEvent1										;now put events
+
+	ld		hl,EventBlockHitGame	;put racing game level progress event
+	call	PutSingleObject
 	ret
 
 PutObjectsPenguinBikeRaceGame:
@@ -1018,6 +1036,8 @@ LoadRoomGfx:
 ;	jp		z,BasketBallGamesGfx 						;loads the basketball game
 	dec		a
 ;	jp		z,PenguinBikeRaceGamesGfx 						;loads the penguinbikerace game
+	dec		a
+;	jp		z,BlockHitGamesGfx 						;loads the penguinbikerace game
 	ret
 
 LoadRacingGameGfx:

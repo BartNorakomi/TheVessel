@@ -662,6 +662,7 @@ DrillingLocationsGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlo
 ArcadeMachineGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
 BasketBallCourtGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
 PenguinBikeRaceGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
+BlockhitGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
 	phase	$4000
 	ArcadeMachinePart1Address:
   incbin "..\grapx\ArcadeMachine\ArcadeMachinePart1.sc5.pck"
@@ -673,6 +674,10 @@ PenguinBikeRaceGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlock
   incbin "..\grapx\penguinbikerace\PenguinBikeRacePart1.sc5.pck"
 	PenguinBikeRacePart2Address:
   incbin "..\grapx\penguinbikerace\PenguinBikeRacePart2.sc5.pck"
+	BlockhitPart1Address:
+  incbin "..\grapx\blockhit\blockhitPart1.sc5.pck"
+	BlockhitPart2Address:
+  incbin "..\grapx\blockhit\BlockhitPart2.sc5.pck"
 
 	.CheckBlockFull:	dw	$+$8000
 	dephase
