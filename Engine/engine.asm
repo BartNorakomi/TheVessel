@@ -3761,9 +3761,9 @@ CompareHLwithDE:
   ret
 
 StartSaveGameData:
-CurrentRoom:  db  21                    ;0=arcadehall1, 1=arcadehall2, 2=biopod, 3=hydroponicsbay, 4=hangarbay, 5=trainingdeck, 6=reactorchamber, 7=sleepingquarters, 8=armoryvault, 9=holodeck, 10=medicalbay
+CurrentRoom:  db  0                    ;0=arcadehall1, 1=arcadehall2, 2=biopod, 3=hydroponicsbay, 4=hangarbay, 5=trainingdeck, 6=reactorchamber, 7=sleepingquarters, 8=armoryvault, 9=holodeck, 10=medicalbay
                                         ;11=sciencelab, 12=drillinggame, 13=upgrademenu, 14=drillinglocations, 15=racinggame, 16=racing game title screen, 17=racing game level progress, 18=racing game congratulations
-                                        ;19=basketball game, 20=penguin bike race, 21=blockhit game
+                                        ;19=basketball game, 20=penguin bike race, 21=blockhit game, 22=jumpdown game
 GamesPlayed:  db 0                      ;increases after leaving a game. max=255
 HighScoreTotalAverage: db 80            ;recruiter appears when 80 (%) is reached
 HighScoreBackroomGame:  db  100
@@ -3777,8 +3777,8 @@ ConvCapGirl: db %0000 0000              ;conversations handled
 ConvGingerBoy: db %0000 0000            ;conversations handled
 ConvHost: db %0000 0001                 ;conversations handled bit0=80% achieved 
 ConvEntity: db %1000 0000               ;conversations handled bit 6=embryo check followup, bit 5=holodeck explainer,bit 0+1+2=conversation arcade2
-ConvEntityShipExplanations: db %1111 1111               ;conversations handled
-;ConvEntityShipExplanations: db %0000 0000               ;conversations handled
+;ConvEntityShipExplanations: db %1111 1111               ;conversations handled
+ConvEntityShipExplanations: db %0000 0000               ;conversations handled
 
 DateCurrentLogin: ds 6 
 DatePreviousLogin: ds 6

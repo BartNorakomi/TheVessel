@@ -1124,22 +1124,25 @@ ArcadeMachine4x:  db $f6 - 10
 CheckShowPressTrigAIconArcadeHall1:
   ld    hl,ArcadeMachine1y
   call  CheckPlayerNearArcadeMachine
+  ld    a,1                           ;arcade hall 1 game 1
   jr    nz,.PlayerIsNear
 
   ld    hl,ArcadeMachine2y
   call  CheckPlayerNearArcadeMachine
+  ld    a,2                           ;arcade hall 1 game 2
   jr    nz,.PlayerIsNear
 
   ld    hl,ArcadeMachine3y
   call  CheckPlayerNearArcadeMachine
+  ld    a,3                           ;arcade hall 1 game 3
   jr    nz,.PlayerIsNear
 
   ld    hl,ArcadeMachine4y
   call  CheckPlayerNearArcadeMachine
+  ld    a,4                           ;arcade hall 1 game 4
   ret   z
 
   .PlayerIsNear:
-  ld    a,1
   ld    (ShowPressTriggerAIcon?),a
   ld    a,(iy+y)
   ld    (TriggerAy),a
@@ -1290,8 +1293,49 @@ ArcadeHall1EventRoutine:
   call  .CheckPlayerEntersHolodeck            ;check player goes back to holodeck 
   call  PutConversationCloud
   call  CheckShowPressTrigAIconArcadeHall1
+  call  .CheckStartGames
   call  PutPressTrigAIcon
   call  .CheckFirstTimeHolodeck
+  ret
+
+  .CheckStartGames:
+  ld    a,(ShowPressTriggerAIcon?)
+  or    a
+  ret   z
+;
+; bit	7	  6	  5		    4		    3		    2		  1		  0
+;		  0	  0	  trig-b	trig-a	right	  left	down	up	(joystick)
+;		  F5	F1	'M'		  space	  right	  left	down	up	(keyboard)
+;
+	ld		a,(NewPrContr)
+	bit		4,a           ;trig a pressed ?
+  ret   z
+
+  ld    a,1
+  ld    (ChangeRoom?),a
+
+  ld    a,(ShowPressTriggerAIcon?)          ;1=jump down, 2=basketball, 3=block hit, 4=penguin bike race
+  dec   a
+  jr    z,.JumpDown
+  dec   a
+  jr    z,.BasketBall
+  dec   a
+  jr    z,.BlockHit
+  .PenguinBikeRace:
+  ld    a,20                                ;penguin bike game
+  ld    (CurrentRoom),a
+  ret
+  .BlockHit:
+  ld    a,21                                ;block hit game
+  ld    (CurrentRoom),a
+  ret
+  .BasketBall:
+  ld    a,19                                ;basketball game
+  ld    (CurrentRoom),a
+  ret
+  .JumpDown:
+  ld    a,22                                ;jump down game
+  ld    (CurrentRoom),a
   ret
 
   .CheckFirstTimeHolodeck:

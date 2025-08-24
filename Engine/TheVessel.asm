@@ -678,14 +678,19 @@ BlockhitGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
   incbin "..\grapx\blockhit\blockhitPart1.sc5.pck"
 	BlockhitPart2Address:
   incbin "..\grapx\blockhit\BlockhitPart2.sc5.pck"
-
 	.CheckBlockFull:	dw	$+$8000
 	dephase
 	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
 
-
-
-
+JumpDownGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
+	phase	$4000
+	JumpDownPart1Address:
+  incbin "..\grapx\JumpDown\JumpDownPart1.sc5.pck"
+	JumpDownPart2Address:
+  incbin "..\grapx\JumpDown\JumpDownPart2.sc5.pck"
+	.CheckBlockFull:	dw	$+$8000
+	dephase
+	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
 
 RacingGameFourMountainsGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
 RacingGameNightCityGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
