@@ -2136,9 +2136,13 @@ BasketMovementRoutine:
   ld    (iy+ObjectPhase),0
   ret
 
-
 BasketBallGameRoutine:
+  ld    a,(framecounter2)
+  inc   a
+  ld    (framecounter2),a
+
   call  CheckEndArcadeGameTriggerB
+  call  HandleBasketBall
   call  .HandlePhase                        ;load graphics, init variables
   ret
 
@@ -2185,6 +2189,104 @@ BasketBallGameRoutine:
 
   ld    a,1
   ld    (SetArcadeGamePalette?),a
+  call  .SetBasketballSprite
+  ret
+
+  .SetBasketballSprite:
+  ld    (iy+x),120                      ;x basketball
+  ld    (iy+y),40                       ;y basketball
+
+  ;write sprite character
+	xor		a				;page 0/1
+	ld		hl,sprcharaddr	;sprite 0 character table in VRAM
+	call	SetVdp_Write
+
+	ld		hl,BasketballCharSprite	;sprite 0 character table in VRAM
+	ld		c,$98
+	call	outix64		;write sprite character to vram
+
+	xor		a				;page 0/1
+	ld		hl,sprcoladdr	;sprite 0 color table in VRAM
+	call	SetVdp_Write
+
+	ld		hl,BasketballColorSprite	;sprite 0 character table in VRAM
+	ld		c,$98
+	call	outix32		;write sprite color of pointer and hand to vram
+  ret
+
+	BasketballCharSprite:
+	include "..\grapx\basketball\sprites\basketball.tgs.gen"
+	BasketballColorSprite:	
+	include "..\grapx\basketball\sprites\basketball.tcs.gen"
+  BasketBallCourtPalette:
+  incbin "..\grapx\BasketBall\sprites\basketball.sc5",$7680+7,32
+
+HandleBasketBall:
+  call  .ApplyGravity
+  call  .SetXYinSpat
+  call  .MoveBallVertically
+  call  .HandleKickupBall
+  ret
+
+  .SetXYinSpat:
+  ld    a,(iy+y)
+  sub   144
+  ld    (spat+0+(00*4)),a                 ;y sprite 0
+  ld    (spat+0+(01*4)),a                 ;y sprite 1
+  ld    a,(iy+x)
+  ld    (spat+1+(00*4)),a                 ;x sprite 0
+  ld    (spat+1+(01*4)),a                 ;x sprite 1
+  ret
+
+  .HandleKickupBall:
+;
+; bit	7	  6	  5		    4		    3		    2		  1		  0
+;		  0	  0	  trig-b	trig-a	right	  left	down	up	(joystick)
+;		  F5	F1	'M'		  space	  right	  left	down	up	(keyboard)
+;
+	ld		a,(NewPrContr)
+	bit		4,a           ;space pressed ?
+  ret   z
+  ld    a,(iy+var1)                       ;vertical speed
+  sub   a,3  
+  ld    (iy+var1),a                       ;vertical speed
+  ret
+
+  .MoveBallVertically:
+  bit   7,(iy+var1)                       ;vertical speed
+  jr    z,.MoveDown
+
+  .MoveUp:
+  ld    a,(iy+var1)                       ;vertical speed
+  add   a,(iy+y)
+  ld    (iy+y),a
+  cp    20
+  ret   nc
+  ld    (iy+y),20
+  ret
+
+  .MoveDown:
+  ld    a,(iy+var1)                       ;vertical speed
+  add   a,(iy+y)
+  ld    (iy+y),a
+  ret   nc
+  ld    (iy+y),255
+
+  ld    a,(iy+var1)                       ;vertical speed
+  dec   a
+  ret   m
+  neg
+  ld    (iy+var1),a                       ;vertical speed
+  ret
+
+  .ApplyGravity:
+  ld    a,(framecounter2)
+  and   3
+  ret   nz
+
+  ld    a,(iy+var1)                       ;vertical speed
+  inc   a
+  ld    (iy+var1),a                       ;vertical speed
   ret
 
 SetInterruptHandlerArcadeMachine:
@@ -2207,9 +2309,6 @@ SetInterruptHandlerArcadeMachine:
   ei
   out   ($99),a 
   ret
-
-BasketBallCourtPalette:
-  incbin "..\grapx\BasketBall\court.sc5",$7680+7,32
 
 SetArcadeMachine:
   ld    hl,ArcadeMachinePart1Address
@@ -2363,7 +2462,7 @@ CheckEndArcadeGameTriggerB:
 ;
 	ld		a,(NewPrContr)
 	bit		4,a           ;space pressed ?
-  jr    nz,.end
+;  jr    nz,.end
 	bit		5,a           ;trig b pressed ?
   ret   z
 
