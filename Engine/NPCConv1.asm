@@ -112,7 +112,7 @@ NPCConv016: ;hangar bay
   db    SwitchCharacter,CharacterPortraitAI,"Exactly. Master the drill to unlock the future of the colony.",255
 
 NPCConv017: ;training deck
-  db    SwitchCharacter,CharacterPortraitAI,"Start Difficulty Rookie Pro Elite Legend ROOKIE PRO ELITE LEGEND This is the Training Deck. After fifteen years in stasis, your body is weak and unprepared for Proxima Centauri b's gravity, which is 30% stronger than Earth's."
+  db    SwitchCharacter,CharacterPortraitAI,"This is the Training Deck. After fifteen years in stasis, your body is weak and unprepared for Proxima Centauri b's gravity, which is 30% stronger than Earth's."
   db    SwitchCharacter,CharacterPortraitAI,"Here, you will rebuild your strength, stamina, and endurance-vital for survival and extended operations outside the ship."
   db    SwitchCharacter,CharacterPortraitAI,"Physical conditioning reduces fatigue and increases your time on the surface, allowing you to perform your tasks more efficiently."
   db    SwitchCharacter,CharacterPortraitVessel,"Sounds tough, but necessary."

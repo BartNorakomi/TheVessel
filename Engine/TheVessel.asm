@@ -2061,6 +2061,17 @@ Hostspritedatablock:			equ ($-RomStartAddress) and (romsize-1) /RomBlockSize
 									incbin "..\tools\host.dat"
 									DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
 
+;Basketball
+Basketballframelistblock:			equ ($-RomStartAddress) and (romsize-1) /RomBlockSize
+									phase	$8000
+									include "..\tools\Basketball.asm" 
+									DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
+									dephase
+Basketballspritedatablock:			equ ($-RomStartAddress) and (romsize-1) /RomBlockSize
+									incbin "..\tools\Basketball.dat"
+									DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
+
+
 ;npcs
 npcsframelistblock:			equ ($-RomStartAddress) and (romsize-1) /RomBlockSize
 									phase	$8000
@@ -2069,6 +2080,16 @@ npcsframelistblock:			equ ($-RomStartAddress) and (romsize-1) /RomBlockSize
 									dephase
 npcsspritedatablock:			equ ($-RomStartAddress) and (romsize-1) /RomBlockSize
 									incbin "..\tools\npcs.dat"
+									DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
+
+;neon horizon table
+NeonHorizonTableframelistblock:			equ ($-RomStartAddress) and (romsize-1) /RomBlockSize
+									phase	$8000
+									include "..\tools\NeonHorizonTable.asm" 
+									DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
+									dephase
+NeonHorizonTablespritedatablock:			equ ($-RomStartAddress) and (romsize-1) /RomBlockSize
+									incbin "..\tools\NeonHorizonTable.dat"
 									DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
 
 ;entity

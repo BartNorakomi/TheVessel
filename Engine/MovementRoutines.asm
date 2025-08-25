@@ -1110,16 +1110,16 @@ HostMovementRoutine:
   ret
 
 ArcadeMachine1y:  db $54 - 4
-ArcadeMachine1x:  db $16 - 10 
+ArcadeMachine1x:  db $16 - 10 + 8
 
 ArcadeMachine2y:  db $50 - 4
-ArcadeMachine2x:  db $42 - 10 
+ArcadeMachine2x:  db $42 - 10 +6
 
 ArcadeMachine3y:  db $54 - 4
-ArcadeMachine3x:  db $c6 - 10 
+ArcadeMachine3x:  db $c6 - 10 - 10 
 
 ArcadeMachine4y:  db $54 - 4
-ArcadeMachine4x:  db $f6 - 10 
+ArcadeMachine4x:  db $f6 - 10 - 16
 
 CheckShowPressTrigAIconArcadeHall1:
   ld    hl,ArcadeMachine1y
@@ -1150,7 +1150,7 @@ CheckShowPressTrigAIconArcadeHall1:
   ld    (TriggerAx),a
   ret
 
-BackroomGamey:  db 92
+BackroomGamey:  db 88
 BackroomGamex:  db 124
 
 CheckShowPressTrigAIconArcadeHall2:
@@ -1340,7 +1340,7 @@ ArcadeHall1EventRoutine:
 
   .CheckFirstTimeHolodeck:
   ld    hl,ConvEntityShipExplanations
-  bit   0,(hl)
+  bit   6,(hl)                              ;bit 6=holodeck explainer
   ret   z
 
   ld    hl,ConvEntity
@@ -1355,9 +1355,10 @@ ArcadeHall1EventRoutine:
   ld    (NPCConvAddress),hl
   ret
 
+
   .CheckPlayerEntersHolodeck:
-  ld    hl,ConvEntityShipExplanations
-  bit   0,(hl)
+  ld    hl,ConvEntityShipExplanations   
+  bit   6,(hl)                        ;bit 6 = holodeck explainer
   ret   z
 
   ld    a,(Object1+x)
@@ -1408,7 +1409,27 @@ ArcadeHall2EventRoutine:
   call  .CheckPlayerLeavingRoom             ;when y>116 player enters arcadehall1 
   call  PutConversationCloud
   call  CheckShowPressTrigAIconArcadeHall2
+  call  .CheckStartNeonHorizon
   call  PutPressTrigAIcon
+  ret
+
+  .CheckStartNeonHorizon:
+  ld    a,(ShowPressTriggerAIcon?)
+  or    a
+  ret   z
+;
+; bit	7	  6	  5		    4		    3		    2		  1		  0
+;		  0	  0	  trig-b	trig-a	right	  left	down	up	(joystick)
+;		  F5	F1	'M'		  space	  right	  left	down	up	(keyboard)
+;
+	ld		a,(NewPrContr)
+	bit		4,a           ;trig a pressed ?
+  ret   z
+
+  ld    a,1
+  ld    (ChangeRoom?),a
+  ld    a,16                                ;penguin bike game
+  ld    (CurrentRoom),a
   ret
 
   .CheckPlayerLeavingRoom:
@@ -1438,6 +1459,13 @@ ArcadeHall2EventRoutine:
   ret
 
   .InitiateWakeUp:
+  ;ADD freeze controls, fade out
+  ld    a,(InitiateWakeUp?)
+  inc   a
+  ld    (InitiateWakeUp?),a
+  cp    50
+  ret   c
+
   ld    a,2
   ld    (CurrentRoom),a
   ld    a,1
@@ -2268,7 +2296,7 @@ CheckOffLoadResources:
   ld    hl,NPCConv038
   ld    (NPCConvAddress),hl
 
-  ld    a,1
+  ld    a,10
   ld    (AskRefuelAfterOffLoadResources?),a
   ret
 
@@ -2277,6 +2305,7 @@ AskRefuelAfterOffLoadResources:
   dec   a
   ret   m
   ld    (AskRefuelAfterOffLoadResources?),a
+  ret   nz
 
   ;Refuel ?
   ld    hl,(Fuel)
@@ -2687,7 +2716,7 @@ RemoveArcadeRedLightsGfxPage1:
   ld    bc,$0000 + (030*256) + (256/2)
   jp    CopyRomToVram                       ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
 
-BRGame_0:        db    npcsframelistblock, npcsspritedatablock | dw    npcs_8_0
+BRGame_0:        db    NeonHorizonTableframelistblock, NeonHorizonTablespritedatablock | dw    NeonHorizonTable_0_0
 BackRoomGameRoutine:
   ret
 
@@ -2706,11 +2735,19 @@ Entity_c:   db    entityframelistblock, entityspritedatablock | dw    Entity_6_0
             db    entityframelistblock, entityspritedatablock | dw    Entity_7_0
             db    entityframelistblock, entityspritedatablock | dw    Entity_8_0
 
-EntityaRoutine:
-  call  .HandlePhase                        ;used to build up hologram table and set palette
+CheckStartConversationEntity:
+  ld    a,(Object1+x)                   ;player x
+  cp    206
+  ret   nc
+  cp    54
+  ret   c
 
-  ld    hl,Entity_a                         ;starting pose
-  call  AnimateEntity
+  ld    a,1
+  ld    (ShowConversationCloud?),a
+  ld    a,(iy+y)
+  ld    (Cloudy),a
+  ld    a,(iy+x)
+  ld    (Cloudx),a
 
 ;
 ; bit	7	  6	  5		    4		    3		    2		  1		  0
@@ -2720,9 +2757,19 @@ EntityaRoutine:
 	ld		a,(NewPrContr)
 	bit		4,a           ;trig a pressed ?
   ret   z
-
   ld    a,1
   ld    (StartConversation?),a
+  ret
+
+
+EntityaRoutine:
+  call  .HandlePhase                        ;used to build up hologram table and set palette
+
+  ld    hl,Entity_a                         ;starting pose
+  call  AnimateEntity
+
+  call  CheckStartConversationEntity        ;out: nz=converstaion starts
+  ret   z
 
   ld    a,NPCConv1Block
   ld    (NPCConvBlock),a
@@ -5047,9 +5094,12 @@ CopyCurrentVisiblePage2ToPage0and1:
   ret
 
 CheckReturnFromNPCConversation:
-  ld    a,(NPCConversationsInDrillingGame?)
-  dec   a
-  ret   m
+  ld    a,(ReturnFromNPCConversation?)
+  or    a
+  ret   z
+
+  xor   a
+  ld    (ReturnFromNPCConversation?),a
   ld    (NPCConversationsInDrillingGame?),a
 
   ld    a,1
@@ -5398,7 +5448,7 @@ DrillMachineEventRoutine:
   call  SetInterruptHandler  
   ld    a,1
   ld    (ChangeRoom?),a
-  ld    a,40
+  ld    a,50
   ld    (OffloadResources?),a
   ld    a,4
   ld    (CurrentRoom),a

@@ -1,5 +1,4 @@
 ;UpgradeMenuEventRoutine
-;DrillingLocationsRoutine
 ;RacingGameRoutine
 ;RacingGameTitleScreenRoutine
 ;RacingGameLevelProgressRoutine

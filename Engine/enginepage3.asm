@@ -10,6 +10,7 @@ InitiateGame:
 ;  call  TitleScreen
 ;  endif
 ;  StartGame:
+  call  SetInterruptHandler           	;sets Vblank
 	call	SetScreenOff
 	call	SpriteInitialize
 	call	ResetVariables
@@ -23,7 +24,6 @@ InitiateGame:
 	inc		a
 ld a,5
   ld    (ChangeSong?),a
-  call  SetInterruptHandler           	;sets Vblank
 	call	SpritesOn
   jp    LevelEngine
 
@@ -44,6 +44,8 @@ ResetVariables:
   ld    (AlreadyAskedToRefuel?),a
   ld    (AskRefuelAfterOffLoadResources?),a
   ld    (AnimateRoad?),a
+  ld    (ReturnFromNPCConversation?),a
+  ld    (SetArcadeGamePalette?),a
   ld    hl,ConvSoldier									;conversations handled bit0=intro, bit1=low fuel, bit2=low fuel short, bit3=low energy, bit4=high radiation, bit5=storage full
   res   2,(hl)
   res   4,(hl)
@@ -66,7 +68,7 @@ INCLUDE "RePlayer.asm"
 ;														on?,  y,  x,  sprite restore table,sprite data,put on frame ,movement routine block,  movement routine,							 phase,var1,var2,var3
 
 ObjectGirl:  							db  1,110,050 | dw 000,000					,000        | db 255      ,MovementRoutinesBlock | dw GirlMovementRoutine				| db 000,000 ,000, 000
-ObjectCapGirl:  					db  1,071,100 | dw 000,000					,000        | db 255      ,MovementRoutinesBlock | dw CapGirlMovementRoutine		| db 000,000 ,000, 000
+ObjectCapGirl:  					db  1,098,120 | dw 000,000					,000        | db 255      ,MovementRoutinesBlock | dw CapGirlMovementRoutine		| db 000,000 ,000, 000
 ObjectRedHeadBoy:  				db  1,102,220 | dw 000,000					,000        | db 255      ,MovementRoutinesBlock | dw RedHeadBoyMovementRoutine	| db 000,000 ,000, 000
 ObjectHost:  							db  1,000,000 | dw 000,000					,Host_0     | db 255      ,MovementRoutinesBlock | dw HostMovementRoutine				| db 000,000 ,000, 000
 ObjectWall:  							db  1,055,172 | dw 000,000					,Wall_0     | db 255      ,MovementRoutinesBlock | dw WallMovementRoutine				| db 000,000 ,000, 000
@@ -144,6 +146,9 @@ EventBasketBallGame:			db	1,$28,$7e | dw 000,000					,000        | db 255      ,
 EventPenguinBikeRaceGame:	db	1,$28,$7e | dw 000,000					,000        | db 255      ,MovementRoutines2Block| dw PenguinBikeRaceGameRoutine		| db 000,000 ,000, 000
 EventBlockHitGame:				db	1,$28,$7e | dw 000,000					,000        | db 255      ,MovementRoutines2Block| dw BlockHitGameRoutine		| db 000,000 ,000, 000
 EventJumpDownGame:				db	1,$28,$7e | dw 000,000					,000        | db 255      ,MovementRoutines2Block| dw JumpDownGameRoutine		| db 000,000 ,000, 000
+
+ObjectBasket:  						db  1,025,000 | dw 000,000		,Basketball_0     | db 255      ,MovementRoutines2Block | dw BasketMovementRoutine				| db 001,000 ,000, 000
+
 
 
 
@@ -679,6 +684,9 @@ PutObjectsPenguinBikeRaceGame:
 PutObjectsBasketBallGame:
 	xor		a																;turn off main player sprite (we don't use this at the games)
 	ld		(Object1+on?),a
+
+	ld		hl,ObjectBasket									;put basket
+	call	PutSingleObject
 
 	ld		de,ObjEvent1										;now put events
 
@@ -2687,6 +2695,8 @@ EnemiesOffEvent?:					rb	1
 RacingGameInvulnerableOn?:			rb	1
 RacingGameInvulnerableTimer:		rb	1
 RacingGameRandomValue:		rb	1
+ReturnFromNPCConversation?:		rb	1
+SetArcadeGamePalette?:		rb	1
 
 endenginepage3variables:  equ $+enginepage3length
 org variables

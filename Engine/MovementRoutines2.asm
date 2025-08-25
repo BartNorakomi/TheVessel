@@ -2080,16 +2080,65 @@ NXPerSymbol2:
 ;               a     b     c     d     e     f     g     h     i     j     k     l     m     n     o     p     q     r     s     t     u     v     w     x     y     z     {     |     }     ~
   db  007+0,007+0,007+0,007+0,007+0,007+0,005+0,007+0,007+0,003+0,005+0,007+0,005+0,009+0,007+0,007+0,007+0,007+0,005+0,007+0,005+0,007+0,007+0,009+0,007+0,007+0,007+0,006+0,004+0,004+0,004+0,004+0
  
+Basketball_0:        db    Basketballframelistblock, Basketballspritedatablock | dw    Basketball_0_0
+BasketMovementRoutine:
+  ld    a,3
+  ld    (framecounter),a
+  ld    (iy+PutOnFrame),3
+
+  .HandlePhase:
+  ld    a,(iy+ObjectPhase)
+  or    a
+  ret   z                                   ;phase 0= do nothing
+  dec   a
+  jp    z,.Phase1                           ;scroll into screen from the left side
+  dec   a
+  jp    z,.Phase2                           ;scroll out of screen on the left side
+  dec   a
+  jp    z,.Phase3                           ;scroll into screen from the right side
+  dec   a
+  jp    z,.Phase4                           ;scroll out of screen on the right side
+  ret
+
+  .Phase4:                                  ;scroll out of screen on the right side
+  ld    a,(iy+x)
+  add   a,2
+  ld    (iy+x),a
+  cp    220
+  ret   nz
+  ld    (iy+ObjectPhase),0
+  ret
+
+  .Phase3:                                  ;scroll into screen from the right side
+  ld    a,(iy+x)
+  sub   a,2
+  ld    (iy+x),a
+  cp    100
+  ret   nz
+  ld    (iy+ObjectPhase),0
+  ret
+
+  .Phase2:                                  ;scroll out of screen on the left side
+  ld    a,(iy+x)
+  sub   a,2
+  ld    (iy+x),a
+  cp    30
+  ret   nz
+  ld    (iy+ObjectPhase),0
+  ret
+
+  .Phase1:                                  ;scroll into screen from the left side
+  ld    a,(iy+x)
+  add   a,2
+  ld    (iy+x),a
+  cp    100
+  ret   nz
+  ld    (iy+ObjectPhase),0
+  ret
+
 
 BasketBallGameRoutine:
-  ld    a,1
-  ld    (framecounter),a                    ;we force framecounter to 1 so that the sf2 object handler doesn't swap page ever
-  ld    a,0*32 + 31                         ;force page 0
-	ld    (PageOnNextVblank),a
-
-  ld    hl,BasketBallCourtPalette
-  call	SetPalette
-
+  call  CheckEndArcadeGameTriggerB
   call  .HandlePhase                        ;load graphics, init variables
   ret
 
@@ -2116,8 +2165,26 @@ BasketBallGameRoutine:
   ld    bc,$0000 + (007*256) + (256/2)
   call  CopyRamToVram                       ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
 
+  xor   a
+  ld    (CopyPageToPage212High+sPage),a
+  ld    a,1
+  ld    (CopyPageToPage212High+dPage),a
+  ld    hl,CopyPageToPage212High
+  call  DoCopy
+  ld    a,2
+  ld    (CopyPageToPage212High+dPage),a
+  ld    hl,CopyPageToPage212High
+  call  DoCopy
+  ld    a,3
+  ld    (CopyPageToPage212High+dPage),a
+  ld    hl,CopyPageToPage212High
+  call  DoCopy
+
   call  SetArcadeMachine
   call  SetInterruptHandlerArcadeMachine   	;sets Vblank and lineint for hud
+
+  ld    a,1
+  ld    (SetArcadeGamePalette?),a
   ret
 
 SetInterruptHandlerArcadeMachine:
@@ -2165,6 +2232,8 @@ PenguinBikeRaceGameRoutine:
   ld    hl,PenguinBikeRacePalette
   call	SetPalette
 
+  call  CheckEndArcadeGameTriggerB
+
   call  .HandlePhase                        ;load graphics, init variables
   ret
 
@@ -2206,6 +2275,8 @@ BlockHitGameRoutine:
 
   ld    hl,BlockhitPalette
   call	SetPalette
+
+  call  CheckEndArcadeGameTriggerB
 
   call  .HandlePhase                        ;load graphics, init variables
   ret
@@ -2249,6 +2320,8 @@ JumpDownGameRoutine:
   ld    hl,JumpDownPalette
   call	SetPalette
 
+  call  CheckEndArcadeGameTriggerB
+
   call  .HandlePhase                        ;load graphics, init variables
   ret
 
@@ -2282,6 +2355,23 @@ JumpDownGameRoutine:
 JumpDownPalette:
   incbin "..\grapx\JumpDown\JumpDown.sc5",$7680+7,32
 
+CheckEndArcadeGameTriggerB:
+;
+; bit	7	  6	  5		    4		    3		    2		  1		  0
+;		  0	  0	  trig-b	trig-a	right	  left	down	up	(joystick)
+;		  F5	F1	'M'		  space	  right	  left	down	up	(keyboard)
+;
+	ld		a,(NewPrContr)
+	bit		4,a           ;space pressed ?
+  jr    nz,.end
+	bit		5,a           ;trig b pressed ?
+  ret   z
 
+  .end:
+  ld    a,0                                ;back to arcade hall 1
+  ld    (CurrentRoom),a
+  ld    a,1
+  ld    (ChangeRoom?),a
+  ret
 
 dephase

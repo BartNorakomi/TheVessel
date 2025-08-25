@@ -17,10 +17,10 @@ LevelEngine:
 
 
   call  SetScreenonWithDelay
-  call  PopulateControls
   if ConversationsOn?
   call  HandleConversations             ;handles NPC conversations
   endif
+  call  PopulateControls
 ;  call  BackdropGreen
   call  HandleObjects
 ;  call  BackdropBlack
@@ -191,6 +191,13 @@ vblank:
   ld    a,8+128
   out   ($99),a
   .EndSetLineIntHeight:
+
+  ld    a,(SetArcadeGamePalette?)
+  or    a
+  jp    z,.EndCheckSetArcadeGamePalette
+  ld    hl,BasketBallCourtPalette
+  call	SetPalette
+  .EndCheckSetArcadeGamePalette:
 
   pop   hl 
   pop   de 
@@ -768,14 +775,16 @@ LineInt:
   ei
   ret  
 
+PageOnLineIntArcadeMachine: db  0*32 + 31
 LineIntHeightArcadeMachine: equ 133
 LineIntArcadeMachine:
   push  bc
   push  hl
-;  ld    a,2*32 + 31         ;page 2 is our active page for the drilling game
-;  out   ($99),a
-;  ld    a,2+128
-;  out   ($99),a
+
+  ld    a,(PageOnLineIntArcadeMachine)
+  out   ($99),a
+  ld    a,2+128
+  out   ($99),a  
 
   ld    hl,ArcadeMachinePalette
   call	SetPalette
@@ -1515,12 +1524,10 @@ ObjEvent3: db  0,0,0    | dw 0,0,0                                              
 HandleObjects:
   ld    iy,Object1
   call  HandleObjectRoutine
-
 ;  call  BackdropRed
-
-
   ld    iy,Object2
   call  HandleObjectRoutine
+;  call  backdropblack
   ld    iy,Object3
   call  HandleObjectRoutine
   ld    iy,Object4
@@ -2334,7 +2341,6 @@ HandleConversations:
   and   3
   ld    (WaitCenterScreenTimer),a
   ret   nz
-
   xor   a
   ld    (freezecontrols?),a
   ld    (StartConversation?),a
@@ -2359,6 +2365,8 @@ HandleConversations:
   ld    a,(NPCConversationsInDrillingGame?)
   or    a
   call  z,SpritesOn
+  ld    a,1
+  ld    (ReturnFromNPCConversation?),a
   halt                                  ;cleanly end of this routine at vblank (because at vblank a pageswap will occur)
   ret
 
@@ -3761,10 +3769,10 @@ CompareHLwithDE:
   ret
 
 StartSaveGameData:
-CurrentRoom:  db  0                    ;0=arcadehall1, 1=arcadehall2, 2=biopod, 3=hydroponicsbay, 4=hangarbay, 5=trainingdeck, 6=reactorchamber, 7=sleepingquarters, 8=armoryvault, 9=holodeck, 10=medicalbay
+CurrentRoom:  db  19                    ;0=arcadehall1, 1=arcadehall2, 2=biopod, 3=hydroponicsbay, 4=hangarbay, 5=trainingdeck, 6=reactorchamber, 7=sleepingquarters, 8=armoryvault, 9=holodeck, 10=medicalbay
                                         ;11=sciencelab, 12=drillinggame, 13=upgrademenu, 14=drillinglocations, 15=racinggame, 16=racing game title screen, 17=racing game level progress, 18=racing game congratulations
                                         ;19=basketball game, 20=penguin bike race, 21=blockhit game, 22=jumpdown game
-GamesPlayed:  db 0                      ;increases after leaving a game. max=255
+GamesPlayed:  db 9                      ;increases after leaving a game. max=255
 HighScoreTotalAverage: db 80            ;recruiter appears when 80 (%) is reached
 HighScoreBackroomGame:  db  100
 
@@ -3772,19 +3780,22 @@ HighScoreRoadFighter: db 0
 HighScoreBasketball: db 0
 HighScoreBlox: db 0
 HighScoreBikeRace: db 0
-ConvGirl: db %0000 0000                 ;conversations handled
+ConvGirl: db %0000 0001                 ;conversations handled
 ConvCapGirl: db %0000 0000              ;conversations handled
 ConvGingerBoy: db %0000 0000            ;conversations handled
-ConvHost: db %0000 0001                 ;conversations handled bit0=80% achieved 
-ConvEntity: db %1000 0000               ;conversations handled bit 6=embryo check followup, bit 5=holodeck explainer,bit 0+1+2=conversation arcade2
+;ConvHost: db %0000 0001                 ;conversations handled bit0=80% achieved 
+ConvHost: db %0000 0011                 ;conversations handled bit0=80% achieved 
+;ConvEntity: db %1000 0000               ;conversations handled bit 6=embryo check followup, bit 5=first time entering holodeck,bit 0+1+2=conversation arcade2
+ConvEntity: db %0000 0011               ;conversations handled bit 6=embryo check followup, bit 5=holodeck explainer,bit 0+1+2=conversation arcade2
 ;ConvEntityShipExplanations: db %1111 1111               ;conversations handled
-ConvEntityShipExplanations: db %0000 0000               ;conversations handled
+ConvEntityShipExplanations: db %0000 0000               ;conversations handled, bit 6=holodeck explainer
 
 DateCurrentLogin: ds 6 
 DatePreviousLogin: ds 6
 DailyContinuesUsed: db 0                ;bit 0=roadfighter,bit 1=basketball,bit 2=blox,bit 4=bikerace
 
-TotalMinutesUntilLand:      dw  4320
+;TotalMinutesUntilLand:      dw  4320
+TotalMinutesUntilLand:      dw  0000
 
 OxygenGeneratorPurchased?:  db  0
 WaterRecyclerPurchased?:    db  0
@@ -3796,7 +3807,7 @@ FoodOnShip:                 dw  100
 MaxFoodOnShip:              dw  500
 WaterOnShip:                dw  100
 MaxWaterOnShip:             dw  300
-AmountOfDigSitesUnlocked:   db  5
+AmountOfDigSitesUnlocked:   db  1
 
 TotalCredits:               dw  0000    ;total credits collected from drilled resources converted into credits
 valueLevel1Resources:       equ 02      ;credit per unit collected
@@ -3830,7 +3841,7 @@ EnergyXP:                   db  0
 Radiation:                  dw  100
 RadiationMax:               dw  400
 RadiationProtectionLevel:   db  0       ;0=no protection, 1=level 1, 2=level 2,3=level 3, 4=level 4
-ConvSoldier: db %0000 0001              ;conversations handled bit0=intro, bit1=low fuel, bit2=low fuel short, bit3=low energy, bit4=low energy short, bit5=high radiation, bit6=storage full, bit7=storage full short
+ConvSoldier: db %0000 0000              ;conversations handled bit0=intro, bit1=low fuel, bit2=low fuel short, bit3=low energy, bit4=low energy short, bit5=high radiation, bit6=storage full, bit7=storage full short
 
 FuelTankLevel1MaxFuel:      equ 500
 FuelTankLevel2MaxFuel:      equ FuelTankLevel1MaxFuel * 2
