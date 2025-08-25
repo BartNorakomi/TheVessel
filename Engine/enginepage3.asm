@@ -5,6 +5,12 @@ MusicOn?:                           equ 1
 Promo?:                             equ 0
 ConversationsOn?:                  	equ 1
 
+;veel dithering, haal het er uit zo veel mogelijk
+;even uit m'n hoofd, die linker griet met groen haar in de arcade. Die zag ik lang geleden al een keer langskomen hier. Die is wat ditherig
+;player idem
+
+
+
 InitiateGame:
 ;  if  StartAtTitleScreen?
 ;  call  TitleScreen
