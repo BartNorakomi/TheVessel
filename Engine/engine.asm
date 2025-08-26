@@ -29,7 +29,9 @@ LevelEngine:
 ;  cp    15
 ;  call  z,RePlayer_Tick                 ;initialise, load samples
 
-  call  WriteSpatToVram
+  ld    a,(SetArcadeGamePalette?)
+  or    a
+  call  z,WriteSpatToVram
 
 
 
@@ -197,6 +199,7 @@ vblank:
   jp    z,.EndCheckSetArcadeGamePalette
   ld    hl,BasketBallCourtPalette
   call	SetPalette
+  call  WriteSpatToVram
   .EndCheckSetArcadeGamePalette:
 
   pop   hl 
@@ -1489,6 +1492,7 @@ y:                      equ 1
 x:                      equ 2
 ObjectRestoreBackgroundTable: equ 3
 ObjectRestoreTable:     equ 5
+SpriteData:             equ 7
 PutOnFrame:             equ 9
 MovementRoutineBlock:   equ 10
 MovementRoutine:        equ 11

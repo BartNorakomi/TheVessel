@@ -148,12 +148,13 @@ EventRacingGameTitleScreen:		db	1,$28,$7e | dw 000,000			,000        | db 255   
 EventRacingGameLevelProgress: db	1,$28,$7e | dw 000,000			,000        | db 255      ,MovementRoutines3Block| dw RacingGameLevelProgressRoutine| db 000,000 ,000, 000
 EventRacingGameCongratulations: db	1,$28,$7e | dw 000,000			,000        | db 255      ,MovementRoutines3Block| dw RacingGameCongratulationsRoutine| db 000,000 ,000, 000
 
-EventBasketBallGame:			db	1,$28,$7e | dw 000,000					,000        | db 255      ,MovementRoutines2Block| dw BasketBallGameRoutine					| db 000,000 ,000, 000
 EventPenguinBikeRaceGame:	db	1,$28,$7e | dw 000,000					,000        | db 255      ,MovementRoutines2Block| dw PenguinBikeRaceGameRoutine		| db 000,000 ,000, 000
 EventBlockHitGame:				db	1,$28,$7e | dw 000,000					,000        | db 255      ,MovementRoutines2Block| dw BlockHitGameRoutine		| db 000,000 ,000, 000
 EventJumpDownGame:				db	1,$28,$7e | dw 000,000					,000        | db 255      ,MovementRoutines2Block| dw JumpDownGameRoutine		| db 000,000 ,000, 000
 
+EventBasketBallGame:			db	1,$28,$7e | dw 000,000					,000        | db 255      ,MovementRoutines2Block| dw BasketBallGameRoutine					| db 000,000 ,000, 000
 ObjectBasket:  						db  1,025,000 | dw 000,000		,Basketball_0     | db 255      ,MovementRoutines2Block | dw BasketMovementRoutine				| db 001,000 ,000, 000
+;ObjectBasket:  						db  1,025,254 | dw 000,000		,Basketball_1     | db 255      ,MovementRoutines2Block | dw BasketMovementRoutine				| db 004,000 ,000, 000
 
 
 

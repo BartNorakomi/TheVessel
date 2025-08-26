@@ -2081,6 +2081,7 @@ NXPerSymbol2:
   db  007+0,007+0,007+0,007+0,007+0,007+0,005+0,007+0,007+0,003+0,005+0,007+0,005+0,009+0,007+0,007+0,007+0,007+0,005+0,007+0,005+0,007+0,007+0,009+0,007+0,007+0,007+0,006+0,004+0,004+0,004+0,004+0
  
 Basketball_0:        db    Basketballframelistblock, Basketballspritedatablock | dw    Basketball_0_0
+Basketball_1:        db    Basketballframelistblock, Basketballspritedatablock | dw    Basketball_1_0
 BasketMovementRoutine:
   ld    a,3
   ld    (framecounter),a
@@ -2089,42 +2090,73 @@ BasketMovementRoutine:
   .HandlePhase:
   ld    a,(iy+ObjectPhase)
   or    a
-  ret   z                                   ;phase 0= do nothing
+  ret   z                                   ;phase 0= do nothing left side of screen
   dec   a
   jp    z,.Phase1                           ;scroll into screen from the left side
   dec   a
-  jp    z,.Phase2                           ;scroll out of screen on the left side
+  jp    z,.Phase2                           ;wait
   dec   a
-  jp    z,.Phase3                           ;scroll into screen from the right side
+  jp    z,.Phase3                           ;scroll out of screen on the left side
   dec   a
-  jp    z,.Phase4                           ;scroll out of screen on the right side
+  jp    z,.Phase4                           ;scroll into screen from the right side
+  dec   a                                   ;phase 5= do nothing right side of screen
+  dec   a
+  jp    z,.Phase6                           ;wait
+  dec   a
+  jp    z,.Phase7                           ;scroll out of screen on the right side
   ret
 
-  .Phase4:                                  ;scroll out of screen on the right side
+  .Phase7:                                  ;scroll out of screen on the right side
   ld    a,(iy+x)
   add   a,2
   ld    (iy+x),a
   cp    220
   ret   nz
-  ld    (iy+ObjectPhase),0
+  ld    (iy+ObjectPhase),1
+  ld    (iy+x),0
+  ld    hl,Basketball_0
+  ld    (iy+SpriteData),l
+  ld    (iy+SpriteData+1),h
   ret
 
-  .Phase3:                                  ;scroll into screen from the right side
+  .Phase6:                                  ;wait
+  ld    a,(iy+var1)
+  inc   a
+  and   15
+  ld    (iy+var1),a
+  ret   nz
+  ld    (iy+ObjectPhase),7
+  ret
+
+  .Phase4:                                  ;scroll into screen from the right side
   ld    a,(iy+x)
   sub   a,2
   ld    (iy+x),a
-  cp    100
+  cp    156
   ret   nz
-  ld    (iy+ObjectPhase),0
+  ld    (iy+ObjectPhase),5
   ret
 
-  .Phase2:                                  ;scroll out of screen on the left side
+  .Phase3:                                  ;scroll out of screen on the left side
   ld    a,(iy+x)
   sub   a,2
   ld    (iy+x),a
   cp    30
   ret   nz
-  ld    (iy+ObjectPhase),0
+  ld    (iy+ObjectPhase),4
+  ld    (iy+x),254
+  ld    hl,Basketball_1
+  ld    (iy+SpriteData),l
+  ld    (iy+SpriteData+1),h
+  ret
+
+  .Phase2:                                  ;wait
+  ld    a,(iy+var1)
+  inc   a
+  and   15
+  ld    (iy+var1),a
+  ret   nz
+  ld    (iy+ObjectPhase),3
   ret
 
   .Phase1:                                  ;scroll into screen from the left side
@@ -2194,7 +2226,10 @@ BasketBallGameRoutine:
 
   .SetBasketballSprite:
   ld    (iy+x),120                      ;x basketball
-  ld    (iy+y),40                       ;y basketball
+  ld    (iy+y),255                       ;y basketball
+
+;  ld    (iy+x),120-70                      ;x basketball
+;  ld    (iy+y),255-200                       ;y basketball
 
   ;write sprite character
 	xor		a				;page 0/1
@@ -2225,7 +2260,116 @@ HandleBasketBall:
   call  .ApplyGravity
   call  .SetXYinSpat
   call  .MoveBallVertically
-  call  .HandleKickupBall
+  call  .HandleTrigA
+  call  .SetHorizontalSpeed
+  call  .MoveBallHorizontally
+  call  .CheckScore
+
+  ld    a,(Object2+ObjectPhase)
+  or    a                                   ;phase 0= do nothing left side of screen
+  jr    z,.CheckBounceLeftRimAndBackboard
+  cp    5                                   ;phase 5= do nothing right side of screen
+  jr    z,.CheckBounceRightRimAndBackboard
+  ret
+
+  .CheckBounceRightRimAndBackboard:
+  call  CheckBounceOnRightRimPart2
+  call  CheckBounceOnRightBackboard
+  call  CheckBounceOnRightRim
+  ret
+
+  .CheckBounceLeftRimAndBackboard:
+  call  CheckBounceOnLeftRimPart2
+  call  CheckBounceOnLeftBackboard
+  call  CheckBounceOnLeftRim
+  ret
+
+  .CheckScore:
+  ld    a,(Object2+ObjectPhase)
+  or    a                                   ;phase 0= do nothing left side of screen
+  jr    z,.CheckScoredLeftSide
+  cp    5                                   ;phase 5= do nothing right side of screen
+  jr    z,.CheckScoredRightSide
+  ret
+
+  .CheckScoredLeftSide:
+  ld    a,(iy+x)
+  cp    33
+  ret   c
+  cp    38
+  ret   nc
+
+  ld    a,(iy+y)
+  cp    187
+  ret   c
+  cp    194
+  ret   nc
+
+  ld    a,2                                         ;scroll basket out of screen on the left side
+	ld		(Object2+ObjectPhase),a											;start with object2
+  ld    (iy+var2),0                       ;horizontal speed
+  ret
+
+  .CheckScoredRightSide:
+  ld    a,(iy+x)
+  cp    33 + 171
+  ret   c
+  cp    38 + 171
+  ret   nc
+
+  ld    a,(iy+y)
+  cp    187
+  ret   c
+  cp    194
+  ret   nc
+
+  ld    a,7                                         ;scroll out of screen on the right side
+	ld		(Object2+ObjectPhase),a											;start with object2
+  ld    (iy+var2),0                       ;horizontal speed
+  ret
+
+
+
+
+
+
+
+
+  .MoveBallHorizontally:
+  ld    a,(iy+x)
+  add   a,(iy+var2)                       ;horizontal speed
+  ld    (iy+x),a
+  ret
+
+  .SetHorizontalSpeed:
+  ld    a,(iy+y)
+  cp    255
+  ret   c
+
+
+  ld    a,(Object2+ObjectPhase)
+  or    a                                   ;phase 0= do nothing left side of screen
+  ld    b,1                                ;if basket is on left side, our horizontal movement speed when using trigger A=-1
+  jr    z,.BallDirectionFound
+  cp    5                                   ;phase 5= do nothing right side of screen
+  ld    b,-1
+  jr    z,.BallDirectionFound
+  ld    b,0
+  .BallDirectionFound:
+
+
+
+  ld    a,(iy+var2)                       ;horizontal speed
+  cp    b
+  jr    z,.SetHorizontalSpeedTo0
+
+  ld    a,(iy+var1)                       ;vertical speed
+  cp    2
+  jr    c,.SetHorizontalSpeedTo0
+  cp    256-1
+  ret   c
+  .SetHorizontalSpeedTo0:
+  ld    (iy+var2),0                       ;horizontal speed
   ret
 
   .SetXYinSpat:
@@ -2238,7 +2382,7 @@ HandleBasketBall:
   ld    (spat+1+(01*4)),a                 ;x sprite 1
   ret
 
-  .HandleKickupBall:
+  .HandleTrigA:
 ;
 ; bit	7	  6	  5		    4		    3		    2		  1		  0
 ;		  0	  0	  trig-b	trig-a	right	  left	down	up	(joystick)
@@ -2247,9 +2391,28 @@ HandleBasketBall:
 	ld		a,(NewPrContr)
 	bit		4,a           ;space pressed ?
   ret   z
+
+  ld    a,(Object2+ObjectPhase)
+  or    a                                   ;phase 0= do nothing left side of screen
+  ld    b,-1                                ;if basket is on left side, our horizontal movement speed when using trigger A=-1
+  jr    z,.SetHorizontalMovementSpeed
+  cp    5                                   ;phase 5= do nothing right side of screen
+  ld    b,+1
+  jr    z,.SetHorizontalMovementSpeed
+  ld    b,0
+  .SetHorizontalMovementSpeed:
+  ld    (iy+var2),b                       ;horizontal speed
+
   ld    a,(iy+var1)                       ;vertical speed
-  sub   a,3  
+  sub   a,1  
   ld    (iy+var1),a                       ;vertical speed
+  jp    p,.Stillpositive
+  cp    256-3
+  ret   c
+  ld    (iy+var1),-4                       ;vertical speed
+  ret   
+  .Stillpositive:
+  ld    (iy+var1),-4                       ;vertical speed
   ret
 
   .MoveBallVertically:
@@ -2277,6 +2440,8 @@ HandleBasketBall:
   ret   m
   neg
   ld    (iy+var1),a                       ;vertical speed
+  ld    a,2
+  ld    (framecounter2),a
   ret
 
   .ApplyGravity:
@@ -2288,6 +2453,240 @@ HandleBasketBall:
   inc   a
   ld    (iy+var1),a                       ;vertical speed
   ret
+
+
+CheckBounceOnRightRimPart2:
+  ret
+
+CheckBounceOnLeftRimPart2:
+  ld    a,(iy+x)
+  cp    33
+  ret   nc
+  cp    17
+  ret   c
+  ld    a,(iy+y)
+  cp    180
+  ret   c
+  cp    200
+  ret   nc
+
+  ;at this point we have hit the rim, change horizontal and vertical speed
+  call  .ChangeHorizontalSpeedRimHit2
+  call  .ChangeVerticalSpeedRimHit2
+  ret
+
+  .ChangeHorizontalSpeedRimHit2:
+  ;horizontally: check where we hit the rim
+  ld    a,(iy+x)
+  cp    33-5
+  jr    nc,.MostRightPoint3
+  cp    17+5
+  jr    c,.MostLeftPoint3
+
+  ld    a,(iy+var2)                      ;horizontal speed
+  or    a
+  ld    (iy+var2),0                      ;horizontal speed
+  ret   nz
+  ld    (iy+var2),1                     ;horizontal speed
+  ret
+
+  .MostLeftPoint3:
+  ld    (iy+var2),-1                      ;horizontal speed
+  ret
+
+  .MostRightPoint3:
+  ld    (iy+var2),1                       ;horizontal speed
+  ret
+
+  .ChangeVerticalSpeedRimHit2:
+  ;vertically: check where we hit the rim
+  ld    a,(iy+y)
+  cp    200-5
+  jr    nc,.LowestPoint3
+  cp    180+5
+  jr    c,.HighestPoint3
+  ret
+
+  .HighestPoint3:
+  ld    a,(iy+var1)                       ;vertical speed
+  dec   a
+  ret   m
+  neg
+  ld    (iy+var1),a                       ;vertical speed
+  ld    a,2
+  ld    (framecounter2),a
+  ret
+  .LowestPoint3:
+  ld    a,(iy+var1)                       ;vertical speed
+  bit   7,a
+  ret   z                                 ;if we hit the lowest part of the rim and our vertical speed is already positive, no need to take action
+  neg
+  dec   a
+  ld    (iy+var1),a                       ;vertical speed
+  ret
+
+
+
+
+
+
+
+
+
+CheckBounceOnRightBackboard:
+  ret
+
+CheckBounceOnLeftBackboard:
+  ld    a,(iy+x)
+  cp    27
+  ret   nc
+  cp    13
+  ret   c
+  ld    a,(iy+y)
+  cp    159
+  ret   c
+  cp    205
+  ret   nc  
+
+  ;at this point we have hit the rim, change horizontal and vertical speed
+  call  .ChangeHorizontalSpeedBackboardHit
+  call  .ChangeVerticalSpeedBackboardHit
+  ret
+
+  .ChangeHorizontalSpeedBackboardHit:
+  ;horizontally: check where we hit the rim
+  ld    a,(iy+x)
+  cp    27-5
+  jr    nc,.MostRightPoint2
+  cp    13+5
+  jr    c,.MostLeftPoint2
+
+  ld    a,(iy+var2)                      ;horizontal speed
+  or    a
+  ld    (iy+var2),0                      ;horizontal speed
+  ret   nz
+  ld    (iy+var2),1                     ;horizontal speed
+  ret
+
+  .MostLeftPoint2:
+  ld    (iy+var2),-1                      ;horizontal speed
+  ret
+
+  .MostRightPoint2:
+  ld    (iy+var2),1                       ;horizontal speed
+  ret
+
+  .ChangeVerticalSpeedBackboardHit:
+  ;vertically: check where we hit the rim
+  ld    a,(iy+y)
+  cp    205-5
+  jr    nc,.LowestPoint2
+  cp    159+5
+  jr    c,.HighestPoint2
+  ret
+
+  .HighestPoint2:
+  ld    a,(iy+var1)                       ;vertical speed
+  dec   a
+  ret   m
+  neg
+  ld    (iy+var1),a                       ;vertical speed
+  ld    a,2
+  ld    (framecounter2),a
+  ret
+  .LowestPoint2:
+  ld    a,(iy+var1)                       ;vertical speed
+  bit   7,a
+  ret   z                                 ;if we hit the lowest part of the backboard and our vertical speed is already positive, no need to take action
+  neg
+  dec   a
+  ld    (iy+var1),a                       ;vertical speed
+  ret
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CheckBounceOnRightRim:
+  ret
+
+CheckBounceOnLeftRim:
+  ld    a,(iy+x)
+  cp    53
+  ret   nc
+  cp    38
+  ret   c
+  ld    a,(iy+y)
+  cp    180
+  ret   c
+  cp    200
+  ret   nc
+
+  ;at this point we have hit the rim, change horizontal and vertical speed
+  call  .ChangeHorizontalSpeedRimHit
+  call  .ChangeVerticalSpeedRimHit
+  ret
+
+  .ChangeHorizontalSpeedRimHit:
+  ;horizontally: check where we hit the rim
+  ld    a,(iy+x)
+  cp    53-5
+  jr    nc,.MostRightPoint
+  cp    38+5
+  jr    c,.MostLeftPoint
+
+  ld    a,(iy+var2)                      ;horizontal speed
+  or    a
+  ld    (iy+var2),0                      ;horizontal speed
+  ret   nz
+  ld    (iy+var2),-1                     ;horizontal speed
+  ret
+
+  .MostLeftPoint:
+  ld    (iy+var2),-1                      ;horizontal speed
+  ret
+
+  .MostRightPoint:
+  ld    (iy+var2),1                       ;horizontal speed
+  ret
+
+  .ChangeVerticalSpeedRimHit:
+  ;vertically: check where we hit the rim
+  ld    a,(iy+y)
+  cp    200-5
+  jr    nc,.LowestPoint
+  cp    180+5
+  jr    c,.HighestPoint
+  ret
+
+  .HighestPoint:
+  ld    a,(iy+var1)                       ;vertical speed
+  dec   a
+  ret   m
+  neg
+  ld    (iy+var1),a                       ;vertical speed
+  ld    a,2
+  ld    (framecounter2),a
+  ret
+  .LowestPoint:
+  ld    a,(iy+var1)                       ;vertical speed
+  bit   7,a
+  ret   z                                 ;if we hit the lowest part of the rim and our vertical speed is already positive, no need to take action
+  neg
+  dec   a
+  ld    (iy+var1),a                       ;vertical speed
+  ret
+
+
 
 SetInterruptHandlerArcadeMachine:
   di
