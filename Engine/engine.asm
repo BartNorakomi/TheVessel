@@ -1526,6 +1526,7 @@ ObjEvent2: db  0,0,0    | dw 0,0,0                                              
 ObjEvent3: db  0,0,0    | dw 0,0,0                                                        | db 255      ,MovementRoutinesBlock | dw SirensRoutine             | db 000,000 ,000, 000
 
 HandleObjects:
+;  call  BackdropGreen
   ld    iy,Object1
   call  HandleObjectRoutine
 ;  call  BackdropRed

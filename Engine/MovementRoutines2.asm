@@ -2079,9 +2079,43 @@ NXPerSymbol2:
   db  007+0,007+0,007+0,007+0,007+0,007+0,007+0,007+0,007+0,003+0,005+0,007+0,005+0,009+0,009+0,007+0,007+0,007+0,007+0,007+0,007+0,007+0,007+0,008+0,008+0,007+0,007+0,006+0,004+0,004+0,004+0,004+0
 ;               a     b     c     d     e     f     g     h     i     j     k     l     m     n     o     p     q     r     s     t     u     v     w     x     y     z     {     |     }     ~
   db  007+0,007+0,007+0,007+0,007+0,007+0,005+0,007+0,007+0,003+0,005+0,007+0,005+0,009+0,007+0,007+0,007+0,007+0,005+0,007+0,005+0,007+0,007+0,009+0,007+0,007+0,007+0,006+0,004+0,004+0,004+0,004+0
- 
-Basketball_0:        db    Basketballframelistblock, Basketballspritedatablock | dw    Basketball_0_0
+
+;basket right side
 Basketball_1:        db    Basketballframelistblock, Basketballspritedatablock | dw    Basketball_1_0
+Basketball_16:        db    Basketballframelistblock, Basketballspritedatablock | dw    Basketball_16_0
+Basketball_17:        db    Basketballframelistblock, Basketballspritedatablock | dw    Basketball_17_0
+Basketball_18:        db    Basketballframelistblock, Basketballspritedatablock | dw    Basketball_18_0
+Basketball_19:        db    Basketballframelistblock, Basketballspritedatablock | dw    Basketball_19_0
+Basketball_20:        db    Basketballframelistblock, Basketballspritedatablock | dw    Basketball_20_0
+Basketball_21:        db    Basketballframelistblock, Basketballspritedatablock | dw    Basketball_21_0
+Basketball_22:        db    Basketballframelistblock, Basketballspritedatablock | dw    Basketball_22_0
+Basketball_23:        db    Basketballframelistblock, Basketballspritedatablock | dw    Basketball_23_0
+Basketball_24:        db    Basketballframelistblock, Basketballspritedatablock | dw    Basketball_24_0
+Basketball_25:        db    Basketballframelistblock, Basketballspritedatablock | dw    Basketball_25_0
+Basketball_26:        db    Basketballframelistblock, Basketballspritedatablock | dw    Basketball_26_0
+Basketball_27:        db    Basketballframelistblock, Basketballspritedatablock | dw    Basketball_27_0
+Basketball_28:        db    Basketballframelistblock, Basketballspritedatablock | dw    Basketball_28_0
+Basketball_29:        db    Basketballframelistblock, Basketballspritedatablock | dw    Basketball_29_0
+Basketball_29end:
+
+;basket left side
+Basketball_0:        db    Basketballframelistblock, Basketballspritedatablock | dw    Basketball_0_0
+Basketball_2:        db    Basketballframelistblock, Basketballspritedatablock | dw    Basketball_2_0
+Basketball_3:        db    Basketballframelistblock, Basketballspritedatablock | dw    Basketball_3_0
+Basketball_4:        db    Basketballframelistblock, Basketballspritedatablock | dw    Basketball_4_0
+Basketball_5:        db    Basketballframelistblock, Basketballspritedatablock | dw    Basketball_5_0
+Basketball_6:        db    Basketballframelistblock, Basketballspritedatablock | dw    Basketball_6_0
+Basketball_7:        db    Basketballframelistblock, Basketballspritedatablock | dw    Basketball_7_0
+Basketball_8:        db    Basketballframelistblock, Basketballspritedatablock | dw    Basketball_8_0
+Basketball_9:        db    Basketballframelistblock, Basketballspritedatablock | dw    Basketball_9_0
+Basketball_10:        db    Basketballframelistblock, Basketballspritedatablock | dw    Basketball_10_0
+Basketball_11:        db    Basketballframelistblock, Basketballspritedatablock | dw    Basketball_11_0
+Basketball_12:        db    Basketballframelistblock, Basketballspritedatablock | dw    Basketball_12_0
+Basketball_13:        db    Basketballframelistblock, Basketballspritedatablock | dw    Basketball_13_0
+Basketball_14:        db    Basketballframelistblock, Basketballspritedatablock | dw    Basketball_14_0
+Basketball_15:        db    Basketballframelistblock, Basketballspritedatablock | dw    Basketball_15_0
+Basketball_15end:
+
 BasketMovementRoutine:
   ld    a,3
   ld    (framecounter),a
@@ -2109,12 +2143,27 @@ BasketMovementRoutine:
   .Phase7:                                  ;scroll out of screen on the right side
   ld    a,(iy+x)
   add   a,2
+  cp    174
+  jp    z,.Bigger
   ld    (iy+x),a
-  cp    220
-  ret   nz
+  ret
+  .Bigger:
+  ld    l,(iy+SpriteData)
+  ld    h,(iy+SpriteData+1)
+  ld    de,4
+  add   hl,de
+  xor   a
+  ld    de,Basketball_29end
+  sbc   hl,de
+  jr    z,.GoPhase1
+  add   hl,de
+  ld    (iy+SpriteData),l
+  ld    (iy+SpriteData+1),h
+  ret
+  .GoPhase1:
   ld    (iy+ObjectPhase),1
-  ld    (iy+x),0
-  ld    hl,Basketball_0
+  ld    (iy+x),84
+  ld    hl,Basketball_15
   ld    (iy+SpriteData),l
   ld    (iy+SpriteData+1),h
   ret
@@ -2129,6 +2178,20 @@ BasketMovementRoutine:
   ret
 
   .Phase4:                                  ;scroll into screen from the right side
+  ld    l,(iy+SpriteData)
+  ld    h,(iy+SpriteData+1)
+  ld    de,-4
+  add   hl,de
+  xor   a
+  ld    de,Basketball_1-4
+  sbc   hl,de
+  jr    z,.FullyInScreenNowMoveLeft
+  add   hl,de
+  ld    (iy+SpriteData),l
+  ld    (iy+SpriteData+1),h
+  ret
+
+  .FullyInScreenNowMoveLeft:
   ld    a,(iy+x)
   sub   a,2
   ld    (iy+x),a
@@ -2140,12 +2203,27 @@ BasketMovementRoutine:
   .Phase3:                                  ;scroll out of screen on the left side
   ld    a,(iy+x)
   sub   a,2
+  cp    82
+  jp    z,.Smaller
   ld    (iy+x),a
-  cp    30
-  ret   nz
+  ret
+  .Smaller:
+  ld    l,(iy+SpriteData)
+  ld    h,(iy+SpriteData+1)
+  ld    de,4
+  add   hl,de
+  xor   a
+  ld    de,Basketball_15end
+  sbc   hl,de
+  jr    z,.GoPhase4
+  add   hl,de
+  ld    (iy+SpriteData),l
+  ld    (iy+SpriteData+1),h
+  ret
+  .GoPhase4:
   ld    (iy+ObjectPhase),4
-  ld    (iy+x),254
-  ld    hl,Basketball_1
+  ld    (iy+x),172
+  ld    hl,Basketball_29
   ld    (iy+SpriteData),l
   ld    (iy+SpriteData+1),h
   ret
@@ -2160,12 +2238,34 @@ BasketMovementRoutine:
   ret
 
   .Phase1:                                  ;scroll into screen from the left side
+  ld    l,(iy+SpriteData)
+  ld    h,(iy+SpriteData+1)
+  ld    de,-4
+  add   hl,de
+  xor   a
+  ld    de,Basketball_29
+  sbc   hl,de
+  jr    z,.FullyInScreenNowMoveRight
+  add   hl,de
+  ld    (iy+SpriteData),l
+  ld    (iy+SpriteData+1),h
+  ret
+
+  .FullyInScreenNowMoveRight:
   ld    a,(iy+x)
   add   a,2
   ld    (iy+x),a
   cp    100
   ret   nz
   ld    (iy+ObjectPhase),0
+  ret
+
+SetwallCoverUps:
+  ld    a,(spat+0+(16*4))                 ;y basketball
+  ld    (spat+0+(08*4)),a                 ;y sprite 0
+  ld    (spat+0+(09*4)),a                 ;y sprite 1
+  ld    (spat+0+(10*4)),a                 ;y sprite 2
+  ld    (spat+0+(11*4)),a                 ;y sprite 3
   ret
 
 BasketBallGameRoutine:
@@ -2175,6 +2275,8 @@ BasketBallGameRoutine:
 
   call  CheckEndArcadeGameTriggerB
   call  HandleBasketBall
+  call  SetwallCoverUps
+  call  HandleNet
   call  .HandlePhase                        ;load graphics, init variables
   ret
 
@@ -2222,6 +2324,25 @@ BasketBallGameRoutine:
   ld    a,1
   ld    (SetArcadeGamePalette?),a
   call  .SetBasketballSprite
+
+  ;set x,y wallcoverupsprites
+  xor   a
+  ld    (spat+1+(08*4)),a                 ;x sprite 0
+  ld    (spat+1+(09*4)),a                 ;x sprite 1
+
+  ld    a,256-6
+  ld    (spat+1+(10*4)),a                 ;x sprite 2
+  ld    (spat+1+(11*4)),a                 ;x sprite 3
+
+  ld    a,-11
+  ld    (spat+0+(00*4)),a                 ;y sprite 4
+  ld    (spat+0+(01*4)),a                 ;y sprite 5
+  ld    (spat+0+(02*4)),a                 ;y sprite 6
+  ld    (spat+0+(03*4)),a                 ;y sprite 7
+  ld    (spat+0+(04*4)),a                 ;y sprite 8
+  ld    (spat+0+(05*4)),a                 ;y sprite 9
+  ld    (spat+0+(06*4)),a                 ;y sprite 9
+  ld    (spat+0+(07*4)),a                 ;y sprite 9
   ret
 
   .SetBasketballSprite:
@@ -2233,29 +2354,134 @@ BasketBallGameRoutine:
 
   ;write sprite character
 	xor		a				;page 0/1
+	ld		hl,sprcharaddr+8*32	;sprite 0 character table in VRAM
+	call	SetVdp_Write
+
+	ld		hl,WallCoverUpsCharSprite	;sprite 0 character table in VRAM
+	ld		c,$98
+	call	outix320		;write sprite color of pointer and hand to vram
+
+	xor		a				;page 0/1
+	ld		hl,sprcoladdr+8*16	;sprite 0 color table in VRAM
+	call	SetVdp_Write
+
+	ld		hl,WallCoverUpsColSprite	;sprite 0 character table in VRAM
+	ld		c,$98
+	call	outix160	;write sprite color of pointer and hand to vram
+
+  ;first 8 sprites are empty wall coverup sprites
+	xor		a				;page 0/1
 	ld		hl,sprcharaddr	;sprite 0 character table in VRAM
 	call	SetVdp_Write
 
-	ld		hl,BasketballCharSprite	;sprite 0 character table in VRAM
-	ld		c,$98
-	call	outix64		;write sprite character to vram
-
-	xor		a				;page 0/1
-	ld		hl,sprcoladdr	;sprite 0 color table in VRAM
-	call	SetVdp_Write
-
-	ld		hl,BasketballColorSprite	;sprite 0 character table in VRAM
-	ld		c,$98
-	call	outix32		;write sprite color of pointer and hand to vram
+  ld    b,0
+  xor   a
+  .loop:
+  out   ($98),a
+  djnz  .loop
   ret
 
+	WallCoverUpsCharSprite:
+	include "..\grapx\basketball\sprites\WallCoverUps.tgs.gen"
+	NetCharSprite:
+	include "..\grapx\basketball\sprites\net.tgs.gen"
 	BasketballCharSprite:
 	include "..\grapx\basketball\sprites\basketball.tgs.gen"
+
+	WallCoverUpsColSprite:
+	include "..\grapx\basketball\sprites\WallCoverUps.tcs.gen"
+	NetColSprite:
+	include "..\grapx\basketball\sprites\net.tcs.gen"
 	BasketballColorSprite:	
 	include "..\grapx\basketball\sprites\basketball.tcs.gen"
-  BasketBallCourtPalette:
-  incbin "..\grapx\BasketBall\sprites\basketball.sc5",$7680+7,32
 
+  BasketBallCourtPalette:
+  incbin "..\grapx\BasketBall\sprites\BasketballPalette.sc5",$7680+7,32
+
+HandleNet:
+  call  .SetXYinSpat
+  ret
+
+  .SetXYinSpat:
+  ld    a,(Object2+ObjectPhase)
+  or    a                                   ;phase 0= do nothing left side of screen
+  jr    z,.Left
+  cp    2                                   ;wait
+  jr    z,.LeftJustScored
+  cp    5                                   ;phase 5= do nothing right side of screen
+  jr    z,.Right
+  cp    6                                   ;wait
+  jr    z,.RightJustScored
+
+  ld    a,213
+  ld    (spat+0+(12*4)),a                 ;y sprite 0
+  ld    (spat+0+(13*4)),a                 ;y sprite 1
+  ld    (spat+0+(14*4)),a                 ;x sprite 0
+  ld    (spat+0+(15*4)),a                 ;x sprite 1
+  ret
+
+  .RightJustScored:
+  ld    a,(iy+y)                        ;y ball
+  cp    215
+  jr    nc,.Right
+
+  ld    a,52
+  ld    (spat+0+(14*4)),a                 ;y sprite 0
+  ld    (spat+0+(15*4)),a                 ;y sprite 1
+  ld    a,206
+  ld    (spat+1+(14*4)),a                 ;x sprite 0
+  ld    (spat+1+(15*4)),a                 ;x sprite 1
+
+  ld    a,213
+  ld    (spat+0+(12*4)),a                 ;y sprite 0
+  ld    (spat+0+(13*4)),a                 ;y sprite 1
+  ret
+
+  .Right:
+  ld    a,52
+  ld    (spat+0+(12*4)),a                 ;y sprite 0
+  ld    (spat+0+(13*4)),a                 ;y sprite 1
+  ld    a,206
+  ld    (spat+1+(12*4)),a                 ;x sprite 0
+  ld    (spat+1+(13*4)),a                 ;x sprite 1
+
+  ld    a,213
+  ld    (spat+0+(14*4)),a                 ;y sprite 0
+  ld    (spat+0+(15*4)),a                 ;y sprite 1
+  ret
+
+  .LeftJustScored:
+  ld    a,(iy+y)                        ;y ball
+  cp    215
+  jr    nc,.Left
+
+  ld    a,52
+  ld    (spat+0+(14*4)),a                 ;y sprite 0
+  ld    (spat+0+(15*4)),a                 ;y sprite 1
+  ld    a,35
+  ld    (spat+1+(14*4)),a                 ;x sprite 0
+  ld    (spat+1+(15*4)),a                 ;x sprite 1
+
+  ld    a,213
+  ld    (spat+0+(12*4)),a                 ;y sprite 0
+  ld    (spat+0+(13*4)),a                 ;y sprite 1
+  ret
+
+  .Left:
+  ld    a,52
+  ld    (spat+0+(12*4)),a                 ;y sprite 0
+  ld    (spat+0+(13*4)),a                 ;y sprite 1
+  ld    a,35
+  ld    (spat+1+(12*4)),a                 ;x sprite 0
+  ld    (spat+1+(13*4)),a                 ;x sprite 1
+
+  ld    a,213
+  ld    (spat+0+(14*4)),a                 ;y sprite 0
+  ld    (spat+0+(15*4)),a                 ;y sprite 1
+  ret
+
+XDifferenceBaskets: equ 173
+XDifferenceBackboards: equ 201
 HandleBasketBall:
   call  .ApplyGravity
   call  .SetXYinSpat
@@ -2273,18 +2499,29 @@ HandleBasketBall:
   ret
 
   .CheckBounceRightRimAndBackboard:
-  call  CheckBounceOnRightRimPart2
+  call  CheckBounceOnRightRimLeftSide
   call  CheckBounceOnRightBackboard
-  call  CheckBounceOnRightRim
+  call  CheckBounceOnRightRimRightSide
   ret
 
   .CheckBounceLeftRimAndBackboard:
-  call  CheckBounceOnLeftRimPart2
+  call  CheckBounceOnLeftRimLeftSide
   call  CheckBounceOnLeftBackboard
-  call  CheckBounceOnLeftRim
+  call  CheckBounceOnLeftRimRightSide
   ret
 
   .CheckScore:
+
+;
+; bit	7	  6	  5		    4		    3		    2		  1		  0
+;		  0	  0	  trig-b	trig-a	right	  left	down	up	(joystick)
+;		  F5	F1	'M'		  space	  right	  left	down	up	(keyboard)
+;;
+;	ld		a,(NewPrContr)
+;	bit		6,a           ;space pressed ?
+;jp nz,.score
+  
+
   ld    a,(Object2+ObjectPhase)
   or    a                                   ;phase 0= do nothing left side of screen
   jr    z,.CheckScoredLeftSide
@@ -2294,38 +2531,41 @@ HandleBasketBall:
 
   .CheckScoredLeftSide:
   ld    a,(iy+x)
-  cp    33
+  cp    33 - 1
   ret   c
-  cp    38
+  cp    38 + 1
   ret   nc
 
   ld    a,(iy+y)
   cp    187
   ret   c
-  cp    194
+  cp    194 + 4
   ret   nc
-
-  ld    a,2                                         ;scroll basket out of screen on the left side
+  ld    a,2                                         ;wait (then phase 3:scroll basket out of screen on the left side)
 	ld		(Object2+ObjectPhase),a											;start with object2
   ld    (iy+var2),0                       ;horizontal speed
+
+  ld    (iy+x),36
   ret
 
   .CheckScoredRightSide:
   ld    a,(iy+x)
-  cp    33 + 171
+  cp    33 + XDifferenceBaskets -1
   ret   c
-  cp    38 + 171
+  cp    38 + XDifferenceBaskets +1
   ret   nc
 
   ld    a,(iy+y)
   cp    187
   ret   c
-  cp    194
+  cp    194 + 4
   ret   nc
-
-  ld    a,7                                         ;scroll out of screen on the right side
+.score:
+  ld    a,6                                         ;wait (then phase 7:scroll basket out of screen on the right side)
 	ld		(Object2+ObjectPhase),a											;start with object2
   ld    (iy+var2),0                       ;horizontal speed
+
+  ld    (iy+x),36 + XDifferenceBaskets - 3
   ret
 
 
@@ -2346,7 +2586,6 @@ HandleBasketBall:
   cp    255
   ret   c
 
-
   ld    a,(Object2+ObjectPhase)
   or    a                                   ;phase 0= do nothing left side of screen
   ld    b,1                                ;if basket is on left side, our horizontal movement speed when using trigger A=-1
@@ -2356,8 +2595,6 @@ HandleBasketBall:
   jr    z,.BallDirectionFound
   ld    b,0
   .BallDirectionFound:
-
-
 
   ld    a,(iy+var2)                       ;horizontal speed
   cp    b
@@ -2375,11 +2612,11 @@ HandleBasketBall:
   .SetXYinSpat:
   ld    a,(iy+y)
   sub   144
-  ld    (spat+0+(00*4)),a                 ;y sprite 0
-  ld    (spat+0+(01*4)),a                 ;y sprite 1
+  ld    (spat+0+(16*4)),a                 ;y sprite 0
+  ld    (spat+0+(17*4)),a                 ;y sprite 1
   ld    a,(iy+x)
-  ld    (spat+1+(00*4)),a                 ;x sprite 0
-  ld    (spat+1+(01*4)),a                 ;x sprite 1
+  ld    (spat+1+(16*4)),a                 ;x sprite 0
+  ld    (spat+1+(17*4)),a                 ;x sprite 1
   ret
 
   .HandleTrigA:
@@ -2393,13 +2630,17 @@ HandleBasketBall:
   ret   z
 
   ld    a,(Object2+ObjectPhase)
-  or    a                                   ;phase 0= do nothing left side of screen
-  ld    b,-1                                ;if basket is on left side, our horizontal movement speed when using trigger A=-1
-  jr    z,.SetHorizontalMovementSpeed
-  cp    5                                   ;phase 5= do nothing right side of screen
-  ld    b,+1
-  jr    z,.SetHorizontalMovementSpeed
+  cp    2
   ld    b,0
+  jr    z,.SetHorizontalMovementSpeed
+  ld    b,-1                                ;if basket is on left side, our horizontal movement speed when using trigger A=-1
+  jr    c,.SetHorizontalMovementSpeed
+  cp    6
+  ld    b,0
+  jr    z,.SetHorizontalMovementSpeed
+  ld    b,+1
+  jr    c,.SetHorizontalMovementSpeed
+  ld    b,-1
   .SetHorizontalMovementSpeed:
   ld    (iy+var2),b                       ;horizontal speed
 
@@ -2409,10 +2650,10 @@ HandleBasketBall:
   jp    p,.Stillpositive
   cp    256-3
   ret   c
-  ld    (iy+var1),-4                       ;vertical speed
+  ld    (iy+var1),-5                       ;vertical speed
   ret   
   .Stillpositive:
-  ld    (iy+var1),-4                       ;vertical speed
+  ld    (iy+var1),-5                       ;vertical speed
   ret
 
   .MoveBallVertically:
@@ -2455,10 +2696,78 @@ HandleBasketBall:
   ret
 
 
-CheckBounceOnRightRimPart2:
+CheckBounceOnRightRimLeftSide:
+  ld    a,(iy+x)
+  cp    33 + XDifferenceBaskets
+  ret   nc
+  cp    17 + XDifferenceBaskets
+  ret   c
+  ld    a,(iy+y)
+  cp    180
+  ret   c
+  cp    200
+  ret   nc
+
+  ;at this point we have hit the rim, change horizontal and vertical speed
+  call  .ChangeHorizontalSpeedRimHit2
+  call  .ChangeVerticalSpeedRimHit2
   ret
 
-CheckBounceOnLeftRimPart2:
+  .ChangeHorizontalSpeedRimHit2:
+  ;horizontally: check where we hit the rim
+  ld    a,(iy+x)
+  cp    33-5  + XDifferenceBaskets
+  jr    nc,.MostRightPoint3
+  cp    17+5  + XDifferenceBaskets
+  jr    c,.MostLeftPoint3
+
+  ld    a,(iy+var2)                      ;horizontal speed
+  or    a
+  ld    (iy+var2),0                      ;horizontal speed
+  ret   nz
+  ld    (iy+var2),1                     ;horizontal speed
+  ret
+
+  .MostLeftPoint3:
+  ld    (iy+var2),-1                      ;horizontal speed
+  ret
+
+  .MostRightPoint3:
+  ld    (iy+var2),1                       ;horizontal speed
+  ret
+
+  .ChangeVerticalSpeedRimHit2:
+  ;vertically: check where we hit the rim
+  ld    a,(iy+y)
+  cp    200-5
+  jr    nc,.LowestPoint3
+  cp    180+5
+  jr    c,.HighestPoint3
+  ret
+
+  .HighestPoint3:
+  ld    a,(iy+var1)                       ;vertical speed
+  dec   a
+  ret   m
+  neg
+  ld    (iy+var1),a                       ;vertical speed
+  ld    a,2
+  ld    (framecounter2),a
+  ret
+  .LowestPoint3:
+  ld    a,(iy+var1)                       ;vertical speed
+  bit   7,a
+  ret   z                                 ;if we hit the lowest part of the rim and our vertical speed is already positive, no need to take action
+  neg
+  dec   a
+  ld    (iy+var1),a                       ;vertical speed
+  ret
+
+
+
+
+
+CheckBounceOnLeftRimLeftSide:
   ld    a,(iy+x)
   cp    33
   ret   nc
@@ -2534,7 +2843,74 @@ CheckBounceOnLeftRimPart2:
 
 
 CheckBounceOnRightBackboard:
+  ld    a,(iy+x)
+  cp    27  + XDifferenceBackboards
+  ret   nc
+  cp    13  + XDifferenceBackboards
+  ret   c
+  ld    a,(iy+y)
+  cp    159
+  ret   c
+  cp    205
+  ret   nc  
+
+  ;at this point we have hit the rim, change horizontal and vertical speed
+  call  .ChangeHorizontalSpeedBackboardHit
+  call  .ChangeVerticalSpeedBackboardHit
   ret
+
+  .ChangeHorizontalSpeedBackboardHit:
+  ;horizontally: check where we hit the rim
+  ld    a,(iy+x)
+  cp    27-5  + XDifferenceBackboards
+  jr    nc,.MostRightPoint2
+  cp    13+5  + XDifferenceBackboards
+  jr    c,.MostLeftPoint2
+
+  ld    a,(iy+var2)                      ;horizontal speed
+  or    a
+  ld    (iy+var2),0                      ;horizontal speed
+  ret   nz
+  ld    (iy+var2),-1                     ;horizontal speed
+  ret
+
+  .MostLeftPoint2:
+  ld    (iy+var2),-1                      ;horizontal speed
+  ret
+
+  .MostRightPoint2:
+  ld    (iy+var2),1                       ;horizontal speed
+  ret
+
+  .ChangeVerticalSpeedBackboardHit:
+  ;vertically: check where we hit the rim
+  ld    a,(iy+y)
+  cp    205-5
+  jr    nc,.LowestPoint2
+  cp    159+5
+  jr    c,.HighestPoint2
+  ret
+
+  .HighestPoint2:
+  ld    a,(iy+var1)                       ;vertical speed
+  dec   a
+  ret   m
+  neg
+  ld    (iy+var1),a                       ;vertical speed
+  ld    a,2
+  ld    (framecounter2),a
+  ret
+  .LowestPoint2:
+  ld    a,(iy+var1)                       ;vertical speed
+  bit   7,a
+  ret   z                                 ;if we hit the lowest part of the backboard and our vertical speed is already positive, no need to take action
+  neg
+  dec   a
+  ld    (iy+var1),a                       ;vertical speed
+  ret
+
+
+
 
 CheckBounceOnLeftBackboard:
   ld    a,(iy+x)
@@ -2616,10 +2992,75 @@ CheckBounceOnLeftBackboard:
 
 
 
-CheckBounceOnRightRim:
+CheckBounceOnRightRimRightSide:
+  ld    a,(iy+x)
+  cp    53  + XDifferenceBaskets
+  ret   nc
+  cp    38  + XDifferenceBaskets
+  ret   c
+  ld    a,(iy+y)
+  cp    180
+  ret   c
+  cp    200
+  ret   nc
+
+  ;at this point we have hit the rim, change horizontal and vertical speed
+  call  .ChangeHorizontalSpeedRimHit
+  call  .ChangeVerticalSpeedRimHit
   ret
 
-CheckBounceOnLeftRim:
+  .ChangeHorizontalSpeedRimHit:
+  ;horizontally: check where we hit the rim
+  ld    a,(iy+x)
+  cp    53-5  + XDifferenceBaskets
+  jr    nc,.MostRightPoint
+  cp    38+5  + XDifferenceBaskets
+  jr    c,.MostLeftPoint
+
+  ld    a,(iy+var2)                      ;horizontal speed
+  or    a
+  ld    (iy+var2),0                      ;horizontal speed
+  ret   nz
+  ld    (iy+var2),-1                     ;horizontal speed
+  ret
+
+  .MostLeftPoint:
+  ld    (iy+var2),-1                      ;horizontal speed
+  ret
+
+  .MostRightPoint:
+  ld    (iy+var2),1                       ;horizontal speed
+  ret
+
+  .ChangeVerticalSpeedRimHit:
+  ;vertically: check where we hit the rim
+  ld    a,(iy+y)
+  cp    200-5
+  jr    nc,.LowestPoint
+  cp    180+5
+  jr    c,.HighestPoint
+  ret
+
+  .HighestPoint:
+  ld    a,(iy+var1)                       ;vertical speed
+  dec   a
+  ret   m
+  neg
+  ld    (iy+var1),a                       ;vertical speed
+  ld    a,2
+  ld    (framecounter2),a
+  ret
+  .LowestPoint:
+  ld    a,(iy+var1)                       ;vertical speed
+  bit   7,a
+  ret   z                                 ;if we hit the lowest part of the rim and our vertical speed is already positive, no need to take action
+  neg
+  dec   a
+  ld    (iy+var1),a                       ;vertical speed
+  ret
+
+
+CheckBounceOnLeftRimRightSide:
   ld    a,(iy+x)
   cp    53
   ret   nc

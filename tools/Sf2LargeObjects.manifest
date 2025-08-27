@@ -6,7 +6,7 @@ basketball=@{
 		destinationPath="";
 		pixelFilePath="basketball.dat";
 		transparentColor=-1;fillcolor=15;
-		canvasX=0;canvasY=0;canvasWidth=2*156;canvasHeight=(1*125);
+		canvasX=0;canvasY=0;canvasWidth=30*156;canvasHeight=(1*125);
 		frameWidth=156;frameHeight=125;
 		subjectX=0;subjectWidth=156;subjectY=-1;subjectHeight=-1;
 		slices=1;
