@@ -2172,6 +2172,8 @@ BasketMovementRoutine:
 
   .Phase6:                                  ;wait
   ld    a,(iy+var1)
+  or    a
+  call  z,IncreaseScoreAndCombo
   inc   a
   and   15
   ld    (iy+var1),a
@@ -2232,6 +2234,8 @@ BasketMovementRoutine:
 
   .Phase2:                                  ;wait
   ld    a,(iy+var1)
+  or    a
+  call  z,IncreaseScoreAndCombo
   inc   a
   and   15
   ld    (iy+var1),a
@@ -2261,6 +2265,32 @@ BasketMovementRoutine:
   ret   nz
   ld    (iy+ObjectPhase),0
   ret
+
+IncreaseScoreAndCombo:
+  ld    a,(basketballCombotime)
+  dec   a
+  jr    nz,.EndCheckComboExpired
+  ld    a,0
+  ld    (basketballCombo),a
+  .EndCheckComboExpired:
+  ld    a,(basketballCombo)
+  inc   a
+  ld    (basketballCombo),a
+
+  ld    e,a
+  ld    d,0
+
+  ld    hl,(basketballScore)
+;  ld    de,1
+  add   hl,de
+  ld    (basketballScore),hl
+
+  ld    a,255
+  ld    (basketballresettimervar),a
+
+  ld    a,(iy+var1)
+  ret
+
 
 SetBallShadow:
   ld    a,(spat+1+(16*4))                 ;x basketball
@@ -2293,13 +2323,6 @@ HandleBasketBallgameHud:
   jp    z,.ReduceComboTimeAndSetDX
   dec   a
   jp    z,.PutBarIn4Pages
-
-
-;  jr    c,.Combo
-;  cp    12
-;  jr    c,.Score
-;  cp    16
-;  jr    c,.Coins
   ld    a,255
   ld    (basketballHudHandler),a
   ret
@@ -2307,8 +2330,100 @@ HandleBasketBallgameHud:
   .Coins:
   ret
 
-  .Score:
+;FreeToUseFastCopy0:                     ;freely usable anywhere
+.TextCombo:                     ;freely usable anywhere
+  db    168,000,007,000                 ;sx,--,sy,spage
+  db    102,000,018,000                 ;dx,--,dy,dpage
+  db    026,000,006,000                 ;nx,--,ny,--
+  db    000,%0000 0000,$D0              ;fast copy -> Copy from right to left     
+
+.ClearTextCombo:                     ;freely usable anywhere
+  db    032,000,012,000                 ;sx,--,sy,spage
+  db    102,000,018,000                 ;dx,--,dy,dpage
+  db    026,000,006,000                 ;nx,--,ny,--
+  db    000,%0000 0000,$D0              ;fast copy -> Copy from right to left     
+
+  .ClearComboText:
+  ld    hl,.ClearTextCombo
+  ld    de,FreeToUseFastCopy0
+  ld    bc,15
+  ldir
+
+	ld    a,(screenpage)
+  ld    (FreeToUseFastCopy0+dPage),a
+
+  ld    hl,FreeToUseFastCopy0
+  call  DoCopy
   ret
+
+  .ComboDX: equ 135
+  .ComboDY: equ 018
+  .SetComboText:
+  ld    a,(basketballCombo)
+  or    a
+  ret   z
+
+  ld    hl,.TextCombo
+  ld    de,FreeToUseFastCopy0
+  ld    bc,15
+  ldir
+
+	ld    a,(screenpage)
+  ld    (FreeToUseFastCopy0+dPage),a
+
+  ld    hl,FreeToUseFastCopy0
+  call  DoCopy
+
+	ld    a,(screenpage)
+  ld    (PutLetterNonTransparant+dPage),a             ;set page where to put text
+  ld    a,.ComboDX
+  ld    (PutLetterNonTransparant+dx),a
+  ld    a,.ComboDY
+  ld    (PutLetterNonTransparant+dy),a
+
+  ld    hl,(basketballCombo)
+  call  NUM_TO_ASCII                      ;HL = 16-bit number (0-65535), Output: ASCII string stored at Ascii5Byte:
+  ld    hl,Ascii5Byte+1
+  call  .PutTextLoop
+  ret
+
+
+
+  .ScoreDX: equ 130
+  .ScoreDY: equ 007
+  .Score:
+	ld    a,(screenpage)
+  ld    (PutLetterNonTransparant+dPage),a             ;set page where to put text
+  ld    a,.ScoreDX
+  ld    (PutLetterNonTransparant+dx),a
+  ld    a,.ScoreDY
+  ld    (PutLetterNonTransparant+dy),a
+
+  ld    hl,(basketballScore)
+  call  NUM_TO_ASCII                      ;HL = 16-bit number (0-65535), Output: ASCII string stored at Ascii5Byte:
+  ld    hl,Ascii5Byte+1
+  call  .PutTextLoop
+  ret
+
+  .PutTextLoop:
+  ld    a,(hl)
+  cp    255
+  ret   z
+  sub   a,$30                             ;0=$30
+  add   a,a                               ;*2
+  add   a,a                               ;*4
+  add   a,192
+  ld    (PutLetterNonTransparant+sx),a
+  push  hl
+  ld    hl,PutLetterNonTransparant
+  call  DoCopy
+  pop   hl
+
+  ld    a,(PutLetterNonTransparant+dx)
+  add   a,5
+  ld    (PutLetterNonTransparant+dx),a
+  inc   hl
+  jr    .PutTextLoop
 
   .ReduceComboTimeAndSetDX:
   ld    a,(basketballFirstPointScored?)
@@ -2403,6 +2518,21 @@ HandleBasketBallgameHud:
   ret
 
   .ResetTimers:
+  ld    a,(basketballresettimervar)
+  inc   a
+  ld    (basketballresettimervar),a
+  cp    4
+  jp    c,.FillTimerAndComboBars
+  cp    8
+  jp    c,.SetComboText
+  cp    12
+  jp    c,.Score
+
+  cp    50
+  jp    nc,.ClearComboText
+  ret
+
+  .FillTimerAndComboBars:
   ld    a,$c0
   ld    (BasketBallGameBar+copytype),a
   ld    a,255
@@ -2436,7 +2566,7 @@ HandleBasketBallGameOver:
   jr    nz,.EndCheckGameOver
   ld    a,1
   ld    (freezecontrols?),a
-  ;game over if time=0, basketball is lying on the ground and vertical speed=0
+  ;game over if time=1, basketball is lying on the ground and vertical speed=0
   ld    a,(iy+y)
   cp    255
   jr    nz,.EndCheckGameOver
@@ -2572,6 +2702,9 @@ BasketBallGameRoutine:
   xor   a
   ld    (basketballGameOver?),a
   ld    (basketballFirstPointScored?),a
+  ld    hl,0
+  ld    (basketballScore),hl
+  ld    (basketballCombo),hl
   ld    a,80
   ld    (basketballtime),a
   ld    (basketballMaxtime),a

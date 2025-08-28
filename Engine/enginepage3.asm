@@ -1728,7 +1728,13 @@ BasketBallGameBar:
 	db		0,0,0,0
 	db		032,0,008,0
 	db		001,0,003,0
-	db		0 + 16*0,0,$0
+	db		0 + 16*0,0,$80
+
+PutLetterNonTransparant:
+  db    000,000,212,001                 ;sx,--,sy,spage
+  db    000,000,000,000                 ;dx,--,dy,dpage
+  db    004,000,006,000                 ;nx,--,ny,--
+  db    000,000,$90              				;transparant copy
 
 STOPWAITSPACEPRESSED:
   call  PopulateControls
@@ -2718,6 +2724,9 @@ basketballCombotime:			rb	1
 basketballMaxCombotime:		rb	1
 basketballGameOver?:			rb	1
 basketballFirstPointScored?:			rb	1
+basketballScore:					rb	2
+basketballCombo:					rb	2
+basketballresettimervar:	rb	1
 
 endenginepage3variables:  equ $+enginepage3length
 org variables
