@@ -1724,6 +1724,12 @@ TitleScreenAnimateSmoke:
 	db		016,0,081,0
 	db		0,0,$d0
 
+BasketBallGameBar:
+	db		0,0,0,0
+	db		032,0,008,0
+	db		001,0,003,0
+	db		0 + 16*0,0,$0
+
 STOPWAITSPACEPRESSED:
   call  PopulateControls
 ;
@@ -2704,6 +2710,14 @@ RacingGameInvulnerableTimer:		rb	1
 RacingGameRandomValue:		rb	1
 ReturnFromNPCConversation?:		rb	1
 SetArcadeGamePalette?:		rb	1
+
+basketballHudHandler:			rb	1
+basketballtime:						rb	1
+basketballMaxtime:				rb	1
+basketballCombotime:			rb	1
+basketballMaxCombotime:		rb	1
+basketballGameOver?:			rb	1
+basketballFirstPointScored?:			rb	1
 
 endenginepage3variables:  equ $+enginepage3length
 org variables

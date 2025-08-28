@@ -663,6 +663,7 @@ ArcadeMachineGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSi
 BasketBallCourtGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
 PenguinBikeRaceGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
 BlockhitGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
+BasketBallFontGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
 	phase	$4000
 	ArcadeMachinePart1Address:
   incbin "..\grapx\ArcadeMachine\ArcadeMachinePart1.sc5.pck"
@@ -678,16 +679,21 @@ BlockhitGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
   incbin "..\grapx\blockhit\blockhitPart1.sc5.pck"
 	BlockhitPart2Address:
   incbin "..\grapx\blockhit\BlockhitPart2.sc5.pck"
+	BasketBallFontPart1Address:
+  incbin "..\grapx\BasketBall\FontPart1.sc5.pck"
 	.CheckBlockFull:	dw	$+$8000
 	dephase
 	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
 
 JumpDownGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
+BasketBallGameOverGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
 	phase	$4000
 	JumpDownPart1Address:
   incbin "..\grapx\JumpDown\JumpDownPart1.sc5.pck"
 	JumpDownPart2Address:
   incbin "..\grapx\JumpDown\JumpDownPart2.sc5.pck"
+	BasketBallPart1Address:
+  incbin "..\grapx\BasketBall\GameOverPart1.sc5.pck"
 	.CheckBlockFull:	dw	$+$8000
 	dephase
 	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block

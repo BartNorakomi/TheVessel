@@ -4,6 +4,8 @@
 ;PenguinBikeRaceGameRoutine
 ;BlockHitGameRoutine
 ;JumpDownGameRoutine
+;BasketMovementRoutine
+;BasketBallGameRoutine
 
 Phase MovementRoutinesAddress
 
@@ -2260,6 +2262,11 @@ BasketMovementRoutine:
   ld    (iy+ObjectPhase),0
   ret
 
+SetBallShadow:
+  ld    a,(spat+1+(16*4))                 ;x basketball
+  ld    (ShadowSpriteXSpat),a             ;x shadow sprite
+  ret
+
 SetwallCoverUps:
   ld    a,(spat+0+(16*4))                 ;y basketball
   ld    (spat+0+(08*4)),a                 ;y sprite 0
@@ -2268,16 +2275,293 @@ SetwallCoverUps:
   ld    (spat+0+(11*4)),a                 ;y sprite 3
   ret
 
+HandleBasketBallgameHud:
+  ld    a,(Object2+ObjectPhase)
+  or    a                                   ;phase 0= do nothing left side of screen
+  jr    z,.Go
+  cp    5                                   ;phase 5= do nothing right side of screen
+  jp    nz,.ResetTimers                     ;when scored, reset timers
+
+  .Go:
+  ld    a,(basketballHudHandler)
+  inc   a
+  ld    (basketballHudHandler),a
+  jp    z,.ReduceTimeAndSetDX
+  dec   a
+  jp    z,.PutBarIn4Pages
+  dec   a
+  jp    z,.ReduceComboTimeAndSetDX
+  dec   a
+  jp    z,.PutBarIn4Pages
+
+
+;  jr    c,.Combo
+;  cp    12
+;  jr    c,.Score
+;  cp    16
+;  jr    c,.Coins
+  ld    a,255
+  ld    (basketballHudHandler),a
+  ret
+
+  .Coins:
+  ret
+
+  .Score:
+  ret
+
+  .ReduceComboTimeAndSetDX:
+  ld    a,(basketballFirstPointScored?)
+  or    a
+  ret   z
+
+  ld    a,(basketballCombotime)
+  dec   a
+  jr    z,.EndCheckSetComboTimeNX
+  ld    (basketballCombotime),a
+  .EndCheckSetComboTimeNX:
+
+  ;nx = time / maxtime * 45. or time *45 / maxtime
+  ld    d,0
+  ld    e,a
+  ld    hl,48
+  call  MultiplyHlWithDE      ;HL = result
+
+  ld    a,(basketballMaxCombotime)
+  ld    e,a
+  ld    d,0
+  push  hl
+  pop   bc
+  call  DivideBCbyDE          ; Out: BC = result, HL = rest
+  ld    a,c
+  add   a,198
+  ld    (BasketBallGameBar+dx),a
+
+  ld    a,0 + 16*0
+  ld    (BasketBallGameBar+clr),a
+  ld    a,1
+  ld    (BasketBallGameBar+nx),a
+  xor   a
+  ld    (BasketBallGameBar+dPage),a
+  ret
+
+  .ReduceTimeAndSetDX:
+  ld    a,(basketballFirstPointScored?)
+  or    a
+  ret   z
+
+  ld    a,(basketballtime)
+  dec   a
+  jr    z,.EndCheckSetTimeNX
+  ld    (basketballtime),a
+  .EndCheckSetTimeNX:
+
+  ;nx = time / maxtime * 45. or time *45 / maxtime
+  ld    d,0
+  ld    e,a
+  ld    hl,48
+  call  MultiplyHlWithDE      ;HL = result
+
+  ld    a,(basketballMaxtime)
+  ld    e,a
+  ld    d,0
+  push  hl
+  pop   bc
+  call  DivideBCbyDE          ; Out: BC = result, HL = rest
+  ld    a,c
+  add   a,32
+  ld    (BasketBallGameBar+dx),a
+  ret
+
+  .PutBarIn4Pages:
+  ld    a,(basketballFirstPointScored?)
+  or    a
+  ret   z
+
+  ld    a,$80
+  ld    (BasketBallGameBar+copytype),a
+  ld    a,0 + 16*0
+  ld    (BasketBallGameBar+clr),a
+  ld    a,1
+  ld    (BasketBallGameBar+nx),a
+  xor   a
+  ld    (BasketBallGameBar+dPage),a
+  ld    hl,BasketBallGameBar
+  call  DoCopy
+  ld    a,1
+  ld    (BasketBallGameBar+dPage),a
+  ld    hl,BasketBallGameBar
+  call  DoCopy
+  ld    a,2
+  ld    (BasketBallGameBar+dPage),a
+  ld    hl,BasketBallGameBar
+  call  DoCopy
+  ld    a,3
+  ld    (BasketBallGameBar+dPage),a
+  ld    hl,BasketBallGameBar
+  call  DoCopy
+  ret
+
+  .ResetTimers:
+  ld    a,$c0
+  ld    (BasketBallGameBar+copytype),a
+  ld    a,255
+  ld    (basketballHudHandler),a
+  ld    a,(basketballMaxtime)
+  ld    (basketballtime),a
+  ld    a,(basketballMaxCombotime)
+  ld    (basketballCombotime),a
+  ld    a,48
+  ld    (BasketBallGameBar+nx),a
+  ld    a,8 + 16*8
+  ld    (BasketBallGameBar+clr),a
+
+	ld    a,(screenpage)
+  ld    (BasketBallGameBar+dPage),a
+  ld    a,32
+  ld    (BasketBallGameBar+dx),a
+  ld    hl,BasketBallGameBar
+  call  DoCopy
+  ld    a,198
+  ld    (BasketBallGameBar+dx),a
+  ld    hl,BasketBallGameBar
+  call  DoCopy
+  ret
+
+HandleBasketBallGameOver:
+  xor   a
+  ld    (freezecontrols?),a
+  ld    a,(basketballtime)
+  dec   a
+  jr    nz,.EndCheckGameOver
+  ld    a,1
+  ld    (freezecontrols?),a
+  ;game over if time=0, basketball is lying on the ground and vertical speed=0
+  ld    a,(iy+y)
+  cp    255
+  jr    nz,.EndCheckGameOver
+  ld    a,(iy+var1)                       ;vertical speed
+  or    a
+  jr    nz,.EndCheckGameOver
+  ld    a,1
+  ld    (basketballGameOver?),a
+  .EndCheckGameOver:
+
+;
+; bit	7	  6	  5		    4		    3		    2		  1		  0
+;		  0	  0	  trig-b	trig-a	right	  left	down	up	(joystick)
+;		  F5	F1	'M'		  space	  right	  left	down	up	(keyboard)
+;;
+	ld		a,(Controls)
+	bit		6,a           ;f1 pressed ?
+  jr    nz,.GamveOver
+
+  ld    a,(basketballGameOver?)
+  or    a
+  ret   z
+
+  .GamveOver:
+	ld    a,(screenpage)
+  or    a
+  ret   nz
+
+  ld    hl,BasketBallPart1Address
+  ld    a,BasketBallGameOverGfxBlock
+  call  SetGfxAt8000InRam                             ;in: hl=adress in rom page 1, a=block, out: puts gfx in page 2 in ram at $8000
+
+  call  WaitVblank
+  call  WaitVblank
+
+  ld    hl,$8000 + (000*128) + (000/2) - 128
+  ld    de,$8000 + (012*128) + (064/2) - 128
+  ld    bc,$0000 + (020*256) + (128/2)
+  call  CopyRamToVram                       ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
+  call  WaitVblank
+
+  ld    hl,$8000 + (020*128) + (000/2) - 128
+  ld    de,$8000 + (032*128) + (064/2) - 128
+  ld    bc,$0000 + (020*256) + (128/2)
+  call  CopyRamToVram                       ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
+  call  WaitVblank
+
+  ld    hl,$8000 + (040*128) + (000/2) - 128
+  ld    de,$8000 + (052*128) + (064/2) - 128
+  ld    bc,$0000 + (020*256) + (128/2)
+  call  CopyRamToVram                       ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
+  call  WaitVblank
+
+  ld    hl,$8000 + (060*128) + (000/2) - 128
+  ld    de,$8000 + (072*128) + (064/2) - 128
+  ld    bc,$0000 + (020*256) + (128/2)
+  call  CopyRamToVram                       ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
+  call  WaitVblank
+
+  ld    hl,$8000 + (080*128) + (000/2) - 128
+  ld    de,$8000 + (092*128) + (064/2) - 128
+  ld    bc,$0000 + (020*256) + (128/2)
+  call  CopyRamToVram                       ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
+  call  WaitVblank
+
+  ld    hl,$8000 + (100*128) + (000/2) - 128
+  ld    de,$8000 + (112*128) + (064/2) - 128
+  ld    bc,$0000 + (019*256) + (128/2)
+  call  CopyRamToVram                       ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
+   
+  ld    a,1*32 + 31
+	ld    (PageOnNextVblank),a
+  call  SpritesOff
+
+.q: jp .q
+
+  ret
+
+
+  xor   a
+  ld    hl,vblankintflag
+  .checkflag:
+  cp    (hl)
+  jr    z,.checkflag
+  ld    (hl),a
+  jp    LevelEngine
+
+
+
 BasketBallGameRoutine:
   ld    a,(framecounter2)
   inc   a
   ld    (framecounter2),a
 
+  call  .HandlePhase                        ;load graphics, init variables
+  call  HandleBasketBallgameHud
   call  CheckEndArcadeGameTriggerB
   call  HandleBasketBall
   call  SetwallCoverUps
+  call  SetBallShadow
+  call  .HandleBallShadowCoverUp
   call  HandleNet
-  call  .HandlePhase                        ;load graphics, init variables
+  call  HandleBasketBallGameOver
+  ret
+
+.HandleBallShadowCoverUp:
+  ;set x,y shadow coverup sprites
+  ld    a,112
+  ld    (ShadowCoverUpSpriteLeftYSpat),a                 ;y shadow coverup sprite left
+  ld    (ShadowCoverUpSpriteLeftYSpat+4),a                 ;y shadow coverup sprite left
+  ld    a,112
+  ld    (ShadowCoverUpSpriteRightYSpat),a                 ;y shadow coverup sprite right
+  ld    (ShadowCoverUpSpriteRightYSpat+4),a                 ;y shadow coverup sprite right
+
+  ld    a,(iy+y)
+  cp    253
+  ret   c
+
+  ;set x,y shadow coverup sprites
+  ld    a,213
+  ld    (ShadowCoverUpSpriteLeftYSpat),a                 ;y shadow coverup sprite left
+  ld    (ShadowCoverUpSpriteLeftYSpat+4),a                 ;y shadow coverup sprite left
+  ld    a,213
+  ld    (ShadowCoverUpSpriteRightYSpat),a                 ;y shadow coverup sprite right
+  ld    (ShadowCoverUpSpriteRightYSpat+4),a                 ;y shadow coverup sprite right
   ret
 
   .HandlePhase:
@@ -2285,6 +2569,19 @@ BasketBallGameRoutine:
   ret   nz
   ld    (iy+ObjectPhase),1
 
+  xor   a
+  ld    (basketballGameOver?),a
+  ld    (basketballFirstPointScored?),a
+  ld    a,80
+  ld    (basketballtime),a
+  ld    (basketballMaxtime),a
+  ld    a,50
+  ld    (basketballCombotime),a
+  ld    (basketballMaxCombotime),a
+  ld    a,255
+  ld    (basketballHudHandler),a
+
+  ;set court in page 0
   ld    hl,CourtPart1Address
   ld    a,BasketBallCourtGfxBlock
   call  SetGfxAt8000InRam                             ;in: hl=adress in rom page 1, a=block, out: puts gfx in page 2 in ram at $8000
@@ -2303,16 +2600,30 @@ BasketBallGameRoutine:
   ld    bc,$0000 + (007*256) + (256/2)
   call  CopyRamToVram                       ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
 
+  ;copy court to page 1
   xor   a
   ld    (CopyPageToPage212High+sPage),a
   ld    a,1
   ld    (CopyPageToPage212High+dPage),a
   ld    hl,CopyPageToPage212High
   call  DoCopy
+
+  ;set font at y=212 page 1
+  ld    hl,BasketBallFontPart1Address
+  ld    a,BasketBallFontGfxBlock
+  call  SetGfxAt8000InRam                             ;in: hl=adress in rom page 1, a=block, out: puts gfx in page 2 in ram at $8000
+
+  ld    hl,$8000 + (000*128) + (000/2) - 128
+  ld    de,$8000 + (212*128) + (000/2) - 128
+  ld    bc,$0000 + (009*256) + (256/2)
+  call  CopyRamToVram                       ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
+
+  ;copy court to page 2
   ld    a,2
   ld    (CopyPageToPage212High+dPage),a
   ld    hl,CopyPageToPage212High
   call  DoCopy
+  ;copy court to page 3
   ld    a,3
   ld    (CopyPageToPage212High+dPage),a
   ld    hl,CopyPageToPage212High
@@ -2324,6 +2635,24 @@ BasketBallGameRoutine:
   ld    a,1
   ld    (SetArcadeGamePalette?),a
   call  .SetBasketballSprite
+
+  ;set x,y shadow sprites
+  ld    a,111
+  ld    (ShadowSpriteYSpat),a                 ;y shadow sprite
+
+  ;set x,y shadow coverup sprites
+  ld    a,112
+  ld    (ShadowCoverUpSpriteLeftYSpat),a                 ;y shadow coverup sprite left
+  ld    (ShadowCoverUpSpriteLeftYSpat+4),a                 ;y shadow coverup sprite left
+  xor   a
+  ld    (ShadowCoverUpSpriteLeftXSpat),a                 ;x shadow coverup sprite left
+  ld    (ShadowCoverUpSpriteLeftXSpat+4),a                 ;x shadow coverup sprite left
+  ld    a,112
+  ld    (ShadowCoverUpSpriteRightYSpat),a                 ;y shadow coverup sprite right
+  ld    (ShadowCoverUpSpriteRightYSpat+4),a                 ;y shadow coverup sprite right
+  ld    a,250
+  ld    (ShadowCoverUpSpriteRightXSpat),a                 ;x shadow coverup sprite right
+  ld    (ShadowCoverUpSpriteRightXSpat+4),a                 ;x shadow coverup sprite right
 
   ;set x,y wallcoverupsprites
   xor   a
@@ -2359,7 +2688,8 @@ BasketBallGameRoutine:
 
 	ld		hl,WallCoverUpsCharSprite	;sprite 0 character table in VRAM
 	ld		c,$98
-	call	outix320		;write sprite color of pointer and hand to vram
+	call	outix352		;write sprite color of pointer and hand to vram
+	call	outix128		;write sprite color of pointer and hand to vram
 
 	xor		a				;page 0/1
 	ld		hl,sprcoladdr+8*16	;sprite 0 color table in VRAM
@@ -2367,7 +2697,8 @@ BasketBallGameRoutine:
 
 	ld		hl,WallCoverUpsColSprite	;sprite 0 character table in VRAM
 	ld		c,$98
-	call	outix160	;write sprite color of pointer and hand to vram
+	call	outix176	;write sprite color of pointer and hand to vram
+	call	outix64	;write sprite color of pointer and hand to vram
 
   ;first 8 sprites are empty wall coverup sprites
 	xor		a				;page 0/1
@@ -2381,12 +2712,23 @@ BasketBallGameRoutine:
   djnz  .loop
   ret
 
+ShadowCoverUpSpriteLeftYSpat:       equ spat+0+18*4
+ShadowCoverUpSpriteLeftXSpat:       equ spat+1+18*4
+ShadowCoverUpSpriteRightYSpat:      equ spat+0+20*4
+ShadowCoverUpSpriteRightXSpat:      equ spat+1+20*4
+ShadowSpriteYSpat:                  equ spat+0+22*4
+ShadowSpriteXSpat:                  equ spat+1+22*4
+
 	WallCoverUpsCharSprite:
 	include "..\grapx\basketball\sprites\WallCoverUps.tgs.gen"
 	NetCharSprite:
 	include "..\grapx\basketball\sprites\net.tgs.gen"
 	BasketballCharSprite:
 	include "..\grapx\basketball\sprites\basketball.tgs.gen"
+	WallCoverUpsCharSpriteForShadow:
+	include "..\grapx\basketball\sprites\WallCoverUps.tgs.gen"
+	ShadowCharSprite:
+	include "..\grapx\basketball\sprites\Shadow.tgs.gen"
 
 	WallCoverUpsColSprite:
 	include "..\grapx\basketball\sprites\WallCoverUps.tcs.gen"
@@ -2394,9 +2736,11 @@ BasketBallGameRoutine:
 	include "..\grapx\basketball\sprites\net.tcs.gen"
 	BasketballColorSprite:	
 	include "..\grapx\basketball\sprites\basketball.tcs.gen"
+	WallCoverUpsColSpriteForShadow:
+	include "..\grapx\basketball\sprites\WallCoverUps.tcs.gen"
+	ShadowColorSprite:	
+	include "..\grapx\basketball\sprites\Shadow.tcs.gen"
 
-  BasketBallCourtPalette:
-  incbin "..\grapx\BasketBall\sprites\BasketballPalette.sc5",$7680+7,32
 
 HandleNet:
   call  .SetXYinSpat
@@ -2518,7 +2862,7 @@ HandleBasketBall:
 ;		  F5	F1	'M'		  space	  right	  left	down	up	(keyboard)
 ;;
 ;	ld		a,(NewPrContr)
-;	bit		6,a           ;space pressed ?
+;	bit		6,a           ;f1 pressed ?
 ;jp nz,.score
   
 
@@ -2546,6 +2890,8 @@ HandleBasketBall:
   ld    (iy+var2),0                       ;horizontal speed
 
   ld    (iy+x),36
+  ld    a,1
+  ld    (basketballFirstPointScored?),a
   ret
 
   .CheckScoredRightSide:
@@ -2560,12 +2906,14 @@ HandleBasketBall:
   ret   c
   cp    194 + 4
   ret   nc
-.score:
+
   ld    a,6                                         ;wait (then phase 7:scroll basket out of screen on the right side)
 	ld		(Object2+ObjectPhase),a											;start with object2
   ld    (iy+var2),0                       ;horizontal speed
 
   ld    (iy+x),36 + XDifferenceBaskets - 3
+  ld    a,1
+  ld    (basketballFirstPointScored?),a
   ret
 
 
@@ -2612,6 +2960,10 @@ HandleBasketBall:
   .SetXYinSpat:
   ld    a,(iy+y)
   sub   144
+  cp    216
+  jr    nz,.EndCheck216
+  ld    a,215
+  .EndCheck216:
   ld    (spat+0+(16*4)),a                 ;y sprite 0
   ld    (spat+0+(17*4)),a                 ;y sprite 1
   ld    a,(iy+x)
@@ -2664,9 +3016,9 @@ HandleBasketBall:
   ld    a,(iy+var1)                       ;vertical speed
   add   a,(iy+y)
   ld    (iy+y),a
-  cp    20
+  cp    103
   ret   nc
-  ld    (iy+y),20
+  ld    (iy+y),103
   ret
 
   .MoveDown:

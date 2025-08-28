@@ -1,0 +1,17 @@
+; Sprite 0 - Mode : 2 sprites, color OR on 
+  db 255
+  db 255
+  db 255
+  db 255
+  db 255
+  db 255
+  db 255
+  db 255
+  db 255
+  db 255
+  db 255
+  db 255
+  db 255
+  db 4
+  db 4
+  db 4

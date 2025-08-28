@@ -33,8 +33,6 @@ LevelEngine:
   or    a
   call  z,WriteSpatToVram
 
-
-
   xor   a
   ld    hl,vblankintflag
   .checkflag:
@@ -216,6 +214,8 @@ vblank:
   pop   af 
   ei
   ret
+  BasketBallCourtPalette:
+  incbin "..\grapx\BasketBall\sprites\BasketballPalette.sc5",$7680+7,32
 
 
 
