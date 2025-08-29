@@ -1,11 +1,11 @@
 ;UpgradeMenuEventRoutine
 ;DrillingLocationsRoutine
-;BasketBallGameRoutine
 ;PenguinBikeRaceGameRoutine
 ;BlockHitGameRoutine
 ;JumpDownGameRoutine
 ;BasketMovementRoutine
 ;BasketBallGameRoutine
+;BackToTitleScreenBasketBall
 
 Phase MovementRoutinesAddress
 
@@ -2080,6 +2080,227 @@ NXPerSymbol2:
 ;               a     b     c     d     e     f     g     h     i     j     k     l     m     n     o     p     q     r     s     t     u     v     w     x     y     z     {     |     }     ~
   db  007+0,007+0,007+0,007+0,007+0,007+0,005+0,007+0,007+0,003+0,005+0,007+0,005+0,009+0,007+0,007+0,007+0,007+0,005+0,007+0,005+0,007+0,007+0,009+0,007+0,007+0,007+0,006+0,004+0,004+0,004+0,004+0
 
+
+
+
+
+;this routine puts basketball titlescreen in page 0, while game screen is in page 1 
+BackToTitleScreenBasketBall:
+  ;set buttons
+  ld    hl,BasketBallButtonsPart1Address
+  ld    a,BasketBallButtonsGfxBlock
+  call  SetGfxAt8000InRam                             ;in: hl=adress in rom page 1, a=block, out: puts gfx in page 2 in ram at $8000
+
+  call  WaitVblank
+  call  WaitVblank
+
+  ld    hl,$8000 + (000*128) + (000/2) - 128
+  ld    de,$8000 + (221*128) + (000/2) - 128
+  ld    bc,$0000 + (010*256) + (256/2)              ;10 lines for the buttons
+  call  CopyRamToVram                       ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
+
+  ;set title screen
+  ld    hl,BasketBallTitleScreenPart1Address
+  ld    a,BasketBallTitleScreenGfxBlock
+  call  SetGfxAt8000InRam                             ;in: hl=adress in rom page 1, a=block, out: puts gfx in page 2 in ram at $8000
+
+  call  WaitVblank
+  call  WaitVblank
+
+  ld    hl,$8000 + (000*128) + (000/2) - 128
+  ld    de,$0000 + (000*128) + (000/2) - 128
+
+  ld    b,12                                        ;12 * 10 lines=120 lines
+  .loop:
+  push  bc
+  call  .Copy10lines
+  ld    bc,10*128
+  add   hl,bc
+  ex    de,hl
+  add   hl,bc
+  ex    de,hl
+  pop   bc
+  djnz  .loop
+
+  ld    bc,$0000 + (008*256) + (256/2)              ;8 more lines
+  call  CopyRamToVram                       ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
+
+  ld    hl,BasketBallTitleScreenPart2Address
+  ld    a,BasketBallTitleScreenGfxBlock
+  call  SetGfxAt8000InRam                             ;in: hl=adress in rom page 1, a=block, out: puts gfx in page 2 in ram at $8000
+
+  call  WaitVblank
+  call  WaitVblank
+
+  ld    hl,$8000 + (000*128) + (000/2) - 128
+  ld    de,$0000 + (128*128) + (000/2) - 128
+  ld    bc,$0000 + (007*256) + (256/2)              ;7 more lines
+  call  CopyRamToVram                       ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
+
+  ;set palette
+  ld    hl,BasketBallTitleScreenPalette
+  ld    (Vblank.SelfModifyingCodeArcadeVblankPalette),hl
+
+  ld    a,0*32 + 31
+	ld    (PageOnNextVblank),a
+
+  .Engine:
+  ld    a,(framecounter2)
+  inc   a
+  ld    (framecounter2),a
+  call  PopulateControls
+  call  .SelectButton
+  call  .BlinkSelectedButton
+
+  xor   a
+  ld    hl,vblankintflag
+  .checkflag:
+  cp    (hl)
+  jr    z,.checkflag
+  ld    (hl),a
+  jp    .Engine
+
+  .SelectButton:
+;
+; bit	7	  6	  5		    4		    3		    2		  1		  0
+;		  0	  0	  trig-b	trig-a	right	  left	down	up	(joystick)
+;		  F5	F1	'M'		  space	  right	  left	down	up	(keyboard)
+;
+	ld		a,(NewPrContr)
+	bit		4,a           ;trig a pressed ?
+  jr    nz,.TriggerAPressed
+  and   %0000 1100
+  cp    %0000 0100
+  jr    z,.LeftPressed
+  cp    %0000 1000
+  ret   nz
+  .RightPressed:
+  ld    a,1
+  ld    (basketballTitleScreenButton),a ;0=left button selected, 1=right button selected
+  ret
+  .LeftPressed:
+  xor   a
+  ld    (basketballTitleScreenButton),a ;0=left button selected, 1=right button selected
+  ret
+  .TriggerAPressed:
+  ld    a,(basketballTitleScreenButton) ;0=left button selected, 1=right button selected
+  or    a
+  jr    z,.StartGame
+
+  .StartShopMenu:
+  ret
+
+  .StartGame:
+  ;reset score and time bars
+  ld    hl,CourtPart1Address
+  ld    a,BasketBallCourtGfxBlock
+  call  SetGfxAt8000InRam                             ;in: hl=adress in rom page 1, a=block, out: puts gfx in page 2 in ram at $8000
+
+  ld    a,1
+  ld    (Vdp_Write_HighPage?),a
+  ld    hl,$8000 + (007*128) + (000/2) - 128
+  ld    de,$0000 + (007*128) + (000/2) - 128
+  ld    bc,$0000 + (006*256) + (256/2)
+  call  CopyRamToVram                       ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
+  xor   a
+  ld    (Vdp_Write_HighPage?),a
+
+  call  BasketBallGameRoutine.ResetVariables
+  call  WriteSpatToVram
+  ld    a,2*32 + 31
+	ld    (PageOnNextVblank),a
+  ld    hl,BasketBallCourtPalette
+  ld    (Vblank.SelfModifyingCodeArcadeVblankPalette),hl
+
+  call  SpritesOn
+
+  ld    hl,.CopyPage2ToPage3
+  call  DoCopy
+  ld    hl,.CopyPage2ToPage1
+  call  DoCopy
+  ld    hl,.CopyPage2ToPage0
+  call  DoCopy
+  call  WaitVdpReady
+  call  WaitVblank
+  call  WaitVblank
+;.q: jp .q
+
+  pop   af
+  ret
+
+  .CopyPage2ToPage1:
+	db		0,0,0,2
+	db		0,0,0,1
+	db		0,1,135,0
+	db		0,0,$d0	
+  .CopyPage2ToPage3:
+	db		0,0,0,2
+	db		0,0,0,3
+	db		0,1,135,0
+	db		0,0,$d0	
+  .CopyPage2ToPage0:
+	db		0,0,0,2
+	db		0,0,0,0
+	db		0,1,135,0
+	db		0,0,$d0	
+
+
+  .BlinkSelectedButton:
+  ld    a,(basketballTitleScreenButton) ;0=left button selected, 1=right button selected
+  or    a
+  jp    z,.BlinkLeftButton
+
+  .BlinkRightButton:
+  ld    hl,.ShowStartButtonBlinkOff
+  call  DoCopy
+  ld    hl,.ShowShopButtonBlinkOn
+  call  DoCopy
+  ret
+
+  .BlinkLeftButton:
+  ld    hl,.ShowStartButtonBlinkOn
+  call  DoCopy
+  ld    hl,.ShowShopButtonBlinkOff
+  call  DoCopy
+  ret
+
+  .Copy10lines:
+  push  hl
+  push  de
+  ld    bc,$0000 + (010*256) + (256/2)
+  call  CopyRamToVram                       ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
+  call  WaitVblank
+  pop   de
+  pop   hl
+  ret
+
+  .ShowStartButtonBlinkOff:
+  db    000,000,221,001                 ;sx,--,sy,spage
+  db    078,000,120,000                 ;dx,--,dy,dpage
+  db    038,000,010,000                 ;nx,--,ny,--
+  db    000,%0000 0000,$d0              ;fast copy -> Copy from right to left     
+
+  .ShowStartButtonBlinkOn:
+  db    038,000,221,001                 ;sx,--,sy,spage
+  db    078,000,120,000                 ;dx,--,dy,dpage
+  db    038,000,010,000                 ;nx,--,ny,--
+  db    000,%0000 0000,$d0              ;fast copy -> Copy from right to left     
+
+  .ShowShopButtonBlinkOff:
+  db    076,000,221,001                 ;sx,--,sy,spage
+  db    142,000,120,000                 ;dx,--,dy,dpage
+  db    038,000,010,000                 ;nx,--,ny,--
+  db    000,%0000 0000,$d0              ;fast copy -> Copy from right to left     
+  
+  .ShowShopButtonBlinkOn:
+  db    114,000,221,001                 ;sx,--,sy,spage
+  db    142,000,120,000                 ;dx,--,dy,dpage
+  db    038,000,010,000                 ;nx,--,ny,--
+  db    000,%0000 0000,$d0              ;fast copy -> Copy from right to left     
+  
+
+
+
 ;basket right side
 Basketball_1:        db    Basketballframelistblock, Basketballspritedatablock | dw    Basketball_1_0
 Basketball_16:        db    Basketballframelistblock, Basketballspritedatablock | dw    Basketball_16_0
@@ -2255,7 +2476,7 @@ BasketMovementRoutine:
   ld    (iy+SpriteData+1),h
   ret
 
-  .FullyInScreenNowMoveRight:
+  .FullyInScreenNowMoveRight: 
   ld    a,(iy+x)
   add   a,2
   ld    (iy+x),a
@@ -2330,12 +2551,12 @@ IncreaseScoreAndComboDecreaseMaxTimers:
   ret
 
 SetBallShadow:
-  ld    a,(spat+1+(16*4))                 ;x basketball
+  ld    a,(BasketBallSpriteXSpat)                 ;x basketball
   ld    (ShadowSpriteXSpat),a             ;x shadow sprite
   ret
 
 SetwallCoverUps:
-  ld    a,(spat+0+(16*4))                 ;y basketball
+  ld    a,(BasketBallSpriteYSpat)                 ;y basketball
   ld    (spat+0+(08*4)),a                 ;y sprite 0
   ld    (spat+0+(09*4)),a                 ;y sprite 1
   ld    (spat+0+(10*4)),a                 ;y sprite 2
@@ -2750,11 +2971,7 @@ HandleBasketBallGameOver:
   ld    (freezecontrols?),a  
   call  STOPWAITSPACEPRESSED
 
-  ld    a,19                                ;back to title screen basketball game
-  ld    (CurrentRoom),a
-  ld    a,1
-  ld    (ChangeRoom?),a
-  ret
+  jp    BackToTitleScreenBasketBall
 
 .PercentageSymbol:                     ;freely usable anywhere
   db    163,000,060,001                 ;sx,--,sy,spage
@@ -2899,7 +3116,7 @@ HandlePickUpCoin:
   cp    (iy+x)
   ret   c
 
-  ld    a,(spat+0+(16*4))                     ;y basketball
+  ld    a,(BasketBallSpriteYSpat)                     ;y basketball
   ld    b,a
 
   ld    a,(CoinSpriteYSpat)                   ;x coin sprite
@@ -2917,6 +3134,9 @@ HandlePickUpCoin:
   ld    a,213
   ld    (CoinSpriteYSpat),a                   ;y coin sprite
   ld    (CoinSpriteYSpat+4),a                   ;y coin sprite
+  ld    a,255 ;????????? if we dont do this we get coin bug
+  ld    (CoinSpriteXSpat),a                   ;y coin sprite
+  ld    (CoinSpriteXSpat+4),a                   ;y coin sprite
   ret
 
 BasketBallGameRoutine:
@@ -2962,22 +3182,6 @@ BasketBallGameRoutine:
   bit   0,(iy+ObjectPhase)
   ret   nz
   ld    (iy+ObjectPhase),1
-
-  xor   a
-  ld    (basketballGameOver?),a
-  ld    (basketballFirstPointScored?),a
-  ld    (basketballcoins),a
-  ld    hl,0
-  ld    (basketballScore),hl
-  ld    (basketballCombo),hl
-  ld    a,150
-  ld    (basketballtime),a
-  ld    (basketballMaxtime),a
-  ld    a,100
-  ld    (basketballCombotime),a
-  ld    (basketballMaxCombotime),a
-  ld    a,255
-  ld    (basketballHudHandler),a
 
   ;set court in page 0
   ld    hl,CourtPart1Address
@@ -3030,13 +3234,52 @@ BasketBallGameRoutine:
   call  SetArcadeMachine
   call  SetInterruptHandlerArcadeMachine   	;sets Vblank and lineint for hud
 
+  .ResetVariables:
+  push  iy
+  ld    iy,Object2
+  ld    (iy+ObjectPhase),1
+  ld    (iy+x),84
+  ld    hl,Basketball_15
+  ld    (iy+SpriteData),l
+  ld    (iy+SpriteData+1),h
+  pop   iy
+
+  ;set palette
+  ld    hl,BasketBallCourtPalette
+  ld    (Vblank.SelfModifyingCodeArcadeVblankPalette),hl
+
   ld    a,1
   ld    (SetArcadeGamePalette?),a
   call  .SetBasketballGameSprites
 
+  xor   a
+  ld    (basketballGameOver?),a
+  ld    (basketballFirstPointScored?),a
+  ld    (basketballcoins),a
+  ld    (basketballTitleScreenButton),a
+  ld    hl,0
+  ld    (basketballScore),hl
+  ld    (basketballCombo),hl
+  ld    a,150
+  ld    (basketballtime),a
+  ld    (basketballMaxtime),a
+  ld    a,100
+  ld    (basketballCombotime),a
+  ld    (basketballMaxCombotime),a
+  ld    a,255
+  ld    (basketballHudHandler),a
+
+  ld    a,213
+  ld    (NetSpriteYSpat),a
+  ld    (NetSpriteYSpat+4),a
+  ld    (NetSpriteOpenYSpat),a
+  ld    (NetSpriteOpenYSpat+4),a
+
   ;set y shadow sprite
   ld    a,111
   ld    (ShadowSpriteYSpat),a                 ;y shadow sprite
+  ld    a,120                                 ;x basketball
+  ld    (ShadowSpriteXSpat),a                 ;x shadow sprite
 
   ;set y coin sprites
   ld    a,213
@@ -3044,13 +3287,13 @@ BasketBallGameRoutine:
   ld    (CoinSpriteYSpat+4),a                   ;y coin sprite
 
   ;set x,y shadow coverup sprites
-  ld    a,112
+  ld    a,213
   ld    (ShadowCoverUpSpriteLeftYSpat),a                 ;y shadow coverup sprite left
   ld    (ShadowCoverUpSpriteLeftYSpat+4),a                 ;y shadow coverup sprite left
   xor   a
   ld    (ShadowCoverUpSpriteLeftXSpat),a                 ;x shadow coverup sprite left
   ld    (ShadowCoverUpSpriteLeftXSpat+4),a                 ;x shadow coverup sprite left
-  ld    a,112
+  ld    a,213
   ld    (ShadowCoverUpSpriteRightYSpat),a                 ;y shadow coverup sprite right
   ld    (ShadowCoverUpSpriteRightYSpat+4),a                 ;y shadow coverup sprite right
   ld    a,250
@@ -3080,6 +3323,13 @@ BasketBallGameRoutine:
   .SetBasketballGameSprites:
   ld    (iy+x),120                      ;x basketball
   ld    (iy+y),255                       ;y basketball
+  ld    a,(iy+y)
+  sub   144
+  ld    (BasketBallSpriteYSpat),a                 ;y sprite 0
+  ld    (BasketBallSpriteYSpat+4),a                 ;y sprite 1
+  ld    a,(iy+x)
+  ld    (BasketBallSpriteXSpat),a                 ;x sprite 0
+  ld    (BasketBallSpriteXSpat+4),a                 ;x sprite 1
 
 ;  ld    (iy+x),120-70                      ;x basketball
 ;  ld    (iy+y),255-200                       ;y basketball
@@ -3115,6 +3365,13 @@ BasketBallGameRoutine:
   djnz  .loop
   ret
 
+NetSpriteYSpat:                     equ spat+0+12*4
+NetSpriteXSpat:                     equ spat+1+12*4
+NetSpriteOpenYSpat:                 equ spat+0+14*4
+NetSpriteOpenXSpat:                 equ spat+1+14*4
+
+BasketBallSpriteYSpat:              equ spat+0+16*4
+BasketBallSpriteXSpat:              equ spat+1+16*4
 ShadowCoverUpSpriteLeftYSpat:       equ spat+0+18*4
 ShadowCoverUpSpriteLeftXSpat:       equ spat+1+18*4
 ShadowCoverUpSpriteRightYSpat:      equ spat+0+20*4
@@ -3123,6 +3380,7 @@ ShadowSpriteYSpat:                  equ spat+0+22*4
 ShadowSpriteXSpat:                  equ spat+1+22*4
 CoinSpriteYSpat:                    equ spat+0+23*4
 CoinSpriteXSpat:                    equ spat+1+23*4
+
 
 	WallCoverUpsCharSprite:
 	include "..\grapx\basketball\sprites\WallCoverUps.tgs.gen"
@@ -3167,10 +3425,10 @@ HandleNet:
   jr    z,.RightJustScored
 
   ld    a,213
-  ld    (spat+0+(12*4)),a                 ;y sprite 0
-  ld    (spat+0+(13*4)),a                 ;y sprite 1
-  ld    (spat+0+(14*4)),a                 ;x sprite 0
-  ld    (spat+0+(15*4)),a                 ;x sprite 1
+  ld    (NetSpriteYSpat),a                 ;y sprite 0
+  ld    (NetSpriteYSpat+4),a                 ;y sprite 1
+  ld    (NetSpriteOpenYSpat),a                 ;x sprite 0
+  ld    (NetSpriteOpenYSpat+4),a                 ;x sprite 1
   ret
 
   .RightJustScored:
@@ -3179,28 +3437,28 @@ HandleNet:
   jr    nc,.Right
 
   ld    a,52
-  ld    (spat+0+(14*4)),a                 ;y sprite 0
-  ld    (spat+0+(15*4)),a                 ;y sprite 1
+  ld    (NetSpriteOpenYSpat),a                 ;y sprite 0
+  ld    (NetSpriteOpenYSpat+4),a                 ;y sprite 1
   ld    a,206
-  ld    (spat+1+(14*4)),a                 ;x sprite 0
-  ld    (spat+1+(15*4)),a                 ;x sprite 1
+  ld    (NetSpriteOpenXSpat),a                 ;x sprite 0
+  ld    (NetSpriteOpenXSpat+4),a                 ;x sprite 1
 
   ld    a,213
-  ld    (spat+0+(12*4)),a                 ;y sprite 0
-  ld    (spat+0+(13*4)),a                 ;y sprite 1
+  ld    (NetSpriteYSpat),a                 ;y sprite 0
+  ld    (NetSpriteYSpat+4),a                 ;y sprite 1
   ret
 
   .Right:
   ld    a,52
-  ld    (spat+0+(12*4)),a                 ;y sprite 0
-  ld    (spat+0+(13*4)),a                 ;y sprite 1
+  ld    (NetSpriteYSpat),a                 ;y sprite 0
+  ld    (NetSpriteYSpat+4),a                 ;y sprite 1
   ld    a,206
-  ld    (spat+1+(12*4)),a                 ;x sprite 0
-  ld    (spat+1+(13*4)),a                 ;x sprite 1
+  ld    (NetSpriteXSpat),a                 ;x sprite 0
+  ld    (NetSpriteXSpat+4),a                 ;x sprite 1
 
   ld    a,213
-  ld    (spat+0+(14*4)),a                 ;y sprite 0
-  ld    (spat+0+(15*4)),a                 ;y sprite 1
+  ld    (NetSpriteOpenYSpat),a                 ;y sprite 0
+  ld    (NetSpriteOpenYSpat+4),a                 ;y sprite 1
   ret
 
   .LeftJustScored:
@@ -3209,28 +3467,28 @@ HandleNet:
   jr    nc,.Left
 
   ld    a,52
-  ld    (spat+0+(14*4)),a                 ;y sprite 0
-  ld    (spat+0+(15*4)),a                 ;y sprite 1
+  ld    (NetSpriteOpenYSpat),a                 ;y sprite 0
+  ld    (NetSpriteOpenYSpat+4),a                 ;y sprite 1
   ld    a,35
-  ld    (spat+1+(14*4)),a                 ;x sprite 0
-  ld    (spat+1+(15*4)),a                 ;x sprite 1
+  ld    (NetSpriteOpenXSpat),a                 ;x sprite 0
+  ld    (NetSpriteOpenXSpat+4),a                 ;x sprite 1
 
   ld    a,213
-  ld    (spat+0+(12*4)),a                 ;y sprite 0
-  ld    (spat+0+(13*4)),a                 ;y sprite 1
+  ld    (NetSpriteYSpat),a                 ;y sprite 0
+  ld    (NetSpriteYSpat+4),a                 ;y sprite 1
   ret
 
   .Left:
   ld    a,52
-  ld    (spat+0+(12*4)),a                 ;y sprite 0
-  ld    (spat+0+(13*4)),a                 ;y sprite 1
+  ld    (NetSpriteYSpat),a                 ;y sprite 0
+  ld    (NetSpriteYSpat+4),a                 ;y sprite 1
   ld    a,35
-  ld    (spat+1+(12*4)),a                 ;x sprite 0
-  ld    (spat+1+(13*4)),a                 ;x sprite 1
+  ld    (NetSpriteXSpat),a                 ;x sprite 0
+  ld    (NetSpriteXSpat+4),a                 ;x sprite 1
 
   ld    a,213
-  ld    (spat+0+(14*4)),a                 ;y sprite 0
-  ld    (spat+0+(15*4)),a                 ;y sprite 1
+  ld    (NetSpriteOpenYSpat),a                 ;y sprite 0
+  ld    (NetSpriteOpenYSpat+4),a                 ;y sprite 1
   ret
 
 XDifferenceBaskets: equ 173
@@ -3373,11 +3631,11 @@ HandleBasketBall:
   jr    nz,.EndCheck216
   ld    a,215
   .EndCheck216:
-  ld    (spat+0+(16*4)),a                 ;y sprite 0
-  ld    (spat+0+(17*4)),a                 ;y sprite 1
+  ld    (BasketBallSpriteYSpat),a                 ;y sprite 0
+  ld    (BasketBallSpriteYSpat+4),a                 ;y sprite 1
   ld    a,(iy+x)
-  ld    (spat+1+(16*4)),a                 ;x sprite 0
-  ld    (spat+1+(17*4)),a                 ;x sprite 1
+  ld    (BasketBallSpriteXSpat),a                 ;x sprite 0
+  ld    (BasketBallSpriteXSpat+4),a                 ;x sprite 1
   ret
 
   .HandleTrigA:

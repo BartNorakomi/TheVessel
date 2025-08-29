@@ -195,6 +195,7 @@ vblank:
   ld    a,(SetArcadeGamePalette?)
   or    a
   jp    z,.EndCheckSetArcadeGamePalette
+  .SelfModifyingCodeArcadeVblankPalette:  equ $+1
   ld    hl,BasketBallCourtPalette
   call	SetPalette
   call  WriteSpatToVram
@@ -216,6 +217,8 @@ vblank:
   ret
   BasketBallCourtPalette:
   incbin "..\grapx\BasketBall\sprites\BasketballPalette.sc5",$7680+7,32
+  BasketBallTitleScreenPalette:
+  incbin "..\grapx\basketball\TitleScreen\TitleScreen.sc5",$7680+7,32
 
 
 

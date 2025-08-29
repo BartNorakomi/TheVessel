@@ -153,8 +153,8 @@ EventBlockHitGame:				db	1,$28,$7e | dw 000,000					,000        | db 255      ,M
 EventJumpDownGame:				db	1,$28,$7e | dw 000,000					,000        | db 255      ,MovementRoutines2Block| dw JumpDownGameRoutine		| db 000,000 ,000, 000
 
 EventBasketBallGame:			db	1,$28,$7e | dw 000,000					,000        | db 255      ,MovementRoutines2Block| dw BasketBallGameRoutine					| db 000,000 ,000, 000
-;ObjectBasket:  						db  1,025,084 | dw 000,000		,Basketball_15end     | db 255      ,MovementRoutines2Block | dw BasketMovementRoutine				| db 001,000 ,000, 000
-ObjectBasket:  						db  1,025,172 | dw 000,000		,Basketball_29     | db 255      ,MovementRoutines2Block | dw BasketMovementRoutine				| db 004,000 ,000, 000
+ObjectBasket:  						db  1,025,084 | dw 000,000		,Basketball_15end     | db 255      ,MovementRoutines2Block | dw BasketMovementRoutine				| db 001,000 ,000, 000
+;ObjectBasket:  						db  1,025,172 | dw 000,000		,Basketball_29     | db 255      ,MovementRoutines2Block | dw BasketMovementRoutine				| db 004,000 ,000, 000
 
 
 
@@ -2734,6 +2734,7 @@ basketballScore:					rb	2
 basketballCombo:					rb	2
 basketballresettimervar:	rb	1
 basketballcoins:					rb	1
+basketballTitleScreenButton:	rb	1
 
 endenginepage3variables:  equ $+enginepage3length
 org variables
