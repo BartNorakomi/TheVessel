@@ -1,7 +1,7 @@
 phase	$c000
 
 StartAtTitleScreen?:                equ 0
-MusicOn?:                           equ 1
+MusicOn?:                           equ 0
 Promo?:                             equ 0
 ConversationsOn?:                  	equ 1
 
@@ -2500,10 +2500,16 @@ COUNT_LOOP:
 
 Ascii5Byte:	db "29993",255
 
-
-
-
-
+SetHLToAscii5ByteSkip0:
+	ld		hl,Ascii5Byte
+	ld		b,4
+	.loop:
+	ld		a,(hl)
+	cp		"0"
+	ret		nz
+	inc		hl
+	djnz	.loop
+	ret
 
 NPCAniCount:     									db  0,0
 PlayerSpriteStand: 								dw  Rstanding
@@ -2727,6 +2733,7 @@ basketballFirstPointScored?:			rb	1
 basketballScore:					rb	2
 basketballCombo:					rb	2
 basketballresettimervar:	rb	1
+basketballcoins:					rb	1
 
 endenginepage3variables:  equ $+enginepage3length
 org variables

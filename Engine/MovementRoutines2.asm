@@ -9,8 +9,6 @@
 
 Phase MovementRoutinesAddress
 
-
-
 DigSite1dx:  equ 152
 DigSite1dy:  equ 049
 DigSite2dx:  equ 183
@@ -2173,7 +2171,7 @@ BasketMovementRoutine:
   .Phase6:                                  ;wait
   ld    a,(iy+var1)
   or    a
-  call  z,IncreaseScoreAndCombo
+  call  z,IncreaseScoreAndComboDecreaseMaxTimers
   inc   a
   and   15
   ld    (iy+var1),a
@@ -2235,7 +2233,7 @@ BasketMovementRoutine:
   .Phase2:                                  ;wait
   ld    a,(iy+var1)
   or    a
-  call  z,IncreaseScoreAndCombo
+  call  z,IncreaseScoreAndComboDecreaseMaxTimers
   inc   a
   and   15
   ld    (iy+var1),a
@@ -2266,7 +2264,7 @@ BasketMovementRoutine:
   ld    (iy+ObjectPhase),0
   ret
 
-IncreaseScoreAndCombo:
+IncreaseScoreAndComboDecreaseMaxTimers:
   ld    a,(basketballCombotime)
   dec   a
   jr    nz,.EndCheckComboExpired
@@ -2289,8 +2287,47 @@ IncreaseScoreAndCombo:
   ld    (basketballresettimervar),a
 
   ld    a,(iy+var1)
-  ret
 
+  ld    a,(basketballMaxtime)
+  sub   a,2
+  cp    50
+  jr    nc,.EndCheckMinimumTimeReached
+  ld    a,50
+  .EndCheckMinimumTimeReached:
+  ld    (basketballMaxtime),a
+
+  ld    a,(basketballMaxCombotime)
+  sub   a,2
+  cp    50
+  jr    nc,.EndCheckMinimumComboTimeReached
+  ld    a,50
+  .EndCheckMinimumComboTimeReached:
+  ld    (basketballMaxCombotime),a
+
+  ld    a,r
+  rrca
+  ret   c
+
+  ld    a,(CoinSpriteYSpat)                   ;y coin sprite
+  cp    213
+  ret   nz                                    ;dont put coin if coin is already in play
+
+  ;set x,y coin sprites
+  ;y has to be between 15 and 39
+  ld    a,r
+  and   31
+  add   a,15
+  cp    40
+  jr    c,.go
+  ld    a,24
+  .go:
+  ld    (CoinSpriteYSpat),a                   ;y coin sprite
+  ld    (CoinSpriteYSpat+4),a                   ;y coin sprite
+  ld    a,r
+  add   a,64
+  ld    (CoinSpriteXSpat),a                   ;x coin sprite
+  ld    (CoinSpriteXSpat+4),a                   ;x coin sprite  
+  ret
 
 SetBallShadow:
   ld    a,(spat+1+(16*4))                 ;x basketball
@@ -2327,10 +2364,13 @@ HandleBasketBallgameHud:
   ld    (basketballHudHandler),a
   ret
 
-  .Coins:
-  ret
-
 ;FreeToUseFastCopy0:                     ;freely usable anywhere
+.TextX:                     ;freely usable anywhere
+  db    232,000,213,001                 ;sx,--,sy,spage
+  db    130,000,019,000                 ;dx,--,dy,dpage
+  db    004,000,004,000                 ;nx,--,ny,--
+  db    000,%0000 0000,$D0              ;fast copy -> Copy from right to left     
+
 .TextCombo:                     ;freely usable anywhere
   db    168,000,007,000                 ;sx,--,sy,spage
   db    102,000,018,000                 ;dx,--,dy,dpage
@@ -2340,7 +2380,7 @@ HandleBasketBallgameHud:
 .ClearTextCombo:                     ;freely usable anywhere
   db    032,000,012,000                 ;sx,--,sy,spage
   db    102,000,018,000                 ;dx,--,dy,dpage
-  db    026,000,006,000                 ;nx,--,ny,--
+  db    044,000,006,000                 ;nx,--,ny,--
   db    000,%0000 0000,$D0              ;fast copy -> Copy from right to left     
 
   .ClearComboText:
@@ -2350,19 +2390,41 @@ HandleBasketBallgameHud:
   ldir
 
 	ld    a,(screenpage)
+  inc   a
+  and   3
   ld    (FreeToUseFastCopy0+dPage),a
 
   ld    hl,FreeToUseFastCopy0
   call  DoCopy
   ret
 
-  .ComboDX: equ 135
+  .ComboDX: equ 136
   .ComboDY: equ 018
   .SetComboText:
   ld    a,(basketballCombo)
   or    a
   ret   z
+  dec   a
+  ret   z
 
+  call  .SetTextX
+  call  .SetComboAmount
+  call  .SetTextCombo  
+  ret
+
+  .SetTextX:
+  ld    hl,.TextX
+  ld    de,FreeToUseFastCopy0
+  ld    bc,15
+  ldir
+
+	ld    a,(screenpage)
+  ld    (FreeToUseFastCopy0+dPage),a
+
+  ld    hl,FreeToUseFastCopy0
+  jp    DoCopy
+
+  .SetTextCombo:
   ld    hl,.TextCombo
   ld    de,FreeToUseFastCopy0
   ld    bc,15
@@ -2372,8 +2434,9 @@ HandleBasketBallgameHud:
   ld    (FreeToUseFastCopy0+dPage),a
 
   ld    hl,FreeToUseFastCopy0
-  call  DoCopy
+  jp    DoCopy
 
+  .SetComboAmount:
 	ld    a,(screenpage)
   ld    (PutLetterNonTransparant+dPage),a             ;set page where to put text
   ld    a,.ComboDX
@@ -2383,11 +2446,13 @@ HandleBasketBallgameHud:
 
   ld    hl,(basketballCombo)
   call  NUM_TO_ASCII                      ;HL = 16-bit number (0-65535), Output: ASCII string stored at Ascii5Byte:
-  ld    hl,Ascii5Byte+1
-  call  .PutTextLoop
-  ret
 
-
+  ld    a,(basketballCombo)
+  cp    10
+  ld    hl,Ascii5Byte+4
+  jp    c,.PutTextLoop
+  ld    hl,Ascii5Byte+3
+  jp    .PutTextLoop
 
   .ScoreDX: equ 130
   .ScoreDY: equ 007
@@ -2406,6 +2471,11 @@ HandleBasketBallgameHud:
   ret
 
   .PutTextLoop:
+  ld    a,4
+  ld    (PutLetterNonTransparant+nx),a
+  ld    a,6
+  ld    (PutLetterNonTransparant+ny),a
+
   ld    a,(hl)
   cp    255
   ret   z
@@ -2528,7 +2598,7 @@ HandleBasketBallgameHud:
   cp    12
   jp    c,.Score
 
-  cp    50
+  cp    40
   jp    nc,.ClearComboText
   ret
 
@@ -2636,25 +2706,218 @@ HandleBasketBallGameOver:
   ld    de,$8000 + (112*128) + (064/2) - 128
   ld    bc,$0000 + (019*256) + (128/2)
   call  CopyRamToVram                       ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
-   
+
+;set total coins
+  ld    hl,(basketballcoins)
+  ld    h,0
+  ld    de,(TotalCoinsBasketball)
+  add   hl,de
+  ld    (TotalCoinsBasketball),hl
+;check if current score is new highscore
+  ld    de,(basketballScore)
+  ld    hl,(HighScoreBasketball)
+  xor   a
+  sbc   hl,de
+  jr    nc,.EndCheckNewHighScore
+  ld    (HighScoreBasketball),de
+  .EndCheckNewHighScore:
+;set completed % (highscore / 340 * 100) = (highscore / 34 * 10) = (highscore / 17 * 5)
+  ld    hl,(HighScoreBasketball)
+  ld    de,5
+  call  MultiplyHlWithDE      ;HL = result
+  push  hl
+  pop   bc
+  ld    de,17
+  call  DivideBCbyDE          ; Out: BC = result, HL = rest
+  ld    a,c
+  cp    101
+  jr    c,.SetCompletePercentage
+  ld    a,100
+  .SetCompletePercentage:
+  ld    (BasketballCompletePercentage),a
+
+  call  .SetCoinsCollected
+  call  .SetScore
+  call  .SetBestScore
+  call  .SetCompleted
+  call  .SetPercentageSymbol
+
   ld    a,1*32 + 31
 	ld    (PageOnNextVblank),a
   call  SpritesOff
 
-.q: jp .q
+  xor   a
+  ld    (freezecontrols?),a  
+  call  STOPWAITSPACEPRESSED
 
+  ld    a,19                                ;back to title screen basketball game
+  ld    (CurrentRoom),a
+  ld    a,1
+  ld    (ChangeRoom?),a
   ret
 
+.PercentageSymbol:                     ;freely usable anywhere
+  db    163,000,060,001                 ;sx,--,sy,spage
+  db    169,000,107,001                 ;dx,--,dy,dpage
+  db    007,000,006,000                 ;nx,--,ny,--
+  db    000,%0000 0000,$90              ;fast copy -> Copy from right to left     
+  .SetPercentageSymbol:
+  ld    hl,.PercentageSymbol
+  ld    de,FreeToUseFastCopy0
+  ld    bc,15
+  ldir
 
-  xor   a
-  ld    hl,vblankintflag
-  .checkflag:
-  cp    (hl)
-  jr    z,.checkflag
-  ld    (hl),a
-  jp    LevelEngine
+  ld    a,(PutLetterNonTransparant+dx)
+  ld    (FreeToUseFastCopy0+dx),a
+  ld    hl,FreeToUseFastCopy0
+  call  DoCopy
+  ret
 
+  .CompletedDX: equ 148
+  .CompletedDY: equ 105
+  .SetCompleted:
+	ld    a,1
+  ld    (PutLetterNonTransparant+dPage),a             ;set page where to put text
+  ld    a,.CompletedDX
+  ld    (PutLetterNonTransparant+dx),a
+  ld    a,.CompletedDY
+  ld    (PutLetterNonTransparant+dy),a
 
+  ld    hl,(BasketballCompletePercentage)
+  ld    h,0
+  call  NUM_TO_ASCII                      ;HL = 16-bit number (0-65535), Output: ASCII string stored at Ascii5Byte:
+  call  SetHLToAscii5ByteSkip0
+  call  .PutTextLoopDark
+  ret
+
+  .BestScoreDX: equ 133
+  .BestScoreDY: equ 092
+  .SetBestScore:
+	ld    a,1
+  ld    (PutLetterNonTransparant+dPage),a             ;set page where to put text
+  ld    a,.BestScoreDX
+  ld    (PutLetterNonTransparant+dx),a
+  ld    a,.BestScoreDY
+  ld    (PutLetterNonTransparant+dy),a
+
+  ld    hl,(HighScoreBasketball)
+  call  NUM_TO_ASCII                      ;HL = 16-bit number (0-65535), Output: ASCII string stored at Ascii5Byte:
+  call  SetHLToAscii5ByteSkip0
+  call  .PutTextLoopDark
+  ret
+
+  .ScoreDX: equ 137
+  .ScoreDY: equ 079
+  .SetScore:
+	ld    a,1
+  ld    (PutLetterNonTransparant+dPage),a             ;set page where to put text
+  ld    a,.ScoreDX
+  ld    (PutLetterNonTransparant+dx),a
+  ld    a,.ScoreDY
+  ld    (PutLetterNonTransparant+dy),a
+
+  ld    hl,(basketballScore)
+  call  NUM_TO_ASCII                      ;HL = 16-bit number (0-65535), Output: ASCII string stored at Ascii5Byte:
+  call  SetHLToAscii5ByteSkip0
+  call  .PutTextLoopDark
+  ret
+
+  .CoinsDX: equ 139
+  .CoinsDY: equ 038
+  .SetCoinsCollected:
+	ld    a,1
+  ld    (PutLetterNonTransparant+dPage),a             ;set page where to put text
+  ld    a,.CoinsDX
+  ld    (PutLetterNonTransparant+dx),a
+  ld    a,.CoinsDY
+  ld    (PutLetterNonTransparant+dy),a
+
+  ld    hl,(basketballcoins)
+  ld    h,0
+  call  NUM_TO_ASCII                      ;HL = 16-bit number (0-65535), Output: ASCII string stored at Ascii5Byte:
+  call  SetHLToAscii5ByteSkip0
+  call  .PutTextLoopBright
+  ret
+
+  .PutTextLoopDark:
+  ld    a,6
+  ld    (PutLetterNonTransparant+nx),a
+  ld    a,9
+  ld    (PutLetterNonTransparant+ny),a
+
+  ld    a,(hl)
+  cp    255
+  ret   z
+  sub   a,$30                             ;0=$30
+  add   a,a                               ;*2
+  add   a,a                               ;*4
+  add   a,a                               ;*8
+  ld    (PutLetterNonTransparant+sx),a
+  push  hl
+  ld    hl,PutLetterNonTransparant
+  call  DoCopy
+  pop   hl
+
+  ld    a,(PutLetterNonTransparant+dx)
+  add   a,7
+  ld    (PutLetterNonTransparant+dx),a
+  inc   hl
+  jr    .PutTextLoopDark
+
+  .PutTextLoopBright:
+  ld    a,6
+  ld    (PutLetterNonTransparant+nx),a
+  ld    a,9
+  ld    (PutLetterNonTransparant+ny),a
+
+  ld    a,(hl)
+  cp    255
+  ret   z
+  sub   a,$30                             ;0=$30
+  add   a,a                               ;*2
+  add   a,a                               ;*4
+  add   a,a                               ;*8
+  add   a,96
+  ld    (PutLetterNonTransparant+sx),a
+  push  hl
+  ld    hl,PutLetterNonTransparant
+  call  DoCopy
+  pop   hl
+
+  ld    a,(PutLetterNonTransparant+dx)
+  add   a,7
+  ld    (PutLetterNonTransparant+dx),a
+  inc   hl
+  jr    .PutTextLoopBright
+
+HandlePickUpCoin:
+  ld    a,(CoinSpriteXSpat)                   ;x coin sprite
+  sub   a,14
+  cp    (iy+x)
+  ret   nc
+  add   a,27
+  cp    (iy+x)
+  ret   c
+
+  ld    a,(spat+0+(16*4))                     ;y basketball
+  ld    b,a
+
+  ld    a,(CoinSpriteYSpat)                   ;x coin sprite
+  sub   a,14
+  cp    b
+  ret   nc
+  add   a,27
+  cp    b
+  ret   c
+
+  ld    a,(basketballcoins)
+  inc   a
+  ld    (basketballcoins),a
+
+  ld    a,213
+  ld    (CoinSpriteYSpat),a                   ;y coin sprite
+  ld    (CoinSpriteYSpat+4),a                   ;y coin sprite
+  ret
 
 BasketBallGameRoutine:
   ld    a,(framecounter2)
@@ -2670,6 +2933,7 @@ BasketBallGameRoutine:
   call  .HandleBallShadowCoverUp
   call  HandleNet
   call  HandleBasketBallGameOver
+  call  HandlePickUpCoin
   ret
 
 .HandleBallShadowCoverUp:
@@ -2702,13 +2966,14 @@ BasketBallGameRoutine:
   xor   a
   ld    (basketballGameOver?),a
   ld    (basketballFirstPointScored?),a
+  ld    (basketballcoins),a
   ld    hl,0
   ld    (basketballScore),hl
   ld    (basketballCombo),hl
-  ld    a,80
+  ld    a,150
   ld    (basketballtime),a
   ld    (basketballMaxtime),a
-  ld    a,50
+  ld    a,100
   ld    (basketballCombotime),a
   ld    (basketballMaxCombotime),a
   ld    a,255
@@ -2767,11 +3032,16 @@ BasketBallGameRoutine:
 
   ld    a,1
   ld    (SetArcadeGamePalette?),a
-  call  .SetBasketballSprite
+  call  .SetBasketballGameSprites
 
-  ;set x,y shadow sprites
+  ;set y shadow sprite
   ld    a,111
   ld    (ShadowSpriteYSpat),a                 ;y shadow sprite
+
+  ;set y coin sprites
+  ld    a,213
+  ld    (CoinSpriteYSpat),a                   ;y coin sprite
+  ld    (CoinSpriteYSpat+4),a                   ;y coin sprite
 
   ;set x,y shadow coverup sprites
   ld    a,112
@@ -2807,7 +3077,7 @@ BasketBallGameRoutine:
   ld    (spat+0+(07*4)),a                 ;y sprite 9
   ret
 
-  .SetBasketballSprite:
+  .SetBasketballGameSprites:
   ld    (iy+x),120                      ;x basketball
   ld    (iy+y),255                       ;y basketball
 
@@ -2822,7 +3092,7 @@ BasketBallGameRoutine:
 	ld		hl,WallCoverUpsCharSprite	;sprite 0 character table in VRAM
 	ld		c,$98
 	call	outix352		;write sprite color of pointer and hand to vram
-	call	outix128		;write sprite color of pointer and hand to vram
+	call	outix192		;write sprite color of pointer and hand to vram
 
 	xor		a				;page 0/1
 	ld		hl,sprcoladdr+8*16	;sprite 0 color table in VRAM
@@ -2831,7 +3101,7 @@ BasketBallGameRoutine:
 	ld		hl,WallCoverUpsColSprite	;sprite 0 character table in VRAM
 	ld		c,$98
 	call	outix176	;write sprite color of pointer and hand to vram
-	call	outix64	;write sprite color of pointer and hand to vram
+	call	outix96	;write sprite color of pointer and hand to vram
 
   ;first 8 sprites are empty wall coverup sprites
 	xor		a				;page 0/1
@@ -2851,6 +3121,8 @@ ShadowCoverUpSpriteRightYSpat:      equ spat+0+20*4
 ShadowCoverUpSpriteRightXSpat:      equ spat+1+20*4
 ShadowSpriteYSpat:                  equ spat+0+22*4
 ShadowSpriteXSpat:                  equ spat+1+22*4
+CoinSpriteYSpat:                    equ spat+0+23*4
+CoinSpriteXSpat:                    equ spat+1+23*4
 
 	WallCoverUpsCharSprite:
 	include "..\grapx\basketball\sprites\WallCoverUps.tgs.gen"
@@ -2862,6 +3134,8 @@ ShadowSpriteXSpat:                  equ spat+1+22*4
 	include "..\grapx\basketball\sprites\WallCoverUps.tgs.gen"
 	ShadowCharSprite:
 	include "..\grapx\basketball\sprites\Shadow.tgs.gen"
+	CoinCharSprite:
+	include "..\grapx\basketball\sprites\Coin.tgs.gen"
 
 	WallCoverUpsColSprite:
 	include "..\grapx\basketball\sprites\WallCoverUps.tcs.gen"
@@ -2873,6 +3147,8 @@ ShadowSpriteXSpat:                  equ spat+1+22*4
 	include "..\grapx\basketball\sprites\WallCoverUps.tcs.gen"
 	ShadowColorSprite:	
 	include "..\grapx\basketball\sprites\Shadow.tcs.gen"
+	CoinColSprite:
+	include "..\grapx\basketball\sprites\Coin.tcs.gen"
 
 
 HandleNet:

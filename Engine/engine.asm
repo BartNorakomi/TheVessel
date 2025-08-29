@@ -3781,8 +3781,12 @@ GamesPlayed:  db 9                      ;increases after leaving a game. max=255
 HighScoreTotalAverage: db 80            ;recruiter appears when 80 (%) is reached
 HighScoreBackroomGame:  db  100
 
+BasketballCompletePercentage: db 0
+HighScoreBasketball:          dw 0
+TotalCoinsBasketball:         dw 0
+BallsPurchased:               db %0000 0000     ;b0=tennisball,b1=....
+
 HighScoreRoadFighter: db 0
-HighScoreBasketball: db 0
 HighScoreBlox: db 0
 HighScoreBikeRace: db 0
 ConvGirl: db %0000 0001                 ;conversations handled
