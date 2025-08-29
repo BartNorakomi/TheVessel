@@ -832,6 +832,7 @@ CurveUpPerspectiveXTable44: equ 095C8h ; last def. pass 3
 BuildUpMapDrillingGame.PutTileLoop: equ 05626h ; last def. pass 3
 CurveLeftEndPage1TOPAddressesfrom39to38: equ 0A396h ; last def. pass 3
 CurveLeftEndPage0BOTTOMWriteInstructionsfrom67to66: equ 09E91h ; last def. pass 3
+BasketBallTitleScreenPart1Address: equ 04ECCh ; last def. pass 3
 SpriteInitialize: equ 0D682h ; last def. pass 3
 vblankintflag: equ 07Bh ; last def. pass 3
 BlockCurveUpEndPage1TOPfrom48to47: equ 0B5h ; last def. pass 3
@@ -1381,6 +1382,7 @@ BlockCurveLeftPage0BOTTOMfrom50to51: equ 05Eh ; last def. pass 3
 HandleEnergy: equ 079B7h ; last def. pass 3
 RoadAnimationIndexesBlockCurveRight: equ 0C9h ; last def. pass 3
 RacingGameRoutine.Level5PurpleCity: equ 0435Fh ; last def. pass 3
+BasketBallTitleScreenPart2Address.CheckBlockFull: equ 06047h ; last def. pass 3
 CurveDownPage0BOTTOMWriteInstructionsfrom16to17: equ 08357h ; last def. pass 3
 RacingGameRoutine.PaletteNightCity: equ 0448Ch ; last def. pass 3
 CurveLeftEndPage1BOTTOMChangedPixelsfrom33to32: equ 08000h ; last def. pass 3
@@ -1772,6 +1774,7 @@ CheckPlayerNearArcadeMachine.CheckPlayerNear: equ 047A2h ; last def. pass 3
 CurveUpPage1BOTTOMAddressesfrom41to42: equ 0A4AAh ; last def. pass 3
 CurveDownPage0TOPWriteInstructionsfrom4to5: equ 096E0h ; last def. pass 3
 BlockCurveUpEndPage0TOPfrom34to33: equ 0B3h ; last def. pass 3
+BasketBallTitleScreenPart2Address: equ 05F50h ; last def. pass 3
 CurveLeftEndPage0TOPAddressesfrom58to57: equ 0ADF7h ; last def. pass 3
 BlockCurveDownEndPage1TOPfrom49to48: equ 0C6h ; last def. pass 3
 oldControls: equ 0E1EEh ; last def. pass 3
@@ -5627,7 +5630,6 @@ initMem.ramOn: equ 0C09Bh ; last def. pass 3
 CurveRightEndPage1TOPChangedPixelsfrom1to0: equ 08064h ; last def. pass 3
 CurveLeftPage0TOPChangedPixelsfrom12to13: equ 08500h ; last def. pass 3
 StraightRoad2ndPart30Part1.Lenght: equ 024h ; last def. pass 3
-BasketBallPart1Address: equ 047B5h ; last def. pass 3
 ObjectTable: equ 01194h ; last def. pass 3
 CurveUpPerspectiveXTable30: equ 08F00h ; last def. pass 3
 EndRom: equ 04EC000h ; last def. pass 3
@@ -5892,6 +5894,7 @@ RoadBlockEventOn?: equ 0E269h ; last def. pass 3
 CurveRightPage1BOTTOMAddressesfrom37to38: equ 0A503h ; last def. pass 3
 BlockCurveUpEndPage1BOTTOMfrom57to56: equ 0B7h ; last def. pass 3
 CurveDownEndPage0TOPChangedPixelsfrom35to34: equ 09E2Dh ; last def. pass 3
+BasketBallGameOverPart1Address: equ 047B5h ; last def. pass 3
 CurveLeftPage1TOPAddressesfrom25to26: equ 0B202h ; last def. pass 3
 BlockCurveRightEndPage0TOPfrom23to22: equ 094h ; last def. pass 3
 CurveDownEndPage1BOTTOMWriteInstructionsfrom46to45: equ 08820h ; last def. pass 3
@@ -8903,6 +8906,7 @@ CurveRightPage0TOPAddressesfrom46to47: equ 0844Ch ; last def. pass 3
 BlockCurveRightEndPage0TOPfrom15to14: equ 091h ; last def. pass 3
 CurveUpPage0BOTTOMAddressesfrom41to42: equ 0A04Ah ; last def. pass 3
 CurveUpEndPage1BOTTOMChangedPixelsfrom27to26: equ 084CEh ; last def. pass 3
+BasketBallTitleScreenGfxBlock: equ 02Dh ; last def. pass 3
 CurveDownEndPage0TOPChangedPixelsfrom26to25: equ 092CFh ; last def. pass 3
 outix112: equ 0DBC1h ; last def. pass 3
 CurveRightEndPage1BOTTOMWriteInstructionsfrom7to6: equ 0A8C0h ; last def. pass 3
@@ -9482,7 +9486,6 @@ CurveUpEndPage0BOTTOMWriteInstructionsfrom17to16: equ 09586h ; last def. pass 3
 FadeInPortrait: equ 01A64h ; last def. pass 3
 sleepingquartersEventRoutine.CheckStartSleepSequence: equ 04CE4h ; last def. pass 3
 CurveLeftPage1BOTTOMChangedPixelsfrom18to19: equ 08000h ; last def. pass 3
-BasketBallPart1Address.CheckBlockFull: equ 04ECCh ; last def. pass 3
 BlockCurveUpPage0BOTTOMfrom16to17: equ 0A6h ; last def. pass 3
 CurveUpPage0BOTTOMWriteInstructionsfrom26to27: equ 08114h ; last def. pass 3
 CurveUpEndPage0TOPChangedPixelsfrom17to16: equ 0936Ah ; last def. pass 3

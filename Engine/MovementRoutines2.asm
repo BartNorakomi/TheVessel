@@ -2665,7 +2665,7 @@ HandleBasketBallGameOver:
   or    a
   ret   nz
 
-  ld    hl,BasketBallPart1Address
+  ld    hl,BasketBallGameOverPart1Address
   ld    a,BasketBallGameOverGfxBlock
   call  SetGfxAt8000InRam                             ;in: hl=adress in rom page 1, a=block, out: puts gfx in page 2 in ram at $8000
 
