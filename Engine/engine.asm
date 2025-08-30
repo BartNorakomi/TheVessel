@@ -3784,7 +3784,7 @@ HighScoreBackroomGame:  db  100
 
 BasketballCompletePercentage: db 0
 HighScoreBasketball:          dw 0
-TotalCoinsBasketball:         dw 0
+TotalCoinsBasketball:         dw 5988
 BallsPurchased:               db %0000 0000     ;b0=tennisball,b1=billiardball,b2=baseball,b3=soccerball,b4=volleyball,b5=bowlingball,b6=golfball,b7=beachball
 CurrentBallsSelected:         db 7              ;0=basketball,1=tennisball,2=billiardball,3=baseball,4=soccerball,5=volleyball,6=bowlingball,7=golfball,8=beachball
 

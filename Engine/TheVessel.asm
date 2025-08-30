@@ -691,6 +691,7 @@ BasketBallButtonsGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlo
 JumpDownGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
 BasketBallGameOverGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
 BasketBallTitleScreenGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
+BasketBallShopGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
 	phase	$4000
 	JumpDownPart1Address:
   incbin "..\grapx\JumpDown\JumpDownPart1.sc5.pck"
@@ -702,6 +703,11 @@ BasketBallTitleScreenGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /Ro
   incbin "..\grapx\BasketBall\TitleScreen\TitleScreenPart1.sc5.pck"
 	BasketBallTitleScreenPart2Address:
   incbin "..\grapx\BasketBall\TitleScreen\TitleScreenPart2.sc5.pck"
+	BasketBallShopPart1Address:
+  incbin "..\grapx\BasketBall\Shop\ShopPart1.sc5.pck"
+	BasketBallShopPart2Address:
+  incbin "..\grapx\BasketBall\Shop\ShopPart2.sc5.pck"
+
 	.CheckBlockFull:	dw	$+$8000
 	dephase
 	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block

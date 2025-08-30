@@ -2190,12 +2190,309 @@ BackToTitleScreenBasketBall:
   .TriggerAPressed:
   ld    a,(basketballTitleScreenButton) ;0=left button selected, 1=right button selected
   or    a
-  jr    z,.StartGame
+  jp    z,.StartGame
 
   .StartShopMenu:
+  ;set title screen
+  ld    hl,BasketBallShopPart1Address
+  ld    a,BasketBallShopGfxBlock
+  call  SetGfxAt8000InRam                             ;in: hl=adress in rom page 1, a=block, out: puts gfx in page 2 in ram at $8000
 
+  call  WaitVblank
+  call  WaitVblank
 
+  ld    hl,$8000 + (000*128) + (000/2) - 128
+  ld    de,$8000 + (000*128) + (000/2) - 128
+
+  ld    b,12                                        ;12 * 10 lines=120 lines
+  .loop2:
+  push  bc
+  call  .Copy10lines
+  ld    bc,10*128
+  add   hl,bc
+  ex    de,hl
+  add   hl,bc
+  ex    de,hl
+  pop   bc
+  djnz  .loop2
+
+  ld    bc,$0000 + (008*256) + (256/2)              ;8 more lines
+  call  CopyRamToVram                       ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
+
+  ld    hl,BasketBallShopPart2Address
+  ld    a,BasketBallShopGfxBlock
+  call  SetGfxAt8000InRam                             ;in: hl=adress in rom page 1, a=block, out: puts gfx in page 2 in ram at $8000
+
+  call  WaitVblank
+  call  WaitVblank
+
+  ld    hl,$8000 + (000*128) + (000/2) - 128
+  ld    de,$8000 + (128*128) + (000/2) - 128
+  ld    bc,$0000 + (007*256) + (256/2)              ;7 more lines
+  call  CopyRamToVram                       ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
+
+  ld    hl,.CopyButtons
+  call  DoCopy
+  ld    hl,.EraseButtonsCurrentlyVisibleInShop
+  call  DoCopy
+  call  .SetAmountOfCoinsShop
+
+  ;set palette
+  ld    hl,.BasketBallShopPalette
+  ld    de,ArcadeGamePalette
+  ld    bc,32
+  ldir
+
+  ld    a,1*32 + 31
+	ld    (PageOnNextVblank),a
+
+  .Engine2:
+  ld    a,(framecounter2)
+  inc   a
+  ld    (framecounter2),a
+  call  PopulateControls
+  call  .SelectedShopButton
+  call  .ShowSelectedShopButton
+;  call  .BlinkSelectedButton
+
+  xor   a
+  ld    hl,vblankintflag
+  .checkflag2:
+  cp    (hl)
+  jr    z,.checkflag2
+  ld    (hl),a
+  jp    .Engine2
+
+  .SetAmountOfCoinsShop:
+  ld    hl,.EraseAmountOfCoins
+  call  DoCopy
+  ;put amount of coins
+  ld    a,1
+  ld    (PutLetterNonTransparant+dPage),a             ;set page where to put text
+  ld    a,135
+  ld    (PutLetterNonTransparant+dx),a
+  ld    a,14
+  ld    (PutLetterNonTransparant+dy),a
+
+  ld    hl,(TotalCoinsBasketball)
+  call  NUM_TO_ASCII                      ;HL = 16-bit number (0-65535), Output: ASCII string stored at Ascii5Byte:
+  call  SetHLToAscii5ByteSkip0
+  ld    a,$98
+  ld    (PutLetterNonTransparant+copytype),a
+  call  HandleBasketBallgameHud.PutTextLoop
+  ld    a,$90
+  ld    (PutLetterNonTransparant+copytype),a
   ret
+
+  .EraseAmountOfCoins:
+  db    000,000,000,000                 ;sx,--,sy,spage
+  db    134,000,014,001                 ;dx,--,dy,dpage
+  db    038,000,006,000                 ;nx,--,ny,--
+	db		4+ (4 * 16),0,$80
+
+  .SelectedShopButton:
+;
+; bit	7	  6	  5		    4		    3		    2		  1		  0
+;		  0	  0	  trig-b	trig-a	right	  left	down	up	(joystick)
+;		  F5	F1	'M'		  space	  right	  left	down	up	(keyboard)
+;
+	ld		a,(NewPrContr)
+  and   %0000 1100
+  jr    z,.EndCheckLeftRight
+  cp    %0000 1000
+  jr    z,.RightPressed2
+
+  .LeftPressed2:
+  ld    a,(CurrentBallsSelected)
+  dec   a
+  ret   m
+  cp    2
+  ret   z
+  cp    5
+  ret   z
+  push  af
+  call  .EraseSelectedShopButton
+  pop   af
+  ld    (CurrentBallsSelected),a
+  ret
+
+  .RightPressed2:
+  ld    a,(CurrentBallsSelected)
+  inc   a
+  cp    3
+  ret   z
+  cp    6
+  ret   z
+  cp    9
+  ret   z
+  push  af
+  call  .EraseSelectedShopButton
+  pop   af
+  ld    (CurrentBallsSelected),a
+  ret
+
+  .EndCheckLeftRight:
+;
+; bit	7	  6	  5		    4		    3		    2		  1		  0
+;		  0	  0	  trig-b	trig-a	right	  left	down	up	(joystick)
+;		  F5	F1	'M'		  space	  right	  left	down	up	(keyboard)
+;
+	ld		a,(NewPrContr)
+  and   %0000 0011
+  jr    z,.EndCheckUpDown
+  cp    %0000 0010
+  jr    z,.DownPressed2
+
+  .UpPressed2:
+  ld    a,(CurrentBallsSelected)
+  sub   3
+  ret   m
+  push  af
+  call  .EraseSelectedShopButton
+  pop   af
+  ld    (CurrentBallsSelected),a
+  ret
+
+  .DownPressed2:
+  ld    a,(CurrentBallsSelected)
+  add   3
+  cp    9
+  ret   nc
+  push  af
+  call  .EraseSelectedShopButton
+  pop   af
+  ld    (CurrentBallsSelected),a
+  ret
+
+  .EndCheckUpDown:
+;
+; bit	7	  6	  5		    4		    3		    2		  1		  0
+;		  0	  0	  trig-b	trig-a	right	  left	down	up	(joystick)
+;		  F5	F1	'M'		  space	  right	  left	down	up	(keyboard)
+;
+	ld		a,(NewPrContr)
+	bit		4,a           ;space pressed ?
+  ret   z
+
+  ld    hl,BallsPurchased               ;b0=tennisball,b1=billiardball,b2=baseball,b3=soccerball,b4=volleyball,b5=bowlingball,b6=golfball,b7=beachball
+  ;space pressed, check if current ball is already purchased ?
+  ld    a,(CurrentBallsSelected)        ;0=basketball,1=tennisball,2=billiardball,3=baseball,4=soccerball,5=volleyball,6=bowlingball,7=golfball,8=beachball
+  or    a
+  jp    z,.CurrentBallIsInPosession
+  dec   a
+  jp    z,.CheckTennisBall
+
+  .CheckTennisBall:
+  bit   0,(hl)
+  jp    nz,.CurrentBallIsInPosession
+  ld    hl,(TotalCoinsBasketball)
+  ld    de,.CostTennisBall
+  xor   a
+  sbc   hl,de
+  ret   c
+  ld    (TotalCoinsBasketball),hl
+  ld    a,(BallsPurchased)            ;b0=tennisball,b1=billiardball,b2=baseball,b3=soccerball,b4=volleyball,b5=bowlingball,b6=golfball,b7=beachball
+  set   0,a
+  ld    (BallsPurchased),a            ;b0=tennisball,b1=billiardball,b2=baseball,b3=soccerball,b4=volleyball,b5=bowlingball,b6=golfball,b7=beachball
+  call  .SetAmountOfCoinsShop
+  ret
+
+  .CurrentBallIsInPosession:
+  ;set palette
+  
+  ld    hl,.BasketBallTitleScreenPalette
+  ld    de,ArcadeGamePalette
+  ld    bc,32
+  ldir
+
+  ld    a,0*32 + 31
+	ld    (PageOnNextVblank),a
+  pop   af
+  ret
+
+  .CostTennisBall:    equ 50
+  .CostBilliardBall:  equ 70
+  .CostBaseBall:      equ 100
+  .CostSoccerBall:    equ 140
+  .CostVolleyBall:    equ 190
+  .CostBowlingBall:   equ 250
+  .CostGolfBall:      equ 320
+  .CostBeachBall:     equ 400
+
+
+  .EraseSelectedShopButton:
+  ld    hl,.DoShowSelectedShopButton
+  ld    de,FreeToUseFastCopy0
+  ld    bc,15
+  ldir
+
+  xor   a
+  ld    (FreeToUseFastCopy0+sx),a
+
+  ld    a,(CurrentBallsSelected)
+  add   a,a                             ;*2
+  ld    e,a
+  ld    d,0
+  ld    hl,.BallCoordinateTable
+  add   hl,de
+  ld    a,(hl)                          ;x
+  ld    (FreeToUseFastCopy0+dx),a
+  inc   hl
+  ld    a,(hl)                          ;y
+  ld    (FreeToUseFastCopy0+dy),a
+
+  ld    hl,FreeToUseFastCopy0
+  call  DoCopy
+  ret
+
+  .ShowSelectedShopButton:
+  ld    hl,.DoShowSelectedShopButton
+  ld    de,FreeToUseFastCopy0
+  ld    bc,15
+  ldir
+  
+  ld    a,(CurrentBallsSelected)
+  add   a,a                             ;*2
+  ld    e,a
+  ld    d,0
+  ld    hl,.BallCoordinateTable
+  add   hl,de
+  ld    a,(hl)                          ;x
+  ld    (FreeToUseFastCopy0+dx),a
+  inc   hl
+  ld    a,(hl)                          ;y
+  ld    (FreeToUseFastCopy0+dy),a
+
+  ld    hl,FreeToUseFastCopy0
+  call  DoCopy
+  ret
+
+  .BallCoordinateTable: ;dx,dy table: 0=basketball,1=tennisball,2=billiardball,3=baseball,4=soccerball,5=volleyball,6=bowlingball,7=golfball,8=beachball
+  db    079,029,  119,029,  159,029
+  db    079,061,  119,061,  159,061
+  db    079,093,  119,093,  159,093
+
+  .DoShowSelectedShopButton:
+  db    019,000,231,001                 ;sx,--,sy,spage
+  db    000,000,000,001                 ;dx,--,dy,dpage
+  db    019,000,019,000                 ;nx,--,ny,--
+  db    000,%0000 0000,$98              ;fast copy -> Copy from right to left     
+
+  .EraseButtonsCurrentlyVisibleInShop:
+  db    000,000,000,000                 ;sx,--,sy,spage
+  db    151,000,011,001                 ;dx,--,dy,dpage
+  db    038,000,019,000                 ;nx,--,ny,--
+	db		4+ (4 * 16),0,$80
+
+  .CopyButtons:
+  db    151,000,011,001                 ;sx,--,sy,spage
+  db    000,000,231,001                 ;dx,--,dy,dpage
+  db    038,000,019,000                 ;nx,--,ny,--
+  db    000,%0000 0000,$90              ;fast copy -> Copy from right to left     
+  
+
+  .BasketBallShopPalette:
+  incbin "..\grapx\basketball\shop\shop.sc5",$7680+7,32
 
   .StartGame:
   ;reset score and time bars
@@ -3171,6 +3468,10 @@ BasketBallGameRoutine:
   call  HandleNet
   call  HandleBasketBallGameOver
   call  HandlePickUpCoin
+
+call screenon
+jp BackToTitleScreenBasketBall.StartShopMenu
+
   ret
 
 .HandleBallShadowCoverUp:
