@@ -2138,8 +2138,10 @@ BackToTitleScreenBasketBall:
   call  CopyRamToVram                       ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
 
   ;set palette
-  ld    hl,BasketBallTitleScreenPalette
-  ld    (Vblank.SelfModifyingCodeArcadeVblankPalette),hl
+  ld    hl,.BasketBallTitleScreenPalette
+  ld    de,ArcadeGamePalette
+  ld    bc,32
+  ldir
 
   ld    a,0*32 + 31
 	ld    (PageOnNextVblank),a
@@ -2159,6 +2161,9 @@ BackToTitleScreenBasketBall:
   jr    z,.checkflag
   ld    (hl),a
   jp    .Engine
+
+  .BasketBallTitleScreenPalette:
+  incbin "..\grapx\basketball\TitleScreen\TitleScreen.sc5",$7680+7,32
 
   .SelectButton:
 ;
@@ -2188,6 +2193,8 @@ BackToTitleScreenBasketBall:
   jr    z,.StartGame
 
   .StartShopMenu:
+
+
   ret
 
   .StartGame:
@@ -2209,8 +2216,6 @@ BackToTitleScreenBasketBall:
   call  WriteSpatToVram
   ld    a,2*32 + 31
 	ld    (PageOnNextVblank),a
-  ld    hl,BasketBallCourtPalette
-  ld    (Vblank.SelfModifyingCodeArcadeVblankPalette),hl
 
   call  SpritesOn
 
@@ -2246,6 +2251,11 @@ BackToTitleScreenBasketBall:
 
 
   .BlinkSelectedButton:
+  ld    a,(framecounter2)
+  and   31
+  cp    16
+  jr    c,.BothButtonsOff
+
   ld    a,(basketballTitleScreenButton) ;0=left button selected, 1=right button selected
   or    a
   jp    z,.BlinkLeftButton
@@ -2259,6 +2269,13 @@ BackToTitleScreenBasketBall:
 
   .BlinkLeftButton:
   ld    hl,.ShowStartButtonBlinkOn
+  call  DoCopy
+  ld    hl,.ShowShopButtonBlinkOff
+  call  DoCopy
+  ret
+
+  .BothButtonsOff:
+  ld    hl,.ShowStartButtonBlinkOff
   call  DoCopy
   ld    hl,.ShowShopButtonBlinkOff
   call  DoCopy
@@ -3244,10 +3261,6 @@ BasketBallGameRoutine:
   ld    (iy+SpriteData+1),h
   pop   iy
 
-  ;set palette
-  ld    hl,BasketBallCourtPalette
-  ld    (Vblank.SelfModifyingCodeArcadeVblankPalette),hl
-
   ld    a,1
   ld    (SetArcadeGamePalette?),a
   call  .SetBasketballGameSprites
@@ -3363,7 +3376,147 @@ BasketBallGameRoutine:
   .loop:
   out   ($98),a
   djnz  .loop
+
+  call  LoadBallTypeAndPalette
   ret
+
+LoadBallTypeAndPalette:
+  ld    a,(CurrentBallsSelected)          ;0=basketball,1=tennisball,2=billiardball,3=baseball,4=soccerball,5=volleyball,6=bowlingball,7=golfball,8=beachball
+  or    a
+  jp    z,.BasketBall
+  dec   a
+  jp    z,.TennisBall
+  dec   a
+  jp    z,.BilliardBall
+  dec   a
+  jp    z,.BaseBall
+  dec   a
+  jp    z,.SoccerBall
+  dec   a
+  jp    z,.VolleyBall
+  dec   a
+  jp    z,.BowlingBall
+  dec   a
+  jp    z,.GolfBall
+  dec   a
+  jp    z,.BeachBall
+
+  .BaseBall:
+  ld    hl,BaseBallCourtPalette
+  push  hl
+  ld    hl,BaseballColorSprite
+  push  hl
+  ld    hl,BaseballCharSprite
+  jp    .Go
+
+  .BeachBall:
+  ld    hl,BeachBallCourtPalette
+  push  hl
+  ld    hl,BeachballColorSprite
+  push  hl
+  ld    hl,BeachballCharSprite
+  jp    .Go
+
+  .GolfBall:
+  ld    hl,GolfBallCourtPalette
+  push  hl
+  ld    hl,GolfballColorSprite
+  push  hl
+  ld    hl,GolfballCharSprite
+  jp    .Go
+
+  .BowlingBall:
+  ld    hl,BowlingBallCourtPalette
+  push  hl
+  ld    hl,BowlingballColorSprite
+  push  hl
+  ld    hl,BowlingballCharSprite
+  jp    .Go
+
+  .VolleyBall:
+  ld    hl,VolleyBallCourtPalette
+  push  hl
+  ld    hl,VolleyballColorSprite
+  push  hl
+  ld    hl,VolleyballCharSprite
+  jp    .Go
+
+  .SoccerBall:
+  ld    hl,SoccerBallCourtPalette
+  push  hl
+  ld    hl,SoccerballColorSprite
+  push  hl
+  ld    hl,SoccerballCharSprite
+  jp    .Go
+
+  .BilliardBall:
+  ld    hl,BilliardBallCourtPalette
+  push  hl
+  ld    hl,BilliardballColorSprite
+  push  hl
+  ld    hl,BilliardballCharSprite
+  jp    .Go
+
+  .BasketBall:
+  ld    hl,BasketBallCourtPalette
+  push  hl
+  ld    hl,BasketballColorSprite
+  push  hl
+  ld    hl,BasketballCharSprite
+  jp    .Go
+
+  .TennisBall:
+  ld    hl,TennisBallCourtPalette
+  push  hl
+  ld    hl,TennisballColorSprite
+  push  hl
+  ld    hl,TennisballCharSprite
+  jp    .Go
+
+  .Go:
+  push  hl  
+  ;set basketball/tennisball
+	xor		a				;page 0/1
+	ld		hl,sprcharaddr+16*32	;sprite 16 character table in VRAM
+	call	SetVdp_Write
+
+  pop   hl
+	ld		c,$98
+	call	outix64		;write sprite color of pointer and hand to vram
+
+	xor		a				;page 0/1
+	ld		hl,sprcoladdr+16*16	;sprite 0 color table in VRAM
+	call	SetVdp_Write
+
+  pop   hl
+	ld		c,$98
+	call	outix32	;write sprite color of pointer and hand to vram
+
+  ;set palette
+  pop   hl
+  ld    de,ArcadeGamePalette
+  ld    bc,32
+  ldir
+  ret
+
+  BasketBallCourtPalette:
+  incbin "..\grapx\BasketBall\sprites\BasketballPalette.sc5",$7680+7,32
+  TennisBallCourtPalette:
+  incbin "..\grapx\BasketBall\sprites\TennisballPalette.sc5",$7680+7,32
+  BilliardBallCourtPalette:
+  incbin "..\grapx\BasketBall\sprites\BilliardballPalette.sc5",$7680+7,32
+  SoccerBallCourtPalette:
+  incbin "..\grapx\BasketBall\sprites\SoccerballPalette.sc5",$7680+7,32
+  VolleyBallCourtPalette:
+  incbin "..\grapx\BasketBall\sprites\VolleyballPalette.sc5",$7680+7,32
+  BowlingBallCourtPalette:
+  incbin "..\grapx\BasketBall\sprites\BowlingballPalette.sc5",$7680+7,32
+  GolfBallCourtPalette:
+  incbin "..\grapx\BasketBall\sprites\GolfballPalette.sc5",$7680+7,32
+  BeachBallCourtPalette:
+  incbin "..\grapx\BasketBall\sprites\BeachballPalette.sc5",$7680+7,32
+  BaseBallCourtPalette:
+  incbin "..\grapx\BasketBall\sprites\BaseballPalette.sc5",$7680+7,32
 
 NetSpriteYSpat:                     equ spat+0+12*4
 NetSpriteXSpat:                     equ spat+1+12*4
@@ -3408,6 +3561,45 @@ CoinSpriteXSpat:                    equ spat+1+23*4
 	CoinColSprite:
 	include "..\grapx\basketball\sprites\Coin.tcs.gen"
 
+	TennisballCharSprite:
+	include "..\grapx\basketball\sprites\Tennisball.tgs.gen"
+	TennisballColorSprite:	
+	include "..\grapx\basketball\sprites\Tennisball.tcs.gen"
+
+	BilliardballCharSprite:
+	include "..\grapx\basketball\sprites\Billiardball.tgs.gen"
+	BilliardballColorSprite:	
+	include "..\grapx\basketball\sprites\Billiardball.tcs.gen"
+
+	SoccerballCharSprite:
+	include "..\grapx\basketball\sprites\Soccerball.tgs.gen"
+	SoccerballColorSprite:	
+	include "..\grapx\basketball\sprites\Soccerball.tcs.gen"
+
+	VolleyballCharSprite:
+	include "..\grapx\basketball\sprites\Volleyball.tgs.gen"
+	VolleyballColorSprite:	
+	include "..\grapx\basketball\sprites\Volleyball.tcs.gen"
+
+	BowlingballCharSprite:
+	include "..\grapx\basketball\sprites\Bowlingball.tgs.gen"
+	BowlingballColorSprite:	
+	include "..\grapx\basketball\sprites\Bowlingball.tcs.gen"
+
+	GolfballCharSprite:
+	include "..\grapx\basketball\sprites\Golfball.tgs.gen"
+	GolfballColorSprite:	
+	include "..\grapx\basketball\sprites\Golfball.tcs.gen"
+
+	BeachballCharSprite:
+	include "..\grapx\basketball\sprites\Beachball.tgs.gen"
+	BeachballColorSprite:	
+	include "..\grapx\basketball\sprites\Beachball.tcs.gen"
+
+	BaseballCharSprite:
+	include "..\grapx\basketball\sprites\Baseball.tgs.gen"
+	BaseballColorSprite:	
+	include "..\grapx\basketball\sprites\Baseball.tcs.gen"
 
 HandleNet:
   call  .SetXYinSpat
