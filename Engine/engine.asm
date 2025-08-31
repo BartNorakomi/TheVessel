@@ -3775,7 +3775,7 @@ CompareHLwithDE:
   ret
 
 StartSaveGameData:
-CurrentRoom:  db  19                    ;0=arcadehall1, 1=arcadehall2, 2=biopod, 3=hydroponicsbay, 4=hangarbay, 5=trainingdeck, 6=reactorchamber, 7=sleepingquarters, 8=armoryvault, 9=holodeck, 10=medicalbay
+CurrentRoom:  db  20                    ;0=arcadehall1, 1=arcadehall2, 2=biopod, 3=hydroponicsbay, 4=hangarbay, 5=trainingdeck, 6=reactorchamber, 7=sleepingquarters, 8=armoryvault, 9=holodeck, 10=medicalbay
                                         ;11=sciencelab, 12=drillinggame, 13=upgrademenu, 14=drillinglocations, 15=racinggame, 16=racing game title screen, 17=racing game level progress, 18=racing game congratulations
                                         ;19=basketball game, 20=penguin bike race, 21=blockhit game, 22=jumpdown game
 GamesPlayed:  db 9                      ;increases after leaving a game. max=255
@@ -3784,9 +3784,10 @@ HighScoreBackroomGame:  db  100
 
 BasketballCompletePercentage: db 0
 HighScoreBasketball:          dw 0
-TotalCoinsBasketball:         dw 5988
+TotalCoinsBasketball:         dw 0
 BallsPurchased:               db %0000 0000     ;b0=tennisball,b1=billiardball,b2=baseball,b3=soccerball,b4=volleyball,b5=bowlingball,b6=golfball,b7=beachball
-CurrentBallsSelected:         db 7              ;0=basketball,1=tennisball,2=billiardball,3=baseball,4=soccerball,5=volleyball,6=bowlingball,7=golfball,8=beachball
+;BallsPurchased:               db %1111 1111     ;b0=tennisball,b1=billiardball,b2=baseball,b3=soccerball,b4=volleyball,b5=bowlingball,b6=golfball,b7=beachball
+CurrentBallsSelected:         db 0              ;0=basketball,1=tennisball,2=billiardball,3=baseball,4=soccerball,5=volleyball,6=bowlingball,7=golfball,8=beachball
 
 HighScoreRoadFighter: db 0
 HighScoreBlox: db 0

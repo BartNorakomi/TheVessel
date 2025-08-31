@@ -1109,16 +1109,16 @@ HostMovementRoutine:
   ld    (NPCConvAddress),hl
   ret
 
-ArcadeMachine1y:  db $54 - 4
+ArcadeMachine1y:  db 72
 ArcadeMachine1x:  db $16 - 10 + 8
 
-ArcadeMachine2y:  db $50 - 4
+ArcadeMachine2y:  db 72
 ArcadeMachine2x:  db $42 - 10 +6
 
-ArcadeMachine3y:  db $54 - 4
+ArcadeMachine3y:  db 72
 ArcadeMachine3x:  db $c6 - 10 - 10 
 
-ArcadeMachine4y:  db $54 - 4
+ArcadeMachine4y:  db 72
 ArcadeMachine4x:  db $f6 - 10 - 16
 
 CheckShowPressTrigAIconArcadeHall1:

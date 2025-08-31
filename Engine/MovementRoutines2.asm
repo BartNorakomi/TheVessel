@@ -2145,6 +2145,7 @@ BackToTitleScreenBasketBall:
 
   ld    a,0*32 + 31
 	ld    (PageOnNextVblank),a
+  call  screenon
 
   .Engine:
   ld    a,(framecounter2)
@@ -2172,6 +2173,8 @@ BackToTitleScreenBasketBall:
 ;		  F5	F1	'M'		  space	  right	  left	down	up	(keyboard)
 ;
 	ld		a,(NewPrContr)
+	bit		5,a           ;trig b pressed ?
+  jr    nz,.TriggerBPressed
 	bit		4,a           ;trig a pressed ?
   jr    nz,.TriggerAPressed
   and   %0000 1100
@@ -2187,6 +2190,14 @@ BackToTitleScreenBasketBall:
   xor   a
   ld    (basketballTitleScreenButton),a ;0=left button selected, 1=right button selected
   ret
+  .TriggerBPressed:
+  ld    a,0                                ;back to arcade hall 1
+  ld    (CurrentRoom),a
+  ld    a,1
+  ld    (ChangeRoom?),a
+  pop   af
+  ret
+
   .TriggerAPressed:
   ld    a,(basketballTitleScreenButton) ;0=left button selected, 1=right button selected
   or    a
@@ -2236,6 +2247,7 @@ BackToTitleScreenBasketBall:
   ld    hl,.EraseButtonsCurrentlyVisibleInShop
   call  DoCopy
   call  .SetAmountOfCoinsShop
+  call  .EraseCostOfBallsAlreadyPurchased
 
   ;set palette
   ld    hl,.BasketBallShopPalette
@@ -2263,6 +2275,89 @@ BackToTitleScreenBasketBall:
   ld    (hl),a
   jp    .Engine2
 
+  .EraseCostOfBallsAlreadyPurchased:
+  ld    hl,BallsPurchased                           ;b0=tennisball,b1=billiardball,b2=baseball,b3=soccerball,b4=volleyball,b5=bowlingball,b6=golfball,b7=beachball
+  bit   0,(hl)
+  ld    de,.EraseCostTennisBall
+  call  nz,.GoEraseCostOfThisBall
+  bit   1,(hl)
+  ld    de,.EraseCostBilliardBall
+  call  nz,.GoEraseCostOfThisBall
+  bit   2,(hl)
+  ld    de,.EraseCostBaseBall
+  call  nz,.GoEraseCostOfThisBall
+  bit   3,(hl)
+  ld    de,.EraseCostSoccerBall
+  call  nz,.GoEraseCostOfThisBall
+  bit   4,(hl)
+  ld    de,.EraseCostVolleysBall
+  call  nz,.GoEraseCostOfThisBall
+  bit   5,(hl)
+  ld    de,.EraseCostBowlingBall
+  call  nz,.GoEraseCostOfThisBall
+  bit   6,(hl)
+  ld    de,.EraseCostGolfBall
+  call  nz,.GoEraseCostOfThisBall
+  bit   7,(hl)
+  ld    de,.EraseCostBeachBall
+  call  nz,.GoEraseCostOfThisBall
+  ret
+
+  .GoEraseCostOfThisBall:
+  push  hl
+  ex    de,hl
+  call  DoCopy
+  pop   hl
+  ret
+
+  .EraseCostTennisBall:
+	db		0,0,0,0
+	db		124,0,048,1
+	db		014,0,006,0
+	db		4+ (4 * 16),0,$c0
+
+  .EraseCostBilliardBall:
+	db		0,0,0,0
+	db		164,0,048,1
+	db		014,0,006,0
+	db		4+ (4 * 16),0,$c0
+
+  .EraseCostBaseBall:
+	db		0,0,0,0
+	db		082,0,080,1
+	db		014,0,006,0
+	db		4+ (4 * 16),0,$c0
+
+  .EraseCostSoccerBall:
+	db		0,0,0,0
+	db		122,0,080,1
+	db		014,0,006,0
+	db		4+ (4 * 16),0,$c0
+
+  .EraseCostVolleysBall:
+	db		0,0,0,0
+	db		162,0,080,1
+	db		014,0,006,0
+	db		4+ (4 * 16),0,$c0
+
+  .EraseCostBowlingBall:
+	db		0,0,0,0
+	db		082,0,112,1
+	db		014,0,006,0
+	db		4+ (4 * 16),0,$c0
+
+  .EraseCostGolfBall:
+	db		0,0,0,0
+	db		122,0,112,1
+	db		014,0,006,0
+	db		4+ (4 * 16),0,$c0
+
+  .EraseCostBeachBall:
+	db		0,0,0,0
+	db		162,0,112,1
+	db		014,0,006,0
+	db		4+ (4 * 16),0,$c0
+
   .SetAmountOfCoinsShop:
   ld    hl,.EraseAmountOfCoins
   call  DoCopy
@@ -2282,6 +2377,7 @@ BackToTitleScreenBasketBall:
   call  HandleBasketBallgameHud.PutTextLoop
   ld    a,$90
   ld    (PutLetterNonTransparant+copytype),a
+  call  .EraseCostOfBallsAlreadyPurchased
   ret
 
   .EraseAmountOfCoins:
@@ -2381,6 +2477,126 @@ BackToTitleScreenBasketBall:
   jp    z,.CurrentBallIsInPosession
   dec   a
   jp    z,.CheckTennisBall
+  dec   a
+  jp    z,.CheckBilliardBall
+  dec   a
+  jp    z,.CheckBaseBall
+  dec   a
+  jp    z,.CheckSoccerBall
+  dec   a
+  jp    z,.CheckVolleyBall
+  dec   a
+  jp    z,.CheckBowlingBall
+  dec   a
+  jp    z,.CheckGolfBall
+  dec   a
+  jp    z,.CheckBeachBall
+  ret
+
+  .CheckBeachBall:
+  bit   7,(hl)
+  jp    nz,.CurrentBallIsInPosession
+  ld    hl,(TotalCoinsBasketball)
+  ld    de,.CostBeachBall
+  xor   a
+  sbc   hl,de
+  ret   c
+  ld    (TotalCoinsBasketball),hl
+  ld    a,(BallsPurchased)            ;b0=tennisball,b1=billiardball,b2=baseball,b3=soccerball,b4=volleyball,b5=bowlingball,b6=golfball,b7=beachball
+  set   7,a
+  ld    (BallsPurchased),a            ;b0=tennisball,b1=billiardball,b2=baseball,b3=soccerball,b4=volleyball,b5=bowlingball,b6=golfball,b7=beachball
+  call  .SetAmountOfCoinsShop
+  ret
+
+  .CheckGolfBall:
+  bit   6,(hl)
+  jp    nz,.CurrentBallIsInPosession
+  ld    hl,(TotalCoinsBasketball)
+  ld    de,.CostGolfBall
+  xor   a
+  sbc   hl,de
+  ret   c
+  ld    (TotalCoinsBasketball),hl
+  ld    a,(BallsPurchased)            ;b0=tennisball,b1=billiardball,b2=baseball,b3=soccerball,b4=volleyball,b5=bowlingball,b6=golfball,b7=beachball
+  set   6,a
+  ld    (BallsPurchased),a            ;b0=tennisball,b1=billiardball,b2=baseball,b3=soccerball,b4=volleyball,b5=bowlingball,b6=golfball,b7=beachball
+  call  .SetAmountOfCoinsShop
+  ret
+
+  .CheckBowlingBall:
+  bit   5,(hl)
+  jp    nz,.CurrentBallIsInPosession
+  ld    hl,(TotalCoinsBasketball)
+  ld    de,.CostBowlingBall
+  xor   a
+  sbc   hl,de
+  ret   c
+  ld    (TotalCoinsBasketball),hl
+  ld    a,(BallsPurchased)            ;b0=tennisball,b1=billiardball,b2=baseball,b3=soccerball,b4=volleyball,b5=bowlingball,b6=golfball,b7=beachball
+  set   5,a
+  ld    (BallsPurchased),a            ;b0=tennisball,b1=billiardball,b2=baseball,b3=soccerball,b4=volleyball,b5=bowlingball,b6=golfball,b7=beachball
+  call  .SetAmountOfCoinsShop
+  ret
+
+  .CheckVolleyBall:
+  bit   4,(hl)
+  jp    nz,.CurrentBallIsInPosession
+  ld    hl,(TotalCoinsBasketball)
+  ld    de,.CostVolleyBall
+  xor   a
+  sbc   hl,de
+  ret   c
+  ld    (TotalCoinsBasketball),hl
+  ld    a,(BallsPurchased)            ;b0=tennisball,b1=billiardball,b2=baseball,b3=soccerball,b4=volleyball,b5=bowlingball,b6=golfball,b7=beachball
+  set   4,a
+  ld    (BallsPurchased),a            ;b0=tennisball,b1=billiardball,b2=baseball,b3=soccerball,b4=volleyball,b5=bowlingball,b6=golfball,b7=beachball
+  call  .SetAmountOfCoinsShop
+  ret
+
+  .CheckSoccerBall:
+  bit   3,(hl)
+  jp    nz,.CurrentBallIsInPosession
+  ld    hl,(TotalCoinsBasketball)
+  ld    de,.CostSoccerBall
+  xor   a
+  sbc   hl,de
+  ret   c
+  ld    (TotalCoinsBasketball),hl
+  ld    a,(BallsPurchased)            ;b0=tennisball,b1=billiardball,b2=baseball,b3=soccerball,b4=volleyball,b5=bowlingball,b6=golfball,b7=beachball
+  set   3,a
+  ld    (BallsPurchased),a            ;b0=tennisball,b1=billiardball,b2=baseball,b3=soccerball,b4=volleyball,b5=bowlingball,b6=golfball,b7=beachball
+  call  .SetAmountOfCoinsShop
+  ret
+
+  .CheckBaseBall:
+  bit   2,(hl)
+  jp    nz,.CurrentBallIsInPosession
+  ld    hl,(TotalCoinsBasketball)
+  ld    de,.CostBaseBall
+  xor   a
+  sbc   hl,de
+  ret   c
+  ld    (TotalCoinsBasketball),hl
+  ld    a,(BallsPurchased)            ;b0=tennisball,b1=billiardball,b2=baseball,b3=soccerball,b4=volleyball,b5=bowlingball,b6=golfball,b7=beachball
+  set   2,a
+  ld    (BallsPurchased),a            ;b0=tennisball,b1=billiardball,b2=baseball,b3=soccerball,b4=volleyball,b5=bowlingball,b6=golfball,b7=beachball
+  call  .SetAmountOfCoinsShop
+  ret
+
+  .CheckBilliardBall:
+  bit   1,(hl)
+  jp    nz,.CurrentBallIsInPosession
+  ld    hl,(TotalCoinsBasketball)
+  ld    de,.CostBilliardBall
+  xor   a
+  sbc   hl,de
+  ret   c
+  ld    (TotalCoinsBasketball),hl
+  ld    a,(BallsPurchased)            ;b0=tennisball,b1=billiardball,b2=baseball,b3=soccerball,b4=volleyball,b5=bowlingball,b6=golfball,b7=beachball
+  set   1,a
+  ld    (BallsPurchased),a            ;b0=tennisball,b1=billiardball,b2=baseball,b3=soccerball,b4=volleyball,b5=bowlingball,b6=golfball,b7=beachball
+  call  .SetAmountOfCoinsShop
+  ret
 
   .CheckTennisBall:
   bit   0,(hl)
@@ -2410,15 +2626,14 @@ BackToTitleScreenBasketBall:
   pop   af
   ret
 
-  .CostTennisBall:    equ 50
-  .CostBilliardBall:  equ 70
-  .CostBaseBall:      equ 100
-  .CostSoccerBall:    equ 140
-  .CostVolleyBall:    equ 190
-  .CostBowlingBall:   equ 250
-  .CostGolfBall:      equ 320
-  .CostBeachBall:     equ 400
-
+  .CostTennisBall:    equ 010
+  .CostBilliardBall:  equ 020
+  .CostBaseBall:      equ 035
+  .CostSoccerBall:    equ 050
+  .CostVolleyBall:    equ 070
+  .CostBowlingBall:   equ 095
+  .CostGolfBall:      equ 120
+  .CostBeachBall:     equ 150
 
   .EraseSelectedShopButton:
   ld    hl,.DoShowSelectedShopButton
@@ -3187,9 +3402,9 @@ HandleBasketBallGameOver:
 ;		  0	  0	  trig-b	trig-a	right	  left	down	up	(joystick)
 ;		  F5	F1	'M'		  space	  right	  left	down	up	(keyboard)
 ;;
-	ld		a,(Controls)
-	bit		6,a           ;f1 pressed ?
-  jr    nz,.GamveOver
+;	ld		a,(Controls)
+;	bit		6,a           ;f1 pressed ?
+;  jr    nz,.GamveOver
 
   ld    a,(basketballGameOver?)
   or    a
@@ -3460,7 +3675,7 @@ BasketBallGameRoutine:
 
   call  .HandlePhase                        ;load graphics, init variables
   call  HandleBasketBallgameHud
-  call  CheckEndArcadeGameTriggerB
+;  call  CheckEndArcadeGameTriggerB
   call  HandleBasketBall
   call  SetwallCoverUps
   call  SetBallShadow
@@ -3469,8 +3684,8 @@ BasketBallGameRoutine:
   call  HandleBasketBallGameOver
   call  HandlePickUpCoin
 
-call screenon
-jp BackToTitleScreenBasketBall.StartShopMenu
+;call screenon
+;jp BackToTitleScreenBasketBall.StartShopMenu
 
   ret
 
@@ -3552,7 +3767,14 @@ jp BackToTitleScreenBasketBall.StartShopMenu
   call  SetArcadeMachine
   call  SetInterruptHandlerArcadeMachine   	;sets Vblank and lineint for hud
 
+  ;These calls starts at titlescreen, instead of directly ingame  
+  call  .ResetVariables
+  call  SpritesOff
+;  call  screenon
+  jp    BackToTitleScreenBasketBall
+
   .ResetVariables:
+  call  PopulateControls
   push  iy
   ld    iy,Object2
   ld    (iy+ObjectPhase),1
