@@ -590,10 +590,6 @@ ArcadeHall1GfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
   incbin "..\grapx\arcadehall1\arcade1.SC5",7,212 * 128      ;212 lines
 	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
 
-;ArcadeHall1redlightsGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
-;  incbin "..\grapx\arcadehall1\redlights.SC5",7,022 * 128      ;030 lines
-;	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
-
 ArcadeHall2GfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
   incbin "..\grapx\arcadehall2\arcade2.SC5",7,212 * 128      ;212 lines
 	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
@@ -707,10 +703,20 @@ BasketBallShopGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockS
   incbin "..\grapx\BasketBall\Shop\ShopPart1.sc5.pck"
 	BasketBallShopPart2Address:
   incbin "..\grapx\BasketBall\Shop\ShopPart2.sc5.pck"
-
 	.CheckBlockFull:	dw	$+$8000
 	dephase
 	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
+
+
+
+
+
+
+
+
+
+
+
 
 RacingGameFourMountainsGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
 RacingGameNightCityGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
@@ -808,9 +814,9 @@ RacingGameTrackStraightPage1GfxBlock:  			equ   ($-RomStartAddress) and (romsize
 	ds	128,255
 	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
 
-RacingGameBackdropGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
-  incbin "..\grapx\RacingGame\RoadMSXSize\backdrop.sc5",7,015 * 128      ;98 lines
-	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
+;RacingGameBackdropGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
+;  incbin "..\grapx\RacingGame\RoadMSXSize\backdrop.sc5",7,015 * 128      ;98 lines
+;	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
 
 
 RacingGameRoadBlockSpritesBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
@@ -900,14 +906,6 @@ RacingGameAlienMiniSpritesBlock:  			equ   ($-RomStartAddress) and (romsize-1) /
 	include "..\grapx\racinggame\sprites\Alien\AlienMiniSprite.tgs.gen"
 	AlienMiniSpriteColors:	
 	include "..\grapx\racinggame\sprites\Alien\AlienMiniSprite.tcs.gen"
-
-;$2200 free = 
-
-;	AlienTurnRightAndLeftCharacters:
-;	include "..\grapx\racinggame\sprites\Alien\AlienTurnRightAndLeft.tgs.gen"
-;	AlienTurnRightAndLeftColors:	
-;	include "..\grapx\racinggame\sprites\Alien\AlienTurnRightAndLeft.tcs.gen"
-
 	dephase
 	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
 
@@ -968,7 +966,6 @@ RacingGameDiamondSpritesBlock:  			equ   ($-RomStartAddress) and (romsize-1) /Ro
 	dephase
 	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
 
-
 RacingGameFlag1SpritesBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
 RacingGameFlag1MiniSpritesBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
 	phase	$8000
@@ -1024,7 +1021,6 @@ RacingGamePlayerSpritesBlock:  			equ   ($-RomStartAddress) and (romsize-1) /Rom
 
 	PlayerEmptySpritesCharacters:
 	ds	320,0
-
 
   ;offset character, color
 SpriteOffSetsTableSlowSpeed: 
@@ -2091,6 +2087,15 @@ Basketballspritedatablock:			equ ($-RomStartAddress) and (romsize-1) /RomBlockSi
 									incbin "..\tools\Basketball.dat"
 									DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
 
+;PenguinBikeRace
+PenguinBikeRaceframelistblock:			equ ($-RomStartAddress) and (romsize-1) /RomBlockSize
+									phase	$8000
+									include "..\tools\PenguinBikeRace.asm" 
+									DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
+									dephase
+PenguinBikeRacespritedatablock:			equ ($-RomStartAddress) and (romsize-1) /RomBlockSize
+									incbin "..\tools\PenguinBikeRace.dat"
+									DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
 
 ;npcs
 npcsframelistblock:			equ ($-RomStartAddress) and (romsize-1) /RomBlockSize
@@ -2215,6 +2220,11 @@ MovementRoutines2Block:	equ ($-RomStartAddress) and (romsize-1) /RomBlockSize ;$
 ;movement routines3
 MovementRoutines3Block:	equ ($-RomStartAddress) and (romsize-1) /RomBlockSize ;$04
 								include "MovementRoutines3.asm"  
+								DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
+
+;movement routines4
+MovementRoutines4Block:	equ ($-RomStartAddress) and (romsize-1) /RomBlockSize ;$04
+								include "MovementRoutines4.asm"  
 								DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
 
 EndBlock:				equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize

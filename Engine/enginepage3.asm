@@ -148,7 +148,9 @@ EventRacingGameTitleScreen:		db	1,$28,$7e | dw 000,000			,000        | db 255   
 EventRacingGameLevelProgress: db	1,$28,$7e | dw 000,000			,000        | db 255      ,MovementRoutines3Block| dw RacingGameLevelProgressRoutine| db 000,000 ,000, 000
 EventRacingGameCongratulations: db	1,$28,$7e | dw 000,000			,000        | db 255      ,MovementRoutines3Block| dw RacingGameCongratulationsRoutine| db 000,000 ,000, 000
 
-EventPenguinBikeRaceGame:	db	1,$28,$7e | dw 000,000					,000        | db 255      ,MovementRoutines2Block| dw PenguinBikeRaceGameRoutine		| db 000,000 ,000, 000
+EventPenguinBikeRaceGame:	db	1,$28,$7e | dw 000,000					,000        | db 255      ,MovementRoutines4Block| dw PenguinBikeRaceGameRoutine		| db 000,000 ,000, 000
+ObjectPenguin: 						db  1,000,000 | dw 000,000		,PenguinBikeRace_0    | db 255  ,MovementRoutines4Block | dw PenguinMovementRoutine				| db 000,000 ,000, 000
+
 EventBlockHitGame:				db	1,$28,$7e | dw 000,000					,000        | db 255      ,MovementRoutines2Block| dw BlockHitGameRoutine		| db 000,000 ,000, 000
 EventJumpDownGame:				db	1,$28,$7e | dw 000,000					,000        | db 255      ,MovementRoutines2Block| dw JumpDownGameRoutine		| db 000,000 ,000, 000
 
@@ -682,6 +684,9 @@ PutObjectsPenguinBikeRaceGame:
 	xor		a																;turn off main player sprite (we don't use this at the games)
 	ld		(Object1+on?),a
 
+	ld		hl,ObjectPenguin								;put penguin
+	call	PutSingleObject
+
 	ld		de,ObjEvent1										;now put events
 
 	ld		hl,EventPenguinBikeRaceGame	;put racing game level progress event
@@ -1077,6 +1082,16 @@ LoadRoomGfx:
 ;	jp		z,JumpDownGamesGfx 						;loads the jumpdown game
 	ret
 
+SetArcadeMachine:
+  ld    hl,ArcadeMachinePart1Address
+  ld    a,ArcadeMachineGfxBlock
+  call  SetGfxAt8000InRam                             ;in: hl=adress in rom page 1, a=block, out: puts gfx in page 2 in ram at $8000
+
+  ld    hl,$8000 + (000*128) + (000/2) - 128
+  ld    de,$0000 + (135*128) + (000/2) - 128
+  ld    bc,$0000 + (077*256) + (256/2)
+  jp    CopyRamToVram                       ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
+
 LoadRacingGameGfx:
   ld    a,RacingGameTrackStraightPage0GfxBlock     			;block to copy graphics from
   ld    hl,$4000 + (000*128) + (000/2) - 128
@@ -1090,16 +1105,16 @@ LoadRacingGameGfx:
   ld    bc,$0000 + (212*256) + (256/2)
   call  CopyRomToVram                   ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
 
-  ld    a,RacingGameBackdropGfxBlock     			;block to copy graphics from
-  ld    hl,$4000 + (000*128) + (000/2) - 128
-  ld    de,$0000 + (0*128) + (000/2) - 128
-  ld    bc,$0000 + (015*256) + (256/2)
+;  ld    a,RacingGameBackdropGfxBlock     			;block to copy graphics from
+;  ld    hl,$4000 + (000*128) + (000/2) - 128
+;  ld    de,$0000 + (0*128) + (000/2) - 128
+;  ld    bc,$0000 + (015*256) + (256/2)
 ;  call  CopyRomToVram                   ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
 
-  ld    a,RacingGameBackdropGfxBlock     			;block to copy graphics from
-  ld    hl,$4000 + (000*128) + (000/2) - 128
-  ld    de,$8000 + (0*128) + (000/2) - 128
-  ld    bc,$0000 + (015*256) + (256/2)
+;  ld    a,RacingGameBackdropGfxBlock     			;block to copy graphics from
+;  ld    hl,$4000 + (000*128) + (000/2) - 128
+;  ld    de,$8000 + (0*128) + (000/2) - 128
+;  ld    bc,$0000 + (015*256) + (256/2)
 ;  call  CopyRomToVram                   ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
 
   ld    hl,RacingGamePalette
@@ -1785,6 +1800,27 @@ SetTempisr:
 	pop		af
 	ei	
 	ret
+
+SetInterruptHandlerArcadeMachine:
+  di
+  ld    hl,InterruptHandlerArcadeMachine
+  ld    ($38+1),hl          ;set new normal interrupt
+  ld    a,$c3               ;jump command
+  ld    ($38),a
+  ;lineinterrupt on
+  ld    a,(VDP_0)                       ;set ei1
+  or    16                              ;ei1 checks for lineint and vblankint
+  ld    (VDP_0),a                       ;ei0 (which is default at boot) only checks vblankint
+  out   ($99),a
+  ld    a,128
+  out   ($99),a
+
+  ld    a,LineIntHeightArcadeMachine
+  out   ($99),a
+  ld    a,19+128                        ;set lineinterrupt height
+  ei
+  out   ($99),a 
+  ret
 
 sprcoladdr:		equ	$7400
 sprattaddr:		equ	$7600
@@ -2735,6 +2771,7 @@ basketballCombo:					rb	2
 basketballresettimervar:	rb	1
 basketballcoins:					rb	1
 basketballTitleScreenButton:	rb	1
+;PenguinDistance:					rb	2
 
 endenginepage3variables:  equ $+enginepage3length
 org variables
