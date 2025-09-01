@@ -1,7 +1,7 @@
 phase	$c000
 
 StartAtTitleScreen?:                equ 0
-MusicOn?:                           equ 0
+MusicOn?:                           equ 1
 Promo?:                             equ 0
 ConversationsOn?:                  	equ 1
 

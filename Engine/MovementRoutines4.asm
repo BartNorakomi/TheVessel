@@ -3,6 +3,21 @@
 
 Phase MovementRoutinesAddress
 
+;every second increase speed by 1
+;maximum speed = 30 (every level max speed increases by 1 or 2)
+;mushroom = speed -5
+;fruit = boost for 3 seconds (speed + 20)
+;stone = knipperen(ouch), snelheid back to 0
+;star = 5 second invulnerable
+;birds appear from edges to screen and fly in straight line
+;clock = timefreeze (5 seconds)
+;stones and birds gets announced with triangle with ! symbol
+
+;you need to complete 10 laps to finish the level with the given time
+;time is displayed in left top, laps in right top, level in the middle
+;after completing a level, time gets extended, level gets increased, laps get reset
+;every level max speed increases by 1 or 2
+
 PenguinDistance:      equ Object2+var1  ;2 bytes
 PenguinInsideOval?:   equ Object2+var3
 PenguinMovementRoutine:
@@ -13,6 +28,133 @@ PenguinMovementRoutine:
   call  IncreaseDistanceAndSetXYPenguin
   call  HandleJumpInsideOrOutsideOval
   call  SetPenguinSprite
+  call  SetAlarmSprite
+  call  SetStarSprite
+  call  SetPizzaSprite
+  call  SetClockSprite
+  call  SetStoneSprite
+  call  SetMushroomSprite
+  ret
+
+MushroomLookingLeftSpriteYSpat:              equ spat+0+12*4
+MushroomLookingLeftSpriteXSpat:              equ spat+1+12*4
+MushroomLookingRightSpriteYSpat:              equ spat+0+16*4
+MushroomLookingRightSpriteXSpat:              equ spat+1+16*4
+MushroomLookingUpSpriteYSpat:               equ spat+0+20*4
+MushroomLookingUpSpriteXSpat:               equ spat+1+20*4
+MushroomLookingDownSpriteYSpat:               equ spat+0+24*4
+MushroomLookingDownSpriteXSpat:               equ spat+1+24*4
+
+SetMushroomSprite:
+;mushroom looking Down
+  ld    a,110
+  ld    (MushroomLookingDownSpriteYSpat),a                 ;y sprite 0
+  ld    (MushroomLookingDownSpriteYSpat+4),a                 ;y sprite 1
+  ld    a,110+16
+  ld    (MushroomLookingDownSpriteYSpat+8),a                 ;y sprite 1
+  ld    (MushroomLookingDownSpriteYSpat+12),a                 ;y sprite 1
+  ld    a,50
+  ld    (MushroomLookingDownSpriteXSpat),a                 ;x sprite 0
+  ld    (MushroomLookingDownSpriteXSpat+4),a                 ;x sprite 1
+  ld    (MushroomLookingDownSpriteXSpat+8),a                 ;x sprite 0
+  ld    (MushroomLookingDownSpriteXSpat+12),a                 ;x sprite 1
+  ret
+
+;mushroom looking Up
+  ld    a,110
+  ld    (MushroomLookingUpSpriteYSpat),a                 ;y sprite 0
+  ld    (MushroomLookingUpSpriteYSpat+4),a                 ;y sprite 1
+  ld    a,110+16
+  ld    (MushroomLookingUpSpriteYSpat+8),a                 ;y sprite 1
+  ld    (MushroomLookingUpSpriteYSpat+12),a                 ;y sprite 1
+  ld    a,50
+  ld    (MushroomLookingUpSpriteXSpat),a                 ;x sprite 0
+  ld    (MushroomLookingUpSpriteXSpat+4),a                 ;x sprite 1
+  ld    (MushroomLookingUpSpriteXSpat+8),a                 ;x sprite 0
+  ld    (MushroomLookingUpSpriteXSpat+12),a                 ;x sprite 1
+  ret
+
+;mushroom looking right
+  ld    a,110
+  ld    (MushroomLookingRightSpriteYSpat),a                 ;y sprite 0
+  ld    (MushroomLookingRightSpriteYSpat+4),a                 ;y sprite 1
+  ld    (MushroomLookingRightSpriteYSpat+8),a                 ;y sprite 1
+  ld    (MushroomLookingRightSpriteYSpat+12),a                 ;y sprite 1
+  ld    a,50
+  ld    (MushroomLookingRightSpriteXSpat),a                 ;x sprite 0
+  ld    (MushroomLookingRightSpriteXSpat+4),a                 ;x sprite 1
+  ld    a,50+16
+  ld    (MushroomLookingRightSpriteXSpat+8),a                 ;x sprite 0
+  ld    (MushroomLookingRightSpriteXSpat+12),a                 ;x sprite 1
+  ret
+
+;mushroom looking left
+  ld    a,110
+  ld    (MushroomLookingLeftSpriteYSpat),a                 ;y sprite 0
+  ld    (MushroomLookingLeftSpriteYSpat+4),a                 ;y sprite 1
+  ld    (MushroomLookingLeftSpriteYSpat+8),a                 ;y sprite 1
+  ld    (MushroomLookingLeftSpriteYSpat+12),a                 ;y sprite 1
+  ld    a,50
+  ld    (MushroomLookingLeftSpriteXSpat),a                 ;x sprite 0
+  ld    (MushroomLookingLeftSpriteXSpat+4),a                 ;x sprite 1
+  ld    a,50+16
+  ld    (MushroomLookingLeftSpriteXSpat+8),a                 ;x sprite 0
+  ld    (MushroomLookingLeftSpriteXSpat+12),a                 ;x sprite 1
+  ret
+
+StoneSpriteYSpat:              equ spat+0+08*4
+StoneSpriteXSpat:              equ spat+1+08*4
+SetStoneSprite:
+  ld    a,90
+  ld    (StoneSpriteYSpat),a                 ;y sprite 0
+  ld    (StoneSpriteYSpat+4),a                 ;y sprite 1
+  ld    a,50
+  ld    (StoneSpriteXSpat),a                 ;x sprite 0
+  ld    (StoneSpriteXSpat+4),a                 ;x sprite 1
+  ret
+
+ClockSpriteYSpat:              equ spat+0+06*4
+ClockSpriteXSpat:              equ spat+1+06*4
+SetClockSprite:
+  ld    a,70
+  ld    (ClockSpriteYSpat),a                 ;y sprite 0
+  ld    (ClockSpriteYSpat+4),a                 ;y sprite 1
+  ld    a,50
+  ld    (ClockSpriteXSpat),a                 ;x sprite 0
+  ld    (ClockSpriteXSpat+4),a                 ;x sprite 1
+  ret
+
+PizzaSpriteYSpat:              equ spat+0+04*4
+PizzaSpriteXSpat:              equ spat+1+04*4
+SetPizzaSprite:
+  ld    a,50
+  ld    (PizzaSpriteYSpat),a                 ;y sprite 0
+  ld    (PizzaSpriteYSpat+4),a                 ;y sprite 1
+  ld    a,50
+  ld    (PizzaSpriteXSpat),a                 ;x sprite 0
+  ld    (PizzaSpriteXSpat+4),a                 ;x sprite 1
+  ret
+
+StarSpriteYSpat:              equ spat+0+02*4
+StarSpriteXSpat:              equ spat+1+02*4
+SetStarSprite:
+  ld    a,30
+  ld    (StarSpriteYSpat),a                 ;y sprite 0
+  ld    (StarSpriteYSpat+4),a                 ;y sprite 1
+  ld    a,50
+  ld    (StarSpriteXSpat),a                 ;x sprite 0
+  ld    (StarSpriteXSpat+4),a                 ;x sprite 1
+  ret
+
+AlarmSpriteYSpat:              equ spat+0+00*4
+AlarmSpriteXSpat:              equ spat+1+00*4
+SetAlarmSprite:
+  ld    a,10
+  ld    (AlarmSpriteYSpat),a                 ;y sprite 0
+  ld    (AlarmSpriteYSpat+4),a                 ;y sprite 1
+  ld    a,50
+  ld    (AlarmSpriteXSpat),a                 ;x sprite 0
+  ld    (AlarmSpriteXSpat+4),a                 ;x sprite 1
   ret
 
 HandleJumpInsideOrOutsideOval:
@@ -269,8 +411,37 @@ PenguinBikeRaceGameRoutine:
   ld    a,1
   ld    (SetArcadeGamePalette?),a
 
+  call  .SetPenguinBikeRaceSprites
+
   call  SetInterruptHandlerArcadeMachine   	;sets Vblank and lineint for hud
   ret
+
+  .SetPenguinBikeRaceSprites:
+  ;write sprite character
+	xor		a				;page 0/1
+	ld		hl,sprcharaddr+0*32	;sprite 0 character table in VRAM
+	call	SetVdp_Write
+
+	ld		hl,PenguinBikeRaceCharSprites	;sprite 0 character table in VRAM
+	ld		c,$98
+	call	outix384		;write sprite color of pointer and hand to vram
+	call	outix384		;write sprite color of pointer and hand to vram
+	call	outix128		;write sprite color of pointer and hand to vram
+
+	xor		a				;page 0/1
+	ld		hl,sprcoladdr+0*16	;sprite 0 color table in VRAM
+	call	SetVdp_Write
+
+	ld		hl,PenguinBikeRaceColSprites	;sprite 0 character table in VRAM
+	ld		c,$98
+	call	outix384		;write sprite color of pointer and hand to vram
+	call	outix64	;write sprite color of pointer and hand to vram  
+  ret
+
+	PenguinBikeRaceCharSprites:
+	include "..\grapx\PenguinBikeRace\assets.tgs.gen"
+	PenguinBikeRaceColSprites:
+	include "..\grapx\PenguinBikeRace\assets.tcs.gen"
 
 PenguinBikeRacePalette:
   incbin "..\grapx\penguinbikerace\PenguinBikeRace.sc5",$7680+7,32
