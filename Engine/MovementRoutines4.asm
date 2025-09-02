@@ -4,37 +4,739 @@
 Phase MovementRoutinesAddress
 
 ;every second increase speed by 1
-;maximum speed = 30 (every level max speed increases by 1 or 2)
+;maximum speed = 30 (every level max speed increases by 2)
 ;mushroom = speed -5
 ;fruit = boost for 3 seconds (speed + 20)
 ;stone = knipperen(ouch), snelheid back to 0
 ;star = 5 second invulnerable
-;birds appear from edges to screen and fly in straight line
+;rolling monsters spawn and continue rolling in either direction
+;spike sprites appear and extend and contract every second for x seconds
 ;clock = timefreeze (5 seconds)
-;stones and birds gets announced with triangle with ! symbol
+;stones, rolling monsters and spikes gets announced with triangle with ! symbol
 
-;you need to complete 10 laps to finish the level with the given time
+
+;you need to complete 10 laps to finish a level within its given time
 ;time is displayed in left top, laps in right top, level in the middle
 ;after completing a level, time gets extended, level gets increased, laps get reset
 ;every level max speed increases by 1 or 2
 
-PenguinDistance:      equ Object2+var1  ;2 bytes
-PenguinInsideOval?:   equ Object2+var3
+PenguinSpeed:                       equ Object2+var1 ;same spot as PutOnFrame
+PenguinDistanceTravelledThisFrame:  equ Object2+var2 ;same spot as ObjectRestoreBackgroundTable
+PenguinInsideOval?:                 equ Object2+var3
+
+Stone1On?:                          equ Object3+0
+Stone1Duration:                     equ Object3+1
+Stone1Distance:                     equ Object3+2
+Stone1InsideOval?:                  equ Object3+4
+
+Stone2On?:                          equ Object4+0
+Stone2Duration:                     equ Object4+1
+Stone2Distance:                     equ Object4+2
+Stone2InsideOval?:                  equ Object4+4
+
 PenguinMovementRoutine:
   ld    a,3
   ld    (framecounter),a
   ld    (iy+PutOnFrame),3
+  ld    a,(framecounter2)
+  inc   a
+  ld    (framecounter2),a
 
+  call  .HandlePhase                        ;init variables, load gfx
+  call  IncreasePenguinSpeed
   call  IncreaseDistanceAndSetXYPenguin
   call  HandleJumpInsideOrOutsideOval
   call  SetPenguinSprite
+  call  HandlePenguinGameObjects
+  call  HandlePenguinGameHud
+  call  HandlePenguinGameOver
+  ret
+
+  .HandlePhase:                             ;init variables, load gfx
+  bit   0,(iy+ObjectPhase)
+  ret   nz
+  ld    (iy+ObjectPhase),1
+
+  ld    hl,0
+  ld    (PenguinDistance),hl
+  ld    a,30
+  ld    (PenguinMaxSpeed),a                 ;maximum speed level 1 = 30, level 10 = 48, speed boost is + 20 speed (every level max speed increases by 2)
+  xor   a
+  ld    (PenguinInsideOval?),a
+  ld    (PenguinDistanceTravelledThisFrame),a
+  ld    (PenguinSpeed),a
+  ld    (framecounter2),a
+  ld    (Stone2On?),a
+
+  ld    a,1
+  ld    (Stone1On?),a
+  ld    hl,0
+  ld    (Stone1Distance),hl
+
+
+  ld    a,1
+  ld    (PenguinGameLevel),a
+;ld a,10
+  ld    (PenguinGameLaps),a
+  ld    (PenguinGameLapsCopy),a
+  ld    a,61
+;ld a,1
+  ld    (PenguinGameTime),a
+
+  call  SetArcadeMachine
+
+  ;set penguin bike race page 0
+  ld    hl,PenguinBikeRacePart1Address
+  ld    a,PenguinBikeRaceGfxBlock
+  call  SetGfxAt8000InRam                             ;in: hl=adress in rom page 1, a=block, out: puts gfx in page 2 in ram at $8000
+
+  ld    hl,$8000 + (000*128) + (000/2) - 128
+  ld    de,$0000 + (000*128) + (000/2) - 128
+  ld    bc,$0000 + (128*256) + (256/2)
+  call  CopyRamToVram                       ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
+
+  ld    hl,PenguinBikeRacePart2Address
+  ld    a,PenguinBikeRaceGfxBlock
+  call  SetGfxAt8000InRam                             ;in: hl=adress in rom page 1, a=block, out: puts gfx in page 2 in ram at $8000
+
+  ld    hl,$8000 + (000*128) + (000/2) - 128
+  ld    de,$0000 + (128*128) + (000/2) - 128
+  ld    bc,$0000 + (007*256) + (256/2)
+  call  CopyRamToVram                       ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
+
+  ;copy page 0 to page 1
+  xor   a
+  ld    (CopyPageToPage212High+sPage),a
+  ld    a,1
+  ld    (CopyPageToPage212High+dPage),a
+  ld    hl,CopyPageToPage212High
+  call  DoCopy
+
+  ;copy page 0 to page 2
+  ld    a,2
+  ld    (CopyPageToPage212High+dPage),a
+  ld    hl,CopyPageToPage212High
+  call  DoCopy
+
+  ;copy page 0 to page 3
+  ld    a,3
+  ld    (CopyPageToPage212High+dPage),a
+  ld    hl,CopyPageToPage212High
+  call  DoCopy
+
+  ld    hl,PenguinBikeRacePalette
+  ld    de,ArcadeGamePalette
+  ld    bc,32
+  ldir
+
+  call  SetPenguinBikeRaceSprites
+
+  ;set font at y=212 page 1
+  ld    hl,PenguinBikeRaceFontPart1Address
+  ld    a,PenguinBikeRaceFontGfxBlock
+  call  SetGfxAt8000InRam                             ;in: hl=adress in rom page 1, a=block, out: puts gfx in page 2 in ram at $8000
+
+  ld    hl,$8000 + (000*128) + (000/2) - 128
+  ld    de,$8000 + (212*128) + (000/2) - 128
+  ld    bc,$0000 + (009*256) + (256/2)
+  call  CopyRamToVram                       ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
+
+  call  SetInterruptHandlerArcadeMachine   	;sets Vblank and lineint for hud
+  ld    a,1
+  ld    (SetArcadeGamePalette?),a           ;action on vblank: 1=set palette, 2=set palette and write spat to vram
+  ret
+
+HandlePenguinGameOver:
+  ld    a,(PenguinGameTime)
+  or    a
+  ret   nz
+  ld    a,(PenguinSpeed)
+  or    a
+  ret   nz
+
+  .GamveOver:
+	ld    a,(screenpage)
+  or    a
+  ret   nz
+
+  ld    hl,PenguinBikeRaceGameOverPart1Address
+  ld    a,PenguinBikeRaceGameOverGfxBlock
+  call  SetGfxAt8000InRam                             ;in: hl=adress in rom page 1, a=block, out: puts gfx in page 2 in ram at $8000
+
+  call  WaitVblank
+  call  WaitVblank
+
+  ld    hl,$8000 + (000*128) + (000/2) - 128
+  ld    de,$8000 + (012*128) + (064/2) - 128
+  ld    bc,$0000 + (020*256) + (128/2)
+  call  CopyRamToVram                       ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
+  call  WaitVblank
+
+  ld    hl,$8000 + (020*128) + (000/2) - 128
+  ld    de,$8000 + (032*128) + (064/2) - 128
+  ld    bc,$0000 + (020*256) + (128/2)
+  call  CopyRamToVram                       ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
+  call  WaitVblank
+
+  ld    hl,$8000 + (040*128) + (000/2) - 128
+  ld    de,$8000 + (052*128) + (064/2) - 128
+  ld    bc,$0000 + (020*256) + (128/2)
+  call  CopyRamToVram                       ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
+  call  WaitVblank
+
+  ld    hl,$8000 + (060*128) + (000/2) - 128
+  ld    de,$8000 + (072*128) + (064/2) - 128
+  ld    bc,$0000 + (020*256) + (128/2)
+  call  CopyRamToVram                       ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
+  call  WaitVblank
+
+  ld    hl,$8000 + (080*128) + (000/2) - 128
+  ld    de,$8000 + (092*128) + (064/2) - 128
+  ld    bc,$0000 + (020*256) + (128/2)
+  call  CopyRamToVram                       ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
+  call  WaitVblank
+
+  ld    hl,$8000 + (100*128) + (000/2) - 128
+  ld    de,$8000 + (112*128) + (064/2) - 128
+  ld    bc,$0000 + (019*256) + (128/2)
+  call  CopyRamToVram                       ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
+
+;ld a,11
+;  ld    (PenguinGameLevel),a
+;ld a,1
+;  ld    (PenguinGameLaps),a
+
+
+;check if current score is new highscore
+  ld    a,(PenguinGameLevel)
+  dec   a
+  ld    e,a
+  ld    d,0
+  ld    hl,10
+  call  MultiplyHlWithDE      ;HL = result (level-1)*10
+  ld    a,(PenguinGameLaps)
+  dec   a
+  ld    e,a
+  ld    d,0
+  add   hl,de                           ;(level-1)*10 + (laps - 1)
+  ld    (PenguinBikeRaceScore),hl
+  ex    de,hl
+
+  ld    hl,(HighScoreBikeRace)
+  xor   a
+  sbc   hl,de
+  jr    nc,.EndCheckNewHighScore
+  ld    (HighScoreBikeRace),de
+  ld    a,(PenguinGameLaps)
+  ld    (PenguinGameLapsHighest),a
+  ld    a,(PenguinGameLevel)
+  ld    (PenguinGameLevelHighest),a
+
+
+  .EndCheckNewHighScore:
+;set completed %
+  ld    hl,(HighScoreBikeRace)
+  ld    a,l
+  cp    101
+  jr    c,.SetCompletePercentage
+  ld    a,100
+  .SetCompletePercentage:
+  ld    (BikeRaceCompletePercentage),a
+
+  call  .SetScore
+  call  .SetBestScore
+  call  .SetCompleted
+  call  .SetPercentageSymbol
+
+  ld    a,1*32 + 31
+	ld    (PageOnNextVblank),a
+  call  SpritesOff
+
+  xor   a
+  ld    (freezecontrols?),a  
+  call  STOPWAITSPACEPRESSED
+
+  jp    BackToTitleScreenBasketBall
+
+.PercentageSymbol:                     ;freely usable anywhere
+  db    163,000,060,001                 ;sx,--,sy,spage
+  db    169,000,107,001                 ;dx,--,dy,dpage
+  db    007,000,006,000                 ;nx,--,ny,--
+  db    000,%0000 0000,$90              ;fast copy -> Copy from right to left     
+  .SetPercentageSymbol:
+  ld    hl,.PercentageSymbol
+  ld    de,FreeToUseFastCopy0
+  ld    bc,15
+  ldir
+
+  ld    a,(PutLetterNonTransparant+dx)
+  ld    (FreeToUseFastCopy0+dx),a
+  ld    hl,FreeToUseFastCopy0
+  call  DoCopy
+  ret
+
+  .CompletedDX: equ 148
+  .CompletedDY: equ 105
+  .SetCompleted:
+	ld    a,1
+  ld    (PutLetterNonTransparant+dPage),a             ;set page where to put text
+  ld    a,.CompletedDX
+  ld    (PutLetterNonTransparant+dx),a
+  ld    a,.CompletedDY
+  ld    (PutLetterNonTransparant+dy),a
+
+  ld    hl,(BikeRaceCompletePercentage)
+  ld    h,0
+  call  NUM_TO_ASCII                      ;HL = 16-bit number (0-65535), Output: ASCII string stored at Ascii5Byte:
+  call  SetHLToAscii5ByteSkip0
+  call  .PutTextLoopDark
+  ret
+
+  .BestScoreDX: equ 138 - 4
+  .BestScoreDY: equ 079 + 13
+  .SetBestScore:
+	ld    a,1
+  ld    (PutLetterNonTransparant+dPage),a             ;set page where to put text
+  ld    a,.BestScoreDX
+  ld    (PutLetterNonTransparant+dx),a
+  ld    a,.BestScoreDY
+  ld    (PutLetterNonTransparant+dy),a
+
+  ld    a,(PenguinGameLevelHighest)
+  cp    10
+  jr    nc,.GoSetHighestLevel
+  ld    a,(PutLetterNonTransparant+dx)
+  add   a,7
+  ld    (PutLetterNonTransparant+dx),a
+  .GoSetHighestLevel:
+
+  ld    a,(PenguinGameLevelHighest)
+  ld    l,a
+  ld    h,0
+  call  NUM_TO_ASCII                      ;HL = 16-bit number (0-65535), Output: ASCII string stored at Ascii5Byte:
+  call  SetHLToAscii5ByteSkip0
+  call  .PutTextLoopDark
+
+  ld    a,.BestScoreDX+17
+  ld    (PutLetterNonTransparant+dx),a
+
+  ld    a,(PenguinGameLapsHighest)
+  ld    l,a
+  ld    h,0
+  call  NUM_TO_ASCII                      ;HL = 16-bit number (0-65535), Output: ASCII string stored at Ascii5Byte:
+  call  SetHLToAscii5ByteSkip0
+  call  .PutTextLoopDark
+  ret
+
+  .ScoreDX: equ 138
+  .ScoreDY: equ 079
+  .SetScore:
+	ld    a,1
+  ld    (PutLetterNonTransparant+dPage),a             ;set page where to put text
+  ld    a,.ScoreDX
+  ld    (PutLetterNonTransparant+dx),a
+  ld    a,.ScoreDY
+  ld    (PutLetterNonTransparant+dy),a
+
+  ld    a,(PenguinGameLevel)
+  cp    10
+  jr    nc,.GoSetLevel
+  ld    a,(PutLetterNonTransparant+dx)
+  add   a,7
+  ld    (PutLetterNonTransparant+dx),a
+  .GoSetLevel:
+
+  ld    a,(PenguinGameLevel)
+  ld    l,a
+  ld    h,0
+  call  NUM_TO_ASCII                      ;HL = 16-bit number (0-65535), Output: ASCII string stored at Ascii5Byte:
+  call  SetHLToAscii5ByteSkip0
+  call  .PutTextLoopDark
+
+  ld    a,.ScoreDX+17
+  ld    (PutLetterNonTransparant+dx),a
+
+  ld    a,(PenguinGameLaps)
+  ld    l,a
+  ld    h,0
+  call  NUM_TO_ASCII                      ;HL = 16-bit number (0-65535), Output: ASCII string stored at Ascii5Byte:
+  call  SetHLToAscii5ByteSkip0
+  call  .PutTextLoopDark
+  ret
+
+  .PutTextLoopDark:
+  ld    a,6
+  ld    (PutLetterNonTransparant+nx),a
+  ld    a,9
+  ld    (PutLetterNonTransparant+ny),a
+
+  ld    a,(hl)
+  cp    255
+  ret   z
+  sub   a,$30                             ;0=$30
+  add   a,a                               ;*2
+  add   a,a                               ;*4
+  add   a,a                               ;*8
+  ld    (PutLetterNonTransparant+sx),a
+  push  hl
+  ld    hl,PutLetterNonTransparant
+  call  DoCopy
+  pop   hl
+
+  ld    a,(PutLetterNonTransparant+dx)
+  add   a,7
+  ld    (PutLetterNonTransparant+dx),a
+  inc   hl
+  jr    .PutTextLoopDark
+
+  ret
+
+HandlePenguinGameHud:
+  ld    a,(framecounter2)
+  and   15
+  jp    z,.AdjustTimeAndSetLapsCopy
+  cp    5
+  jp    c,.SetTime
+  cp    9
+  jp    c,.SetLevel
+
+  .SetLaps:
+  ;erase Laps
+  ld    hl,.EraseLaps
+  ld    de,FreeToUseFastCopy0
+  ld    bc,15
+  ldir
+	ld    a,(screenpage)
+  dec   a
+  and   3
+  ld    (FreeToUseFastCopy0+dPage),a             ;set page where to put text
+  ld    hl,FreeToUseFastCopy0
+  call  DoCopy
+
+	ld    a,(screenpage)
+  dec   a
+  and   3
+  ld    (PutLetterNonTransparant+dPage),a             ;set page where to put text
+
+  ld    a,(PenguinGameLapsCopy)
+  cp    10
+  ld    a,.LapsDX
+  jr    c,.SetDX
+  ld    a,.LapsDX-5
+  .SetDX:
+  ld    (PutLetterNonTransparant+dx),a
+  ld    a,.LapsDY
+  ld    (PutLetterNonTransparant+dy),a
+
+  ld    a,(PenguinGameLapsCopy)
+  ld    l,a
+  ld    h,0
+  call  NUM_TO_ASCII                      ;HL = 16-bit number (0-65535), Output: ASCII string stored at Ascii5Byte:
+  call  SetHLToAscii5ByteSkip0
+  ld    a,$98
+  ld    (PutLetterNonTransparant+copytype),a
+  call  .PutTextLoop
+  ld    a,$90
+  ld    (PutLetterNonTransparant+copytype),a
+  ret
+
+  .EraseLaps:
+	db		226,0,014,0
+	db		226,0,008,0
+	db		010,0,006,0
+	db		0,0,$d0
+
+  .LapsDX: equ 231
+  .LapsDY: equ 008
+
+  .SetLevel:
+  ;erase level
+  ld    hl,.EraseLevel
+  ld    de,FreeToUseFastCopy0
+  ld    bc,15
+  ldir
+	ld    a,(screenpage)
+  dec   a
+  and   3
+  ld    (FreeToUseFastCopy0+dPage),a             ;set page where to put text
+  ld    hl,FreeToUseFastCopy0
+  call  DoCopy
+
+	ld    a,(screenpage)
+  dec   a
+  and   3
+  ld    (PutLetterNonTransparant+dPage),a             ;set page where to put text
+  ld    a,.LevelDX
+  ld    (PutLetterNonTransparant+dx),a
+  ld    a,.LevelDY
+  ld    (PutLetterNonTransparant+dy),a
+
+  ld    a,(PenguinGameLevel)
+  ld    l,a
+  ld    h,0
+  call  NUM_TO_ASCII                      ;HL = 16-bit number (0-65535), Output: ASCII string stored at Ascii5Byte:
+  call  SetHLToAscii5ByteSkip0
+  ld    a,$98
+  ld    (PutLetterNonTransparant+copytype),a
+  call  .PutTextLoop
+  ld    a,$90
+  ld    (PutLetterNonTransparant+copytype),a
+  ret
+
+  .EraseLevel:
+	db		018,0,129,0
+	db		140,0,008,0
+	db		004,0,006,0
+	db		0,0,$d0
+
+  .LevelDX: equ 140
+  .LevelDY: equ 008
+
+  .AdjustTimeAndSetLapsCopy:
+  ld    a,(PenguinGameLaps)
+  ld    (PenguinGameLapsCopy),a
+
+  ld    a,(PenguinGameTimeSpeed)
+  inc   a
+  ld    (PenguinGameTimeSpeed),a
+  and   3
+  ret   nz
+
+  ld    a,(PenguinGameTime)
+  dec   a
+  ret   m
+  ld    (PenguinGameTime),a
+  ret
+
+  .SetTime:
+  ;erase time
+  ld    hl,.EraseTime
+  ld    de,FreeToUseFastCopy0
+  ld    bc,15
+  ldir
+	ld    a,(screenpage)
+  dec   a
+  and   3
+  ld    (FreeToUseFastCopy0+dPage),a             ;set page where to put text
+  ld    hl,FreeToUseFastCopy0
+  call  DoCopy
+
+	ld    a,(screenpage)
+  dec   a
+  and   3
+  ld    (PutLetterNonTransparant+dPage),a             ;set page where to put text
+  ld    a,.TimeDX
+  ld    (PutLetterNonTransparant+dx),a
+  ld    a,.TimeDY
+  ld    (PutLetterNonTransparant+dy),a
+
+  ld    a,(PenguinGameTime)
+  ld    l,a
+  ld    h,0
+  call  NUM_TO_ASCII                      ;HL = 16-bit number (0-65535), Output: ASCII string stored at Ascii5Byte:
+  call  SetHLToAscii5ByteSkip0
+  ld    a,$98
+  ld    (PutLetterNonTransparant+copytype),a
+  call  .PutTextLoop
+  ld    a,$90
+  ld    (PutLetterNonTransparant+copytype),a
+  ret
+
+  .EraseTime:
+	db		006,0,014,0
+	db		028,0,008,0
+	db		010,0,006,0
+	db		0,0,$d0
+
+  .TimeDX: equ 029
+  .TimeDY: equ 008
+
+  .PutTextLoop:
+  ld    a,4
+  ld    (PutLetterNonTransparant+nx),a
+  ld    a,6
+  ld    (PutLetterNonTransparant+ny),a
+
+  ld    a,(hl)
+  cp    255
+  ret   z
+  sub   a,$30                             ;0=$30
+  add   a,a                               ;*2
+  add   a,a                               ;*4
+  add   a,192
+  ld    (PutLetterNonTransparant+sx),a
+  push  hl
+  ld    hl,PutLetterNonTransparant
+  call  DoCopy
+  pop   hl
+
+  ld    a,(PutLetterNonTransparant+dx)
+  add   a,5
+  ld    (PutLetterNonTransparant+dx),a
+  inc   hl
+  jr    .PutTextLoop
+
+HandlePenguinGameObjects:
+  call  HandleStone1Sprite
+  ret
+
   call  SetAlarmSprite
   call  SetStarSprite
   call  SetPizzaSprite
   call  SetClockSprite
-  call  SetStoneSprite
   call  SetMushroomSprite
   ret
+
+;Stone1On?:                          equ Object3+0
+;Stone1Duration:                     equ Object3+1
+;Stone1Distance:                     equ Object3+2
+;Stone1InsideOval?:                  equ Object3+4
+
+StoneSpriteYSpat:              equ spat+0+08*4
+StoneSpriteXSpat:              equ spat+1+08*4
+HandleStone1Sprite:
+  ld    a,(Stone1On?)
+  or    a
+  ret   z
+
+  ld    hl,(Stone1Distance)
+  add   hl,hl                               ;*2
+  ld    de,CoordinateTablePenguin
+  add   hl,de
+  ld    a,(hl)                              ;x
+
+ld a,50
+  ld    (StoneSpriteXSpat),a                 ;x sprite 0
+  ld    (StoneSpriteXSpat+4),a                 ;x sprite 1
+
+  inc   hl
+  ld    a,(hl)                              ;y
+
+ld a,50
+  ld    (StoneSpriteYSpat),a                 ;y sprite 0
+  ld    (StoneSpriteYSpat+4),a                 ;y sprite 1
+  ret
+
+
+
+HandleJumpInsideOrOutsideOval:
+;
+; bit	7	  6	  5		    4		    3		    2		  1		  0
+;		  0	  0	  trig-b	trig-a	right	  left	down	up	(joystick)
+;		  F5	F1	'M'		  space	  right	  left	down	up	(keyboard)
+;
+	ld		a,(NewPrContr)
+	bit		4,a           ;f1 pressed ?
+  ret   z
+  ld    a,(PenguinInsideOval?)
+  xor   1
+  ld    (PenguinInsideOval?),a
+  ret
+
+SetPenguinSprite:
+  ld    a,(PenguinInsideOval?)
+  or    a
+  ld    de,PenguinCurvatureTableInsideOval
+  jr    nz,.Go
+  ld    de,PenguinCurvatureTableOutsideOval
+  .Go:
+  ld    hl,(PenguinDistance)          ;440 = total distance (130 pixels top straight, 90 pixels right curve, 130 bottom straight, 90 pixel left curve)
+  srl   h        ; Shift high byte right, LSB -> Carry
+  rr    l        ; Rotate low byte right through Carry, Carry -> MSB of L
+  srl   h        ; Shift high byte right, LSB -> Carry
+  rr    l        ; Rotate low byte right through Carry, Carry -> MSB of L
+  ;we have distance / 4
+  res   0,l
+  add   hl,de
+
+  ld    a,(hl)
+  ld    (iy+SpriteData),a
+  inc   hl
+  ld    a,(hl)
+  ld    (iy+SpriteData+1),a
+  ret
+
+IncreasePenguinSpeed:                       ;maximum speed level 1 = 30, level 10 = 48, speed boost is + 20 speed (every level max speed increases by 2)
+  ld    a,(framecounter2)
+  and   7
+  ret   nz
+
+  ld    a,(PenguinGameTime)
+  or    a
+  jr    z,.OutOfTime
+
+  ld    a,(PenguinMaxSpeed)
+  ld    b,a
+  ld    a,(PenguinSpeed)
+  inc   a
+  cp    b
+  ret   z
+  ld    (PenguinSpeed),a
+  ret
+
+  .OutOfTime:
+  ld    a,(PenguinSpeed)
+  dec   a
+  ret   m
+  ld    (PenguinSpeed),a
+  ret
+
+IncreaseDistanceAndSetXYPenguin:
+  ld    a,(PenguinSpeed)                    ;68 = max speed, max speed should increase distance by 4 every frame
+  ld    b,a
+  ld    c,0                                 ;distance increased this frame
+
+  ld    a,(PenguinDistanceTravelledThisFrame)
+  add   a,b
+  .loop:
+  sub   a,17
+  jr    c,.GoSetNewDistance
+  inc   c
+  jp    .loop
+  .GoSetNewDistance:
+  add   a,17
+  ld    (PenguinDistanceTravelledThisFrame),a
+
+  ld    hl,(PenguinDistance)
+  ld    b,0
+  add   hl,bc
+  ld    de,440
+  xor   a
+  sbc   hl,de
+  jr    nc,.LapFinished
+  add   hl,de
+  .EndCheckLapFinished:
+  ld    (PenguinDistance),hl
+
+  add   hl,hl                               ;*2
+  ld    de,CoordinateTablePenguin
+  add   hl,de
+  ld    a,(hl)                              ;x
+  ld    (iy+x),a
+  inc   hl
+  ld    a,(hl)                              ;y
+  ld    (iy+y),a
+  ret
+
+  .LapFinished:
+  ld    a,(PenguinGameLaps)
+  inc   a
+  ld    (PenguinGameLaps),a
+  cp    11
+  jp    nz,.EndCheckLapFinished
+  ;Next level
+  ld    a,1
+  ld    (PenguinGameLaps),a
+  ld    a,(PenguinGameLevel)
+  inc   a
+  ld    (PenguinGameLevel),a
+  ld    a,(PenguinGameTime)
+  add   a,30
+  ld    (PenguinGameTime),a
+  ld    a,(PenguinMaxSpeed)
+  add   a,2
+  ld    (PenguinMaxSpeed),a
+  jp    .EndCheckLapFinished
 
 MushroomLookingLeftSpriteYSpat:              equ spat+0+12*4
 MushroomLookingLeftSpriteXSpat:              equ spat+1+12*4
@@ -58,7 +760,7 @@ SetMushroomSprite:
   ld    (MushroomLookingDownSpriteXSpat+4),a                 ;x sprite 1
   ld    (MushroomLookingDownSpriteXSpat+8),a                 ;x sprite 0
   ld    (MushroomLookingDownSpriteXSpat+12),a                 ;x sprite 1
-  ret
+;  ret
 
 ;mushroom looking Up
   ld    a,110
@@ -67,50 +769,39 @@ SetMushroomSprite:
   ld    a,110+16
   ld    (MushroomLookingUpSpriteYSpat+8),a                 ;y sprite 1
   ld    (MushroomLookingUpSpriteYSpat+12),a                 ;y sprite 1
-  ld    a,50
+  ld    a,80
   ld    (MushroomLookingUpSpriteXSpat),a                 ;x sprite 0
   ld    (MushroomLookingUpSpriteXSpat+4),a                 ;x sprite 1
   ld    (MushroomLookingUpSpriteXSpat+8),a                 ;x sprite 0
   ld    (MushroomLookingUpSpriteXSpat+12),a                 ;x sprite 1
-  ret
+;  ret
 
 ;mushroom looking right
-  ld    a,110
+  ld    a,70
   ld    (MushroomLookingRightSpriteYSpat),a                 ;y sprite 0
   ld    (MushroomLookingRightSpriteYSpat+4),a                 ;y sprite 1
   ld    (MushroomLookingRightSpriteYSpat+8),a                 ;y sprite 1
   ld    (MushroomLookingRightSpriteYSpat+12),a                 ;y sprite 1
-  ld    a,50
+  ld    a,100
   ld    (MushroomLookingRightSpriteXSpat),a                 ;x sprite 0
   ld    (MushroomLookingRightSpriteXSpat+4),a                 ;x sprite 1
-  ld    a,50+16
+  ld    a,100+16
   ld    (MushroomLookingRightSpriteXSpat+8),a                 ;x sprite 0
   ld    (MushroomLookingRightSpriteXSpat+12),a                 ;x sprite 1
-  ret
+;  ret
 
 ;mushroom looking left
-  ld    a,110
+  ld    a,50
   ld    (MushroomLookingLeftSpriteYSpat),a                 ;y sprite 0
   ld    (MushroomLookingLeftSpriteYSpat+4),a                 ;y sprite 1
   ld    (MushroomLookingLeftSpriteYSpat+8),a                 ;y sprite 1
   ld    (MushroomLookingLeftSpriteYSpat+12),a                 ;y sprite 1
-  ld    a,50
+  ld    a,130
   ld    (MushroomLookingLeftSpriteXSpat),a                 ;x sprite 0
   ld    (MushroomLookingLeftSpriteXSpat+4),a                 ;x sprite 1
-  ld    a,50+16
+  ld    a,130+16
   ld    (MushroomLookingLeftSpriteXSpat+8),a                 ;x sprite 0
   ld    (MushroomLookingLeftSpriteXSpat+12),a                 ;x sprite 1
-  ret
-
-StoneSpriteYSpat:              equ spat+0+08*4
-StoneSpriteXSpat:              equ spat+1+08*4
-SetStoneSprite:
-  ld    a,90
-  ld    (StoneSpriteYSpat),a                 ;y sprite 0
-  ld    (StoneSpriteYSpat+4),a                 ;y sprite 1
-  ld    a,50
-  ld    (StoneSpriteXSpat),a                 ;x sprite 0
-  ld    (StoneSpriteXSpat+4),a                 ;x sprite 1
   ret
 
 ClockSpriteYSpat:              equ spat+0+06*4
@@ -155,65 +846,6 @@ SetAlarmSprite:
   ld    a,50
   ld    (AlarmSpriteXSpat),a                 ;x sprite 0
   ld    (AlarmSpriteXSpat+4),a                 ;x sprite 1
-  ret
-
-HandleJumpInsideOrOutsideOval:
-;
-; bit	7	  6	  5		    4		    3		    2		  1		  0
-;		  0	  0	  trig-b	trig-a	right	  left	down	up	(joystick)
-;		  F5	F1	'M'		  space	  right	  left	down	up	(keyboard)
-;
-	ld		a,(NewPrContr)
-	bit		4,a           ;f1 pressed ?
-  ret   z
-  ld    a,(PenguinInsideOval?)
-  xor   1
-  ld    (PenguinInsideOval?),a
-  ret
-
-SetPenguinSprite:
-  ld    a,(PenguinInsideOval?)
-  or    a
-  ld    de,PenguinCurvatureTableInsideOval
-  jr    nz,.Go
-  ld    de,PenguinCurvatureTableOutsideOval
-  .Go:
-  ld    hl,(PenguinDistance)          ;440 = total distance (130 pixels top straight, 90 pixels right curve, 130 bottom straight, 90 pixel left curve)
-  srl   h        ; Shift high byte right, LSB -> Carry
-  rr    l        ; Rotate low byte right through Carry, Carry -> MSB of L
-  srl   h        ; Shift high byte right, LSB -> Carry
-  rr    l        ; Rotate low byte right through Carry, Carry -> MSB of L
-  ;we have distance / 4
-  res   0,l
-  add   hl,de
-
-  ld    a,(hl)
-  ld    (iy+SpriteData),a
-  inc   hl
-  ld    a,(hl)
-  ld    (iy+SpriteData+1),a
-  ret
-
-IncreaseDistanceAndSetXYPenguin:
-  ld    hl,(PenguinDistance)
-  inc   hl
-  inc   hl
-  ld    de,440
-  xor   a
-  sbc   hl,de
-  jr    nc,.EndCheckOverFlow
-  add   hl,de
-  .EndCheckOverFlow:
-  ld    (PenguinDistance),hl
-
-  add   hl,hl                               ;*2
-  ld    de,CoordinateTablePenguin
-  add   hl,de
-  ld    a,(hl)                              ;x
-  ld    (iy+x),a
-  inc   hl
-  ld    a,(hl)                              ;y
-  ld    (iy+y),a
   ret
 
 CoordinateTablePenguin:
@@ -351,78 +983,15 @@ PenguinBikeRace_46:       db    PenguinBikeRaceframelistblock, PenguinBikeRacesp
 PenguinBikeRace_47:       db    PenguinBikeRaceframelistblock, PenguinBikeRacespritedatablock | dw    PenguinBikeRace_25_0
 
 PenguinBikeRaceGameRoutine:
-  call  .HandlePhase                        ;load graphics, init variables
   ret
 
-  .HandlePhase:
-  bit   0,(iy+ObjectPhase)
-  ret   nz
-  ld    (iy+ObjectPhase),1
-
-  ld    hl,0
-  ld    (PenguinDistance),hl
-  xor   a
-  ld    (PenguinInsideOval?),a
-
-  call  SetArcadeMachine
-
-  ;set penguin bike race page 0
-  ld    hl,PenguinBikeRacePart1Address
-  ld    a,PenguinBikeRaceGfxBlock
-  call  SetGfxAt8000InRam                             ;in: hl=adress in rom page 1, a=block, out: puts gfx in page 2 in ram at $8000
-
-  ld    hl,$8000 + (000*128) + (000/2) - 128
-  ld    de,$0000 + (000*128) + (000/2) - 128
-  ld    bc,$0000 + (128*256) + (256/2)
-  call  CopyRamToVram                       ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
-
-  ld    hl,PenguinBikeRacePart2Address
-  ld    a,PenguinBikeRaceGfxBlock
-  call  SetGfxAt8000InRam                             ;in: hl=adress in rom page 1, a=block, out: puts gfx in page 2 in ram at $8000
-
-  ld    hl,$8000 + (000*128) + (000/2) - 128
-  ld    de,$0000 + (128*128) + (000/2) - 128
-  ld    bc,$0000 + (007*256) + (256/2)
-  call  CopyRamToVram                       ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
-
-  ;copy page 0 to page 1
-  xor   a
-  ld    (CopyPageToPage212High+sPage),a
-  ld    a,1
-  ld    (CopyPageToPage212High+dPage),a
-  ld    hl,CopyPageToPage212High
-  call  DoCopy
-
-  ;copy page 0 to page 2
-  ld    a,2
-  ld    (CopyPageToPage212High+dPage),a
-  ld    hl,CopyPageToPage212High
-  call  DoCopy
-  ;copy page 0 to page 3
-  ld    a,3
-  ld    (CopyPageToPage212High+dPage),a
-  ld    hl,CopyPageToPage212High
-  call  DoCopy
-
-  ld    hl,PenguinBikeRacePalette
-  ld    de,ArcadeGamePalette
-  ld    bc,32
-  ldir
-  ld    a,1
-  ld    (SetArcadeGamePalette?),a
-
-  call  .SetPenguinBikeRaceSprites
-
-  call  SetInterruptHandlerArcadeMachine   	;sets Vblank and lineint for hud
-  ret
-
-  .SetPenguinBikeRaceSprites:
+SetPenguinBikeRaceSprites:
   ;write sprite character
 	xor		a				;page 0/1
 	ld		hl,sprcharaddr+0*32	;sprite 0 character table in VRAM
 	call	SetVdp_Write
 
-	ld		hl,PenguinBikeRaceCharSprites	;sprite 0 character table in VRAM
+	ld		hl,PenguinBikeRaceCharSprites+0*32	;sprite 0 character table in VRAM
 	ld		c,$98
 	call	outix384		;write sprite color of pointer and hand to vram
 	call	outix384		;write sprite color of pointer and hand to vram
@@ -432,7 +1001,7 @@ PenguinBikeRaceGameRoutine:
 	ld		hl,sprcoladdr+0*16	;sprite 0 color table in VRAM
 	call	SetVdp_Write
 
-	ld		hl,PenguinBikeRaceColSprites	;sprite 0 character table in VRAM
+	ld		hl,PenguinBikeRaceColSprites+0*16	;sprite 0 character table in VRAM
 	ld		c,$98
 	call	outix384		;write sprite color of pointer and hand to vram
 	call	outix64	;write sprite color of pointer and hand to vram  

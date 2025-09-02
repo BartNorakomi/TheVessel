@@ -148,7 +148,7 @@ EventRacingGameTitleScreen:		db	1,$28,$7e | dw 000,000			,000        | db 255   
 EventRacingGameLevelProgress: db	1,$28,$7e | dw 000,000			,000        | db 255      ,MovementRoutines3Block| dw RacingGameLevelProgressRoutine| db 000,000 ,000, 000
 EventRacingGameCongratulations: db	1,$28,$7e | dw 000,000			,000        | db 255      ,MovementRoutines3Block| dw RacingGameCongratulationsRoutine| db 000,000 ,000, 000
 
-EventPenguinBikeRaceGame:	db	1,$28,$7e | dw 000,000					,000        | db 255      ,MovementRoutines4Block| dw PenguinBikeRaceGameRoutine		| db 000,000 ,000, 000
+;EventPenguinBikeRaceGame:	db	1,$28,$7e | dw 000,000					,000        | db 255      ,MovementRoutines4Block| dw PenguinBikeRaceGameRoutine		| db 000,000 ,000, 000
 ObjectPenguin: 						db  1,000,000 | dw 000,000		,PenguinBikeRace_0    | db 255  ,MovementRoutines4Block | dw PenguinMovementRoutine				| db 000,000 ,000, 000
 
 EventBlockHitGame:				db	1,$28,$7e | dw 000,000					,000        | db 255      ,MovementRoutines2Block| dw BlockHitGameRoutine		| db 000,000 ,000, 000
@@ -687,10 +687,10 @@ PutObjectsPenguinBikeRaceGame:
 	ld		hl,ObjectPenguin								;put penguin
 	call	PutSingleObject
 
-	ld		de,ObjEvent1										;now put events
+;	ld		de,ObjEvent1										;now put events
 
-	ld		hl,EventPenguinBikeRaceGame	;put racing game level progress event
-	call	PutSingleObject
+;	ld		hl,EventPenguinBikeRaceGame	;put racing game level progress event
+;	call	PutSingleObject
 	ret
 
 PutObjectsBasketBallGame:
@@ -1519,7 +1519,7 @@ CopyPageToPage212High:
 	db		0,0,0,0
 	db		0,0,0,0
 	db		0,1,212,0
-	db		0,0,$d0	
+	db		0,0,$d0
 CopyPage0To1:
 	db		0,0,0,0
 	db		0,0,0,1
@@ -2771,7 +2771,14 @@ basketballCombo:					rb	2
 basketballresettimervar:	rb	1
 basketballcoins:					rb	1
 basketballTitleScreenButton:	rb	1
-;PenguinDistance:					rb	2
+PenguinDistance:					rb	2
+PenguinGameTime:					rb	1
+PenguinGameTimeSpeed:			rb	1
+PenguinGameLevel:					rb	1
+PenguinGameLaps:					rb	1
+PenguinGameLapsCopy:			rb	1
+PenguinMaxSpeed:					rb	1
+PenguinBikeRaceScore:			rb	2
 
 endenginepage3variables:  equ $+enginepage3length
 org variables

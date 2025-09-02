@@ -192,11 +192,14 @@ vblank:
   out   ($99),a
   .EndSetLineIntHeight:
 
-  ld    a,(SetArcadeGamePalette?)
+  ld    a,(SetArcadeGamePalette?)         ;action on vblank: 1=set palette, 2=set palette and write spat to vram
   or    a
   jp    z,.EndCheckSetArcadeGamePalette
   ld    hl,ArcadeGamePalette
   call	SetPalette
+;  ld    a,(SetArcadeGamePalette?)
+;  cp    2
+;  call  z,WriteSpatToVram
   call  WriteSpatToVram
   .EndCheckSetArcadeGamePalette:
 
@@ -3791,7 +3794,13 @@ CurrentBallsSelected:         db 0              ;0=basketball,1=tennisball,2=bil
 
 HighScoreRoadFighter: db 0
 HighScoreBlox: db 0
-HighScoreBikeRace: db 0
+
+BikeRaceCompletePercentage: db 0
+HighScoreBikeRace:          dw 0
+PenguinGameLevelHighest:    db 1
+PenguinGameLapsHighest:     db 1
+
+
 ConvGirl: db %0000 0001                 ;conversations handled
 ConvCapGirl: db %0000 0000              ;conversations handled
 ConvGingerBoy: db %0000 0000            ;conversations handled
