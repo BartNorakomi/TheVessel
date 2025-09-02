@@ -91,7 +91,7 @@ BlockCurveDownEndPage1TOPfrom17to16: equ 0C1h ; last def. pass 3
 CurveLeftPage0TOPChangedPixelsfrom5to6: equ 08498h ; last def. pass 3
 CurveDownPage0TOPWriteInstructionsfrom6to7: equ 0A37Fh ; last def. pass 3
 BlockCurveRightPage1TOPfrom25to26: equ 07Fh ; last def. pass 3
-PenguinBikeRaceGameRoutine: equ 04AC1h ; last def. pass 3
+PenguinBikeRaceGameRoutine: equ 051AAh ; last def. pass 3
 CurveLeftEndBlock12: equ 06Fh ; last def. pass 3
 CurveUpPage1TOPChangedPixelsfrom12to13: equ 0B3F0h ; last def. pass 3
 CurveUpEndPage0TOPWriteInstructionsfrom33to32: equ 0B8A2h ; last def. pass 3
@@ -397,7 +397,7 @@ CurveUpEndPage0TOPAddressesfrom32to31: equ 0AD59h ; last def. pass 3
 CurveUpPage0TOPWriteInstructionsfrom26to27: equ 0BE71h ; last def. pass 3
 CurveRightPage0BOTTOMChangedPixelsfrom34to35: equ 0A179h ; last def. pass 3
 CurveUpEndPage0TOPWriteInstructionsfrom6to5: equ 0A63Fh ; last def. pass 3
-PenguinBikeRace_11: equ 04A2Dh ; last def. pass 3
+PenguinBikeRace_11: equ 05116h ; last def. pass 3
 outix144: equ 0DBA0h ; last def. pass 3
 CurveLeftEndPage0BOTTOMWriteInstructionsfrom31to30: equ 0926Eh ; last def. pass 3
 NPCConv034: equ 07C4Eh ; last def. pass 3
@@ -497,7 +497,7 @@ CurveUpPage0BOTTOMWriteInstructionsfrom41to42: equ 0A0CEh ; last def. pass 3
 ArcadeHall2EventRoutine.CheckPlayerLeavingRoom: equ 04936h ; last def. pass 3
 SetPlayerSprite.PlayerVisible: equ 055E2h ; last def. pass 3
 CurveDownEndPage0BOTTOMAddressesfrom21to20: equ 0A01Dh ; last def. pass 3
-PenguinBikeRace_13: equ 04A35h ; last def. pass 3
+PenguinBikeRace_13: equ 0511Eh ; last def. pass 3
 CurveDownEndPage1BOTTOMChangedPixelsfrom44to43: equ 0AF2Bh ; last def. pass 3
 BlockCurveRightPage1BOTTOMfrom42to43: equ 084h ; last def. pass 3
 basketball_2_0: equ 0834Ah ; last def. pass 3
@@ -721,6 +721,7 @@ NPCConv033: equ 07BB8h ; last def. pass 3
 CurveLeftEndPage0TOPAddressesfrom51to50: equ 0AF10h ; last def. pass 3
 VDP_8: equ 0E1E3h ; last def. pass 3
 EdgeRoomLeft: equ 02h ; last def. pass 3
+CoordinateTableSpritesInsideOval.TopStraightSegment: equ 04444h ; last def. pass 3
 CurveLeftEndPage1BOTTOMWriteInstructionsfrom72to71: equ 0895Ah ; last def. pass 3
 CurveUpPage1BOTTOMWriteInstructionsfrom21to22: equ 0920Ah ; last def. pass 3
 CheckCollisionEnemyOrHeart.DifficultyFound: equ 05C60h ; last def. pass 3
@@ -955,7 +956,7 @@ BlockCurveLeftEndPage1BOTTOMfrom19to18: equ 069h ; last def. pass 3
 BlockCurveDownPage0TOPfrom40to41: equ 0BCh ; last def. pass 3
 CurveDownEndPage0TOPChangedPixelsfrom2to1: equ 0833Eh ; last def. pass 3
 CurveUpEndPage0BOTTOMChangedPixelsfrom13to12: equ 0AA31h ; last def. pass 3
-PenguinCurvatureTableOutsideOval: equ 04921h ; last def. pass 3
+PenguinCurvatureTableOutsideOval: equ 0500Ah ; last def. pass 3
 BlockCurveDownPage0TOPfrom22to23: equ 0B9h ; last def. pass 3
 CurveRightEndPage1BOTTOMChangedPixelsfrom25to24: equ 08000h ; last def. pass 3
 CurveUpPage0BOTTOMChangedPixelsfrom37to38: equ 0B3A4h ; last def. pass 3
@@ -1090,7 +1091,7 @@ CurveDownEndPage0TOPWriteInstructionsfrom8to7: equ 0AFE8h ; last def. pass 3
 SetEnemySprite.Not216Check7: equ 04D1Ch ; last def. pass 3
 CurveLeftPage0TOPChangedPixelsfrom60to61: equ 0A717h ; last def. pass 3
 CurveRightPage0BOTTOMChangedPixelsfrom63to64: equ 08000h ; last def. pass 3
-PenguinBikeRace_17: equ 04A45h ; last def. pass 3
+PenguinBikeRace_17: equ 0512Eh ; last def. pass 3
 CurveRightPage0TOPChangedPixelsfrom24to25: equ 0A90Bh ; last def. pass 3
 CopySelectionWindow.PageFound: equ 04BE6h ; last def. pass 3
 Object3RestoreBackgroundTable: equ 012C1h ; last def. pass 3
@@ -1099,7 +1100,7 @@ BackupBackgroundInRam.loop2: equ 017A0h ; last def. pass 3
 CurveUpPerspectiveXTable22: equ 08B20h ; last def. pass 3
 CurveRightEndPage1BOTTOMWriteInstructionsfrom24to23: equ 0A531h ; last def. pass 3
 BlockCurveDownPage1BOTTOMfrom48to49: equ 0BDh ; last def. pass 3
-PenguinBikeRace_33: equ 04A85h ; last def. pass 3
+PenguinBikeRace_33: equ 0516Eh ; last def. pass 3
 CurveLeftPerspectiveXTable32: equ 09F00h ; last def. pass 3
 CurveRightPage1TOPAddressesfrom16to17: equ 0A363h ; last def. pass 3
 BlockCurveRightEndPage0TOPfrom65to64: equ 09Fh ; last def. pass 3
@@ -1486,7 +1487,7 @@ CurveDownPage0TOPWriteInstructionsfrom35to36: equ 0A34Fh ; last def. pass 3
 BlockCurveDownPage0BOTTOMfrom38to39: equ 0BCh ; last def. pass 3
 CurveLeftEndPage1TOPAddressesfrom70to69: equ 09999h ; last def. pass 3
 CurveUpPage1TOPWriteInstructionsfrom12to13: equ 0B493h ; last def. pass 3
-PenguinBikeRace_36: equ 04A91h ; last def. pass 3
+PenguinBikeRace_36: equ 0517Ah ; last def. pass 3
 SpriteColors: equ 0D7F3h ; last def. pass 3
 CurveDownPage1BOTTOMChangedPixelsfrom20to21: equ 09FD3h ; last def. pass 3
 BlockCurveDownEndPage1BOTTOMfrom34to33: equ 0C3h ; last def. pass 3
@@ -1531,7 +1532,7 @@ CurveDownPage0BOTTOMChangedPixelsfrom9to10: equ 086EFh ; last def. pass 3
 WaitVdpReady.vdpready: equ 0D966h ; last def. pass 3
 CurveUpPage1TOPWriteInstructionsfrom15to16: equ 09210h ; last def. pass 3
 BlockCurveDownPage0TOPfrom43to44: equ 0BCh ; last def. pass 3
-PenguinBikeRace_4: equ 04A11h ; last def. pass 3
+PenguinBikeRace_4: equ 050FAh ; last def. pass 3
 CurveUpEndPage1BOTTOMWriteInstructionsfrom38to37: equ 0B618h ; last def. pass 3
 CurveDownPage0BOTTOMWriteInstructionsfrom40to41: equ 0932Ah ; last def. pass 3
 CurveDownEndPage1BOTTOMChangedPixelsfrom55to54: equ 09437h ; last def. pass 3
@@ -2111,7 +2112,7 @@ CurveDownPage0TOPAddressesfrom42to43: equ 0A06Ch ; last def. pass 3
 CurveRightPage0BOTTOMChangedPixelsfrom37to38: equ 09B62h ; last def. pass 3
 StraightRoad2ndPart16Part2: equ 0E52h ; last def. pass 3
 CurveRightEndPage0TOPAddressesfrom33to32: equ 084C2h ; last def. pass 3
-SetAlarmSprite: equ 045A0h ; last def. pass 3
+SetAlarmSprite: equ 04C89h ; last def. pass 3
 CurveLeftEndPage0BOTTOMAddressesfrom24to23: equ 08E6Dh ; last def. pass 3
 Basketball_15end: equ 05C71h ; last def. pass 3
 CurveDownEndPage1TOPWriteInstructionsfrom8to7: equ 0B34Bh ; last def. pass 3
@@ -2289,6 +2290,7 @@ BlockCurveLeftEndPage1TOPfrom57to56: equ 073h ; last def. pass 3
 BlockCurveRightEndPage1BOTTOMfrom75to74: equ 0A2h ; last def. pass 3
 CurrentAmountOfSpeedBars: equ 0E26Bh ; last def. pass 3
 CurveDownEndPage1BOTTOMWriteInstructionsfrom10to9: equ 08C53h ; last def. pass 3
+CoordinateTableSpritesOutsideOval.BottomStraightSegment: equ 0496Ch ; last def. pass 3
 CurveLeftPage0BOTTOMWriteInstructionsfrom48to49: equ 0941Fh ; last def. pass 3
 BlockCurveRightPage1BOTTOMfrom33to34: equ 081h ; last def. pass 3
 BlockCurveUpPage1TOPfrom34to35: equ 0A8h ; last def. pass 3
@@ -2387,7 +2389,7 @@ BlinkRookieProEliteLegend.BlinkEliteOn: equ 0659Ch ; last def. pass 3
 holodeck_16_0: equ 09430h ; last def. pass 3
 CurveUpEndPage1TOPWriteInstructionsfrom41to40: equ 096B5h ; last def. pass 3
 BlockCurveRightPage0BOTTOMfrom50to51: equ 086h ; last def. pass 3
-Stone2Duration: equ 011C8h ; last def. pass 3
+Stone2Duration: equ 011C9h ; last def. pass 3
 CurveLeftEndPage0BOTTOMWriteInstructionsfrom74to73: equ 09AC6h ; last def. pass 3
 UpdateHud.dyStartingLights: equ 0Eh ; last def. pass 3
 AskRefuelAfterOffLoadResources?: equ 0E241h ; last def. pass 3
@@ -2639,7 +2641,7 @@ RefuelConversation: equ 0DCC1h ; last def. pass 3
 HandleCurvatureRoad.CurveLeft: equ 05B1Ch ; last def. pass 3
 CurveDownEndPage1TOPChangedPixelsfrom12to11: equ 09A54h ; last def. pass 3
 CurveLeftEndPage1BOTTOMWriteInstructionsfrom30to29: equ 08BF1h ; last def. pass 3
-PenguinCurvatureTableInsideOval: equ 04991h ; last def. pass 3
+PenguinCurvatureTableInsideOval: equ 0507Ah ; last def. pass 3
 TheVesselrightrunning_3: equ 04010h ; last def. pass 3
 CurveLeftEndPage0TOPChangedPixelsfrom7to6: equ 0919Ah ; last def. pass 3
 CurveUpEndPage0TOPChangedPixelsfrom22to21: equ 08819h ; last def. pass 3
@@ -2659,7 +2661,7 @@ CurveRightEndPage1TOPChangedPixelsfrom26to25: equ 08D0Ah ; last def. pass 3
 CurveUpEndPage1BOTTOMWriteInstructionsfrom17to16: equ 09AF6h ; last def. pass 3
 LenghtStraightRoad05Part1: equ 06B3h ; last def. pass 3
 CurveLeftPage1TOPAddressesfrom38to39: equ 0A396h ; last def. pass 3
-PenguinBikeRace_45: equ 04AB5h ; last def. pass 3
+PenguinBikeRace_45: equ 0519Eh ; last def. pass 3
 BlockCurveLeftPage0BOTTOMfrom2to3: equ 04Fh ; last def. pass 3
 CurveUpEndPage1TOPAddressesfrom11to10: equ 09D5Fh ; last def. pass 3
 BlockCurveUpEndPage0TOPfrom31to30: equ 0B1h ; last def. pass 3
@@ -2680,7 +2682,7 @@ CurveRightPage0BOTTOMWriteInstructionsfrom4to5: equ 08841h ; last def. pass 3
 CurveUpEndPage1TOPAddressesfrom27to26: equ 08406h ; last def. pass 3
 CurveRightPage0TOPChangedPixelsfrom21to22: equ 0AD8Ch ; last def. pass 3
 CurveUpPage0TOPWriteInstructionsfrom11to12: equ 0A3A0h ; last def. pass 3
-Stone1Distance: equ 011B8h ; last def. pass 3
+Stone1Distance: equ 011B9h ; last def. pass 3
 PutObjects: equ 0CC8Dh ; last def. pass 3
 CurveDownPerspectiveXTable42: equ 094D0h ; last def. pass 3
 CurveDownPage0TOPWriteInstructionsfrom17to18: equ 08A39h ; last def. pass 3
@@ -2694,7 +2696,7 @@ CurveDownEndPage0TOPAddressesfrom37to36: equ 0AD6Fh ; last def. pass 3
 BlockCurveUpPage1TOPfrom52to53: equ 0ABh ; last def. pass 3
 BlockCurveLeftEndPage1BOTTOMfrom12to11: equ 067h ; last def. pass 3
 outix8: equ 0DCB0h ; last def. pass 3
-CoordinateTablePenguin.LeftCurve: equ 0486Dh ; last def. pass 3
+CoordinateTablePenguin.LeftCurve: equ 04F56h ; last def. pass 3
 BlockCurveLeftPage0BOTTOMfrom39to40: equ 059h ; last def. pass 3
 BlockCurveDownPage0BOTTOMfrom49to50: equ 0BDh ; last def. pass 3
 BlockCurveDownEndPage1TOPfrom8to7: equ 0BFh ; last def. pass 3
@@ -2840,7 +2842,7 @@ BlockCurveUpEndPage1BOTTOMfrom33to32: equ 0B2h ; last def. pass 3
 sleepingquartersEventRoutine.armoryvault: equ 04D4Ch ; last def. pass 3
 CurveRightPage0TOPChangedPixelsfrom19to20: equ 091DEh ; last def. pass 3
 CurveLeftPage0BOTTOMAddressesfrom52to53: equ 0995Fh ; last def. pass 3
-PenguinBikeRace_0: equ 04A01h ; last def. pass 3
+PenguinBikeRace_0: equ 050EAh ; last def. pass 3
 medicalbaybed2x: equ 04B62h ; last def. pass 3
 RacingGameRoutine.Positive: equ 04728h ; last def. pass 3
 CurveLeftEndPage1BOTTOMAddressesfrom10to9: equ 096C5h ; last def. pass 3
@@ -3069,7 +3071,7 @@ vblankRacingGame: equ 0180h ; last def. pass 3
 CurveLeftEndPage1TOPAddressesfrom40to39: equ 0B1CBh ; last def. pass 3
 CurveUpEndPage0BOTTOMWriteInstructionsfrom41to40: equ 09389h ; last def. pass 3
 CurveUpEndPage0BOTTOMChangedPixelsfrom52to51: equ 08D42h ; last def. pass 3
-SetStarSprite: equ 0458Fh ; last def. pass 3
+SetStarSprite: equ 04C78h ; last def. pass 3
 CurveLeftPerspectiveXTable70: equ 083E0h ; last def. pass 3
 MoveHorizonInCurves.SetRoadCurvatureAnimationStep: equ 05DB3h ; last def. pass 3
 CurveLeftPage0BOTTOMChangedPixelsfrom69to70: equ 09250h ; last def. pass 3
@@ -3194,7 +3196,7 @@ TextOxygenGenerator: equ 044D7h ; last def. pass 3
 CurveLeftPage0TOPWriteInstructionsfrom44to45: equ 08CE7h ; last def. pass 3
 StraightRoad01Part1: equ 05D5h ; last def. pass 3
 CurveUpPage0TOPWriteInstructionsfrom12to13: equ 0AE31h ; last def. pass 3
-Stone2InsideOval?: equ 011CBh ; last def. pass 3
+Stone2InsideOval?: equ 011CCh ; last def. pass 3
 CurveUpEndPage1BOTTOMChangedPixelsfrom20to19: equ 0B568h ; last def. pass 3
 BlockCurveLeftPage0BOTTOMfrom68to69: equ 062h ; last def. pass 3
 CurveRightPage0BOTTOMAddressesfrom9to10: equ 09BA0h ; last def. pass 3
@@ -3204,7 +3206,7 @@ CurveLeftEndPage0TOPAddressesfrom42to41: equ 09107h ; last def. pass 3
 BlockCurveRightEndPage0BOTTOMfrom59to58: equ 09Dh ; last def. pass 3
 CurveUpPage0BOTTOMWriteInstructionsfrom49to50: equ 0BA12h ; last def. pass 3
 CurveLeftEndBlock16: equ 073h ; last def. pass 3
-SetPenguinSprite: equ 0444Ah ; last def. pass 3
+SetPenguinSprite: equ 04B33h ; last def. pass 3
 BlockCurveLeftEndPage0TOPfrom55to54: equ 073h ; last def. pass 3
 CurveLeftEndPage1BOTTOMAddressesfrom67to66: equ 0A543h ; last def. pass 3
 BlockCurveRightEndPage1TOPfrom1to0: equ 08Eh ; last def. pass 3
@@ -3453,7 +3455,7 @@ CurveUpPage0TOPChangedPixelsfrom57to58: equ 08BF2h ; last def. pass 3
 BackToTitleScreenBasketBall.CheckGolfBall: equ 05970h ; last def. pass 3
 CurveLeftEndPage1BOTTOMWriteInstructionsfrom31to30: equ 0997Dh ; last def. pass 3
 BlockCurveUpPage1BOTTOMfrom40to41: equ 0A9h ; last def. pass 3
-PenguinBikeRace_28: equ 04A71h ; last def. pass 3
+PenguinBikeRace_28: equ 0515Ah ; last def. pass 3
 RestoreBackgroundObject1Page1: equ 01300h ; last def. pass 3
 BlockCurveDownPage0TOPfrom24to25: equ 0BAh ; last def. pass 3
 CurveDownPage0BOTTOMChangedPixelsfrom29to30: equ 0AB23h ; last def. pass 3
@@ -3641,6 +3643,7 @@ CurveLeftEndPage1BOTTOMChangedPixelsfrom66to65: equ 0975Eh ; last def. pass 3
 CurveRightPage1BOTTOMWriteInstructionsfrom57to58: equ 0977Bh ; last def. pass 3
 FlashWrite.CheckIfWritten: equ 0CB58h ; last def. pass 3
 TrainingdeckPalette: equ 0CFE0h ; last def. pass 3
+CoordinateTableSpritesOutsideOval.TopStraightSegment: equ 047B4h ; last def. pass 3
 Depack.get_gamma_value_size: equ 0D9FFh ; last def. pass 3
 RestoreBackgroundObject4Page0: equ 013A5h ; last def. pass 3
 BottomWindowAddressPage0Vram: equ 017B4h ; last def. pass 3
@@ -3648,7 +3651,7 @@ CurveDownEndPage1BOTTOMAddressesfrom44to43: equ 0AF6Ah ; last def. pass 3
 CurveDownEndPage0TOPAddressesfrom6to5: equ 0A1F5h ; last def. pass 3
 PortraitEyesSXSY: equ 016A0h ; last def. pass 3
 SetCurrentLevelIconAdresses: equ 06992h ; last def. pass 3
-PenguinBikeRace_26: equ 04A69h ; last def. pass 3
+PenguinBikeRace_26: equ 05152h ; last def. pass 3
 BlockCurveRightPage1TOPfrom59to60: equ 088h ; last def. pass 3
 CurveUpPage0BOTTOMChangedPixelsfrom54to55: equ 0AE29h ; last def. pass 3
 CurveDownEndPage1BOTTOMWriteInstructionsfrom8to7: equ 0B3EAh ; last def. pass 3
@@ -3735,7 +3738,7 @@ CurveLeftEndPage0BOTTOMAddressesfrom14to13: equ 09310h ; last def. pass 3
 CostRadiationShieldLevel3: equ 06Eh ; last def. pass 3
 BlockCurveUpEndPage1TOPfrom23to22: equ 0B0h ; last def. pass 3
 CurveDownEndPage0BOTTOMAddressesfrom3to2: equ 08C50h ; last def. pass 3
-PenguinBikeRace_25: equ 04A65h ; last def. pass 3
+PenguinBikeRace_25: equ 0514Eh ; last def. pass 3
 CurveRightEndPage0BOTTOMChangedPixelsfrom29to28: equ 08000h ; last def. pass 3
 CurveDownEndPage0TOPAddressesfrom50to49: equ 0A236h ; last def. pass 3
 DrillMachineX: equ 0E230h ; last def. pass 3
@@ -3818,7 +3821,7 @@ CurveLeftEndPage1BOTTOMChangedPixelsfrom13to12: equ 08D3Dh ; last def. pass 3
 BlockCurveLeftEndPage1BOTTOMfrom2to1: equ 064h ; last def. pass 3
 CurveDownPerspectiveXTable24: equ 08C18h ; last def. pass 3
 CurveRightPage0BOTTOMWriteInstructionsfrom69to70: equ 0A0A6h ; last def. pass 3
-IncreaseDistanceAndSetXYPenguin.GoSetNewDistance: equ 044A3h ; last def. pass 3
+IncreaseDistanceAndSetXYPenguin.GoSetNewDistance: equ 04B8Ch ; last def. pass 3
 SetEnemySprite.MiniSpriteSize3: equ 04C87h ; last def. pass 3
 CurveDownEndPage0TOPAddressesfrom29to28: equ 0A778h ; last def. pass 3
 CurveLeftPage0BOTTOMWriteInstructionsfrom0to1: equ 0816Ch ; last def. pass 3
@@ -3877,7 +3880,7 @@ CurveUpPerspectiveYTable33: equ 094B8h ; last def. pass 3
 CurveLeftEndPage1TOPAddressesfrom61to60: equ 0AFD7h ; last def. pass 3
 CurveUpEndPage0TOPAddressesfrom1to0: equ 0800Bh ; last def. pass 3
 BlockCurveUpPage1TOPfrom37to38: equ 0A8h ; last def. pass 3
-PenguinBikeRace_15: equ 04A3Dh ; last def. pass 3
+PenguinBikeRace_15: equ 05126h ; last def. pass 3
 MoonSound_WriteFM1Register: equ 0C334h ; last def. pass 3
 CurveUpEndPage1BOTTOMWriteInstructionsfrom28to27: equ 08F1Ah ; last def. pass 3
 CurveLeftEndPage0TOPWriteInstructionsfrom40to39: equ 0A847h ; last def. pass 3
@@ -3889,7 +3892,7 @@ TextCredits: equ 046FDh ; last def. pass 3
 RoadBlockSpritesCharacters: equ 08000h ; last def. pass 3
 PutObjectsDrillingGame: equ 0CD95h ; last def. pass 3
 CurveDownPage1TOPWriteInstructionsfrom19to20: equ 09A6Ch ; last def. pass 3
-CoordinateTablePenguin.TopStraightSegment: equ 045B1h ; last def. pass 3
+CoordinateTablePenguin.TopStraightSegment: equ 04C9Ah ; last def. pass 3
 CurveDownPage1TOPChangedPixelsfrom37to38: equ 082AFh ; last def. pass 3
 CurveLeftEndPage1BOTTOMAddressesfrom55to54: equ 08D53h ; last def. pass 3
 CurveLeftPage1BOTTOMWriteInstructionsfrom58to59: equ 096E1h ; last def. pass 3
@@ -4280,9 +4283,9 @@ CongratulationsPose1And2Address: equ 06A67h ; last def. pass 3
 LoadBallTypeAndPalette: equ 063F5h ; last def. pass 3
 CurveDownPage1BOTTOMAddressesfrom50to51: equ 0AA68h ; last def. pass 3
 CurveUpPage0BOTTOMChangedPixelsfrom58to59: equ 09A26h ; last def. pass 3
-PenguinBikeRace_1: equ 04A05h ; last def. pass 3
+PenguinBikeRace_1: equ 050EEh ; last def. pass 3
 CurveDownPerspectiveXTable39: equ 092E0h ; last def. pass 3
-PenguinBikeRace_22: equ 04A59h ; last def. pass 3
+PenguinBikeRace_22: equ 05142h ; last def. pass 3
 CurveRightEndPage1TOPChangedPixelsfrom17to16: equ 0A363h ; last def. pass 3
 MoonSound_FM1_ADDRESS: equ 0C4h ; last def. pass 3
 CurveDownPage0TOPAddressesfrom3to4: equ 0909Ah ; last def. pass 3
@@ -4413,7 +4416,7 @@ BackToTitleScreenBasketBall.LeftPressed2: equ 058CCh ; last def. pass 3
 CurveLeftPage0TOPChangedPixelsfrom35to36: equ 0A00Eh ; last def. pass 3
 CurveUpEndPage1TOPWriteInstructionsfrom57to56: equ 0871Dh ; last def. pass 3
 CurveUpEndPage0TOPWriteInstructionsfrom21to20: equ 0805Eh ; last def. pass 3
-PenguinBikeRace_41: equ 04AA5h ; last def. pass 3
+PenguinBikeRace_41: equ 0518Eh ; last def. pass 3
 DrillingGameMap04Size: equ 01000h ; last def. pass 3
 CurveUpPerspectiveXTable32: equ 08FF8h ; last def. pass 3
 SetCurrentLevelIconInPage2: equ 069E5h ; last def. pass 3
@@ -4438,10 +4441,11 @@ TextColonyExpansion: equ 046C1h ; last def. pass 3
 dxText: equ 06Eh ; last def. pass 3
 CurveDownPage0BOTTOMChangedPixelsfrom37to38: equ 08000h ; last def. pass 3
 RomBlockSize8kb: equ 02000h ; last def. pass 3
-PenguinBikeRace_21: equ 04A55h ; last def. pass 3
+PenguinBikeRace_21: equ 0513Eh ; last def. pass 3
 SongHaze: equ 07h ; last def. pass 3
 CurveLeftPage0BOTTOMChangedPixelsfrom15to16: equ 08000h ; last def. pass 3
 SetEnemySprite.Size11: equ 0500Bh ; last def. pass 3
+CoordinateTableSpritesInsideOval.BottomStraightSegment: equ 045FCh ; last def. pass 3
 base: equ 04000h ; last def. pass 3
 ClearBarsPage3: equ 04B2Dh ; last def. pass 3
 CurveLeftPage0BOTTOMChangedPixelsfrom67to68: equ 0A992h ; last def. pass 3
@@ -4518,7 +4522,7 @@ CurveUpPage1BOTTOMAddressesfrom13to14: equ 0BD81h ; last def. pass 3
 CurveDownEndPage1BOTTOMChangedPixelsfrom8to7: equ 0B34Ch ; last def. pass 3
 CurveRightEndPage0BOTTOMAddressesfrom26to25: equ 0861Ah ; last def. pass 3
 CurveUpEndPage1TOPChangedPixelsfrom3to2: equ 091B5h ; last def. pass 3
-PenguinBikeRace_6: equ 04A19h ; last def. pass 3
+PenguinBikeRace_6: equ 05102h ; last def. pass 3
 SetPage: equ 0D873h ; last def. pass 3
 CurveUpPage1TOPWriteInstructionsfrom35to36: equ 0A395h ; last def. pass 3
 BlockCurveDownPage1BOTTOMfrom2to3: equ 0B7h ; last def. pass 3
@@ -4556,7 +4560,7 @@ BlockCurveUpEndPage0BOTTOMfrom59to58: equ 0B6h ; last def. pass 3
 CurveDownPage1TOPAddressesfrom58to59: equ 0AD26h ; last def. pass 3
 CurveRightPage1BOTTOMWriteInstructionsfrom10to11: equ 08150h ; last def. pass 3
 CurveDownPage0TOPWriteInstructionsfrom10to11: equ 08C82h ; last def. pass 3
-PenguinBikeRace_24: equ 04A61h ; last def. pass 3
+PenguinBikeRace_24: equ 0514Ah ; last def. pass 3
 BlockCurveLeftPage1BOTTOMfrom69to70: equ 062h ; last def. pass 3
 CurveUpEndPage1TOPWriteInstructionsfrom25to24: equ 0A90Ch ; last def. pass 3
 CurveUpEndPage0BOTTOMAddressesfrom45to44: equ 08295h ; last def. pass 3
@@ -4594,7 +4598,7 @@ BlockCurveDownEndPage1TOPfrom27to26: equ 0C2h ; last def. pass 3
 CurveLeftPage0TOPWriteInstructionsfrom49to50: equ 09E64h ; last def. pass 3
 CurveUpPage0TOPAddressesfrom0to1: equ 08080h ; last def. pass 3
 BlockCurveDownPage0BOTTOMfrom51to52: equ 0BDh ; last def. pass 3
-PenguinBikeRace_40: equ 04AA1h ; last def. pass 3
+PenguinBikeRace_40: equ 0518Ah ; last def. pass 3
 CurveUpPage0TOPChangedPixelsfrom1to2: equ 0863Fh ; last def. pass 3
 PlaceNewObject.SetThisObjectMiniSprite: equ 0479Bh ; last def. pass 3
 HangarBayDrillMachiney: equ 0502Dh ; last def. pass 3
@@ -4608,6 +4612,7 @@ CurveRightEndPage0BOTTOMWriteInstructionsfrom43to42: equ 08235h ; last def. pass
 BlockCurveUpPage0TOPfrom36to37: equ 0A8h ; last def. pass 3
 BlockCurveUpEndPage1TOPfrom31to30: equ 0B1h ; last def. pass 3
 SwapPageOnNextVblank.SwapPage: equ 04C3Ah ; last def. pass 3
+CoordinateTableSpritesInsideOval.RightCurve: equ 04548h ; last def. pass 3
 BlockCurveLeftPage0BOTTOMfrom73to74: equ 063h ; last def. pass 3
 CurveLeftEndPage1TOPChangedPixelsfrom66to65: equ 0975Dh ; last def. pass 3
 SetEnemySprite.Skip2: equ 04BD4h ; last def. pass 3
@@ -5003,7 +5008,7 @@ CurveDownPage0BOTTOMWriteInstructionsfrom26to27: equ 097F5h ; last def. pass 3
 CurveLeftPage1TOPChangedPixelsfrom6to7: equ 099E2h ; last def. pass 3
 CurveLeftEndPage1BOTTOMChangedPixelsfrom32to31: equ 0A519h ; last def. pass 3
 HandleBasketBall.CheckScoredRightSide: equ 06D0Ah ; last def. pass 3
-PenguinBikeRace_7: equ 04A1Dh ; last def. pass 3
+PenguinBikeRace_7: equ 05106h ; last def. pass 3
 BlockCurveUpEndPage0BOTTOMfrom6to5: equ 0ADh ; last def. pass 3
 CurveLeftPage0BOTTOMAddressesfrom38to39: equ 09C66h ; last def. pass 3
 CurveRightEndPage1TOPAddressesfrom20to19: equ 09AECh ; last def. pass 3
@@ -5136,7 +5141,7 @@ CurveRightPage0BOTTOMAddressesfrom0to1: equ 08012h ; last def. pass 3
 CurveDownPage1TOPChangedPixelsfrom39to40: equ 08FDBh ; last def. pass 3
 RacingGameRoutine.PaletteTronCity: equ 0452Ch ; last def. pass 3
 CurveLeftEndPage0TOPWriteInstructionsfrom67to66: equ 09C2Ch ; last def. pass 3
-CoordinateTablePenguin.BottomStraightSegment: equ 04769h ; last def. pass 3
+CoordinateTablePenguin.BottomStraightSegment: equ 04E52h ; last def. pass 3
 vblank.EndCheckSetArcadeGamePalette: equ 0150h ; last def. pass 3
 CurveDownEndPage1BOTTOMWriteInstructionsfrom43to42: equ 0A942h ; last def. pass 3
 CurveUpEndPage1BOTTOMAddressesfrom28to27: equ 08EBCh ; last def. pass 3
@@ -5181,7 +5186,7 @@ CurveRightPerspectiveXTable16: equ 08F80h ; last def. pass 3
 CurveUpEndPage1TOPAddressesfrom14to13: equ 0B74Fh ; last def. pass 3
 CurveDownEndPage1BOTTOMChangedPixelsfrom58to57: equ 0AB6Dh ; last def. pass 3
 CurveRightPage0TOPAddressesfrom64to65: equ 08CF9h ; last def. pass 3
-HandleJumpInsideOrOutsideOval: equ 0443Bh ; last def. pass 3
+HandleJumpInsideOrOutsideOval: equ 04B24h ; last def. pass 3
 CurveUpPage0TOPChangedPixelsfrom21to22: equ 08819h ; last def. pass 3
 CurveDownPage1TOPChangedPixelsfrom25to26: equ 094BBh ; last def. pass 3
 CheckCollisionEnemyOrHeart.CheckObject2: equ 05CA6h ; last def. pass 3
@@ -5386,9 +5391,10 @@ CurveRightEndPage0TOPChangedPixelsfrom9to8: equ 08CFBh ; last def. pass 3
 BlockCurveLeftEndPage1TOPfrom11to10: equ 066h ; last def. pass 3
 CurveRightEndPage0TOPWriteInstructionsfrom58to57: equ 08DD1h ; last def. pass 3
 CurveDownEndPage1BOTTOMAddressesfrom7to6: equ 0AD0Ah ; last def. pass 3
+CoordinateTableSpritesOutsideOval.LeftCurve: equ 04A70h ; last def. pass 3
 CurveUpPage1BOTTOMChangedPixelsfrom20to21: equ 085B2h ; last def. pass 3
 BlockCurveDownEndPage1BOTTOMfrom2to1: equ 0BFh ; last def. pass 3
-PenguinBikeRace_16: equ 04A41h ; last def. pass 3
+PenguinBikeRace_16: equ 0512Ah ; last def. pass 3
 CurveDownPage1BOTTOMChangedPixelsfrom37to38: equ 082B0h ; last def. pass 3
 Basketball_20: equ 05C0Dh ; last def. pass 3
 BlockCurveLeftEndPage1BOTTOMfrom58to57: equ 074h ; last def. pass 3
@@ -5717,7 +5723,7 @@ CurveRightEndPage0TOPChangedPixelsfrom22to21: equ 0AD8Ch ; last def. pass 3
 CurveRightPage0TOPAddressesfrom68to69: equ 0908Eh ; last def. pass 3
 CurveLeftPage1TOPChangedPixelsfrom68to69: equ 08D3Eh ; last def. pass 3
 CurveRightEndPage1TOPAddressesfrom30to29: equ 0967Ah ; last def. pass 3
-PenguinBikeRace_5: equ 04A15h ; last def. pass 3
+PenguinBikeRace_5: equ 050FEh ; last def. pass 3
 CurveLeftPerspectiveXTable0: equ 08000h ; last def. pass 3
 CurveDownPage1TOPAddressesfrom38to39: equ 088A5h ; last def. pass 3
 CurveLeftEndPage1TOPAddressesfrom21to20: equ 09B73h ; last def. pass 3
@@ -6021,7 +6027,7 @@ Mult16: equ 01D67h ; last def. pass 3
 CurveRightPerspectiveXTable31: equ 09E08h ; last def. pass 3
 CurveRightPage0TOPChangedPixelsfrom12to13: equ 0925Ch ; last def. pass 3
 BlockCurveLeftEndPage1BOTTOMfrom72to71: equ 078h ; last def. pass 3
-PenguinBikeRace_34: equ 04A89h ; last def. pass 3
+PenguinBikeRace_34: equ 05172h ; last def. pass 3
 CurveDownPage0BOTTOMAddressesfrom58to59: equ 0A9E4h ; last def. pass 3
 valueLevel1Resources: equ 02h ; last def. pass 3
 CurveLeftPage0BOTTOMChangedPixelsfrom72to73: equ 08CB9h ; last def. pass 3
@@ -6386,13 +6392,13 @@ BlockCurveDownPage1TOPfrom15to16: equ 0B8h ; last def. pass 3
 SetTempisr.tempisr: equ 0D677h ; last def. pass 3
 BlockCurveUpPage1TOPfrom15to16: equ 0A5h ; last def. pass 3
 BlockCurveLeftPage0BOTTOMfrom18to19: equ 053h ; last def. pass 3
-SetClockSprite: equ 0456Dh ; last def. pass 3
+SetClockSprite: equ 04C56h ; last def. pass 3
 CurveRightPage1BOTTOMChangedPixelsfrom9to10: equ 0A32Dh ; last def. pass 3
 CurveLeftEndPage1BOTTOMWriteInstructionsfrom50to49: equ 0AABAh ; last def. pass 3
 CloseholodeckDoor.holodeck_12: equ 053E2h ; last def. pass 3
 medicalbaybed2y: equ 04B61h ; last def. pass 3
 CurveRightEndPage1BOTTOMChangedPixelsfrom45to44: equ 0A31Bh ; last def. pass 3
-PenguinBikeRaceColSprites: equ 04E6Ah ; last def. pass 3
+PenguinBikeRaceColSprites: equ 05553h ; last def. pass 3
 BlockCurveLeftPage1BOTTOMfrom72to73: equ 063h ; last def. pass 3
 CurveUpEndPage0BOTTOMWriteInstructionsfrom49to48: equ 0AA21h ; last def. pass 3
 CurveDownPage1TOPAddressesfrom34to35: equ 09F41h ; last def. pass 3
@@ -6654,7 +6660,7 @@ CurveLeftPage0BOTTOMChangedPixelsfrom46to47: equ 0A848h ; last def. pass 3
 CurveRightPage0TOPWriteInstructionsfrom39to40: equ 084B0h ; last def. pass 3
 CurveRightEndPage1TOPAddressesfrom35to34: equ 0A931h ; last def. pass 3
 MoveDown.Collision: equ 045A0h ; last def. pass 3
-PenguinBikeRace_31: equ 04A7Dh ; last def. pass 3
+PenguinBikeRace_31: equ 05166h ; last def. pass 3
 CurveDownEndPage0BOTTOMAddressesfrom24to23: equ 0846Bh ; last def. pass 3
 PenguinGameLapsCopy: equ 0E2A3h ; last def. pass 3
 CurveLeftPage1BOTTOMChangedPixelsfrom52to53: equ 0A19Ah ; last def. pass 3
@@ -6826,7 +6832,7 @@ InterruptHandlerRacingGame: equ 05B6h ; last def. pass 3
 RacingGameFlagHolderWIthoutFlagMiniSpritesBlock: equ 043h ; last def. pass 3
 CurveRightEndPage1BOTTOMChangedPixelsfrom49to48: equ 0A84Ch ; last def. pass 3
 CurveUpEndPage0BOTTOMChangedPixelsfrom9to8: equ 08790h ; last def. pass 3
-PenguinBikeRacePalette: equ 0502Ah ; last def. pass 3
+PenguinBikeRacePalette: equ 05713h ; last def. pass 3
 MonthEenheden: equ 0E203h ; last def. pass 3
 CurveLeftPage1BOTTOMChangedPixelsfrom29to30: equ 08A51h ; last def. pass 3
 CurveUpEndPage1BOTTOMChangedPixelsfrom33to32: equ 08387h ; last def. pass 3
@@ -6859,7 +6865,7 @@ CurveUpEndPage0BOTTOMChangedPixelsfrom30to29: equ 09B8Fh ; last def. pass 3
 CheckDrillingPossible.DrillingLevel4Soil: equ 077EBh ; last def. pass 3
 CurveLeftPage0BOTTOMAddressesfrom42to43: equ 0A16Fh ; last def. pass 3
 PutSpatDrillMachineSprite: equ 06EDAh ; last def. pass 3
-SetPenguinBikeRaceSprites: equ 04AC2h ; last def. pass 3
+SetPenguinBikeRaceSprites: equ 051ABh ; last def. pass 3
 BlockCurveUpEndPage1TOPfrom1to0: equ 0ADh ; last def. pass 3
 penguinbikerace_20_0: equ 08D70h ; last def. pass 3
 CurveRightEndPage1BOTTOMWriteInstructionsfrom25to24: equ 0816Bh ; last def. pass 3
@@ -6931,7 +6937,7 @@ RacingGameTronCityGfxBlock: equ 02Eh ; last def. pass 3
 CurveUpEndPage1TOPChangedPixelsfrom50to49: equ 0B5C0h ; last def. pass 3
 LenghtStraightRoad07Part1: equ 0714h ; last def. pass 3
 CurveDownPerspectiveXTable52: equ 099A8h ; last def. pass 3
-PenguinBikeRace_20: equ 04A51h ; last def. pass 3
+PenguinBikeRace_20: equ 0513Ah ; last def. pass 3
 CurveUpPage1BOTTOMAddressesfrom2to3: equ 0966Fh ; last def. pass 3
 CurveRightEndPage0BOTTOMChangedPixelsfrom17to16: equ 09A3Ch ; last def. pass 3
 CurveRightPerspectiveXTablePart2Block: equ 04Ch ; last def. pass 3
@@ -7293,7 +7299,7 @@ TheVesselgettingupframelistblock: equ 0DEh ; last def. pass 3
 CurveLeftPerspectiveXTable49: equ 0AF78h ; last def. pass 3
 CurveLeftEndPage1BOTTOMAddressesfrom43to42: equ 0A8D9h ; last def. pass 3
 CurveDownEndPage1BOTTOMChangedPixelsfrom9to8: equ 084ABh ; last def. pass 3
-PenguinBikeRace_14: equ 04A39h ; last def. pass 3
+PenguinBikeRace_14: equ 05122h ; last def. pass 3
 VolleyballCharSprite: equ 06A2Fh ; last def. pass 3
 CurveUpPage0BOTTOMWriteInstructionsfrom8to9: equ 08A06h ; last def. pass 3
 CurveLeftEndPage0BOTTOMAddressesfrom42to41: equ 0923Bh ; last def. pass 3
@@ -7326,7 +7332,7 @@ CurveLeftEndPage1TOPChangedPixelsfrom51to50: equ 087B9h ; last def. pass 3
 CurveLeftEndPage0BOTTOMAddressesfrom71to70: equ 09EDBh ; last def. pass 3
 CurveRightEndPage1TOPChangedPixelsfrom68to67: equ 08C54h ; last def. pass 3
 GolfballColorSprite: equ 06B2Fh ; last def. pass 3
-PenguinBikeRace_47: equ 04ABDh ; last def. pass 3
+PenguinBikeRace_47: equ 051A6h ; last def. pass 3
 CheckBounceOnLeftRimLeftSide.ChangeVerticalSpeedRimHit2: equ 06E9Dh ; last def. pass 3
 CurveUpEndPage1BOTTOMAddressesfrom42to41: equ 0A1ECh ; last def. pass 3
 CurveLeftPage0TOPChangedPixelsfrom31to32: equ 09CCDh ; last def. pass 3
@@ -7589,7 +7595,7 @@ CurveLeftPage1BOTTOMAddressesfrom31to32: equ 0A59Fh ; last def. pass 3
 medicalbayTileMapBlock: equ 08h ; last def. pass 3
 CurveDownEndPage0BOTTOMWriteInstructionsfrom1to0: equ 08089h ; last def. pass 3
 TheVesselGettingOutOfBed: equ 04094h ; last def. pass 3
-PenguinBikeRace_37: equ 04A95h ; last def. pass 3
+PenguinBikeRace_37: equ 0517Eh ; last def. pass 3
 ArcadeGamePalette: equ 0160h ; last def. pass 3
 trainingdeck_1: equ 05361h ; last def. pass 3
 CurveDownEndPage1TOPChangedPixelsfrom41to40: equ 09914h ; last def. pass 3
@@ -7781,7 +7787,7 @@ CurveDownEndPage1BOTTOMChangedPixelsfrom13to12: equ 0A123h ; last def. pass 3
 CurveUpEndPage0BOTTOMAddressesfrom13to12: equ 0AAAAh ; last def. pass 3
 BlockCurveUpEndPage0BOTTOMfrom52to51: equ 0B5h ; last def. pass 3
 CurveUpEndPage0TOPWriteInstructionsfrom3to2: equ 08D31h ; last def. pass 3
-PenguinBikeRace_27: equ 04A6Dh ; last def. pass 3
+PenguinBikeRace_27: equ 05156h ; last def. pass 3
 CurveRightEndPage0TOPAddressesfrom20to19: equ 091DEh ; last def. pass 3
 CurveDownPage1BOTTOMChangedPixelsfrom38to39: equ 088A6h ; last def. pass 3
 CurveUpPage0BOTTOMWriteInstructionsfrom1to2: equ 087A4h ; last def. pass 3
@@ -7886,7 +7892,7 @@ BlockCurveDownEndPage0TOPfrom46to45: equ 0C5h ; last def. pass 3
 ChangeSong?: equ 0D64Ch ; last def. pass 3
 CurveLeftPage0BOTTOMChangedPixelsfrom27to28: equ 09337h ; last def. pass 3
 CurveUpEndPage0BOTTOMWriteInstructionsfrom26to25: equ 0AFDBh ; last def. pass 3
-CoordinateTablePenguin: equ 045B1h ; last def. pass 3
+CoordinateTablePenguin: equ 04C9Ah ; last def. pass 3
 StraightRoad2ndPart09Part1.Lenght: equ 025h ; last def. pass 3
 CurveDownEndPage1BOTTOMWriteInstructionsfrom22to21: equ 0ABE2h ; last def. pass 3
 CurveRightEndPage0BOTTOMChangedPixelsfrom20to19: equ 091DFh ; last def. pass 3
@@ -7897,7 +7903,7 @@ CurveRightPage0TOPWriteInstructionsfrom69to70: equ 09E9Bh ; last def. pass 3
 BlockCurveDownPage1BOTTOMfrom28to29: equ 0BAh ; last def. pass 3
 Biopod_7: equ 054F6h ; last def. pass 3
 StraightRoad27Part2: equ 0ACFh ; last def. pass 3
-IncreaseDistanceAndSetXYPenguin.LapFinished: equ 044C9h ; last def. pass 3
+IncreaseDistanceAndSetXYPenguin.LapFinished: equ 04BB2h ; last def. pass 3
 SpacePressedPurchaseItem.MinerSpeedLevelFound: equ 043B6h ; last def. pass 3
 BlockCurveRightEndPage0BOTTOMfrom36to35: equ 097h ; last def. pass 3
 CurveDownPage0BOTTOMWriteInstructionsfrom35to36: equ 0A44Dh ; last def. pass 3
@@ -7959,7 +7965,7 @@ CurveRightPage0BOTTOMChangedPixelsfrom48to49: equ 0A05Fh ; last def. pass 3
 CurveDownPage1BOTTOMWriteInstructionsfrom22to23: equ 08138h ; last def. pass 3
 BlockCurveUpEndPage0TOPfrom20to19: equ 0AFh ; last def. pass 3
 CurveRightPage1BOTTOMAddressesfrom14to15: equ 0891Dh ; last def. pass 3
-PenguinBikeRace_29: equ 04A75h ; last def. pass 3
+PenguinBikeRace_29: equ 0515Eh ; last def. pass 3
 CurveLeftEndPage0BOTTOMChangedPixelsfrom65to64: equ 08000h ; last def. pass 3
 CheckBounceOnLeftBackboard.MostRightPoint2: equ 06F62h ; last def. pass 3
 RemoveEnemySprite: equ 04973h ; last def. pass 3
@@ -8233,7 +8239,7 @@ CurveDownEndPage1TOPChangedPixelsfrom32to31: equ 08CDFh ; last def. pass 3
 CurveRightPage0BOTTOMChangedPixelsfrom49to50: equ 08000h ; last def. pass 3
 BlockCurveUpEndPage1BOTTOMfrom1to0: equ 0ADh ; last def. pass 3
 basketballFirstPointScored?: equ 0E295h ; last def. pass 3
-Stone1InsideOval?: equ 011BAh ; last def. pass 3
+Stone1InsideOval?: equ 011BBh ; last def. pass 3
 CurveUpPage1TOPChangedPixelsfrom16to17: equ 09C3Bh ; last def. pass 3
 CurveDownPage0TOPAddressesfrom43to44: equ 0A7D5h ; last def. pass 3
 CurveUpPage0BOTTOMChangedPixelsfrom34to35: equ 0932Ch ; last def. pass 3
@@ -8387,7 +8393,7 @@ ResourceOffloadPortraitPalette: equ 02036h ; last def. pass 3
 BlockCurveDownPage1BOTTOMfrom55to56: equ 0BEh ; last def. pass 3
 CharacterPortraitAI: equ 06h ; last def. pass 3
 CurveUpPage1TOPWriteInstructionsfrom24to25: equ 0AD29h ; last def. pass 3
-PenguinBikeRace_32: equ 04A81h ; last def. pass 3
+PenguinBikeRace_32: equ 0516Ah ; last def. pass 3
 vblankRacingGame.CurveDownLineIntHeightTable: equ 02BDh ; last def. pass 3
 CurveRightPage1TOPAddressesfrom44to45: equ 0A31Ah ; last def. pass 3
 CurveRightPage0BOTTOMChangedPixelsfrom72to73: equ 09B5Eh ; last def. pass 3
@@ -8628,7 +8634,7 @@ CurveDownPage1BOTTOMChangedPixelsfrom57to58: equ 0A750h ; last def. pass 3
 HandleCurvatureRoad.CurveRightEnd: equ 05A69h ; last def. pass 3
 CurveDownPage0BOTTOMWriteInstructionsfrom20to21: equ 09D70h ; last def. pass 3
 FrequencyEnemiesMax: equ 09h ; last def. pass 3
-PenguinBikeRace_43: equ 04AADh ; last def. pass 3
+PenguinBikeRace_43: equ 05196h ; last def. pass 3
 CurveLeftEndPage1BOTTOMChangedPixelsfrom7to6: equ 099E3h ; last def. pass 3
 CurveUpPage0TOPChangedPixelsfrom50to51: equ 08000h ; last def. pass 3
 CurveDownPage1BOTTOMAddressesfrom34to35: equ 0A009h ; last def. pass 3
@@ -8666,7 +8672,7 @@ BlockCurveUpPage1TOPfrom13to14: equ 0A4h ; last def. pass 3
 CurveDownEndPage0BOTTOMChangedPixelsfrom7to6: equ 0A79Dh ; last def. pass 3
 MoveHorizonInCurves.NewYDown: equ 05F09h ; last def. pass 3
 BlockCurveDownEndPage1BOTTOMfrom36to35: equ 0C3h ; last def. pass 3
-IncreaseDistanceAndSetXYPenguin.loop: equ 0449Bh ; last def. pass 3
+IncreaseDistanceAndSetXYPenguin.loop: equ 04B84h ; last def. pass 3
 CurveRightPerspectiveXTable14: equ 08D90h ; last def. pass 3
 CostRadiationShieldLevel2: equ 050h ; last def. pass 3
 CoinColSprite: equ 068EFh ; last def. pass 3
@@ -8753,7 +8759,7 @@ CurveUpPage0TOPWriteInstructionsfrom32to33: equ 0BE1Eh ; last def. pass 3
 CurveLeftEndPage0TOPAddressesfrom18to17: equ 09B27h ; last def. pass 3
 CurveDownEndPage0TOPWriteInstructionsfrom59to58: equ 0AD8Fh ; last def. pass 3
 CurveDownPage1TOPAddressesfrom24to25: equ 08D51h ; last def. pass 3
-PenguinBikeRace_2: equ 04A09h ; last def. pass 3
+PenguinBikeRace_2: equ 050F2h ; last def. pass 3
 BlockCurveLeftPage1TOPfrom34to35: equ 058h ; last def. pass 3
 CurveRightPage0TOPWriteInstructionsfrom40to41: equ 09390h ; last def. pass 3
 SirensRoutine.SetOpenDoorPage0: equ 0513Ah ; last def. pass 3
@@ -8948,7 +8954,7 @@ CurveLeftEndPage0TOPAddressesfrom3to2: equ 09168h ; last def. pass 3
 holodeck1Routine.OpenOrCloseDoorWhenEnteringRoom: equ 054B6h ; last def. pass 3
 CurveLeftBlock19: equ 061h ; last def. pass 3
 BlockCurveRightPage0BOTTOMfrom68to69: equ 08Bh ; last def. pass 3
-IncreasePenguinSpeed: equ 0446Eh ; last def. pass 3
+IncreasePenguinSpeed: equ 04B57h ; last def. pass 3
 CurveDownPage1BOTTOMChangedPixelsfrom32to33: equ 091B3h ; last def. pass 3
 BlockCurveUpPage0TOPfrom42to43: equ 0A9h ; last def. pass 3
 CurveDownPerspectiveXTable27: equ 08D10h ; last def. pass 3
@@ -8983,7 +8989,7 @@ CurveUpPage1BOTTOMWriteInstructionsfrom13to14: equ 0BDD5h ; last def. pass 3
 AsciiOutput: equ 0E16Dh ; last def. pass 3
 CurveDownEndPage1BOTTOMWriteInstructionsfrom40to39: equ 091CEh ; last def. pass 3
 CurveDownEndPage1TOPAddressesfrom12to11: equ 09A54h ; last def. pass 3
-SetPizzaSprite: equ 0457Eh ; last def. pass 3
+SetPizzaSprite: equ 04C67h ; last def. pass 3
 CurveLeftPage1TOPWriteInstructionsfrom24to25: equ 0A4F7h ; last def. pass 3
 MushroomLookingLeftSpriteYSpat: equ 02156h ; last def. pass 3
 BilliardballColorSprite: equ 069AFh ; last def. pass 3
@@ -9023,7 +9029,7 @@ HandleBasketBallGameOver.GamveOver: equ 06040h ; last def. pass 3
 LineInt.Waitline2: equ 04C0h ; last def. pass 3
 CurveLeftEndPage1TOPChangedPixelsfrom63to62: equ 09C4Bh ; last def. pass 3
 CurveDownPage0BOTTOMAddressesfrom51to52: equ 0AD86h ; last def. pass 3
-SetPenguinSprite.Go: equ 04456h ; last def. pass 3
+SetPenguinSprite.Go: equ 04B3Fh ; last def. pass 3
 CurveLeftPage1TOPWriteInstructionsfrom45to46: equ 0A3FAh ; last def. pass 3
 CurveDownEndPage0TOPChangedPixelsfrom30to29: equ 0AF3Fh ; last def. pass 3
 CurveUpEndPage1BOTTOMChangedPixelsfrom24to23: equ 0A1ACh ; last def. pass 3
@@ -9040,10 +9046,10 @@ RacingGameRoutine.LoadRavinePalaceCity: equ 04391h ; last def. pass 3
 CurveLeftPage1TOPWriteInstructionsfrom68to69: equ 08D3Eh ; last def. pass 3
 CurveRightPage1BOTTOMChangedPixelsfrom13to14: equ 0A843h ; last def. pass 3
 CurveLeftEndPage0TOPAddressesfrom10to9: equ 08D8Dh ; last def. pass 3
-IncreasePenguinSpeed.OutOfTime: equ 04488h ; last def. pass 3
+IncreasePenguinSpeed.OutOfTime: equ 04B71h ; last def. pass 3
 CurveLeftPage1BOTTOMChangedPixelsfrom20to21: equ 09B74h ; last def. pass 3
 CloseholodeckDoor.holodeck_4: equ 053F2h ; last def. pass 3
-PenguinBikeRace_30: equ 04A79h ; last def. pass 3
+PenguinBikeRace_30: equ 05162h ; last def. pass 3
 CurveDownEndPage0BOTTOMAddressesfrom14to13: equ 0A544h ; last def. pass 3
 SirensRoutine.EndPhase0: equ 0518Fh ; last def. pass 3
 Flag1SpriteColors: equ 092C0h ; last def. pass 3
@@ -9222,7 +9228,7 @@ CurveLeftEndPage0TOPAddressesfrom21to20: equ 092E7h ; last def. pass 3
 CurveDownPage1TOPChangedPixelsfrom6to7: equ 0A6CEh ; last def. pass 3
 BlockCurveLeftEndPage1TOPfrom20to19: equ 069h ; last def. pass 3
 CurveDownPage0BOTTOMWriteInstructionsfrom56to57: equ 09CE0h ; last def. pass 3
-PenguinBikeRace_39: equ 04A9Dh ; last def. pass 3
+PenguinBikeRace_39: equ 05186h ; last def. pass 3
 CurveLeftBlock20: equ 062h ; last def. pass 3
 CurveDownEndPage0BOTTOMChangedPixelsfrom31to30: equ 08000h ; last def. pass 3
 SetEnemySprite.LeftSideOfScreen: equ 04BA3h ; last def. pass 3
@@ -9270,7 +9276,7 @@ CurveRightPage1BOTTOMWriteInstructionsfrom30to31: equ 0A5A7h ; last def. pass 3
 CurveUpPage0TOPChangedPixelsfrom6to7: equ 0B458h ; last def. pass 3
 CurveUpEndPage1TOPWriteInstructionsfrom56to55: equ 0B6C4h ; last def. pass 3
 CheckBounceOnRightBackboard.MostLeftPoint2: equ 06EF8h ; last def. pass 3
-Stone1Duration: equ 011B7h ; last def. pass 3
+Stone1Duration: equ 011B8h ; last def. pass 3
 BlockCurveLeftEndPage0TOPfrom47to46: equ 070h ; last def. pass 3
 CurveLeftEndPage1TOPAddressesfrom53to52: equ 0A199h ; last def. pass 3
 RePlayer_playing: equ 0C4E5h ; last def. pass 3
@@ -9353,7 +9359,7 @@ RoadAnimationIndexesBlock: equ 0E246h ; last def. pass 3
 CurveRightEndPage1TOPChangedPixelsfrom53to52: equ 0B245h ; last def. pass 3
 holodeck1Routine.Open: equ 05493h ; last def. pass 3
 WolfPalette: equ 0492Bh ; last def. pass 3
-Stone1On?: equ 011B6h ; last def. pass 3
+Stone1On?: equ 011B7h ; last def. pass 3
 Vesselleft_6_0: equ 08886h ; last def. pass 3
 CurveLeftEndPage1TOPAddressesfrom72to71: equ 0880Fh ; last def. pass 3
 BlockCurveRightEndPage1BOTTOMfrom7to6: equ 08Eh ; last def. pass 3
@@ -9387,7 +9393,7 @@ CurveLeftPage1BOTTOMAddressesfrom22to23: equ 0890Bh ; last def. pass 3
 DrillMachineEventRoutine.CheckMoveCameraDown: equ 07CA6h ; last def. pass 3
 RacingGameFlagHolderWIthoutFlagSpritesBlock: equ 043h ; last def. pass 3
 penguinbikerace_42_0: equ 09C6Ah ; last def. pass 3
-PenguinBikeRace_3: equ 04A0Dh ; last def. pass 3
+PenguinBikeRace_3: equ 050F6h ; last def. pass 3
 SetEnemySprite.Size1: equ 05033h ; last def. pass 3
 RestoreBackgroundObject2Page0: equ 0132Dh ; last def. pass 3
 CurveUpEndPage0BOTTOMWriteInstructionsfrom31to30: equ 0A582h ; last def. pass 3
@@ -9622,6 +9628,7 @@ CurveUpPage0TOPAddressesfrom31to32: equ 0B1EBh ; last def. pass 3
 CurveDownEndPage1BOTTOMChangedPixelsfrom37to36: equ 0B2FAh ; last def. pass 3
 Objectreactorchamber2: equ 0C870h ; last def. pass 3
 CurveRightEndPage0BOTTOMAddressesfrom71to70: equ 0811Dh ; last def. pass 3
+CoordinateTableSpritesInsideOval.LeftCurve: equ 04700h ; last def. pass 3
 BlockCurveUpPage1TOPfrom6to7: equ 0A3h ; last def. pass 3
 CurveRightEndPage0BOTTOMAddressesfrom63to62: equ 0A3A0h ; last def. pass 3
 CurveDownEndPage0BOTTOMAddressesfrom56to55: equ 0990Bh ; last def. pass 3
@@ -9860,7 +9867,7 @@ CurveLeftEndPage1BOTTOMAddressesfrom12to11: equ 08090h ; last def. pass 3
 CurveDownEndPage1TOPAddressesfrom55to54: equ 09436h ; last def. pass 3
 CurveRightPerspectiveXTable7: equ 086C8h ; last def. pass 3
 CurveDownPage1TOPChangedPixelsfrom44to45: equ 0B102h ; last def. pass 3
-SetMushroomSprite: equ 044F4h ; last def. pass 3
+SetMushroomSprite: equ 04BDDh ; last def. pass 3
 CurveRightEndPage0BOTTOMChangedPixelsfrom10to9: equ 09A8Ah ; last def. pass 3
 BlockCurveDownPage1TOPfrom7to8: equ 0B7h ; last def. pass 3
 SectorErase4000hto5fffh.CheckEraseDone: equ 0CA6Fh ; last def. pass 3
@@ -9938,6 +9945,7 @@ CurveRightPage1BOTTOMWriteInstructionsfrom24to25: equ 0816Bh ; last def. pass 3
 CurveDownEndPage1TOPWriteInstructionsfrom55to54: equ 09436h ; last def. pass 3
 CurveDownPage1BOTTOMChangedPixelsfrom9to10: equ 08A5Ah ; last def. pass 3
 MoveLeft.NoCollisionCheck1: equ 04496h ; last def. pass 3
+CoordinateTableSpritesOutsideOval: equ 047B4h ; last def. pass 3
 CurveLeftPage1TOPChangedPixelsfrom71to72: equ 0880Fh ; last def. pass 3
 CurveRightEndPage1TOPWriteInstructionsfrom20to19: equ 09AECh ; last def. pass 3
 CurveUpEndPage0BOTTOMAddressesfrom44to43: equ 0B0F2h ; last def. pass 3
@@ -9951,7 +9959,7 @@ CurveUpEndPage0TOPAddressesfrom19to18: equ 0A463h ; last def. pass 3
 penguinbikerace_29_0: equ 093A5h ; last def. pass 3
 CurveRightPage1BOTTOMChangedPixelsfrom30to31: equ 0A45Dh ; last def. pass 3
 CurveRightPage0TOPChangedPixelsfrom49to50: equ 0ACE0h ; last def. pass 3
-IncreaseDistanceAndSetXYPenguin: equ 04491h ; last def. pass 3
+IncreaseDistanceAndSetXYPenguin: equ 04B7Ah ; last def. pass 3
 CurveDownEndPage1TOPWriteInstructionsfrom33to32: equ 09470h ; last def. pass 3
 CurveLeftPage1BOTTOMWriteInstructionsfrom74to75: equ 0AEDBh ; last def. pass 3
 RacingGameCongratulationsRoutine.SetColor: equ 06CB1h ; last def. pass 3
@@ -10193,7 +10201,7 @@ BlockCurveDownEndPage0TOPfrom4to3: equ 0BFh ; last def. pass 3
 FrequencyEnemiesAppear: equ 0E27Bh ; last def. pass 3
 CurveRightPage0TOPWriteInstructionsfrom28to29: equ 0AC69h ; last def. pass 3
 CurveDownPage1TOPAddressesfrom18to19: equ 0930Dh ; last def. pass 3
-IncreaseDistanceAndSetXYPenguin.EndCheckLapFinished: equ 044B7h ; last def. pass 3
+IncreaseDistanceAndSetXYPenguin.EndCheckLapFinished: equ 04BA0h ; last def. pass 3
 CurveRightEndPage0BOTTOMWriteInstructionsfrom54to53: equ 087DDh ; last def. pass 3
 BuildUpPurchaseMenu: equ 04C3Eh ; last def. pass 3
 CurveRightPage1BOTTOMAddressesfrom23to24: equ 0A451h ; last def. pass 3
@@ -10222,7 +10230,7 @@ CurveUpPage1BOTTOMWriteInstructionsfrom10to11: equ 0A13Ch ; last def. pass 3
 CurveUpPage0BOTTOMChangedPixelsfrom1to2: equ 08640h ; last def. pass 3
 Vesselright_6_0: equ 08866h ; last def. pass 3
 CurveUpEndPage0BOTTOMChangedPixelsfrom35to34: equ 0906Eh ; last def. pass 3
-PenguinBikeRace_35: equ 04A8Dh ; last def. pass 3
+PenguinBikeRace_35: equ 05176h ; last def. pass 3
 CurveDownPerspectiveYTable10: equ 086CCh ; last def. pass 3
 BlockCurveUpEndPage0TOPfrom56to55: equ 0B5h ; last def. pass 3
 CurveUpEndPage1BOTTOMAddressesfrom11to10: equ 09E1Ch ; last def. pass 3
@@ -10378,12 +10386,12 @@ MushroomLookingUpSpriteXSpat: equ 02177h ; last def. pass 3
 BlockCurveLeftPage0BOTTOMfrom65to66: equ 061h ; last def. pass 3
 CurveUpEndPage1BOTTOMAddressesfrom19to18: equ 0AB8Fh ; last def. pass 3
 CheckCollisionEnemyOrHeart.CheckObject3: equ 05C70h ; last def. pass 3
-PenguinBikeRace_23: equ 04A5Dh ; last def. pass 3
+PenguinBikeRace_23: equ 05146h ; last def. pass 3
 CurveRightPage1BOTTOMChangedPixelsfrom33to34: equ 09BE8h ; last def. pass 3
 CurveRightPage0TOPAddressesfrom47to48: equ 09458h ; last def. pass 3
 CurveRightPage1TOPWriteInstructionsfrom72to73: equ 0A2CFh ; last def. pass 3
 SetText2.NextLetter: equ 05588h ; last def. pass 3
-PenguinBikeRace_8: equ 04A21h ; last def. pass 3
+PenguinBikeRace_8: equ 0510Ah ; last def. pass 3
 BlockCurveRightEndPage1TOPfrom25to24: equ 093h ; last def. pass 3
 CurveUpPage1TOPWriteInstructionsfrom21to22: equ 08F98h ; last def. pass 3
 CurveLeftPage1TOPAddressesfrom66to67: equ 0A4B7h ; last def. pass 3
@@ -10546,7 +10554,7 @@ CurveLeftEndPage0TOPAddressesfrom43to42: equ 0A075h ; last def. pass 3
 CurveLeftEndPage1TOPWriteInstructionsfrom14to13: equ 09AE6h ; last def. pass 3
 RestoreBackgroundObject1Page2: equ 0130Fh ; last def. pass 3
 CurveUpPage0BOTTOMChangedPixelsfrom14to15: equ 0827Eh ; last def. pass 3
-PenguinBikeRace_46: equ 04AB9h ; last def. pass 3
+PenguinBikeRace_46: equ 051A2h ; last def. pass 3
 CurveUpPage0TOPChangedPixelsfrom0to1: equ 08000h ; last def. pass 3
 BlockCurveDownPage0BOTTOMfrom21to22: equ 0B9h ; last def. pass 3
 StraightRoad15Part1.Lenght: equ 026h ; last def. pass 3
@@ -10574,7 +10582,7 @@ CurveRightPage0BOTTOMAddressesfrom1to2: equ 080B7h ; last def. pass 3
 BlockCurveDownEndPage0BOTTOMfrom34to33: equ 0C3h ; last def. pass 3
 entity_1_0: equ 080E1h ; last def. pass 3
 HydroponicsbayGfxBlock: equ 010h ; last def. pass 3
-PenguinBikeRace_10: equ 04A29h ; last def. pass 3
+PenguinBikeRace_10: equ 05112h ; last def. pass 3
 CurveLeftPage0BOTTOMChangedPixelsfrom13to14: equ 091F5h ; last def. pass 3
 CurveRightEndPage1TOPChangedPixelsfrom60to59: equ 0B033h ; last def. pass 3
 BlockCurveUpEndPage0BOTTOMfrom36to35: equ 0B2h ; last def. pass 3
@@ -10664,7 +10672,7 @@ BlockCurveLeftPage0TOPfrom3to4: equ 04Fh ; last def. pass 3
 CurveLeftEndPage0BOTTOMChangedPixelsfrom38to37: equ 08D0Ch ; last def. pass 3
 CurveUpPage0BOTTOMWriteInstructionsfrom36to37: equ 0AAA8h ; last def. pass 3
 CurveRightEndPage1BOTTOMWriteInstructionsfrom70to69: equ 0A708h ; last def. pass 3
-PenguinBikeRace_42: equ 04AA9h ; last def. pass 3
+PenguinBikeRace_42: equ 05192h ; last def. pass 3
 CurveLeftPage0BOTTOMChangedPixelsfrom32to33: equ 0A9DCh ; last def. pass 3
 UpgradeMenuEventRoutine.HandlePhase: equ 04195h ; last def. pass 3
 ScrollLayer2?: equ 0E27Fh ; last def. pass 3
@@ -10895,7 +10903,7 @@ HangarbayEventRoutine.trainingdeck: equ 05003h ; last def. pass 3
 CurveRightPage0TOPAddressesfrom30to31: equ 09C53h ; last def. pass 3
 BlockCurveUpPage1TOPfrom10to11: equ 0A4h ; last def. pass 3
 Set_R_stand: equ 045B4h ; last def. pass 3
-PenguinBikeRace_9: equ 04A25h ; last def. pass 3
+PenguinBikeRace_9: equ 0510Eh ; last def. pass 3
 CurveLeftPerspectiveXTable31: equ 09E08h ; last def. pass 3
 CurveLeftEndPage1BOTTOMWriteInstructionsfrom59to58: equ 096E1h ; last def. pass 3
 CurveRightPage1TOPAddressesfrom68to69: equ 0998Dh ; last def. pass 3
@@ -11229,7 +11237,7 @@ BlockCurveRightEndPage1BOTTOMfrom15to14: equ 091h ; last def. pass 3
 CurveLeftEndPage0BOTTOMChangedPixelsfrom7to6: equ 0919Bh ; last def. pass 3
 CurveUpEndPage0BOTTOMAddressesfrom19to18: equ 0A5BFh ; last def. pass 3
 CurveUpPage0TOPWriteInstructionsfrom29to30: equ 09D33h ; last def. pass 3
-PenguinBikeRace_18: equ 04A49h ; last def. pass 3
+PenguinBikeRace_18: equ 05132h ; last def. pass 3
 CurveDownEndPage0BOTTOMChangedPixelsfrom15to14: equ 0AA9Fh ; last def. pass 3
 BlockCurveUpPage1BOTTOMfrom5to6: equ 0A3h ; last def. pass 3
 CurveRightEndPage0TOPChangedPixelsfrom18to17: equ 0A89Bh ; last def. pass 3
@@ -11349,7 +11357,7 @@ CurveRightEndPage0BOTTOMChangedPixelsfrom5to4: equ 0861Dh ; last def. pass 3
 hydroponicsbayTileMap: equ 08000h ; last def. pass 3
 CurveRightPage1BOTTOMWriteInstructionsfrom52to53: equ 0817Bh ; last def. pass 3
 CurveRightPage1TOPAddressesfrom27to28: equ 0A7FCh ; last def. pass 3
-CoordinateTablePenguin.RightCurve: equ 046B5h ; last def. pass 3
+CoordinateTablePenguin.RightCurve: equ 04D9Eh ; last def. pass 3
 CurveDownEndPage0TOPWriteInstructionsfrom52to51: equ 0B14Bh ; last def. pass 3
 penguinbikerace_22_0: equ 08EDAh ; last def. pass 3
 CurveDownEndPage0BOTTOMWriteInstructionsfrom49to48: equ 09B46h ; last def. pass 3
@@ -11361,7 +11369,7 @@ CurveDownPage0TOPChangedPixelsfrom17to18: equ 08A39h ; last def. pass 3
 CurveLeftEndPage0BOTTOMAddressesfrom48to47: equ 086D5h ; last def. pass 3
 CurveRightPage1TOPWriteInstructionsfrom56to57: equ 088D1h ; last def. pass 3
 NPCConv017: equ 05D26h ; last def. pass 3
-PenguinBikeRaceCharSprites: equ 04AEAh ; last def. pass 3
+PenguinBikeRaceCharSprites: equ 051D3h ; last def. pass 3
 CurveRightEndPage0BOTTOMWriteInstructionsfrom62to61: equ 09546h ; last def. pass 3
 CurveDownEndPage1BOTTOMChangedPixelsfrom42to41: equ 0A0C5h ; last def. pass 3
 BlockCurveDownEndPage0TOPfrom49to48: equ 0C5h ; last def. pass 3
@@ -11448,6 +11456,7 @@ CurveDownPage0TOPChangedPixelsfrom31to32: equ 087D3h ; last def. pass 3
 CurveUpEndPage0BOTTOMAddressesfrom48to47: equ 09F51h ; last def. pass 3
 CurveRightEndPage0TOPChangedPixelsfrom67to66: equ 0A91Ah ; last def. pass 3
 CurveDownPage1TOPChangedPixelsfrom55to56: equ 09977h ; last def. pass 3
+CoordinateTableSpritesOutsideOval.RightCurve: equ 048B8h ; last def. pass 3
 putplayer_noclip.setpage: equ 0148Dh ; last def. pass 3
 CurveLeftEndPage0BOTTOMChangedPixelsfrom5to4: equ 0A5ADh ; last def. pass 3
 RacingGameEventsLevel3: equ 05836h ; last def. pass 3
@@ -11510,7 +11519,7 @@ CurveLeftEndPage0BOTTOMWriteInstructionsfrom69to68: equ 086C2h ; last def. pass 
 CurveRightEndPage0TOPWriteInstructionsfrom28to27: equ 0A041h ; last def. pass 3
 RacingGameLevelProgressRoutine.SetDPage2: equ 0675Bh ; last def. pass 3
 SetItemInfoUpgrades.MinerSpeed: equ 0552Ch ; last def. pass 3
-PenguinBikeRace_38: equ 04A99h ; last def. pass 3
+PenguinBikeRace_38: equ 05182h ; last def. pass 3
 CurveLeftEndPage0BOTTOMWriteInstructionsfrom61to60: equ 0A98Dh ; last def. pass 3
 CurveLeftPage1TOPChangedPixelsfrom37to38: equ 09616h ; last def. pass 3
 BlockCurveRightPage1TOPfrom43to44: equ 084h ; last def. pass 3
@@ -11696,7 +11705,7 @@ CurveUpPage1TOPAddressesfrom52to53: equ 09BB8h ; last def. pass 3
 CurveDownPage0BOTTOMWriteInstructionsfrom1to2: equ 0834Ch ; last def. pass 3
 CurveUpPage0BOTTOMWriteInstructionsfrom22to23: equ 096EEh ; last def. pass 3
 Basketball_24: equ 05C1Dh ; last def. pass 3
-Stone2On?: equ 011C7h ; last def. pass 3
+Stone2On?: equ 011C8h ; last def. pass 3
 FuelBars: equ 0D5C8h ; last def. pass 3
 CurveLeftPage0BOTTOMWriteInstructionsfrom59to60: equ 09C83h ; last def. pass 3
 CurveUpPage0TOPWriteInstructionsfrom47to48: equ 0A080h ; last def. pass 3
@@ -11827,6 +11836,7 @@ Basketball_10: equ 05C59h ; last def. pass 3
 CurveLeftPage1BOTTOMWriteInstructionsfrom22to23: equ 089CFh ; last def. pass 3
 BlockCurveRightPage1TOPfrom42to43: equ 084h ; last def. pass 3
 CurveRightEndPage0TOPAddressesfrom37to36: equ 08E55h ; last def. pass 3
+CoordinateTableSpritesInsideOval: equ 04444h ; last def. pass 3
 BlockCurveDownPage0TOPfrom0to1: equ 0B7h ; last def. pass 3
 CurveUpPage0BOTTOMChangedPixelsfrom4to5: equ 0A330h ; last def. pass 3
 CurveLeftPage0TOPChangedPixelsfrom44to45: equ 08CE7h ; last def. pass 3
@@ -11923,7 +11933,7 @@ CurveLeftEndPage0BOTTOMWriteInstructionsfrom52to51: equ 08E5Fh ; last def. pass 
 CurveUpPage0BOTTOMChangedPixelsfrom22to23: equ 095F7h ; last def. pass 3
 BlockCurveRightPage1TOPfrom68to69: equ 08Bh ; last def. pass 3
 penguinbikerace_44_0: equ 09DBCh ; last def. pass 3
-Stone2Distance: equ 011C9h ; last def. pass 3
+Stone2Distance: equ 011CAh ; last def. pass 3
 CurveDownPage1BOTTOMWriteInstructionsfrom49to50: equ 0A43Fh ; last def. pass 3
 CurveLeftPerspectiveXTable36: equ 0A2E0h ; last def. pass 3
 CurveLeftPage0TOPChangedPixelsfrom0to1: equ 08000h ; last def. pass 3
@@ -11934,7 +11944,7 @@ CurveUpEndPage1BOTTOMChangedPixelsfrom40to39: equ 08E71h ; last def. pass 3
 CurveDownPage1TOPAddressesfrom9to10: equ 08A59h ; last def. pass 3
 CurveLeftEndPage0TOPAddressesfrom8to7: equ 09EA0h ; last def. pass 3
 BlockCurveRightEndPage0BOTTOMfrom65to64: equ 09Fh ; last def. pass 3
-PenguinBikeRace_12: equ 04A31h ; last def. pass 3
+PenguinBikeRace_12: equ 0511Ah ; last def. pass 3
 CurveLeftPage1TOPWriteInstructionsfrom70to71: equ 0A72Fh ; last def. pass 3
 CurveLeftEndPage0TOPWriteInstructionsfrom12to11: equ 0A837h ; last def. pass 3
 BlockCurveLeftEndPage1BOTTOMfrom73to72: equ 078h ; last def. pass 3
@@ -12206,6 +12216,7 @@ REDCLK: equ 01F5h ; last def. pass 3
 CurveRightEndPage1BOTTOMChangedPixelsfrom38to37: equ 0A46Dh ; last def. pass 3
 CurveUpBlock3: equ 0A5h ; last def. pass 3
 CurveLeftEndPage0BOTTOMAddressesfrom37to36: equ 0810Eh ; last def. pass 3
+HandleStone1Sprite.EndCheckLapFinished: equ 0442Ch ; last def. pass 3
 CurveUpPage1BOTTOMAddressesfrom4to5: equ 0A7AEh ; last def. pass 3
 BlockCurveLeftPage0BOTTOMfrom58to59: equ 05Fh ; last def. pass 3
 TextLandinHours: equ 0DD62h ; last def. pass 3
@@ -12463,7 +12474,7 @@ CurveDownEndPage1BOTTOMWriteInstructionsfrom15to14: equ 0B05Ah ; last def. pass 
 BlockCurveLeftPage0TOPfrom29to30: equ 056h ; last def. pass 3
 RoadCurvatureAnimationStep: equ 0E256h ; last def. pass 3
 CurveRightPage1TOPChangedPixelsfrom61to62: equ 09CAEh ; last def. pass 3
-PenguinBikeRace_19: equ 04A4Dh ; last def. pass 3
+PenguinBikeRace_19: equ 05136h ; last def. pass 3
 CurveDownPage1BOTTOMChangedPixelsfrom48to49: equ 09BCFh ; last def. pass 3
 Layer2Y: equ 0E281h ; last def. pass 3
 CurveLeftEndPage0BOTTOMChangedPixelsfrom21to20: equ 092E8h ; last def. pass 3
@@ -12524,7 +12535,7 @@ BlockCurveUpEndPage0TOPfrom49to48: equ 0B4h ; last def. pass 3
 CurveRightEndPage1TOPWriteInstructionsfrom56to55: equ 0A8FAh ; last def. pass 3
 CurveLeftEndPage0TOPAddressesfrom29to28: equ 09F5Eh ; last def. pass 3
 BlockCurveDownEndPage0TOPfrom38to37: equ 0C3h ; last def. pass 3
-PenguinBikeRace_44: equ 04AB1h ; last def. pass 3
+PenguinBikeRace_44: equ 0519Ah ; last def. pass 3
 CurveRightEndPage1TOPAddressesfrom27to26: equ 09AE5h ; last def. pass 3
 CurveDownPerspectiveYTable50: equ 0A01Ch ; last def. pass 3
 CurveUpEndPage1TOPWriteInstructionsfrom53to52: equ 0993Ah ; last def. pass 3
