@@ -2779,6 +2779,14 @@ PenguinGameLaps:					rb	1
 PenguinGameLapsCopy:			rb	1
 PenguinMaxSpeed:					rb	1
 PenguinBikeRaceScore:			rb	2
+AddedPizzaSpeedBoost:			rb	1
+PenguinInvulnerable?:			rb	1
+SpawnFrequencyWarning:		rb	1
+SpawnFrequencyPizza:			rb	1
+SpawnFrequencyStar:				rb	1
+SpawnFrequencyExtraTime:	rb	1
+PenguinGameRandomValue:		rb	1
+PenguinGameTimeExtended?:	rb	1
 
 endenginepage3variables:  equ $+enginepage3length
 org variables

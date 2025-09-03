@@ -3672,6 +3672,17 @@ WriteSpatToVram:
 	call	outix128		;32 sprites
 	ret
 
+FreeToUseObjectTableLenght: equ 10
+FreeToUseObject0: ds  FreeToUseObjectTableLenght  ;warning symbol
+FreeToUseObject1: ds  FreeToUseObjectTableLenght  ;star
+FreeToUseObject2: ds  FreeToUseObjectTableLenght  ;pizza
+FreeToUseObject3: ds  FreeToUseObjectTableLenght  ;extra time
+FreeToUseObject4: ds  FreeToUseObjectTableLenght  ;stone1
+FreeToUseObject5: ds  FreeToUseObjectTableLenght  ;stone2
+FreeToUseObject6: ds  FreeToUseObjectTableLenght  ;stone3
+FreeToUseObject7: ds  FreeToUseObjectTableLenght  ;stone4
+
+
 spat:						;sprite attribute table (y,x)
 	db		100,100,00,0	,100,100,04,0	,100,100,08,0	,100,116,12,0
 	db		100,116,16,0	,100,116,20,0	,116,100,24,0	,116,100,28,0

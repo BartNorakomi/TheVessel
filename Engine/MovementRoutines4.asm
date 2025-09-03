@@ -14,25 +14,104 @@ Phase MovementRoutinesAddress
 ;clock = timefreeze (5 seconds)
 ;stones, rolling monsters and spikes gets announced with triangle with ! symbol
 
-
 ;you need to complete 10 laps to finish a level within its given time
 ;time is displayed in left top, laps in right top, level in the middle
 ;after completing a level, time gets extended, level gets increased, laps get reset
 ;every level max speed increases by 1 or 2
 
+TotalTrackDistance:                 equ 440
 PenguinSpeed:                       equ Object2+var1 ;same spot as PutOnFrame
 PenguinDistanceTravelledThisFrame:  equ Object2+var2 ;same spot as ObjectRestoreBackgroundTable
 PenguinInsideOval?:                 equ Object2+var3
 
-Stone1On?:                          equ Object3+1
-Stone1Duration:                     equ Object3+2
-Stone1Distance:                     equ Object3+3
-Stone1InsideOval?:                  equ Object3+5
+PenguinGameObjectOn?:               equ 0
+PenguinGameObjectDuration:          equ 1
+PenguinGameObjectDistance:          equ 2  ;2 bytes
+PenguinGameObjectInsideOval?:       equ 4
+PenguinGameObjectXSpat:             equ 5 ;2 bytes
+PenguinGameObjectYSpat:             equ 7 ; 2 bytes
 
-Stone2On?:                          equ Object4+1
-Stone2Duration:                     equ Object4+2
-Stone2Distance:                     equ Object4+3
-Stone2InsideOval?:                  equ Object4+5
+WarningSpriteYSpat:                 equ spat+0+00*4
+WarningSpriteXSpat:                 equ spat+1+00*4
+Warning:                            equ FreeToUseObject0
+WarningOn?:                         equ FreeToUseObject0+PenguinGameObjectOn?
+WarningDuration:                    equ FreeToUseObject0+PenguinGameObjectDuration
+WarningDistance:                    equ FreeToUseObject0+PenguinGameObjectDistance ;2 bytes
+WarningInsideOval?:                 equ FreeToUseObject0+PenguinGameObjectInsideOval?
+WarningXSpat:                       equ FreeToUseObject0+PenguinGameObjectXSpat ;2 bytes
+WarningYSpat:                       equ FreeToUseObject0+PenguinGameObjectYSpat ;2 bytes
+
+StarSpriteYSpat:                    equ spat+0+02*4
+StarSpriteXSpat:                    equ spat+1+02*4
+Star:                               equ FreeToUseObject1
+StarOn?:                            equ FreeToUseObject1+PenguinGameObjectOn?
+StarDuration:                       equ FreeToUseObject1+PenguinGameObjectDuration
+StarDistance:                       equ FreeToUseObject1+PenguinGameObjectDistance ;2 bytes
+StarInsideOval?:                    equ FreeToUseObject1+PenguinGameObjectInsideOval?
+StarXSpat:                          equ FreeToUseObject1+PenguinGameObjectXSpat ;2 bytes
+StarYSpat:                          equ FreeToUseObject1+PenguinGameObjectYSpat ;2 bytes
+
+PizzaSpriteYSpat:                   equ spat+0+04*4
+PizzaSpriteXSpat:                   equ spat+1+04*4
+Pizza:                              equ FreeToUseObject2
+PizzaOn?:                           equ FreeToUseObject2+PenguinGameObjectOn?
+PizzaDuration:                      equ FreeToUseObject2+PenguinGameObjectDuration
+PizzaDistance:                      equ FreeToUseObject2+PenguinGameObjectDistance ;2 bytes
+PizzaInsideOval?:                   equ FreeToUseObject2+PenguinGameObjectInsideOval?
+PizzaXSpat:                         equ FreeToUseObject2+PenguinGameObjectXSpat ;2 bytes
+PizzaYSpat:                         equ FreeToUseObject2+PenguinGameObjectYSpat ;2 bytes
+
+ExtraTimeSpriteYSpat:               equ spat+0+06*4
+ExtraTimeSpriteXSpat:               equ spat+1+06*4
+ExtraTime:                          equ FreeToUseObject3
+ExtraTimeOn?:                       equ FreeToUseObject3+PenguinGameObjectOn?
+ExtraTimeDuration:                  equ FreeToUseObject3+PenguinGameObjectDuration
+ExtraTimeDistance:                  equ FreeToUseObject3+PenguinGameObjectDistance ;2 bytes
+ExtraTimeInsideOval?:               equ FreeToUseObject3+PenguinGameObjectInsideOval?
+ExtraTimeXSpat:                     equ FreeToUseObject3+PenguinGameObjectXSpat ;2 bytes
+ExtraTimeYSpat:                     equ FreeToUseObject3+PenguinGameObjectYSpat ;2 bytes
+
+StoneDuration:                      equ 255
+
+Stone1SpriteYSpat:                  equ spat+0+08*4
+Stone1SpriteXSpat:                  equ spat+1+08*4
+Stone1:                             equ FreeToUseObject4
+Stone1On?:                          equ FreeToUseObject4+PenguinGameObjectOn?
+Stone1Duration:                     equ FreeToUseObject4+PenguinGameObjectDuration
+Stone1Distance:                     equ FreeToUseObject4+PenguinGameObjectDistance ;2 bytes
+Stone1InsideOval?:                  equ FreeToUseObject4+PenguinGameObjectInsideOval?
+Stone1XSpat:                        equ FreeToUseObject4+PenguinGameObjectXSpat ;2 bytes
+Stone1YSpat:                        equ FreeToUseObject4+PenguinGameObjectYSpat ;2 bytes
+
+Stone2SpriteYSpat:                  equ spat+0+10*4
+Stone2SpriteXSpat:                  equ spat+1+10*4
+Stone2:                             equ FreeToUseObject5
+Stone2On?:                          equ FreeToUseObject5+PenguinGameObjectOn?
+Stone2Duration:                     equ FreeToUseObject5+PenguinGameObjectDuration
+Stone2Distance:                     equ FreeToUseObject5+PenguinGameObjectDistance ;2 bytes
+Stone2InsideOval?:                  equ FreeToUseObject5+PenguinGameObjectInsideOval?
+Stone2XSpat:                        equ FreeToUseObject5+PenguinGameObjectXSpat ;2 bytes
+Stone2YSpat:                        equ FreeToUseObject5+PenguinGameObjectYSpat ;2 bytes
+
+Stone3SpriteYSpat:                  equ spat+0+12*4
+Stone3SpriteXSpat:                  equ spat+1+12*4
+Stone3:                             equ FreeToUseObject6
+Stone3On?:                          equ FreeToUseObject6+PenguinGameObjectOn?
+Stone3Duration:                     equ FreeToUseObject6+PenguinGameObjectDuration
+Stone3Distance:                     equ FreeToUseObject6+PenguinGameObjectDistance ;2 bytes
+Stone3InsideOval?:                  equ FreeToUseObject6+PenguinGameObjectInsideOval?
+Stone3XSpat:                        equ FreeToUseObject6+PenguinGameObjectXSpat ;2 bytes
+Stone3YSpat:                        equ FreeToUseObject6+PenguinGameObjectYSpat ;2 bytes
+
+Stone4SpriteYSpat:                  equ spat+0+14*4
+Stone4SpriteXSpat:                  equ spat+1+14*4
+Stone4:                             equ FreeToUseObject7
+Stone4On?:                          equ FreeToUseObject7+PenguinGameObjectOn?
+Stone4Duration:                     equ FreeToUseObject7+PenguinGameObjectDuration
+Stone4Distance:                     equ FreeToUseObject7+PenguinGameObjectDistance ;2 bytes
+Stone4InsideOval?:                  equ FreeToUseObject7+PenguinGameObjectInsideOval?
+Stone4XSpat:                        equ FreeToUseObject7+PenguinGameObjectXSpat ;2 bytes
+Stone4YSpat:                        equ FreeToUseObject7+PenguinGameObjectYSpat ;2 bytes
 
 PenguinMovementRoutine:
   ld    a,3
@@ -46,10 +125,17 @@ PenguinMovementRoutine:
   call  IncreasePenguinSpeed
   call  IncreaseDistanceAndSetXYPenguin
   call  HandleJumpInsideOrOutsideOval
-  call  SetPenguinSprite
   call  HandlePenguinGameObjects
   call  HandlePenguinGameHud
   call  HandlePenguinGameOver
+  call  PutNewWarningObjects
+  call  PutNewPizzaObjects
+  call  PutNewStarObjects
+  call  PutNewExtraTimeObjects
+  call  SetPenguinSprite
+
+  ld    a,r
+  ld    (PenguinGameRandomValue),a
   ret
 
   .HandlePhase:                             ;init variables, load gfx
@@ -66,12 +152,122 @@ PenguinMovementRoutine:
   ld    (PenguinDistanceTravelledThisFrame),a
   ld    (PenguinSpeed),a
   ld    (framecounter2),a
-  ld    (Stone2On?),a
-
+  ld    (PenguinInvulnerable?),a
+  ld    (PenguinGameTimeExtended?),a
   ld    a,1
-  ld    (Stone1On?),a
+  ld    (AddedPizzaSpeedBoost),a
+
+  ld    ix,Warning
+  ld    (ix+PenguinGameObjectOn?),0           ;on?
+  ld    (ix+PenguinGameObjectDuration),050    ;duration
+  ld    hl,150
+  ld    (ix+PenguinGameObjectDistance),l      ;distance
+  ld    (ix+PenguinGameObjectDistance+1),h    ;distance
+  ld    (ix+PenguinGameObjectInsideOval?),1   ;inside oval?
+  ld    hl,WarningSpriteYSpat
+  ld    (ix+PenguinGameObjectYSpat),l         ;y spat
+  ld    (ix+PenguinGameObjectYSpat+1),h       ;y spat
+  ld    hl,WarningSpriteXSpat
+  ld    (ix+PenguinGameObjectXSpat),l         ;x spat
+  ld    (ix+PenguinGameObjectXSpat+1),h       ;x spat
+
+  ld    ix,Star
+  ld    (ix+PenguinGameObjectOn?),0           ;on?
+  ld    (ix+PenguinGameObjectDuration),050    ;duration
+  ld    hl,150
+  ld    (ix+PenguinGameObjectDistance),l      ;distance
+  ld    (ix+PenguinGameObjectDistance+1),h    ;distance
+  ld    (ix+PenguinGameObjectInsideOval?),1   ;inside oval?
+  ld    hl,StarSpriteYSpat
+  ld    (ix+PenguinGameObjectYSpat),l         ;y spat
+  ld    (ix+PenguinGameObjectYSpat+1),h       ;y spat
+  ld    hl,StarSpriteXSpat
+  ld    (ix+PenguinGameObjectXSpat),l         ;x spat
+  ld    (ix+PenguinGameObjectXSpat+1),h       ;x spat
+
+  ld    ix,Pizza
+  ld    (ix+PenguinGameObjectOn?),0           ;on?
+  ld    (ix+PenguinGameObjectDuration),050    ;duration
+  ld    hl,100
+  ld    (ix+PenguinGameObjectDistance),l      ;distance
+  ld    (ix+PenguinGameObjectDistance+1),h    ;distance
+  ld    (ix+PenguinGameObjectInsideOval?),0   ;inside oval?
+  ld    hl,PizzaSpriteYSpat
+  ld    (ix+PenguinGameObjectYSpat),l         ;y spat
+  ld    (ix+PenguinGameObjectYSpat+1),h       ;y spat
+  ld    hl,PizzaSpriteXSpat
+  ld    (ix+PenguinGameObjectXSpat),l         ;x spat
+  ld    (ix+PenguinGameObjectXSpat+1),h       ;x spat
+
+  ld    ix,ExtraTime
+  ld    (ix+PenguinGameObjectOn?),0           ;on?
+  ld    (ix+PenguinGameObjectDuration),050    ;duration
+  ld    hl,100
+  ld    (ix+PenguinGameObjectDistance),l      ;distance
+  ld    (ix+PenguinGameObjectDistance+1),h    ;distance
+  ld    (ix+PenguinGameObjectInsideOval?),0   ;inside oval?
+  ld    hl,ExtraTimeSpriteYSpat
+  ld    (ix+PenguinGameObjectYSpat),l         ;y spat
+  ld    (ix+PenguinGameObjectYSpat+1),h       ;y spat
+  ld    hl,ExtraTimeSpriteXSpat
+  ld    (ix+PenguinGameObjectXSpat),l         ;x spat
+  ld    (ix+PenguinGameObjectXSpat+1),h       ;x spat
+
+  ld    ix,Stone1
+  ld    (ix+PenguinGameObjectOn?),1           ;on?
+  ld    (ix+PenguinGameObjectDuration),100    ;duration
+  ld    hl,20
+  ld    (ix+PenguinGameObjectDistance),l      ;distance
+  ld    (ix+PenguinGameObjectDistance+1),h    ;distance
+  ld    (ix+PenguinGameObjectInsideOval?),1   ;inside oval?
+  ld    hl,Stone1SpriteYSpat
+  ld    (ix+PenguinGameObjectYSpat),l         ;y spat
+  ld    (ix+PenguinGameObjectYSpat+1),h       ;y spat
+  ld    hl,Stone1SpriteXSpat
+  ld    (ix+PenguinGameObjectXSpat),l         ;x spat
+  ld    (ix+PenguinGameObjectXSpat+1),h       ;x spat
+ 
+  ld    ix,Stone2
+  ld    (ix+PenguinGameObjectOn?),0           ;on?
+  ld    (ix+PenguinGameObjectDuration),100    ;duration
   ld    hl,0
-  ld    (Stone1Distance),hl
+  ld    (ix+PenguinGameObjectDistance),l      ;distance
+  ld    (ix+PenguinGameObjectDistance+1),h    ;distance
+  ld    (ix+PenguinGameObjectInsideOval?),0   ;inside oval?
+  ld    hl,Stone2SpriteYSpat
+  ld    (ix+PenguinGameObjectYSpat),l         ;y spat
+  ld    (ix+PenguinGameObjectYSpat+1),h       ;y spat
+  ld    hl,Stone2SpriteXSpat
+  ld    (ix+PenguinGameObjectXSpat),l         ;x spat
+  ld    (ix+PenguinGameObjectXSpat+1),h       ;x spat
+
+  ld    ix,Stone3
+  ld    (ix+PenguinGameObjectOn?),0           ;on?
+  ld    (ix+PenguinGameObjectDuration),100    ;duration
+  ld    hl,0
+  ld    (ix+PenguinGameObjectDistance),l      ;distance
+  ld    (ix+PenguinGameObjectDistance+1),h    ;distance
+  ld    (ix+PenguinGameObjectInsideOval?),0   ;inside oval?
+  ld    hl,Stone3SpriteYSpat
+  ld    (ix+PenguinGameObjectYSpat),l         ;y spat
+  ld    (ix+PenguinGameObjectYSpat+1),h       ;y spat
+  ld    hl,Stone3SpriteXSpat
+  ld    (ix+PenguinGameObjectXSpat),l         ;x spat
+  ld    (ix+PenguinGameObjectXSpat+1),h       ;x spat
+
+  ld    ix,Stone4
+  ld    (ix+PenguinGameObjectOn?),0           ;on?
+  ld    (ix+PenguinGameObjectDuration),100    ;duration
+  ld    hl,0
+  ld    (ix+PenguinGameObjectDistance),l      ;distance
+  ld    (ix+PenguinGameObjectDistance+1),h    ;distance
+  ld    (ix+PenguinGameObjectInsideOval?),0   ;inside oval?
+  ld    hl,Stone4SpriteYSpat
+  ld    (ix+PenguinGameObjectYSpat),l         ;y spat
+  ld    (ix+PenguinGameObjectYSpat+1),h       ;y spat
+  ld    hl,Stone4SpriteXSpat
+  ld    (ix+PenguinGameObjectXSpat),l         ;x spat
+  ld    (ix+PenguinGameObjectXSpat+1),h       ;x spat
 
 
   ld    a,1
@@ -493,14 +689,26 @@ HandlePenguinGameHud:
   .LevelDY: equ 008
 
   .AdjustTimeAndSetLapsCopy:
+  ld    a,(PenguinGameTimeExtended?)
+  or    a
+  jr    z,.EndCheckExtendTime
+  xor   a
+  ld    (PenguinGameTimeExtended?),a
+  ld    a,(PenguinGameTime)
+  add   a,5
+  ld    (PenguinGameTime),a
+  .EndCheckExtendTime:
+
   ld    a,(PenguinGameLaps)
   ld    (PenguinGameLapsCopy),a
 
   ld    a,(PenguinGameTimeSpeed)
   inc   a
   ld    (PenguinGameTimeSpeed),a
-  and   3
+  cp    3
   ret   nz
+  xor   a
+  ld    (PenguinGameTimeSpeed),a
 
   ld    a,(PenguinGameTime)
   dec   a
@@ -576,56 +784,436 @@ HandlePenguinGameHud:
   inc   hl
   jr    .PutTextLoop
 
+PutNewExtraTimeObjects:
+  ld    ix,ExtraTime
+  bit   0,(ix+PenguinGameObjectOn?)
+  ret   nz
+
+  ld    a,(SpawnFrequencyExtraTime)
+  dec   a
+  ld    (SpawnFrequencyExtraTime),a
+  ret   nz
+  ld    a,250
+  ld    (SpawnFrequencyExtraTime),a
+
+  ld    a,r
+  and   31
+  add   a,a                                   ;*2
+  ld    l,a
+  ld    h,0
+  ld    de,DistanceTable
+  add   hl,de
+  ld    e,(hl)
+  inc   hl
+  ld    d,(hl)
+
+  call  CheckDistanceAlreadyInUseByOtherObject
+
+  set   0,(ix+PenguinGameObjectOn?)           ;on
+  ld    (ix+PenguinGameObjectDuration),250    ;duration
+  ld    (ix+PenguinGameObjectDistance),e      ;distance
+  ld    (ix+PenguinGameObjectDistance+1),d    ;distance
+
+  ld    a,r
+  and   1
+  ld    (ix+PenguinGameObjectInsideOval?),a   ;inside oval?
+  ret
+
+PutNewStarObjects:
+  ld    ix,Star
+  bit   0,(ix+PenguinGameObjectOn?)
+  ret   nz
+
+  ld    a,(SpawnFrequencyStar)
+  dec   a
+  ld    (SpawnFrequencyStar),a
+  ret   nz
+  ld    a,50
+  ld    (SpawnFrequencyStar),a
+
+  ld    a,(PenguinGameRandomValue)
+  and   7
+  ret   nz
+
+  ld    a,r
+  and   31
+  add   a,a                                   ;*2
+  ld    l,a
+  ld    h,0
+  ld    de,DistanceTable
+  add   hl,de
+  ld    e,(hl)
+  inc   hl
+  ld    d,(hl)
+
+  call  CheckDistanceAlreadyInUseByOtherObject
+
+  set   0,(ix+PenguinGameObjectOn?)           ;on
+  ld    (ix+PenguinGameObjectDuration),250    ;duration
+  ld    (ix+PenguinGameObjectDistance),e      ;distance
+  ld    (ix+PenguinGameObjectDistance+1),d    ;distance
+
+  ld    a,r
+  and   1
+  ld    (ix+PenguinGameObjectInsideOval?),a   ;inside oval?
+  ret
+
+PutNewPizzaObjects:
+  ld    ix,Pizza
+  bit   0,(ix+PenguinGameObjectOn?)
+  ret   nz
+
+  ld    a,(SpawnFrequencyPizza)
+  dec   a
+  ld    (SpawnFrequencyPizza),a
+  ret   nz
+  ld    a,100
+  ld    (SpawnFrequencyPizza),a
+
+  ld    a,r
+  and   31
+  add   a,a                                   ;*2
+  ld    l,a
+  ld    h,0
+  ld    de,DistanceTable
+  add   hl,de
+  ld    e,(hl)
+  inc   hl
+  ld    d,(hl)
+
+  call  CheckDistanceAlreadyInUseByOtherObject
+
+  set   0,(ix+PenguinGameObjectOn?)           ;on
+  ld    (ix+PenguinGameObjectDuration),250    ;duration
+  ld    (ix+PenguinGameObjectDistance),e      ;distance
+  ld    (ix+PenguinGameObjectDistance+1),d    ;distance
+
+  ld    a,r
+  and   1
+  ld    (ix+PenguinGameObjectInsideOval?),a   ;inside oval?
+  ret
+
+PutNewWarningObjects:
+  ld    a,(SpawnFrequencyWarning)
+  dec   a
+  ld    (SpawnFrequencyWarning),a
+  ret   nz
+  ld    a,10
+  ld    (SpawnFrequencyWarning),a
+
+  ld    ix,Warning
+  bit   0,(ix+PenguinGameObjectOn?)
+  ret   nz
+
+  ld    a,r
+  and   31
+  add   a,a                                   ;*2
+  ld    l,a
+  ld    h,0
+  ld    de,DistanceTable
+  add   hl,de
+  ld    e,(hl)
+  inc   hl
+  ld    d,(hl)
+
+  call  CheckDistanceAlreadyInUseByOtherObject
+
+  set   0,(ix+PenguinGameObjectOn?)           ;on
+  ld    (ix+PenguinGameObjectDuration),050    ;duration
+  ld    (ix+PenguinGameObjectDistance),e      ;distance
+  ld    (ix+PenguinGameObjectDistance+1),d    ;distance
+
+  ld    a,r
+  and   1
+  ld    (ix+PenguinGameObjectInsideOval?),a   ;inside oval?
+  ret
+
+DistanceTable:
+  dw    000+20,040+20,080+20,120+20,160+20,200+20,240+20,280+20,320+20,360+20,400+20
+  dw    000+20,040+20,080+20,120+20,160+20,200+20,240+20,280+20,320+20,360+20,400+20
+  dw    000+20,040+20,080+20,120+20,160+20,200+20,240+20,280+20,320+20,360+20,400+20
+
+CheckDistanceAlreadyInUseByOtherObject:
+  ld    hl,(Warning+PenguinGameObjectDistance)
+  xor   a
+  sbc   hl,de
+  jr    z,.DistanceInUse                       ;this distance is already in use by this stone, don't place warning symbol
+  ld    hl,(Star+PenguinGameObjectDistance)
+  xor   a
+  sbc   hl,de
+  jr    z,.DistanceInUse                       ;this distance is already in use by this stone, don't place warning symbol
+  ld    hl,(Pizza+PenguinGameObjectDistance)
+  xor   a
+  sbc   hl,de
+  jr    z,.DistanceInUse                       ;this distance is already in use by this stone, don't place warning symbol
+  ld    hl,(ExtraTime+PenguinGameObjectDistance)
+  xor   a
+  sbc   hl,de
+  jr    z,.DistanceInUse                       ;this distance is already in use by this stone, don't place warning symbol
+  ld    hl,(Stone1+PenguinGameObjectDistance)
+  xor   a
+  sbc   hl,de
+  jr    z,.DistanceInUse                       ;this distance is already in use by this stone, don't place warning symbol
+  ld    hl,(Stone2+PenguinGameObjectDistance)
+  xor   a
+  sbc   hl,de
+  jr    z,.DistanceInUse                       ;this distance is already in use by this stone, don't place warning symbol
+  ld    hl,(Stone3+PenguinGameObjectDistance)
+  xor   a
+  sbc   hl,de
+  jr    z,.DistanceInUse                       ;this distance is already in use by this stone, don't place warning symbol
+  ld    hl,(Stone4+PenguinGameObjectDistance)
+  xor   a
+  sbc   hl,de
+  ret   nz
+  .DistanceInUse:
+  pop   af
+  ret
+
 HandlePenguinGameObjects:
-  call  HandleStone1Sprite
+  ld    ix,Warning
+  call  HandleObjectWarning
+  ld    ix,Star
+  call  HandleObjectStar
+  ld    ix,Pizza
+  call  HandleObjectPizza
+  ld    ix,ExtraTime
+  call  HandleObjectExtraTime
+  ld    ix,Stone1
+  call  HandleObjectStone
+  ld    ix,Stone2
+  call  HandleObjectStone
+  ld    ix,Stone3
+  call  HandleObjectStone
+  ld    ix,Stone4
+  call  HandleObjectStone
   ret
 
-  call  SetAlarmSprite
-  call  SetStarSprite
-  call  SetPizzaSprite
-  call  SetClockSprite
-  call  SetMushroomSprite
-  ret
-
-;Stone1On?:                          equ Object3+0
-;Stone1Duration:                     equ Object3+1
-;Stone1Distance:                     equ Object3+2
-;Stone1InsideOval?:                  equ Object3+4
-
-StoneSpriteYSpat:              equ spat+0+08*4
-StoneSpriteXSpat:              equ spat+1+08*4
-HandleStone1Sprite:
-  ld    a,(Stone1On?)
+HandleObjectExtraTime:
+  ld    a,(ix+PenguinGameObjectOn?)           ;on?
   or    a
   ret   z
 
-  ld    hl,(Stone1Distance)
+  ld    a,(ix+PenguinGameObjectDuration)      ;duration
+  dec   a
+  ld    (ix+PenguinGameObjectDuration),a      ;duration
+  jr    z,.Remove
 
-  inc   hl
-  ld    de,440
+  call  HandleObjectPenguinRaceGame.SetXY
+  call  CheckCollisionPenguin                 ;out: c=collision
+  ret   nc
+
+  ld    a,1
+  ld    (PenguinGameTimeExtended?),a
+
+  .Remove:
+  call  SetObjectY213
+  ld    (ix+PenguinGameObjectOn?),0           ;duration  
+  ld    (ix+PenguinGameObjectDistance),0      ;distance
+  ld    (ix+PenguinGameObjectDistance+1),0    ;distance
+  ret
+
+HandleObjectStar:
+  ld    a,(ix+PenguinGameObjectOn?)           ;on?
+  or    a
+  ret   z
+
+  ld    a,(ix+PenguinGameObjectDuration)      ;duration
+  dec   a
+  ld    (ix+PenguinGameObjectDuration),a      ;duration
+  jr    z,.Remove
+
+  call  HandleObjectPenguinRaceGame.SetXY
+  call  CheckCollisionPenguin                 ;out: c=collision
+  ret   nc
+
+  ld    a,255
+  ld    (PenguinInvulnerable?),a
+  .Remove:
+  call  SetObjectY213
+  ld    (ix+PenguinGameObjectOn?),0           ;duration  
+  ld    (ix+PenguinGameObjectDistance),0      ;distance
+  ld    (ix+PenguinGameObjectDistance+1),0    ;distance
+  ret
+
+HandleObjectPizza:
+  ld    a,(ix+PenguinGameObjectOn?)           ;on?
+  or    a
+  ret   z
+
+  ld    a,(ix+PenguinGameObjectDuration)      ;duration
+  dec   a
+  ld    (ix+PenguinGameObjectDuration),a      ;duration
+  jr    z,.Remove
+
+  call  HandleObjectPenguinRaceGame.SetXY
+  call  CheckCollisionPenguin                 ;out: c=collision
+  ret   nc
+
+  ld    a,80
+  ld    (AddedPizzaSpeedBoost),a
+  .Remove:
+  call  SetObjectY213
+  ld    (ix+PenguinGameObjectOn?),0           ;duration  
+  ld    (ix+PenguinGameObjectDistance),0      ;distance
+  ld    (ix+PenguinGameObjectDistance+1),0    ;distance
+  ret
+
+CheckCollisionPenguin:                        ;out: c=collision
+  ld    l,(ix+PenguinGameObjectDistance)      ;distance
+  ld    h,(ix+PenguinGameObjectDistance+1)    ;distance
+  ld    bc,-10
+  add   hl,bc
+
+  ld    de,(PenguinDistance)
   xor   a
   sbc   hl,de
-  jr    nc,.EndCheckLapFinished
+  ret   nc
+
+  ld    de,20
   add   hl,de
-  .EndCheckLapFinished:
-  ld    (Stone1Distance),hl
+  ret   nc
+
+  ld    a,(PenguinInsideOval?)
+  cp    (ix+PenguinGameObjectInsideOval?)
+  jr    z,.Collision
+  xor   a
+  ret
+
+  .Collision:
+  scf
+  ret
+
+HandleObjectWarning:
+  ld    a,(ix+PenguinGameObjectOn?)           ;on?
+  or    a
+  ret   z
+
+  ld    a,(framecounter2)
+  and   15
+  cp    8
+  jp    c,HandleObjectPenguinRaceGame.SetXY
+  call  SetObjectY213
+  ld    a,(ix+PenguinGameObjectDuration)      ;duration
+  dec   a
+  ld    (ix+PenguinGameObjectDuration),a      ;duration
+  ret   nz
+  ld    (ix+PenguinGameObjectOn?),0           ;duration
+  ;we remove warning symbol and replace it with a stone
+  push  iy 
+  call  .SetStone
+  pop   iy
+  ret
+
+  .SetStone:
+  ld    iy,Stone1
+  bit   0,(iy+PenguinGameObjectOn?)
+  jr    z,.GoSetStone
+  ld    iy,Stone2
+  bit   0,(iy+PenguinGameObjectOn?)
+  jr    z,.GoSetStone
+  ld    iy,Stone3
+  bit   0,(iy+PenguinGameObjectOn?)
+  jr    z,.GoSetStone
+  ld    iy,Stone4
+  bit   0,(iy+PenguinGameObjectOn?)
+  jr    z,.GoSetStone
+  ret
+
+  .GoSetStone:
+  set   0,(iy+PenguinGameObjectOn?)   ;on
+  ld    l,(ix+PenguinGameObjectDistance)      ;distance
+  ld    h,(ix+PenguinGameObjectDistance+1)    ;distance
+  ld    (iy+PenguinGameObjectDistance),l      ;distance
+  ld    (iy+PenguinGameObjectDistance+1),h    ;distance
+  ld    a,(ix+PenguinGameObjectInsideOval?)   ;inside oval?
+  ld    (iy+PenguinGameObjectInsideOval?),a   ;inside oval?
+  ld    (iy+PenguinGameObjectDuration),StoneDuration   ;duration
+  ret
+
+SetObjectY213:
+  ld    l,(ix+PenguinGameObjectYSpat)         ;y spat
+  ld    h,(ix+PenguinGameObjectYSpat+1)       ;y spat
+  ld    (hl),213                              ;set y
+  ld    de,4
+  add   hl,de                                 ;y
+  ld    (hl),213                              ;set y
+  ret
+
+HandleObjectStone:
+  bit   0,(ix+PenguinGameObjectOn?)           ;on?
+  ret   z
+  call  HandleObjectPenguinRaceGame.SetXY
+
+  ld    a,(PenguinInvulnerable?)
+  or    a
+  call  z,CheckCollisionPenguin                 ;out: c=collision
+  jr    c,.CollisionStone
+
+  ld    a,(framecounter2)
+  rrca
+  ret   c
+
+  ld    a,(ix+PenguinGameObjectDuration)      ;duration
+  dec   a
+  ld    (ix+PenguinGameObjectDuration),a      ;duration
+  ret   nz
+  res   0,(ix+PenguinGameObjectOn?)           ;on?
+  ld    (ix+PenguinGameObjectDistance),0      ;distance
+  ld    (ix+PenguinGameObjectDistance+1),0    ;distance
+  jp    SetObjectY213
+
+  .CollisionStone:
+  call  SetObjectY213
+  ld    (ix+PenguinGameObjectOn?),0           ;duration  
+  ld    (ix+PenguinGameObjectDistance),0      ;distance
+  ld    (ix+PenguinGameObjectDistance+1),0    ;distance
+  xor   a
+  ld    (PenguinSpeed),a
+  ld    a,100
+  ld    (PenguinInvulnerable?),a
+  ret
+
+HandleObjectPenguinRaceGame:
+  ld    a,(ix+PenguinGameObjectOn?)           ;on?
+  or    a
+  ret   z
+  .SetXY:
+  ld    l,(ix+PenguinGameObjectDistance)      ;distance
+  ld    h,(ix+PenguinGameObjectDistance+1)    ;distance
 
 
+;  ld    hl,(Stone1Distance)
+;  inc   hl
+;  ld    de,440
+;  xor   a
+;  sbc   hl,de
+;  jr    nc,.EndCheckLapFinished
+;  add   hl,de
+;  .EndCheckLapFinished:
+;  ld    (Stone1Distance),hl
 
   add   hl,hl                               ;*2
-
+  bit   0,(ix+PenguinGameObjectInsideOval?)   ;inside oval?
   ld    de,CoordinateTableSpritesInsideOval
-;  ld    de,CoordinateTableSpritesOutsideOval
-
+  jr    nz,.EndCheckInsideOval
+  ld    de,CoordinateTableSpritesOutsideOval
+  .EndCheckInsideOval:
   add   hl,de
   ld    a,(hl)                              ;x
-  ld    (StoneSpriteXSpat),a                 ;x sprite 0
-  ld    (StoneSpriteXSpat+4),a                 ;x sprite 1
-
   inc   hl
-  ld    a,(hl)                              ;y
-  ld    (StoneSpriteYSpat),a                 ;y sprite 0
-  ld    (StoneSpriteYSpat+4),a                 ;y sprite 1
+  ld    b,(hl)                              ;y
+
+  ld    l,(ix+PenguinGameObjectYSpat)         ;y spat
+  ld    h,(ix+PenguinGameObjectYSpat+1)       ;y spat
+  ld    (hl),b                                ;set y
+  inc   hl                                    ;x
+  ld    (hl),a
+  ld    de,3
+  add   hl,de                                 ;y
+  ld    (hl),b                                ;set y
+  inc   hl                                    ;x
+  ld    (hl),a
   ret
 
 
@@ -781,6 +1369,16 @@ SetPenguinSprite:
   inc   hl
   ld    a,(hl)
   ld    (iy+SpriteData+1),a
+
+  ld    a,(PenguinInvulnerable?)
+  or    a
+  ret   z
+  dec   a
+  ld    (PenguinInvulnerable?),a
+  rrca
+  ret   c
+  ld    (iy+PutOnFrame),2
+	call  GoRestoreObject                     ;restore sprite in previous page with (fast) vdp copy
   ret
 
 IncreasePenguinSpeed:                       ;maximum speed level 1 = 30, level 10 = 48, speed boost is + 20 speed (every level max speed increases by 2)
@@ -809,7 +1407,17 @@ IncreasePenguinSpeed:                       ;maximum speed level 1 = 30, level 1
   ret
 
 IncreaseDistanceAndSetXYPenguin:
+  ld    a,(AddedPizzaSpeedBoost)            ;maximum speed level 1 = 30, level 10 = 48, speed boost is + 20 speed (every level max speed increases by 2)
+  dec   a
+  jr    z,.EndCheckSpeedBoost
+  ld    (AddedPizzaSpeedBoost),a            ;maximum speed level 1 = 30, level 10 = 48, speed boost is + 20 speed (every level max speed increases by 2)
+  .EndCheckSpeedBoost:
+  srl   a                                   ;/2
+  srl   a                                   ;/2
+  ld    d,a
+
   ld    a,(PenguinSpeed)                    ;68 = max speed, max speed should increase distance by 4 every frame
+  add   a,d
   ld    b,a
   ld    c,0                                 ;distance increased this frame
 
@@ -827,7 +1435,7 @@ IncreaseDistanceAndSetXYPenguin:
   ld    hl,(PenguinDistance)
   ld    b,0
   add   hl,bc
-  ld    de,440
+  ld    de,TotalTrackDistance
   xor   a
   sbc   hl,de
   jr    nc,.LapFinished
@@ -940,28 +1548,6 @@ SetClockSprite:
   ld    a,50
   ld    (ClockSpriteXSpat),a                 ;x sprite 0
   ld    (ClockSpriteXSpat+4),a                 ;x sprite 1
-  ret
-
-PizzaSpriteYSpat:              equ spat+0+04*4
-PizzaSpriteXSpat:              equ spat+1+04*4
-SetPizzaSprite:
-  ld    a,50
-  ld    (PizzaSpriteYSpat),a                 ;y sprite 0
-  ld    (PizzaSpriteYSpat+4),a                 ;y sprite 1
-  ld    a,50
-  ld    (PizzaSpriteXSpat),a                 ;x sprite 0
-  ld    (PizzaSpriteXSpat+4),a                 ;x sprite 1
-  ret
-
-StarSpriteYSpat:              equ spat+0+02*4
-StarSpriteXSpat:              equ spat+1+02*4
-SetStarSprite:
-  ld    a,30
-  ld    (StarSpriteYSpat),a                 ;y sprite 0
-  ld    (StarSpriteYSpat+4),a                 ;y sprite 1
-  ld    a,50
-  ld    (StarSpriteXSpat),a                 ;x sprite 0
-  ld    (StarSpriteXSpat+4),a                 ;x sprite 1
   ret
 
 AlarmSpriteYSpat:              equ spat+0+00*4
@@ -1122,7 +1708,7 @@ SetPenguinBikeRaceSprites:
 	ld		c,$98
 	call	outix384		;write sprite color of pointer and hand to vram
 	call	outix384		;write sprite color of pointer and hand to vram
-	call	outix128		;write sprite color of pointer and hand to vram
+	call	outix256		;write sprite color of pointer and hand to vram
 
 	xor		a				;page 0/1
 	ld		hl,sprcoladdr+0*16	;sprite 0 color table in VRAM
@@ -1131,7 +1717,7 @@ SetPenguinBikeRaceSprites:
 	ld		hl,PenguinBikeRaceColSprites+0*16	;sprite 0 character table in VRAM
 	ld		c,$98
 	call	outix384		;write sprite color of pointer and hand to vram
-	call	outix64	;write sprite color of pointer and hand to vram  
+	call	outix128	;write sprite color of pointer and hand to vram  
   ret
 
 	PenguinBikeRaceCharSprites:
