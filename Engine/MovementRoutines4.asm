@@ -30,6 +30,7 @@ PenguinGameObjectDistance:          equ 2  ;2 bytes
 PenguinGameObjectInsideOval?:       equ 4
 PenguinGameObjectXSpat:             equ 5 ;2 bytes
 PenguinGameObjectYSpat:             equ 7 ; 2 bytes
+PenguinGameObjectVar1:              equ 9 ; 1 bytes
 
 WarningSpriteYSpat:                 equ spat+0+00*4
 WarningSpriteXSpat:                 equ spat+1+00*4
@@ -112,6 +113,18 @@ Stone4Distance:                     equ FreeToUseObject7+PenguinGameObjectDistan
 Stone4InsideOval?:                  equ FreeToUseObject7+PenguinGameObjectInsideOval?
 Stone4XSpat:                        equ FreeToUseObject7+PenguinGameObjectXSpat ;2 bytes
 Stone4YSpat:                        equ FreeToUseObject7+PenguinGameObjectYSpat ;2 bytes
+
+SpikeDuration:                      equ 255
+
+Spike1SpriteYSpat:                  equ spat+0+28*4
+Spike1SpriteXSpat:                  equ spat+1+28*4
+Spike1:                             equ FreeToUseObject14
+Spike1On?:                          equ FreeToUseObject14+PenguinGameObjectOn?
+Spike1Duration:                     equ FreeToUseObject14+PenguinGameObjectDuration
+Spike1Distance:                     equ FreeToUseObject14+PenguinGameObjectDistance ;2 bytes
+Spike1InsideOval?:                  equ FreeToUseObject14+PenguinGameObjectInsideOval?
+Spike1XSpat:                        equ FreeToUseObject14+PenguinGameObjectXSpat ;2 bytes
+Spike1YSpat:                        equ FreeToUseObject14+PenguinGameObjectYSpat ;2 bytes
 
 PenguinMovementRoutine:
   ld    a,3
@@ -269,6 +282,19 @@ PenguinMovementRoutine:
   ld    (ix+PenguinGameObjectXSpat),l         ;x spat
   ld    (ix+PenguinGameObjectXSpat+1),h       ;x spat
 
+  ld    ix,Spike1
+  ld    (ix+PenguinGameObjectOn?),0           ;on?
+  ld    (ix+PenguinGameObjectDuration),100    ;duration
+  ld    hl,0
+  ld    (ix+PenguinGameObjectDistance),l      ;distance
+  ld    (ix+PenguinGameObjectDistance+1),h    ;distance
+  ld    (ix+PenguinGameObjectInsideOval?),0   ;inside oval?
+  ld    hl,Spike1SpriteYSpat
+  ld    (ix+PenguinGameObjectYSpat),l         ;y spat
+  ld    (ix+PenguinGameObjectYSpat+1),h       ;y spat
+  ld    hl,Spike1SpriteXSpat
+  ld    (ix+PenguinGameObjectXSpat),l         ;x spat
+  ld    (ix+PenguinGameObjectXSpat+1),h       ;x spat
 
   ld    a,1
   ld    (PenguinGameLevel),a
@@ -922,6 +948,7 @@ PutNewWarningObjects:
   ld    (ix+PenguinGameObjectDuration),050    ;duration
   ld    (ix+PenguinGameObjectDistance),e      ;distance
   ld    (ix+PenguinGameObjectDistance+1),d    ;distance
+  ld    (ix+PenguinGameObjectVar1),0          ;reset var 1
 
   ld    a,r
   and   1
@@ -965,6 +992,10 @@ CheckDistanceAlreadyInUseByOtherObject:
   ld    hl,(Stone4+PenguinGameObjectDistance)
   xor   a
   sbc   hl,de
+  jr    z,.DistanceInUse                       ;this distance is already in use by this stone, don't place warning symbol
+  ld    hl,(Spike1+PenguinGameObjectDistance)
+  xor   a
+  sbc   hl,de
   ret   nz
   .DistanceInUse:
   pop   af
@@ -987,6 +1018,8 @@ HandlePenguinGameObjects:
   call  HandleObjectStone
   ld    ix,Stone4
   call  HandleObjectStone
+  ld    ix,Spike1
+  call  HandleObjectSpike
   ret
 
 HandleObjectExtraTime:
@@ -1106,6 +1139,10 @@ HandleObjectWarning:
   ret
 
   .SetStone:
+  ld    iy,Spike1
+  bit   0,(iy+PenguinGameObjectOn?)
+  jr    z,.GoSetSpike
+
   ld    iy,Stone1
   bit   0,(iy+PenguinGameObjectOn?)
   jr    z,.GoSetStone
@@ -1118,6 +1155,17 @@ HandleObjectWarning:
   ld    iy,Stone4
   bit   0,(iy+PenguinGameObjectOn?)
   jr    z,.GoSetStone
+  ret
+
+  .GoSetSpike:
+  set   0,(iy+PenguinGameObjectOn?)   ;on
+  ld    l,(ix+PenguinGameObjectDistance)      ;distance
+  ld    h,(ix+PenguinGameObjectDistance+1)    ;distance
+  ld    (iy+PenguinGameObjectDistance),l      ;distance
+  ld    (iy+PenguinGameObjectDistance+1),h    ;distance
+  ld    a,(ix+PenguinGameObjectInsideOval?)   ;inside oval?
+  ld    (iy+PenguinGameObjectInsideOval?),a   ;inside oval?
+  ld    (iy+PenguinGameObjectDuration),SpikeDuration   ;duration
   ret
 
   .GoSetStone:
@@ -1139,6 +1187,235 @@ SetObjectY213:
   add   hl,de                                 ;y
   ld    (hl),213                              ;set y
   ret
+
+HandleObjectSpike:
+  push  iy
+  call  AnimateSpike
+  pop   iy
+
+  bit   0,(ix+PenguinGameObjectOn?)           ;on?
+  ret   z
+  call  HandleObjectPenguinRaceGame.SetXY
+
+  ld    a,(PenguinInvulnerable?)
+  or    a
+  call  z,CheckCollisionPenguin                 ;out: c=collision
+  jr    c,.CollisionSpike
+
+  ld    a,(framecounter2)
+  rrca
+  ret   c
+
+  ld    a,(ix+PenguinGameObjectDuration)      ;duration
+  dec   a
+  ld    (ix+PenguinGameObjectDuration),a      ;duration
+  ret   nz
+  res   0,(ix+PenguinGameObjectOn?)           ;on?
+  ld    (ix+PenguinGameObjectDistance),0      ;distance
+  ld    (ix+PenguinGameObjectDistance+1),0    ;distance
+  jp    SetObjectY213
+
+  .CollisionSpike:
+  call  SetObjectY213
+  ld    (ix+PenguinGameObjectOn?),0           ;duration  
+  ld    (ix+PenguinGameObjectDistance),0      ;distance
+  ld    (ix+PenguinGameObjectDistance+1),0    ;distance
+  xor   a
+  ld    (PenguinSpeed),a
+  ld    a,100
+  ld    (PenguinInvulnerable?),a
+  ret
+
+
+AnimateSpike:
+  ld    a,(framecounter2)
+  and   3
+  ld    a,(ix+PenguinGameObjectVar1)          ;reset var 1
+  jr    nz,.EndCheckIncreaseAnimationStep
+  inc   a
+  and   31
+  ld    (ix+PenguinGameObjectVar1),a          ;reset var 1
+  .EndCheckIncreaseAnimationStep:
+  add   a,a                                   ;*2
+  add   a,a                                   ;*4
+  ld    e,a
+  ld    d,0
+;  ld de,20
+  ld    iy,SpikeAnimationTableLookingLeft
+  add   iy,de
+
+  ;write sprite character
+	xor		a				;page 0/1
+	ld		hl,sprcharaddr+28*32	;sprite 0 character table in VRAM
+	call	SetVdp_Write
+
+  ld    l,(iy+0)
+  ld    h,(iy+1)                              ;sprite character
+	ld		c,$98
+	call	outix64		;write sprite color of pointer and hand to vram
+
+	xor		a				;page 0/1
+	ld		hl,sprcoladdr+28*16	;sprite 0 color table in VRAM
+	call	SetVdp_Write
+
+  ld    l,(iy+2)
+  ld    h,(iy+3)                              ;sprite color
+	ld		c,$98
+	call	outix32		;write sprite color of pointer and hand to vram
+  ret
+
+	PenguinBikeRaceSpikeCharSprites:
+	include "..\grapx\PenguinBikeRace\sprites\spikes.tgs.gen"
+	PenguinBikeRaceSpikeColSprites:
+	include "..\grapx\PenguinBikeRace\sprites\spikes.tcs.gen"
+
+SpikeAnimationTableLookingUp:
+  dw    PenguinBikeRaceSpikeCharSprites+0*64, PenguinBikeRaceSpikeColSprites+0*32
+  dw    PenguinBikeRaceSpikeCharSprites+0*64, PenguinBikeRaceSpikeColSprites+0*32
+  dw    PenguinBikeRaceSpikeCharSprites+0*64, PenguinBikeRaceSpikeColSprites+0*32
+  dw    PenguinBikeRaceSpikeCharSprites+0*64, PenguinBikeRaceSpikeColSprites+0*32
+  dw    PenguinBikeRaceSpikeCharSprites+0*64, PenguinBikeRaceSpikeColSprites+0*32
+  dw    PenguinBikeRaceSpikeCharSprites+0*64, PenguinBikeRaceSpikeColSprites+0*32
+  dw    PenguinBikeRaceSpikeCharSprites+0*64, PenguinBikeRaceSpikeColSprites+0*32
+  dw    PenguinBikeRaceSpikeCharSprites+0*64, PenguinBikeRaceSpikeColSprites+0*32
+
+  dw    PenguinBikeRaceSpikeCharSprites+0*64, PenguinBikeRaceSpikeColSprites+0*32
+  dw    PenguinBikeRaceSpikeCharSprites+0*64, PenguinBikeRaceSpikeColSprites+0*32
+  dw    PenguinBikeRaceSpikeCharSprites+1*64, PenguinBikeRaceSpikeColSprites+1*32
+  dw    PenguinBikeRaceSpikeCharSprites+2*64, PenguinBikeRaceSpikeColSprites+2*32
+  dw    PenguinBikeRaceSpikeCharSprites+3*64, PenguinBikeRaceSpikeColSprites+3*32
+  dw    PenguinBikeRaceSpikeCharSprites+4*64, PenguinBikeRaceSpikeColSprites+4*32
+  dw    PenguinBikeRaceSpikeCharSprites+5*64, PenguinBikeRaceSpikeColSprites+5*32
+  dw    PenguinBikeRaceSpikeCharSprites+5*64, PenguinBikeRaceSpikeColSprites+5*32
+
+  dw    PenguinBikeRaceSpikeCharSprites+5*64, PenguinBikeRaceSpikeColSprites+5*32
+  dw    PenguinBikeRaceSpikeCharSprites+5*64, PenguinBikeRaceSpikeColSprites+5*32
+  dw    PenguinBikeRaceSpikeCharSprites+4*64, PenguinBikeRaceSpikeColSprites+4*32
+  dw    PenguinBikeRaceSpikeCharSprites+3*64, PenguinBikeRaceSpikeColSprites+3*32
+  dw    PenguinBikeRaceSpikeCharSprites+2*64, PenguinBikeRaceSpikeColSprites+2*32
+  dw    PenguinBikeRaceSpikeCharSprites+1*64, PenguinBikeRaceSpikeColSprites+1*32
+  dw    PenguinBikeRaceSpikeCharSprites+0*64, PenguinBikeRaceSpikeColSprites+0*32
+  dw    PenguinBikeRaceSpikeCharSprites+0*64, PenguinBikeRaceSpikeColSprites+0*32
+
+  dw    PenguinBikeRaceSpikeCharSprites+0*64, PenguinBikeRaceSpikeColSprites+0*32
+  dw    PenguinBikeRaceSpikeCharSprites+0*64, PenguinBikeRaceSpikeColSprites+0*32
+  dw    PenguinBikeRaceSpikeCharSprites+0*64, PenguinBikeRaceSpikeColSprites+0*32
+  dw    PenguinBikeRaceSpikeCharSprites+0*64, PenguinBikeRaceSpikeColSprites+0*32
+  dw    PenguinBikeRaceSpikeCharSprites+0*64, PenguinBikeRaceSpikeColSprites+0*32
+  dw    PenguinBikeRaceSpikeCharSprites+0*64, PenguinBikeRaceSpikeColSprites+0*32
+  dw    PenguinBikeRaceSpikeCharSprites+0*64, PenguinBikeRaceSpikeColSprites+0*32
+  dw    PenguinBikeRaceSpikeCharSprites+0*64, PenguinBikeRaceSpikeColSprites+0*32
+
+SpikeAnimationTableLookingDown:
+  dw    PenguinBikeRaceSpikeCharSprites+6*64, PenguinBikeRaceSpikeColSprites+6*32
+  dw    PenguinBikeRaceSpikeCharSprites+6*64, PenguinBikeRaceSpikeColSprites+6*32
+  dw    PenguinBikeRaceSpikeCharSprites+6*64, PenguinBikeRaceSpikeColSprites+6*32
+  dw    PenguinBikeRaceSpikeCharSprites+6*64, PenguinBikeRaceSpikeColSprites+6*32
+  dw    PenguinBikeRaceSpikeCharSprites+6*64, PenguinBikeRaceSpikeColSprites+6*32
+  dw    PenguinBikeRaceSpikeCharSprites+6*64, PenguinBikeRaceSpikeColSprites+6*32
+  dw    PenguinBikeRaceSpikeCharSprites+6*64, PenguinBikeRaceSpikeColSprites+6*32
+  dw    PenguinBikeRaceSpikeCharSprites+6*64, PenguinBikeRaceSpikeColSprites+6*32
+
+  dw    PenguinBikeRaceSpikeCharSprites+6*64, PenguinBikeRaceSpikeColSprites+6*32
+  dw    PenguinBikeRaceSpikeCharSprites+6*64, PenguinBikeRaceSpikeColSprites+6*32
+  dw    PenguinBikeRaceSpikeCharSprites+7*64, PenguinBikeRaceSpikeColSprites+7*32
+  dw    PenguinBikeRaceSpikeCharSprites+8*64, PenguinBikeRaceSpikeColSprites+8*32
+  dw    PenguinBikeRaceSpikeCharSprites+9*64, PenguinBikeRaceSpikeColSprites+9*32
+  dw    PenguinBikeRaceSpikeCharSprites+10*64, PenguinBikeRaceSpikeColSprites+10*32
+  dw    PenguinBikeRaceSpikeCharSprites+11*64, PenguinBikeRaceSpikeColSprites+11*32
+  dw    PenguinBikeRaceSpikeCharSprites+11*64, PenguinBikeRaceSpikeColSprites+11*32
+
+  dw    PenguinBikeRaceSpikeCharSprites+11*64, PenguinBikeRaceSpikeColSprites+11*32
+  dw    PenguinBikeRaceSpikeCharSprites+11*64, PenguinBikeRaceSpikeColSprites+11*32
+  dw    PenguinBikeRaceSpikeCharSprites+10*64, PenguinBikeRaceSpikeColSprites+10*32
+  dw    PenguinBikeRaceSpikeCharSprites+9*64, PenguinBikeRaceSpikeColSprites+9*32
+  dw    PenguinBikeRaceSpikeCharSprites+8*64, PenguinBikeRaceSpikeColSprites+8*32
+  dw    PenguinBikeRaceSpikeCharSprites+7*64, PenguinBikeRaceSpikeColSprites+7*32
+  dw    PenguinBikeRaceSpikeCharSprites+6*64, PenguinBikeRaceSpikeColSprites+6*32
+  dw    PenguinBikeRaceSpikeCharSprites+6*64, PenguinBikeRaceSpikeColSprites+6*32
+
+  dw    PenguinBikeRaceSpikeCharSprites+6*64, PenguinBikeRaceSpikeColSprites+6*32
+  dw    PenguinBikeRaceSpikeCharSprites+6*64, PenguinBikeRaceSpikeColSprites+6*32
+  dw    PenguinBikeRaceSpikeCharSprites+6*64, PenguinBikeRaceSpikeColSprites+6*32
+  dw    PenguinBikeRaceSpikeCharSprites+6*64, PenguinBikeRaceSpikeColSprites+6*32
+  dw    PenguinBikeRaceSpikeCharSprites+6*64, PenguinBikeRaceSpikeColSprites+6*32
+  dw    PenguinBikeRaceSpikeCharSprites+6*64, PenguinBikeRaceSpikeColSprites+6*32
+  dw    PenguinBikeRaceSpikeCharSprites+6*64, PenguinBikeRaceSpikeColSprites+6*32
+  dw    PenguinBikeRaceSpikeCharSprites+6*64, PenguinBikeRaceSpikeColSprites+6*32
+
+SpikeAnimationTableLookingRight:
+  dw    PenguinBikeRaceSpikeCharSprites+12*64, PenguinBikeRaceSpikeColSprites+12*32
+  dw    PenguinBikeRaceSpikeCharSprites+12*64, PenguinBikeRaceSpikeColSprites+12*32
+  dw    PenguinBikeRaceSpikeCharSprites+12*64, PenguinBikeRaceSpikeColSprites+12*32
+  dw    PenguinBikeRaceSpikeCharSprites+12*64, PenguinBikeRaceSpikeColSprites+12*32
+  dw    PenguinBikeRaceSpikeCharSprites+12*64, PenguinBikeRaceSpikeColSprites+12*32
+  dw    PenguinBikeRaceSpikeCharSprites+12*64, PenguinBikeRaceSpikeColSprites+12*32
+  dw    PenguinBikeRaceSpikeCharSprites+12*64, PenguinBikeRaceSpikeColSprites+12*32
+  dw    PenguinBikeRaceSpikeCharSprites+12*64, PenguinBikeRaceSpikeColSprites+12*32
+
+  dw    PenguinBikeRaceSpikeCharSprites+12*64, PenguinBikeRaceSpikeColSprites+12*32
+  dw    PenguinBikeRaceSpikeCharSprites+12*64, PenguinBikeRaceSpikeColSprites+12*32
+  dw    PenguinBikeRaceSpikeCharSprites+13*64, PenguinBikeRaceSpikeColSprites+13*32
+  dw    PenguinBikeRaceSpikeCharSprites+14*64, PenguinBikeRaceSpikeColSprites+14*32
+  dw    PenguinBikeRaceSpikeCharSprites+15*64, PenguinBikeRaceSpikeColSprites+15*32
+  dw    PenguinBikeRaceSpikeCharSprites+16*64, PenguinBikeRaceSpikeColSprites+16*32
+  dw    PenguinBikeRaceSpikeCharSprites+17*64, PenguinBikeRaceSpikeColSprites+17*32
+  dw    PenguinBikeRaceSpikeCharSprites+17*64, PenguinBikeRaceSpikeColSprites+17*32
+
+  dw    PenguinBikeRaceSpikeCharSprites+17*64, PenguinBikeRaceSpikeColSprites+17*32
+  dw    PenguinBikeRaceSpikeCharSprites+17*64, PenguinBikeRaceSpikeColSprites+17*32
+  dw    PenguinBikeRaceSpikeCharSprites+16*64, PenguinBikeRaceSpikeColSprites+16*32
+  dw    PenguinBikeRaceSpikeCharSprites+15*64, PenguinBikeRaceSpikeColSprites+15*32
+  dw    PenguinBikeRaceSpikeCharSprites+14*64, PenguinBikeRaceSpikeColSprites+14*32
+  dw    PenguinBikeRaceSpikeCharSprites+13*64, PenguinBikeRaceSpikeColSprites+13*32
+  dw    PenguinBikeRaceSpikeCharSprites+12*64, PenguinBikeRaceSpikeColSprites+12*32
+  dw    PenguinBikeRaceSpikeCharSprites+12*64, PenguinBikeRaceSpikeColSprites+12*32
+
+  dw    PenguinBikeRaceSpikeCharSprites+12*64, PenguinBikeRaceSpikeColSprites+12*32
+  dw    PenguinBikeRaceSpikeCharSprites+12*64, PenguinBikeRaceSpikeColSprites+12*32
+  dw    PenguinBikeRaceSpikeCharSprites+12*64, PenguinBikeRaceSpikeColSprites+12*32
+  dw    PenguinBikeRaceSpikeCharSprites+12*64, PenguinBikeRaceSpikeColSprites+12*32
+  dw    PenguinBikeRaceSpikeCharSprites+12*64, PenguinBikeRaceSpikeColSprites+12*32
+  dw    PenguinBikeRaceSpikeCharSprites+12*64, PenguinBikeRaceSpikeColSprites+12*32
+  dw    PenguinBikeRaceSpikeCharSprites+12*64, PenguinBikeRaceSpikeColSprites+12*32
+  dw    PenguinBikeRaceSpikeCharSprites+12*64, PenguinBikeRaceSpikeColSprites+12*32
+
+SpikeAnimationTableLookingLeft:
+  dw    PenguinBikeRaceSpikeCharSprites+18*64, PenguinBikeRaceSpikeColSprites+18*32
+  dw    PenguinBikeRaceSpikeCharSprites+18*64, PenguinBikeRaceSpikeColSprites+18*32
+  dw    PenguinBikeRaceSpikeCharSprites+18*64, PenguinBikeRaceSpikeColSprites+18*32
+  dw    PenguinBikeRaceSpikeCharSprites+18*64, PenguinBikeRaceSpikeColSprites+18*32
+  dw    PenguinBikeRaceSpikeCharSprites+18*64, PenguinBikeRaceSpikeColSprites+18*32
+  dw    PenguinBikeRaceSpikeCharSprites+18*64, PenguinBikeRaceSpikeColSprites+18*32
+  dw    PenguinBikeRaceSpikeCharSprites+18*64, PenguinBikeRaceSpikeColSprites+18*32
+  dw    PenguinBikeRaceSpikeCharSprites+18*64, PenguinBikeRaceSpikeColSprites+18*32
+
+  dw    PenguinBikeRaceSpikeCharSprites+18*64, PenguinBikeRaceSpikeColSprites+18*32
+  dw    PenguinBikeRaceSpikeCharSprites+18*64, PenguinBikeRaceSpikeColSprites+18*32
+  dw    PenguinBikeRaceSpikeCharSprites+19*64, PenguinBikeRaceSpikeColSprites+19*32
+  dw    PenguinBikeRaceSpikeCharSprites+20*64, PenguinBikeRaceSpikeColSprites+20*32
+  dw    PenguinBikeRaceSpikeCharSprites+21*64, PenguinBikeRaceSpikeColSprites+21*32
+  dw    PenguinBikeRaceSpikeCharSprites+22*64, PenguinBikeRaceSpikeColSprites+22*32
+  dw    PenguinBikeRaceSpikeCharSprites+23*64, PenguinBikeRaceSpikeColSprites+23*32
+  dw    PenguinBikeRaceSpikeCharSprites+23*64, PenguinBikeRaceSpikeColSprites+23*32
+
+  dw    PenguinBikeRaceSpikeCharSprites+23*64, PenguinBikeRaceSpikeColSprites+23*32
+  dw    PenguinBikeRaceSpikeCharSprites+23*64, PenguinBikeRaceSpikeColSprites+23*32
+  dw    PenguinBikeRaceSpikeCharSprites+22*64, PenguinBikeRaceSpikeColSprites+22*32
+  dw    PenguinBikeRaceSpikeCharSprites+21*64, PenguinBikeRaceSpikeColSprites+21*32
+  dw    PenguinBikeRaceSpikeCharSprites+20*64, PenguinBikeRaceSpikeColSprites+20*32
+  dw    PenguinBikeRaceSpikeCharSprites+19*64, PenguinBikeRaceSpikeColSprites+19*32
+  dw    PenguinBikeRaceSpikeCharSprites+18*64, PenguinBikeRaceSpikeColSprites+18*32
+  dw    PenguinBikeRaceSpikeCharSprites+18*64, PenguinBikeRaceSpikeColSprites+18*32
+
+  dw    PenguinBikeRaceSpikeCharSprites+18*64, PenguinBikeRaceSpikeColSprites+18*32
+  dw    PenguinBikeRaceSpikeCharSprites+18*64, PenguinBikeRaceSpikeColSprites+18*32
+  dw    PenguinBikeRaceSpikeCharSprites+18*64, PenguinBikeRaceSpikeColSprites+18*32
+  dw    PenguinBikeRaceSpikeCharSprites+18*64, PenguinBikeRaceSpikeColSprites+18*32
+  dw    PenguinBikeRaceSpikeCharSprites+18*64, PenguinBikeRaceSpikeColSprites+18*32
+  dw    PenguinBikeRaceSpikeCharSprites+18*64, PenguinBikeRaceSpikeColSprites+18*32
+  dw    PenguinBikeRaceSpikeCharSprites+18*64, PenguinBikeRaceSpikeColSprites+18*32
+  dw    PenguinBikeRaceSpikeCharSprites+18*64, PenguinBikeRaceSpikeColSprites+18*32
 
 HandleObjectStone:
   bit   0,(ix+PenguinGameObjectOn?)           ;on?
@@ -1721,9 +1998,9 @@ SetPenguinBikeRaceSprites:
   ret
 
 	PenguinBikeRaceCharSprites:
-	include "..\grapx\PenguinBikeRace\assets.tgs.gen"
+	include "..\grapx\PenguinBikeRace\sprites\assets.tgs.gen"
 	PenguinBikeRaceColSprites:
-	include "..\grapx\PenguinBikeRace\assets.tcs.gen"
+	include "..\grapx\PenguinBikeRace\sprites\assets.tcs.gen"
 
 PenguinBikeRacePalette:
   incbin "..\grapx\penguinbikerace\PenguinBikeRace.sc5",$7680+7,32

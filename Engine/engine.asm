@@ -3681,6 +3681,7 @@ FreeToUseObject4: ds  FreeToUseObjectTableLenght  ;stone1
 FreeToUseObject5: ds  FreeToUseObjectTableLenght  ;stone2
 FreeToUseObject6: ds  FreeToUseObjectTableLenght  ;stone3
 FreeToUseObject7: ds  FreeToUseObjectTableLenght  ;stone4
+FreeToUseObject14: ds  FreeToUseObjectTableLenght  ;stone4
 
 
 spat:						;sprite attribute table (y,x)
