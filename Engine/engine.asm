@@ -3681,6 +3681,8 @@ FreeToUseObject4: ds  FreeToUseObjectTableLenght  ;stone1
 FreeToUseObject5: ds  FreeToUseObjectTableLenght  ;stone2
 FreeToUseObject6: ds  FreeToUseObjectTableLenght  ;stone3
 FreeToUseObject7: ds  FreeToUseObjectTableLenght  ;stone4
+FreeToUseObject8: ds  FreeToUseObjectTableLenght  ;mushroom1
+FreeToUseObject9: ds  FreeToUseObjectTableLenght  ;mushroom1
 FreeToUseObject14: ds  FreeToUseObjectTableLenght  ;stone4
 
 

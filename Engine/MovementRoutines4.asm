@@ -114,6 +114,28 @@ Stone4InsideOval?:                  equ FreeToUseObject7+PenguinGameObjectInside
 Stone4XSpat:                        equ FreeToUseObject7+PenguinGameObjectXSpat ;2 bytes
 Stone4YSpat:                        equ FreeToUseObject7+PenguinGameObjectYSpat ;2 bytes
 
+MushroomDuration:                   equ 150
+
+Mushroom1SpriteYSpat:               equ spat+0+16*4
+Mushroom1SpriteXSpat:               equ spat+1+16*4
+Mushroom1:                          equ FreeToUseObject8
+Mushroom1On?:                       equ FreeToUseObject8+PenguinGameObjectOn?
+Mushroom1Duration:                  equ FreeToUseObject8+PenguinGameObjectDuration
+Mushroom1Distance:                  equ FreeToUseObject8+PenguinGameObjectDistance ;2 bytes
+Mushroom1InsideOval?:               equ FreeToUseObject8+PenguinGameObjectInsideOval?
+Mushroom1XSpat:                     equ FreeToUseObject8+PenguinGameObjectXSpat ;2 bytes
+Mushroom1YSpat:                     equ FreeToUseObject8+PenguinGameObjectYSpat ;2 bytes
+
+Mushroom2SpriteYSpat:               equ spat+0+20*4
+Mushroom2SpriteXSpat:               equ spat+1+20*4
+Mushroom2:                          equ FreeToUseObject9
+Mushroom2On?:                       equ FreeToUseObject9+PenguinGameObjectOn?
+Mushroom2Duration:                  equ FreeToUseObject9+PenguinGameObjectDuration
+Mushroom2Distance:                  equ FreeToUseObject9+PenguinGameObjectDistance ;2 bytes
+Mushroom2InsideOval?:               equ FreeToUseObject9+PenguinGameObjectInsideOval?
+Mushroom2XSpat:                     equ FreeToUseObject9+PenguinGameObjectXSpat ;2 bytes
+Mushroom2YSpat:                     equ FreeToUseObject9+PenguinGameObjectYSpat ;2 bytes
+
 SpikeDuration:                      equ 255
 
 Spike1SpriteYSpat:                  equ spat+0+28*4
@@ -227,7 +249,7 @@ PenguinMovementRoutine:
   ld    (ix+PenguinGameObjectXSpat+1),h       ;x spat
 
   ld    ix,Stone1
-  ld    (ix+PenguinGameObjectOn?),1           ;on?
+  ld    (ix+PenguinGameObjectOn?),0           ;on?
   ld    (ix+PenguinGameObjectDuration),100    ;duration
   ld    hl,20
   ld    (ix+PenguinGameObjectDistance),l      ;distance
@@ -279,6 +301,34 @@ PenguinMovementRoutine:
   ld    (ix+PenguinGameObjectYSpat),l         ;y spat
   ld    (ix+PenguinGameObjectYSpat+1),h       ;y spat
   ld    hl,Stone4SpriteXSpat
+  ld    (ix+PenguinGameObjectXSpat),l         ;x spat
+  ld    (ix+PenguinGameObjectXSpat+1),h       ;x spat
+
+  ld    ix,Mushroom1
+  ld    (ix+PenguinGameObjectOn?),0           ;on?
+  ld    (ix+PenguinGameObjectDuration),100    ;duration
+  ld    hl,0
+  ld    (ix+PenguinGameObjectDistance),l      ;distance
+  ld    (ix+PenguinGameObjectDistance+1),h    ;distance
+  ld    (ix+PenguinGameObjectInsideOval?),0   ;inside oval?
+  ld    hl,Mushroom1SpriteYSpat
+  ld    (ix+PenguinGameObjectYSpat),l         ;y spat
+  ld    (ix+PenguinGameObjectYSpat+1),h       ;y spat
+  ld    hl,Mushroom1SpriteXSpat
+  ld    (ix+PenguinGameObjectXSpat),l         ;x spat
+  ld    (ix+PenguinGameObjectXSpat+1),h       ;x spat
+
+  ld    ix,Mushroom2
+  ld    (ix+PenguinGameObjectOn?),0           ;on?
+  ld    (ix+PenguinGameObjectDuration),100    ;duration
+  ld    hl,0
+  ld    (ix+PenguinGameObjectDistance),l      ;distance
+  ld    (ix+PenguinGameObjectDistance+1),h    ;distance
+  ld    (ix+PenguinGameObjectInsideOval?),0   ;inside oval?
+  ld    hl,Mushroom2SpriteYSpat
+  ld    (ix+PenguinGameObjectYSpat),l         ;y spat
+  ld    (ix+PenguinGameObjectYSpat+1),h       ;y spat
+  ld    hl,Mushroom2SpriteXSpat
   ld    (ix+PenguinGameObjectXSpat),l         ;x spat
   ld    (ix+PenguinGameObjectXSpat+1),h       ;x spat
 
@@ -993,6 +1043,14 @@ CheckDistanceAlreadyInUseByOtherObject:
   xor   a
   sbc   hl,de
   jr    z,.DistanceInUse                       ;this distance is already in use by this stone, don't place warning symbol
+  ld    hl,(Mushroom1+PenguinGameObjectDistance)
+  xor   a
+  sbc   hl,de
+  jr    z,.DistanceInUse                       ;this distance is already in use by this stone, don't place warning symbol
+  ld    hl,(Mushroom2+PenguinGameObjectDistance)
+  xor   a
+  sbc   hl,de
+  jr    z,.DistanceInUse                       ;this distance is already in use by this stone, don't place warning symbol
   ld    hl,(Spike1+PenguinGameObjectDistance)
   xor   a
   sbc   hl,de
@@ -1020,6 +1078,112 @@ HandlePenguinGameObjects:
   call  HandleObjectStone
   ld    ix,Spike1
   call  HandleObjectSpike
+  ld    ix,Mushroom1
+  call  HandleObjectMushroom1
+  ld    ix,Mushroom2
+  call  HandleObjectMushroom2
+  ret
+
+HandleObjectMushroom2:
+  ld    a,(ix+PenguinGameObjectOn?)           ;on?
+  or    a
+  ret   z
+
+  ld    a,(ix+PenguinGameObjectDuration)      ;duration
+  dec   a
+  ld    (ix+PenguinGameObjectDuration),a      ;duration
+  jr    z,.Remove
+
+  call  HandleObjectPenguinRaceGame.SetXY
+  ;mushroom is 4 sprites
+  ld    de,4
+  add   hl,de                                 ;x
+  ld    (hl),a
+  add   hl,de                                 ;x
+  ld    (hl),a
+  dec   hl
+  ld    a,b
+  add   16
+  ld    (hl),a
+  sbc   hl,de
+  ld    (hl),a
+
+  ld    a,(PenguinInvulnerable?)
+  or    a
+  ret   nz
+
+  call  CheckCollisionPenguin                 ;out: c=collision
+  ret   nc
+
+  ld    a,(PenguinSpeed)
+  sub   a,15
+  jr    nc,.SetPenguinSpeed
+  xor   a
+  .SetPenguinSpeed:
+  ld    (PenguinSpeed),a
+
+  .Remove:
+  call  SetObjectY213
+  ;mushroom is 4 sprites
+  add   hl,de                                 ;y
+  ld    (hl),213                              ;set y
+  add   hl,de                                 ;y
+  ld    (hl),213                              ;set y
+
+  ld    (ix+PenguinGameObjectOn?),0           ;duration  
+  ld    (ix+PenguinGameObjectDistance),0      ;distance
+  ld    (ix+PenguinGameObjectDistance+1),0    ;distance
+  ret
+
+HandleObjectMushroom1:
+  ld    a,(ix+PenguinGameObjectOn?)           ;on?
+  or    a
+  ret   z
+
+  ld    a,(ix+PenguinGameObjectDuration)      ;duration
+  dec   a
+  ld    (ix+PenguinGameObjectDuration),a      ;duration
+  jr    z,.Remove
+
+  call  HandleObjectPenguinRaceGame.SetXY
+  ;mushroom is 4 sprites
+  ld    de,4
+  add   hl,de                                 ;x
+  ld    (hl),a
+  add   hl,de                                 ;x
+  ld    (hl),a
+  dec   hl
+  ld    a,b
+  sub   16
+  ld    (hl),a
+  sbc   hl,de
+  ld    (hl),a
+
+  ld    a,(PenguinInvulnerable?)
+  or    a
+  ret   nz
+
+  call  CheckCollisionPenguin                 ;out: c=collision
+  ret   nc
+
+  ld    a,(PenguinSpeed)
+  sub   a,15
+  jr    nc,.SetPenguinSpeed
+  xor   a
+  .SetPenguinSpeed:
+  ld    (PenguinSpeed),a
+
+  .Remove:
+  call  SetObjectY213
+  ;mushroom is 4 sprites
+  add   hl,de                                 ;y
+  ld    (hl),213                              ;set y
+  add   hl,de                                 ;y
+  ld    (hl),213                              ;set y
+
+  ld    (ix+PenguinGameObjectOn?),0           ;duration  
+  ld    (ix+PenguinGameObjectDistance),0      ;distance
+  ld    (ix+PenguinGameObjectDistance+1),0    ;distance
   ret
 
 HandleObjectExtraTime:
@@ -1134,27 +1298,107 @@ HandleObjectWarning:
   ld    (ix+PenguinGameObjectOn?),0           ;duration
   ;we remove warning symbol and replace it with a stone
   push  iy 
-  call  .SetStone
+  call  .SetStoneOrSpike
   pop   iy
   ret
 
-  .SetStone:
-  ld    iy,Spike1
+  .SetStoneOrSpike:
+  ld    iy,Mushroom1
   bit   0,(iy+PenguinGameObjectOn?)
-  jr    z,.GoSetSpike
+  jp    z,.GoSetMushroom1
+  .UnableToPlaceMushRoom1:
+  ld    iy,Mushroom2
+  bit   0,(iy+PenguinGameObjectOn?)
+  jp    z,.GoSetMushroom2
+  .UnableToPlaceMushRoom2:
 
   ld    iy,Stone1
   bit   0,(iy+PenguinGameObjectOn?)
-  jr    z,.GoSetStone
+  jp    z,.GoSetStone
   ld    iy,Stone2
   bit   0,(iy+PenguinGameObjectOn?)
-  jr    z,.GoSetStone
+  jp    z,.GoSetStone
   ld    iy,Stone3
   bit   0,(iy+PenguinGameObjectOn?)
-  jr    z,.GoSetStone
+  jp    z,.GoSetStone
   ld    iy,Stone4
   bit   0,(iy+PenguinGameObjectOn?)
-  jr    z,.GoSetStone
+  jp    z,.GoSetStone
+  ld    iy,Spike1
+  bit   0,(iy+PenguinGameObjectOn?)
+  jp    z,.GoSetSpike
+  ret
+
+  ;mushroom2 looks down, can only be placed inside oval top straight or outside oval bottom straight
+  .GoSetMushroom2:
+  bit   0,(ix+PenguinGameObjectInsideOval?)   ;inside oval?
+  jr    nz,.GoSetMushroom2InsideOval
+
+  .GoSetMushroom2OutsideOval:
+  ld    l,(ix+PenguinGameObjectDistance)      ;distance
+  ld    h,(ix+PenguinGameObjectDistance+1)    ;distance
+  ld    de,180 + 40
+  xor   a
+  sbc   hl,de
+  jr    c,.UnableToPlaceMushroom2
+  ld    de,140
+  sbc   hl,de
+  jr    nc,.UnableToPlaceMushroom2
+  jp    .PlaceMushroom2
+
+  .GoSetMushroom2InsideOval:
+  ld    l,(ix+PenguinGameObjectDistance)      ;distance
+  ld    h,(ix+PenguinGameObjectDistance+1)    ;distance
+  ld    de,180
+  xor   a
+  sbc   hl,de
+  jr    nc,.UnableToPlaceMushroom2
+
+  .PlaceMushroom2:
+  set   0,(iy+PenguinGameObjectOn?)   ;on
+  ld    l,(ix+PenguinGameObjectDistance)      ;distance
+  ld    h,(ix+PenguinGameObjectDistance+1)    ;distance
+  ld    (iy+PenguinGameObjectDistance),l      ;distance
+  ld    (iy+PenguinGameObjectDistance+1),h    ;distance
+  ld    a,(ix+PenguinGameObjectInsideOval?)   ;inside oval?
+  ld    (iy+PenguinGameObjectInsideOval?),a   ;inside oval?
+  ld    (iy+PenguinGameObjectDuration),MushroomDuration   ;duration
+  ret
+
+  ;mushroom1 looks up, can only be placed outside oval top straight or inside oval bottom straight
+  .GoSetMushroom1:
+  bit   0,(ix+PenguinGameObjectInsideOval?)   ;inside oval?
+  jr    nz,.GoSetMushroom1InsideOval
+
+  .GoSetMushroom1OutsideOval:
+  ld    l,(ix+PenguinGameObjectDistance)      ;distance
+  ld    h,(ix+PenguinGameObjectDistance+1)    ;distance
+  ld    de,180
+  xor   a
+  sbc   hl,de
+  jr    c,.PlaceMushRoom1
+  jp    .UnableToPlaceMushRoom1             ;dont place mushroom 
+
+  .GoSetMushroom1InsideOval:
+  ld    l,(ix+PenguinGameObjectDistance)      ;distance
+  ld    h,(ix+PenguinGameObjectDistance+1)    ;distance
+  ld    de,180 + 40
+  xor   a
+  sbc   hl,de
+  jp    c,.UnableToPlaceMushRoom1
+  ld    de,140
+  sbc   hl,de
+  jp    nc,.UnableToPlaceMushRoom1
+
+  .PlaceMushRoom1:
+  set   0,(iy+PenguinGameObjectOn?)   ;on
+  ld    l,(ix+PenguinGameObjectDistance)      ;distance
+  ld    h,(ix+PenguinGameObjectDistance+1)    ;distance
+  ld    (iy+PenguinGameObjectDistance),l      ;distance
+  ld    (iy+PenguinGameObjectDistance+1),h    ;distance
+  ld    a,(ix+PenguinGameObjectInsideOval?)   ;inside oval?
+  ld    (iy+PenguinGameObjectInsideOval?),a   ;inside oval?
+  ld    (iy+PenguinGameObjectDuration),MushroomDuration   ;duration
   ret
 
   .GoSetSpike:
@@ -1197,10 +1441,19 @@ HandleObjectSpike:
   ret   z
   call  HandleObjectPenguinRaceGame.SetXY
 
+  ;we only need to check for collision is Var1=14,15,16 or 17 (thats when spike is fully extended)
+  ld    a,(ix+PenguinGameObjectVar1)          ;reset var 1
+  cp    14
+  jr    c,.EndCheckCollisionSpike
+  cp    18
+  jr    nc,.EndCheckCollisionSpike
+
   ld    a,(PenguinInvulnerable?)
   or    a
   call  z,CheckCollisionPenguin                 ;out: c=collision
   jr    c,.CollisionSpike
+
+  .EndCheckCollisionSpike:
 
   ld    a,(framecounter2)
   rrca
@@ -1228,6 +1481,55 @@ HandleObjectSpike:
 
 
 AnimateSpike:
+  bit   0,(ix+PenguinGameObjectInsideOval?)   ;inside oval?
+  jr    nz,AnimateSpikeInsideOval
+
+AnimateSpikeOutsideOval:
+  ld    l,(ix+PenguinGameObjectDistance)      ;distance
+  ld    h,(ix+PenguinGameObjectDistance+1)    ;distance
+  ld    de,180
+  xor   a
+  sbc   hl,de
+  ld    iy,SpikeAnimationTableLookingUp
+  jr    c,GoAnimateSpike
+
+  ld    de,40
+  sbc   hl,de
+  ld    iy,SpikeAnimationTableLookingRight
+  jr    c,GoAnimateSpike
+
+  ld    de,140
+  sbc   hl,de
+  ld    iy,SpikeAnimationTableLookingDown
+  jr    c,GoAnimateSpike
+
+  ld    iy,SpikeAnimationTableLookingLeft
+  jp    GoAnimateSpike
+
+AnimateSpikeInsideOval:
+  ld    l,(ix+PenguinGameObjectDistance)      ;distance
+  ld    h,(ix+PenguinGameObjectDistance+1)    ;distance
+  ld    de,180
+  xor   a
+  sbc   hl,de
+  ld    iy,SpikeAnimationTableLookingDown
+  jr    c,GoAnimateSpike
+
+  ld    de,40
+  sbc   hl,de
+  ld    iy,SpikeAnimationTableLookingLeft
+  jr    c,GoAnimateSpike
+
+  ld    de,140
+  sbc   hl,de
+  ld    iy,SpikeAnimationTableLookingUp
+  jr    c,GoAnimateSpike
+
+  ld    iy,SpikeAnimationTableLookingRight
+  jp    GoAnimateSpike
+
+
+GoAnimateSpike:
   ld    a,(framecounter2)
   and   3
   ld    a,(ix+PenguinGameObjectVar1)          ;reset var 1
@@ -1241,7 +1543,7 @@ AnimateSpike:
   ld    e,a
   ld    d,0
 ;  ld de,20
-  ld    iy,SpikeAnimationTableLookingLeft
+;  ld    iy,SpikeAnimationTableLookingUp
   add   iy,de
 
   ;write sprite character
@@ -1749,94 +2051,6 @@ IncreaseDistanceAndSetXYPenguin:
   add   a,2
   ld    (PenguinMaxSpeed),a
   jp    .EndCheckLapFinished
-
-MushroomLookingLeftSpriteYSpat:              equ spat+0+12*4
-MushroomLookingLeftSpriteXSpat:              equ spat+1+12*4
-MushroomLookingRightSpriteYSpat:              equ spat+0+16*4
-MushroomLookingRightSpriteXSpat:              equ spat+1+16*4
-MushroomLookingUpSpriteYSpat:               equ spat+0+20*4
-MushroomLookingUpSpriteXSpat:               equ spat+1+20*4
-MushroomLookingDownSpriteYSpat:               equ spat+0+24*4
-MushroomLookingDownSpriteXSpat:               equ spat+1+24*4
-
-SetMushroomSprite:
-;mushroom looking Down
-  ld    a,110
-  ld    (MushroomLookingDownSpriteYSpat),a                 ;y sprite 0
-  ld    (MushroomLookingDownSpriteYSpat+4),a                 ;y sprite 1
-  ld    a,110+16
-  ld    (MushroomLookingDownSpriteYSpat+8),a                 ;y sprite 1
-  ld    (MushroomLookingDownSpriteYSpat+12),a                 ;y sprite 1
-  ld    a,50
-  ld    (MushroomLookingDownSpriteXSpat),a                 ;x sprite 0
-  ld    (MushroomLookingDownSpriteXSpat+4),a                 ;x sprite 1
-  ld    (MushroomLookingDownSpriteXSpat+8),a                 ;x sprite 0
-  ld    (MushroomLookingDownSpriteXSpat+12),a                 ;x sprite 1
-;  ret
-
-;mushroom looking Up
-  ld    a,110
-  ld    (MushroomLookingUpSpriteYSpat),a                 ;y sprite 0
-  ld    (MushroomLookingUpSpriteYSpat+4),a                 ;y sprite 1
-  ld    a,110+16
-  ld    (MushroomLookingUpSpriteYSpat+8),a                 ;y sprite 1
-  ld    (MushroomLookingUpSpriteYSpat+12),a                 ;y sprite 1
-  ld    a,80
-  ld    (MushroomLookingUpSpriteXSpat),a                 ;x sprite 0
-  ld    (MushroomLookingUpSpriteXSpat+4),a                 ;x sprite 1
-  ld    (MushroomLookingUpSpriteXSpat+8),a                 ;x sprite 0
-  ld    (MushroomLookingUpSpriteXSpat+12),a                 ;x sprite 1
-;  ret
-
-;mushroom looking right
-  ld    a,70
-  ld    (MushroomLookingRightSpriteYSpat),a                 ;y sprite 0
-  ld    (MushroomLookingRightSpriteYSpat+4),a                 ;y sprite 1
-  ld    (MushroomLookingRightSpriteYSpat+8),a                 ;y sprite 1
-  ld    (MushroomLookingRightSpriteYSpat+12),a                 ;y sprite 1
-  ld    a,100
-  ld    (MushroomLookingRightSpriteXSpat),a                 ;x sprite 0
-  ld    (MushroomLookingRightSpriteXSpat+4),a                 ;x sprite 1
-  ld    a,100+16
-  ld    (MushroomLookingRightSpriteXSpat+8),a                 ;x sprite 0
-  ld    (MushroomLookingRightSpriteXSpat+12),a                 ;x sprite 1
-;  ret
-
-;mushroom looking left
-  ld    a,50
-  ld    (MushroomLookingLeftSpriteYSpat),a                 ;y sprite 0
-  ld    (MushroomLookingLeftSpriteYSpat+4),a                 ;y sprite 1
-  ld    (MushroomLookingLeftSpriteYSpat+8),a                 ;y sprite 1
-  ld    (MushroomLookingLeftSpriteYSpat+12),a                 ;y sprite 1
-  ld    a,130
-  ld    (MushroomLookingLeftSpriteXSpat),a                 ;x sprite 0
-  ld    (MushroomLookingLeftSpriteXSpat+4),a                 ;x sprite 1
-  ld    a,130+16
-  ld    (MushroomLookingLeftSpriteXSpat+8),a                 ;x sprite 0
-  ld    (MushroomLookingLeftSpriteXSpat+12),a                 ;x sprite 1
-  ret
-
-ClockSpriteYSpat:              equ spat+0+06*4
-ClockSpriteXSpat:              equ spat+1+06*4
-SetClockSprite:
-  ld    a,70
-  ld    (ClockSpriteYSpat),a                 ;y sprite 0
-  ld    (ClockSpriteYSpat+4),a                 ;y sprite 1
-  ld    a,50
-  ld    (ClockSpriteXSpat),a                 ;x sprite 0
-  ld    (ClockSpriteXSpat+4),a                 ;x sprite 1
-  ret
-
-AlarmSpriteYSpat:              equ spat+0+00*4
-AlarmSpriteXSpat:              equ spat+1+00*4
-SetAlarmSprite:
-  ld    a,10
-  ld    (AlarmSpriteYSpat),a                 ;y sprite 0
-  ld    (AlarmSpriteYSpat+4),a                 ;y sprite 1
-  ld    a,50
-  ld    (AlarmSpriteXSpat),a                 ;x sprite 0
-  ld    (AlarmSpriteXSpat+4),a                 ;x sprite 1
-  ret
 
 CoordinateTablePenguin:
 .TopStraightSegment: ;130 points
