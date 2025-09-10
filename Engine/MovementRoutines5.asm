@@ -13,6 +13,7 @@ BlockHitGameRoutine:
 
   call  MoveCannon
   call  MoveProjectile
+  call  CheckProjectileHitsBlock
   call  CheckShootNewProjectile
   call  .HandlePhase                        ;load graphics, init variables
 
@@ -102,23 +103,23 @@ BlocksColumnsTable:
   db    1,1,1,1,0
   db    0,0,1,1,1
   db    1,0,1,1,1
-  db    0,0,0,1,0
-  db    0,1,0,1,1
-  db    0,1,1,0,1
-  db    0,0,1,0,1
-  db    1,0,0,0,0
+  db    0,1,1,1,0
+  db    1,1,0,1,1
+  db    1,1,1,0,1
+  db    0,0,1,1,1
+  db    1,0,1,1,0
   db    1,0,1,1,1
-  db    0,0,0,1,0
+  db    1,1,0,1,0
   db    0,1,0,1,1
   db    0,1,1,0,1
-  db    0,0,1,0,1
-  db    1,0,0,0,0
+  db    1,0,1,0,1
+  db    1,1,1,0,0
   db    1,0,1,1,1
-  db    0,0,0,1,0
+  db    1,0,1,1,0
   db    0,1,0,1,1
   db    0,1,1,0,1
   db    0,0,1,0,1
-  db    1,0,0,0,0
+  db    1,0,1,1,1
   db    1,0,1,1,1
   db    0,0,0,1,0
   db    0,1,0,1,1
@@ -238,8 +239,7 @@ MoveBlocks:
   add   a,a                                   ;*2
   add   a,a                                   ;*4
   inc   hl                                    ;character
-;  ld a,10*4
-  ld    (hl),8
+  ld    (hl),a
   dec   hl
 
   .Skip:
@@ -317,12 +317,127 @@ MoveProjectile:
   ret   z                             ;dont move if x projectile=1 (that means projectile is not in play)
   add   a,10
   ld    (spat+1+31*4),a               ;x projectile
-  cp    240
-  ret   c
+;  cp    240
+  ret   nc
   ld    a,1
   ld    (spat+1+31*4),a               ;x projectile
   ld    a,213
   ld    (spat+0+31*4),a               ;y projectile
+  ret
+
+CheckProjectileHitsBlock:
+  ld    a,(spat+1+31*4)               ;x projectile
+  dec   a
+  ret   z                             ;dont move if x projectile=1 (that means projectile is not in play)
+
+  ld    a,(spat+0+31*4)               ;y projectile
+  ld    c,a                           ;c = y projectile
+
+  ld    hl,spat+0                     ;y block 1
+  ld    de,4
+  ld    b,31                          ;check first 31 sprites (last sprite is player projectile)
+
+  .loop:
+  ld    a,(hl)                        ;y block
+  cp    c
+  jr    nz,.CheckNextBlock
+  inc   hl                            ;x block
+  ld    a,(spat+1+31*4)               ;x projectile
+  cp    (hl)
+  dec   hl                            ;y block
+  jr    c,.CheckNextBlock
+
+  ;we hit this block, remove projectile
+  ld    a,1
+  ld    (spat+1+31*4),a               ;x projectile
+  ld    a,213
+  ld    (spat+0+31*4),a               ;y projectile
+
+;  ld    a,(RemoveBlocksThatWeHit?)    ;maybe this can be used if a certain weapon is picked up ?
+  or    a
+;  jr    nz,.RemoveBlockThatWeHit
+
+  ;add a new block to the spat in front of the block we hit
+  inc   hl                            ;x block
+  ld    a,(hl)                        ;x block we just hit
+  push  af
+
+  ;find free unused block
+  ld    hl,spat+1                     ;x block 1
+  ld    de,4
+  ld    b,31                          ;check first 31 sprites (last sprite is player projectile)
+
+  .loop2:
+  ld    a,(hl)                        ;x block
+  dec   a
+  jr    z,.FreeEntryFound2
+  add   hl,de
+  djnz  .loop2
+  pop   af
+  ret
+
+  .FreeEntryFound2:
+  pop   af                            ;x block we just hit
+  sub   a,26
+  ld    (hl),a
+  dec   hl                            ;y block
+  ld    (hl),c
+  inc   hl
+  inc   hl                            ;character block
+  ld    (hl),0
+  jp    CheckRemoveEntireColumn
+
+  .RemoveBlockThatWeHit:              ;maybe this can be used if a certain weapon is picked up ?
+  ld    (hl),213
+  inc   hl
+  ld    (hl),1
+  ret
+
+  .CheckNextBlock:
+  add   hl,de
+  djnz  .loop
+  ret
+
+CheckRemoveEntireColumn:              ;in: a=x block we just added
+  ;search 5 blocks with the same x
+  ld    hl,spat+1                     ;x block 1
+  ld    de,4
+  ld    b,31                          ;check first 31 sprites (last sprite is player projectile)
+  ld    c,0                           ;amount of block with this x value
+
+  .loop:
+  cp    (hl)
+  jr    nz,.EndCheckSameX
+  inc   c
+  .EndCheckSameX:
+  add   hl,de
+  djnz  .loop
+
+  ld    b,a                           ;x block we just added
+
+  ld    a,c
+  cp    5
+  ret   nz
+
+  ld    a,b                           ;x block we just added
+
+  ;we found 5 blocks with the same x, remove them (or reduce their value by 1)
+  ld    hl,spat+1                     ;x block 1
+  ld    de,4
+  ld    b,31                          ;check first 31 sprites (last sprite is player projectile)
+
+  .loop2:
+  cp    (hl)
+  jr    nz,.EndCheckSameX2
+
+  ld    (hl),1
+  dec   hl                            ;y block
+  ld    (hl),213
+  inc   hl
+
+  .EndCheckSameX2:
+  add   hl,de
+  djnz  .loop2
   ret
 
 MoveCannon:
