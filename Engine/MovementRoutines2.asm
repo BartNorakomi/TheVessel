@@ -41,6 +41,28 @@ DrillingLocationsRoutine:
   ret   nz
   ld    (iy+ObjectPhase),1
 
+  ;set upgrade menu gfx page 0
+  ld    hl,DrillingLocationsGfxPart1Address
+  ld    a,DrillingLocationsGfxBlock
+  call  SetGfxAt8000InRam                             ;in: hl=adress in rom page 1, a=block, out: puts gfx in page 2 in ram at $8000
+
+  ld    hl,$8000 + (000*128) + (000/2) - 128
+  ld    de,$0000 + (000*128) + (000/2) - 128
+  ld    bc,$0000 + (128*256) + (256/2)
+  call  CopyRamToVram                       ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
+
+  ld    hl,DrillingLocationsGfxPart2Address
+  ld    a,DrillingLocationsGfxBlock
+  call  SetGfxAt8000InRam                             ;in: hl=adress in rom page 1, a=block, out: puts gfx in page 2 in ram at $8000
+
+  ld    hl,$8000 + (000*128) + (000/2) - 128
+  ld    de,$0000 + (128*128) + (000/2) - 128
+  ld    bc,$0000 + (084*256) + (256/2)
+  call  CopyRamToVram                       ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
+
+  ld    hl,DrillingLocationsPalette
+  call  SetPalette
+
   call  SetPinPointsInPage1
 
   ld    a,1
@@ -94,6 +116,9 @@ DrillingLocationsRoutine:
   ld    (SetPinPoint+dy),a
   ld    hl,SetPinPoint
   jp    DoCopy
+
+DrillingLocationsPalette:
+  incbin "..\grapx\drillinglocations\drillinglocations.SC5",$7680+7,32
 
 AnimateSelectedDigSite:
   ld    a,(framecounter2)                   ;used as animation counter
@@ -233,11 +258,15 @@ ChooseDigSite:
   db    5,2,3,1,4, 255
 
 SetPinPointsInPage1:                       ;set pinpoints at (0,0) page 1
-  ld    hl,$4000 + (000*128) + (000/2) - 128
+  ;set pin point icon gfx page 1
+  ld    hl,PinPointIconGfxPart1Address
+  ld    a,PinPointIconGfxBlock
+  call  SetGfxAt8000InRam                             ;in: hl=adress in rom page 1, a=block, out: puts gfx in page 2 in ram at $8000
+
+  ld    hl,$8000 + (000*128) + (000/2) - 128
   ld    de,$8000 + (000*128) + (000/2) - 128
   ld    bc,$0000 + (070*256) + (144/2)
-  ld    a,PinPointIconGfxBlock         ;font graphics block
-  jp    CopyRomToVram          ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
+  jp    CopyRamToVram                       ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
 
 UpgradeMenuEventRoutine:
   ld    a,(framecounter2)
@@ -259,6 +288,52 @@ UpgradeMenuEventRoutine:
   or    a
   ret   nz
   ld    (iy+ObjectPhase),1
+
+
+
+
+  ;set upgrade menu gfx page 0
+  ld    hl,UpgradeMenuGfxPart1Address
+  ld    a,UpgradeMenuGfxBlock
+  call  SetGfxAt8000InRam                             ;in: hl=adress in rom page 1, a=block, out: puts gfx in page 2 in ram at $8000
+
+  ld    hl,$8000 + (000*128) + (000/2) - 128
+  ld    de,$0000 + (000*128) + (000/2) - 128
+  ld    bc,$0000 + (128*256) + (256/2)
+  call  CopyRamToVram                       ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
+
+  ld    hl,UpgradeMenuGfxPart2Address
+  ld    a,UpgradeMenuGfxBlock
+  call  SetGfxAt8000InRam                             ;in: hl=adress in rom page 1, a=block, out: puts gfx in page 2 in ram at $8000
+
+  ld    hl,$8000 + (000*128) + (000/2) - 128
+  ld    de,$0000 + (128*128) + (000/2) - 128
+  ld    bc,$0000 + (084*256) + (256/2)
+  call  CopyRamToVram                       ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
+
+  ;copy from page 0 to page 1
+  ld    a,0
+  ld    (CopyPageToPage212High+sPage),a
+  ld    a,1
+  ld    (CopyPageToPage212High+dPage),a
+  ld    hl,CopyPageToPage212High
+  call  DoCopy
+
+  ;copy from page 0 to page 2
+  ld    a,0
+  ld    (CopyPageToPage212High+sPage),a
+  ld    a,2
+  ld    (CopyPageToPage212High+dPage),a
+  ld    hl,CopyPageToPage212High
+  call  DoCopy
+
+  ;copy from page 0 to page 3
+  ld    a,0
+  ld    (CopyPageToPage212High+sPage),a
+  ld    a,3
+  ld    (CopyPageToPage212High+dPage),a
+  ld    hl,CopyPageToPage212High
+  call  DoCopy
 
   ld    a,0*32 + 31                         ;page 0
 	ld    (PageOnNextVblank),a
@@ -3404,13 +3479,13 @@ HandleBasketBallGameOver:
 ;;
 ;	ld		a,(Controls)
 ;	bit		6,a           ;f1 pressed ?
-;  jr    nz,.GamveOver
+;  jr    nz,.GameOver
 
   ld    a,(basketballGameOver?)
   or    a
   ret   z
 
-  .GamveOver:
+  .GameOver:
 	ld    a,(screenpage)
   or    a
   ret   nz
@@ -4865,49 +4940,6 @@ CheckBounceOnLeftRimRightSide:
 
 
 
-BlockHitGameRoutine:
-  ld    a,1
-  ld    (framecounter),a                    ;we force framecounter to 1 so that the sf2 object handler doesn't swap page ever
-  ld    a,0*32 + 31                         ;force page 0
-	ld    (PageOnNextVblank),a
-
-  ld    hl,BlockhitPalette
-  call	SetPalette
-
-  call  CheckEndArcadeGameTriggerB
-
-  call  .HandlePhase                        ;load graphics, init variables
-  ret
-
-  .HandlePhase:
-  bit   0,(iy+ObjectPhase)
-  ret   nz
-  ld    (iy+ObjectPhase),1
-
-  ld    hl,BlockhitPart1Address
-  ld    a,BlockhitGfxBlock
-  call  SetGfxAt8000InRam                             ;in: hl=adress in rom page 1, a=block, out: puts gfx in page 2 in ram at $8000
-
-  ld    hl,$8000 + (000*128) + (000/2) - 128
-  ld    de,$0000 + (000*128) + (000/2) - 128
-  ld    bc,$0000 + (128*256) + (256/2)
-  call  CopyRamToVram                       ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
-
-  ld    hl,BlockhitPart2Address
-  ld    a,BlockhitGfxBlock
-  call  SetGfxAt8000InRam                             ;in: hl=adress in rom page 1, a=block, out: puts gfx in page 2 in ram at $8000
-
-  ld    hl,$8000 + (000*128) + (000/2) - 128
-  ld    de,$0000 + (128*128) + (000/2) - 128
-  ld    bc,$0000 + (007*256) + (256/2)
-  call  CopyRamToVram                       ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
-
-  call  SetArcadeMachine
-  call  SetInterruptHandlerArcadeMachine   	;sets Vblank and lineint for hud
-  ret
-
-BlockhitPalette:
-  incbin "..\grapx\Blockhit\Blockhit.sc5",$7680+7,32
 
 JumpDownGameRoutine:
   ld    a,1

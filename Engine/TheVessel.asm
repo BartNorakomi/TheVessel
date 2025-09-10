@@ -651,9 +651,7 @@ DrillingGameHudBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSiz
   incbin "..\grapx\drillinggame\hud.SC5",7,028 * 128      ;032 lines
 	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
 
-DrillingLocationsGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
-  incbin "..\grapx\DrillingLocations\DrillingLocations.SC5",7,212 * 128      ;98 lines
-	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
+
 
 ArcadeMachineGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
 BasketBallCourtGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
@@ -692,6 +690,7 @@ BasketBallGameOverGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBl
 BasketBallTitleScreenGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
 BasketBallShopGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
 PenguinBikeRaceGameOverGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
+UpgradeMenuGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
 	phase	$4000
 	JumpDownPart1Address:
   incbin "..\grapx\JumpDown\JumpDownPart1.sc5.pck"
@@ -709,6 +708,36 @@ PenguinBikeRaceGameOverGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /
   incbin "..\grapx\BasketBall\Shop\ShopPart2.sc5.pck"
 	PenguinBikeRaceGameOverPart1Address:
   incbin "..\grapx\PenguinBikeRace\GameOverPart1.sc5.pck"
+	UpgradeMenuGfxPart1Address:
+  incbin "..\grapx\ship\sciencelab\UpgradeMenu2Part1.sc5.pck"
+	UpgradeMenuGfxPart2Address:
+  incbin "..\grapx\ship\sciencelab\UpgradeMenu2Part2.sc5.pck"
+	.CheckBlockFull:	dw	$+$8000
+	dephase
+	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
+
+DrillingLocationsGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
+PinPointIconGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
+	phase	$4000
+	DrillingLocationsGfxPart1Address:
+  incbin "..\grapx\DrillingLocations\DrillingLocationsPart1.sc5.pck"
+	DrillingLocationsGfxPart2Address:
+  incbin "..\grapx\DrillingLocations\DrillingLocationsPart2.sc5.pck"
+	PinPointIconGfxPart1Address:
+  incbin "..\grapx\DrillingLocations\PinPointIconPart1.sc5.pck"
+	.CheckBlockFull:	dw	$+$8000
+	dephase
+	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
+
+PenguinBikeRaceTitleScreenGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
+PenguinBikeRaceButtonsGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
+	phase	$4000
+	PenguinBikeRaceTitleScreenPart1Address:
+  incbin "..\grapx\penguinbikerace\titlescreen\TitleScreenPart1.sc5.pck"
+	PenguinBikeRaceTitleScreenPart2Address:
+  incbin "..\grapx\penguinbikerace\titlescreen\TitleScreenPart2.sc5.pck"
+	PenguinBikeRaceButtonsPart1Address:
+  incbin "..\grapx\penguinbikerace\titlescreen\ButtonsPart1.sc5.pck"
 	.CheckBlockFull:	dw	$+$8000
 	dephase
 	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
@@ -1980,17 +2009,8 @@ db 0,0
 
 
 
-
-PinPointIconGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
-  incbin "..\grapx\DrillingLocations\PinPointIcon.SC5",7,070 * 128      ;98 lines
-	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
-
 ResourceOffloadPortraitGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
   incbin "..\grapx\ship\hangarbay\resourceoffload.SC5",7,099 * 128      ;98 lines
-	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
-
-UpgradeMenuGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
-  incbin "..\grapx\ship\sciencelab\UpgradeMenu2.SC5",7,212 * 128      ;98 lines
 	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
 
 OpenDoorGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
@@ -2232,6 +2252,12 @@ MovementRoutines3Block:	equ ($-RomStartAddress) and (romsize-1) /RomBlockSize ;$
 MovementRoutines4Block:	equ ($-RomStartAddress) and (romsize-1) /RomBlockSize ;$04
 								include "MovementRoutines4.asm"  
 								DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
+
+;movement routines5
+MovementRoutines5Block:	equ ($-RomStartAddress) and (romsize-1) /RomBlockSize ;$04
+								include "MovementRoutines5.asm"  
+								DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
+
 
 EndBlock:				equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
 

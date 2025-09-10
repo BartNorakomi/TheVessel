@@ -3685,7 +3685,6 @@ FreeToUseObject8: ds  FreeToUseObjectTableLenght  ;mushroom1
 FreeToUseObject9: ds  FreeToUseObjectTableLenght  ;mushroom1
 FreeToUseObject14: ds  FreeToUseObjectTableLenght  ;stone4
 
-
 spat:						;sprite attribute table (y,x)
 	db		100,100,00,0	,100,100,04,0	,100,100,08,0	,100,116,12,0
 	db		100,116,16,0	,100,116,20,0	,116,100,24,0	,116,100,28,0
@@ -3792,7 +3791,7 @@ CompareHLwithDE:
   ret
 
 StartSaveGameData:
-CurrentRoom:  db  20                    ;0=arcadehall1, 1=arcadehall2, 2=biopod, 3=hydroponicsbay, 4=hangarbay, 5=trainingdeck, 6=reactorchamber, 7=sleepingquarters, 8=armoryvault, 9=holodeck, 10=medicalbay
+CurrentRoom:  db  21                    ;0=arcadehall1, 1=arcadehall2, 2=biopod, 3=hydroponicsbay, 4=hangarbay, 5=trainingdeck, 6=reactorchamber, 7=sleepingquarters, 8=armoryvault, 9=holodeck, 10=medicalbay
                                         ;11=sciencelab, 12=drillinggame, 13=upgrademenu, 14=drillinglocations, 15=racinggame, 16=racing game title screen, 17=racing game level progress, 18=racing game congratulations
                                         ;19=basketball game, 20=penguin bike race, 21=blockhit game, 22=jumpdown game
 GamesPlayed:  db 9                      ;increases after leaving a game. max=255
@@ -3822,8 +3821,8 @@ ConvGingerBoy: db %0000 0000            ;conversations handled
 ConvHost: db %0000 0011                 ;conversations handled bit0=80% achieved 
 ;ConvEntity: db %1000 0000               ;conversations handled bit 6=embryo check followup, bit 5=first time entering holodeck,bit 0+1+2=conversation arcade2
 ConvEntity: db %0000 0011               ;conversations handled bit 6=embryo check followup, bit 5=holodeck explainer,bit 0+1+2=conversation arcade2
-;ConvEntityShipExplanations: db %1111 1111               ;conversations handled
-ConvEntityShipExplanations: db %0000 0000               ;conversations handled, bit 6=holodeck explainer
+ConvEntityShipExplanations: db %1111 1111               ;conversations handled
+;ConvEntityShipExplanations: db %0000 0000               ;conversations handled, bit 6=holodeck explainer
 
 DateCurrentLogin: ds 6 
 DatePreviousLogin: ds 6

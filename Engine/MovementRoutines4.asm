@@ -178,6 +178,274 @@ PenguinMovementRoutine:
   ret   nz
   ld    (iy+ObjectPhase),1
 
+  call  SetArcadeMachine
+
+  ;set penguin bike race page 0
+  ld    hl,PenguinBikeRacePart1Address
+  ld    a,PenguinBikeRaceGfxBlock
+  call  SetGfxAt8000InRam                             ;in: hl=adress in rom page 1, a=block, out: puts gfx in page 2 in ram at $8000
+
+  ld    hl,$8000 + (000*128) + (000/2) - 128
+  ld    de,$0000 + (000*128) + (000/2) - 128
+  ld    bc,$0000 + (128*256) + (256/2)
+  call  CopyRamToVram                       ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
+
+  ld    hl,PenguinBikeRacePart2Address
+  ld    a,PenguinBikeRaceGfxBlock
+  call  SetGfxAt8000InRam                             ;in: hl=adress in rom page 1, a=block, out: puts gfx in page 2 in ram at $8000
+
+  ld    hl,$8000 + (000*128) + (000/2) - 128
+  ld    de,$0000 + (128*128) + (000/2) - 128
+  ld    bc,$0000 + (007*256) + (256/2)
+  call  CopyRamToVram                       ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
+
+  ;copy page 0 to page 1
+  xor   a
+  ld    (CopyPageToPage212High+sPage),a
+  ld    a,1
+  ld    (CopyPageToPage212High+dPage),a
+  ld    hl,CopyPageToPage212High
+  call  DoCopy
+
+  ;copy page 0 to page 2
+  ld    a,2
+  ld    (CopyPageToPage212High+dPage),a
+  ld    hl,CopyPageToPage212High
+  call  DoCopy
+
+  ;copy page 0 to page 3
+  ld    a,3
+  ld    (CopyPageToPage212High+dPage),a
+  ld    hl,CopyPageToPage212High
+  call  DoCopy
+
+  call  SetPenguinBikeRaceSprites
+
+  ;set font at y=212 page 1
+  ld    hl,PenguinBikeRaceFontPart1Address
+  ld    a,PenguinBikeRaceFontGfxBlock
+  call  SetGfxAt8000InRam                             ;in: hl=adress in rom page 1, a=block, out: puts gfx in page 2 in ram at $8000
+
+  ld    hl,$8000 + (000*128) + (000/2) - 128
+  ld    de,$8000 + (212*128) + (000/2) - 128
+  ld    bc,$0000 + (009*256) + (256/2)
+  call  CopyRamToVram                       ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
+
+  call  SetInterruptHandlerArcadeMachine   	;sets Vblank and lineint for hud
+
+  call  ResetVariablesPenguinRace
+;  call  SpritesOff
+  jp    BackToTitleScreenPenguinRace
+
+;this routine puts penguin race titlescreen in page 0, while game screen is in page 1 
+BackToTitleScreenPenguinRace:
+  ;set buttons
+  ld    hl,PenguinBikeRaceButtonsPart1Address
+  ld    a,PenguinBikeRaceButtonsGfxBlock
+  call  SetGfxAt8000InRam                             ;in: hl=adress in rom page 1, a=block, out: puts gfx in page 2 in ram at $8000
+
+  call  WaitVblank
+  call  WaitVblank
+
+  ld    hl,$8000 + (000*128) + (000/2) - 128
+  ld    de,$8000 + (221*128) + (000/2) - 128
+  ld    bc,$0000 + (010*256) + (256/2)              ;10 lines for the buttons
+  call  CopyRamToVram                       ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
+
+  ;set title screen
+  ld    hl,PenguinBikeRaceTitleScreenPart1Address
+  ld    a,PenguinBikeRaceTitleScreenGfxBlock
+  call  SetGfxAt8000InRam                             ;in: hl=adress in rom page 1, a=block, out: puts gfx in page 2 in ram at $8000
+
+  call  WaitVblank
+  call  WaitVblank
+
+  ld    hl,$8000 + (000*128) + (000/2) - 128
+  ld    de,$0000 + (000*128) + (000/2) - 128
+
+  ld    b,12                                        ;12 * 10 lines=120 lines
+  .loop:
+  push  bc
+  call  .Copy10lines
+  ld    bc,10*128
+  add   hl,bc
+  ex    de,hl
+  add   hl,bc
+  ex    de,hl
+  pop   bc
+  djnz  .loop
+
+  ld    bc,$0000 + (008*256) + (256/2)              ;8 more lines
+  call  CopyRamToVram                       ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
+
+  ld    hl,PenguinBikeRaceTitleScreenPart2Address
+  ld    a,PenguinBikeRaceTitleScreenGfxBlock
+  call  SetGfxAt8000InRam                             ;in: hl=adress in rom page 1, a=block, out: puts gfx in page 2 in ram at $8000
+
+  call  WaitVblank
+  call  WaitVblank
+
+  ld    hl,$8000 + (000*128) + (000/2) - 128
+  ld    de,$0000 + (128*128) + (000/2) - 128
+  ld    bc,$0000 + (007*256) + (256/2)              ;7 more lines
+  call  CopyRamToVram                       ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
+
+  ;set palette
+  ld    hl,.PenguinRaceTitleScreenPalette
+  ld    de,ArcadeGamePalette
+  ld    bc,32
+  ldir
+
+  ld    a,0*32 + 31
+	ld    (PageOnNextVblank),a
+  call  screenon
+
+  .Engine:
+  ld    a,(framecounter2)
+  inc   a
+  ld    (framecounter2),a
+  call  PopulateControls
+  call  .SelectButton
+  call  .BlinkSelectedButton
+
+  xor   a
+  ld    hl,vblankintflag
+  .checkflag:
+  cp    (hl)
+  jr    z,.checkflag
+  ld    (hl),a
+  jp    .Engine
+
+  .SelectButton:
+;
+; bit	7	  6	  5		    4		    3		    2		  1		  0
+;		  0	  0	  trig-b	trig-a	right	  left	down	up	(joystick)
+;		  F5	F1	'M'		  space	  right	  left	down	up	(keyboard)
+;
+	ld		a,(NewPrContr)
+	bit		5,a           ;trig b pressed ?
+  jr    nz,.TriggerBPressed
+	bit		4,a           ;trig a pressed ?
+  jr    nz,.TriggerAPressed
+  ret
+  .TriggerBPressed:
+  ld    a,0                                ;back to arcade hall 1
+  ld    (CurrentRoom),a
+  ld    a,1
+  ld    (ChangeRoom?),a
+  pop   af
+  ret
+
+  .TriggerAPressed:
+  ;reset time, level and lap
+  ld    hl,PenguinBikeRacePart1Address
+  ld    a,PenguinBikeRaceGfxBlock
+  call  SetGfxAt8000InRam                             ;in: hl=adress in rom page 1, a=block, out: puts gfx in page 2 in ram at $8000
+
+  ld    a,1
+  ld    (Vdp_Write_HighPage?),a
+  ld    hl,$8000 + (008*128) + (000/2) - 128
+  ld    de,$0000 + (008*128) + (000/2) - 128
+  ld    bc,$0000 + (006*256) + (256/2)
+  call  CopyRamToVram                       ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
+  xor   a
+  ld    (Vdp_Write_HighPage?),a
+
+  call  ResetVariablesPenguinRace
+  call  WriteSpatToVram
+  ld    a,2*32 + 31
+	ld    (PageOnNextVblank),a
+
+  call  SpritesOn
+
+  ld    hl,.CopyPage2ToPage3
+  call  DoCopy
+  ld    hl,.CopyPage2ToPage1
+  call  DoCopy
+  ld    hl,.CopyPage2ToPage0
+  call  DoCopy
+  call  WaitVdpReady
+  call  WaitVblank
+  call  WaitVblank
+;.q: jp .q
+
+  pop   af
+  xor   a
+	ld		(NewPrContr),a
+  ret
+
+  .CopyPage2ToPage1:
+	db		0,0,0,2
+	db		0,0,0,1
+	db		0,1,135,0
+	db		0,0,$d0	
+  .CopyPage2ToPage3:
+	db		0,0,0,2
+	db		0,0,0,3
+	db		0,1,135,0
+	db		0,0,$d0	
+  .CopyPage2ToPage0:
+	db		0,0,0,2
+	db		0,0,0,0
+	db		0,1,135,0
+	db		0,0,$d0	
+
+  .BlinkSelectedButton:
+  ld    a,(framecounter2)
+  and   31
+  cp    16
+  jr    c,.ButtonOff
+
+  .ButtonOn:
+  ld    hl,.ShowStartButtonBlinkOn
+  call  DoCopy
+  ret
+
+  .ButtonOff:
+  ld    hl,.ShowStartButtonBlinkOff
+  call  DoCopy
+  ret
+
+  .ShowStartButtonBlinkOff:
+  db    000,000,221,001                 ;sx,--,sy,spage
+  db    110,000,123,000                 ;dx,--,dy,dpage
+  db    038,000,010,000                 ;nx,--,ny,--
+  db    000,%0000 0000,$d0              ;fast copy -> Copy from right to left     
+
+  .ShowStartButtonBlinkOn:
+  db    038,000,221,001                 ;sx,--,sy,spage
+  db    110,000,123,000                 ;dx,--,dy,dpage
+  db    038,000,010,000                 ;nx,--,ny,--
+  db    000,%0000 0000,$d0              ;fast copy -> Copy from right to left     
+
+
+  .PenguinRaceTitleScreenPalette:
+  incbin "..\grapx\penguinbikerace\titlescreen\TitleScreen.sc5",$7680+7,32
+
+  .Copy10lines:
+  push  hl
+  push  de
+  ld    bc,$0000 + (010*256) + (256/2)
+  call  CopyRamToVram                       ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
+  call  WaitVblank
+  pop   de
+  pop   hl
+  ret
+
+
+ResetVariablesPenguinRace:
+  ld    a,1
+  ld    (SetArcadeGamePalette?),a           ;action on vblank: 1=set palette, 2=set palette and write spat to vram
+
+  ld    hl,PenguinBikeRacePalette
+  ld    de,ArcadeGamePalette
+  ld    bc,32
+  ldir
+
+  ld    a,r
+  ld    (SpawnFrequencyPizza),a
+  ld    a,255
+  ld    (SpawnFrequencyExtraTime),a
   ld    hl,0
   ld    (PenguinDistance),hl
   ld    a,30
@@ -355,70 +623,29 @@ PenguinMovementRoutine:
 ;ld a,1
   ld    (PenguinGameTime),a
 
-  call  SetArcadeMachine
+  ld    a,213
+  ld    de,4
+  ld    b,32
+  ld    hl,spat
+  .loop:
+  ld    (hl),a                                ;remove sprite from screen display
+  add   hl,de
+  djnz  .loop
 
-  ;set penguin bike race page 0
-  ld    hl,PenguinBikeRacePart1Address
-  ld    a,PenguinBikeRaceGfxBlock
-  call  SetGfxAt8000InRam                             ;in: hl=adress in rom page 1, a=block, out: puts gfx in page 2 in ram at $8000
-
-  ld    hl,$8000 + (000*128) + (000/2) - 128
-  ld    de,$0000 + (000*128) + (000/2) - 128
-  ld    bc,$0000 + (128*256) + (256/2)
-  call  CopyRamToVram                       ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
-
-  ld    hl,PenguinBikeRacePart2Address
-  ld    a,PenguinBikeRaceGfxBlock
-  call  SetGfxAt8000InRam                             ;in: hl=adress in rom page 1, a=block, out: puts gfx in page 2 in ram at $8000
-
-  ld    hl,$8000 + (000*128) + (000/2) - 128
-  ld    de,$0000 + (128*128) + (000/2) - 128
-  ld    bc,$0000 + (007*256) + (256/2)
-  call  CopyRamToVram                       ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
-
-  ;copy page 0 to page 1
-  xor   a
-  ld    (CopyPageToPage212High+sPage),a
   ld    a,1
-  ld    (CopyPageToPage212High+dPage),a
-  ld    hl,CopyPageToPage212High
-  call  DoCopy
-
-  ;copy page 0 to page 2
-  ld    a,2
-  ld    (CopyPageToPage212High+dPage),a
-  ld    hl,CopyPageToPage212High
-  call  DoCopy
-
-  ;copy page 0 to page 3
-  ld    a,3
-  ld    (CopyPageToPage212High+dPage),a
-  ld    hl,CopyPageToPage212High
-  call  DoCopy
-
-  ld    hl,PenguinBikeRacePalette
-  ld    de,ArcadeGamePalette
-  ld    bc,32
-  ldir
-
-  call  SetPenguinBikeRaceSprites
-
-  ;set font at y=212 page 1
-  ld    hl,PenguinBikeRaceFontPart1Address
-  ld    a,PenguinBikeRaceFontGfxBlock
-  call  SetGfxAt8000InRam                             ;in: hl=adress in rom page 1, a=block, out: puts gfx in page 2 in ram at $8000
-
-  ld    hl,$8000 + (000*128) + (000/2) - 128
-  ld    de,$8000 + (212*128) + (000/2) - 128
-  ld    bc,$0000 + (009*256) + (256/2)
-  call  CopyRamToVram                       ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
-
-  call  SetInterruptHandlerArcadeMachine   	;sets Vblank and lineint for hud
-  ld    a,1
-  ld    (SetArcadeGamePalette?),a           ;action on vblank: 1=set palette, 2=set palette and write spat to vram
+  ld    (PenguinInvulnerable?),a
   ret
 
 HandlePenguinGameOver:
+;
+; bit	7	  6	  5		    4		    3		    2		  1		  0
+;		  0	  0	  trig-b	trig-a	right	  left	down	up	(joystick)
+;		  F5	F1	'M'		  space	  right	  left	down	up	(keyboard)
+;;
+	ld		a,(Controls)
+	bit		6,a           ;f1 pressed ?
+  jr    nz,.GameOver
+
   ld    a,(PenguinGameTime)
   or    a
   ret   nz
@@ -426,7 +653,7 @@ HandlePenguinGameOver:
   or    a
   ret   nz
 
-  .GamveOver:
+  .GameOver:
 	ld    a,(screenpage)
   or    a
   ret   nz
@@ -528,7 +755,7 @@ HandlePenguinGameOver:
   ld    (freezecontrols?),a  
   call  STOPWAITSPACEPRESSED
 
-  jp    BackToTitleScreenBasketBall
+  jp    BackToTitleScreenPenguinRace
 
 .PercentageSymbol:                     ;freely usable anywhere
   db    163,000,060,001                 ;sx,--,sy,spage
@@ -758,7 +985,7 @@ HandlePenguinGameHud:
   .EraseLevel:
 	db		018,0,129,0
 	db		140,0,008,0
-	db		004,0,006,0
+	db		010,0,006,0
 	db		0,0,$d0
 
   .LevelDX: equ 140
@@ -768,10 +995,11 @@ HandlePenguinGameHud:
   ld    a,(PenguinGameTimeExtended?)
   or    a
   jr    z,.EndCheckExtendTime
+  ld    b,a
   xor   a
   ld    (PenguinGameTimeExtended?),a
   ld    a,(PenguinGameTime)
-  add   a,5
+  add   a,b
   ld    (PenguinGameTime),a
   .EndCheckExtendTime:
 
@@ -869,8 +1097,8 @@ PutNewExtraTimeObjects:
   dec   a
   ld    (SpawnFrequencyExtraTime),a
   ret   nz
-  ld    a,250
-  ld    (SpawnFrequencyExtraTime),a
+;  ld    a,250
+;  ld    (SpawnFrequencyExtraTime),a
 
   ld    a,r
   and   31
@@ -886,7 +1114,7 @@ PutNewExtraTimeObjects:
   call  CheckDistanceAlreadyInUseByOtherObject
 
   set   0,(ix+PenguinGameObjectOn?)           ;on
-  ld    (ix+PenguinGameObjectDuration),250    ;duration
+  ld    (ix+PenguinGameObjectDuration),190    ;duration
   ld    (ix+PenguinGameObjectDistance),e      ;distance
   ld    (ix+PenguinGameObjectDistance+1),d    ;distance
 
@@ -974,7 +1202,16 @@ PutNewWarningObjects:
   dec   a
   ld    (SpawnFrequencyWarning),a
   ret   nz
-  ld    a,10
+
+  ld    a,(PenguinGameLevel)
+  add   a,a                                   ;*2
+  ld    b,a
+  ld    a,30
+  sub   a,b
+  jr    nc,.SetSpawnFrequency  
+  xor   a
+  .SetSpawnFrequency:
+  inc   a
   ld    (SpawnFrequencyWarning),a
 
   ld    ix,Warning
@@ -1200,7 +1437,7 @@ HandleObjectExtraTime:
   call  CheckCollisionPenguin                 ;out: c=collision
   ret   nc
 
-  ld    a,1
+  ld    a,5                                   ;5 seconds extra
   ld    (PenguinGameTimeExtended?),a
 
   .Remove:
@@ -1224,7 +1461,7 @@ HandleObjectStar:
   call  CheckCollisionPenguin                 ;out: c=collision
   ret   nc
 
-  ld    a,255
+  ld    a,200
   ld    (PenguinInvulnerable?),a
   .Remove:
   call  SetObjectY213
@@ -1247,7 +1484,7 @@ HandleObjectPizza:
   call  CheckCollisionPenguin                 ;out: c=collision
   ret   nc
 
-  ld    a,80
+  ld    a,90
   ld    (AddedPizzaSpeedBoost),a
   .Remove:
   call  SetObjectY213
@@ -1298,20 +1535,18 @@ HandleObjectWarning:
   ld    (ix+PenguinGameObjectOn?),0           ;duration
   ;we remove warning symbol and replace it with a stone
   push  iy 
-  call  .SetStoneOrSpike
+  call  .SetStoneSpikeOrMushroom
   pop   iy
   ret
 
-  .SetStoneOrSpike:
-  ld    iy,Mushroom1
-  bit   0,(iy+PenguinGameObjectOn?)
-  jp    z,.GoSetMushroom1
-  .UnableToPlaceMushRoom1:
-  ld    iy,Mushroom2
-  bit   0,(iy+PenguinGameObjectOn?)
-  jp    z,.GoSetMushroom2
-  .UnableToPlaceMushRoom2:
+  .SetStoneSpikeOrMushroom:
+  ld    a,r
+  and   3
+  jr    z,.GoCheckIfWeCanPlaceMushroom
+  dec   a
+  jr    z,.GoCheckIfWeCanPlaceSpike
 
+  .UnableToPlaceMushRoom2:
   ld    iy,Stone1
   bit   0,(iy+PenguinGameObjectOn?)
   jp    z,.GoSetStone
@@ -1324,10 +1559,19 @@ HandleObjectWarning:
   ld    iy,Stone4
   bit   0,(iy+PenguinGameObjectOn?)
   jp    z,.GoSetStone
+  .GoCheckIfWeCanPlaceSpike:
   ld    iy,Spike1
   bit   0,(iy+PenguinGameObjectOn?)
   jp    z,.GoSetSpike
-  ret
+  .GoCheckIfWeCanPlaceMushroom:
+  ld    iy,Mushroom1
+  bit   0,(iy+PenguinGameObjectOn?)
+  jp    z,.GoSetMushroom1
+  .UnableToPlaceMushRoom1:
+  ld    iy,Mushroom2
+  bit   0,(iy+PenguinGameObjectOn?)
+  jp    z,.GoSetMushroom2
+  jp    .UnableToPlaceMushRoom2
 
   ;mushroom2 looks down, can only be placed inside oval top straight or outside oval bottom straight
   .GoSetMushroom2:
@@ -2044,12 +2288,20 @@ IncreaseDistanceAndSetXYPenguin:
   ld    a,(PenguinGameLevel)
   inc   a
   ld    (PenguinGameLevel),a
-  ld    a,(PenguinGameTime)
-  add   a,30
-  ld    (PenguinGameTime),a
   ld    a,(PenguinMaxSpeed)
   add   a,2
   ld    (PenguinMaxSpeed),a
+
+  ld    a,(PenguinGameLevel)
+  add   a,a
+  ld    b,a
+  ld    a,36
+  sub   a,b
+  jr    nc,.GoAddTime
+  xor   a
+  .GoAddTime:
+  ld    (PenguinGameTimeExtended?),a
+
   jp    .EndCheckLapFinished
 
 CoordinateTablePenguin:

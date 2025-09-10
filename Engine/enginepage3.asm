@@ -8,7 +8,7 @@ ConversationsOn?:                  	equ 1
 ;veel dithering, haal het er uit zo veel mogelijk
 ;even uit m'n hoofd, die linker griet met groen haar in de arcade. Die zag ik lang geleden al een keer langskomen hier. Die is wat ditherig
 ;player idem
-
+;bug als je in arcade 2 naar beneden loopt kom je soms in de biopod room terecht
 
 
 InitiateGame:
@@ -151,7 +151,7 @@ EventRacingGameCongratulations: db	1,$28,$7e | dw 000,000			,000        | db 255
 ;EventPenguinBikeRaceGame:	db	1,$28,$7e | dw 000,000					,000        | db 255      ,MovementRoutines4Block| dw PenguinBikeRaceGameRoutine		| db 000,000 ,000, 000
 ObjectPenguin: 						db  1,000,000 | dw 000,000		,PenguinBikeRace_0    | db 255  ,MovementRoutines4Block | dw PenguinMovementRoutine				| db 000,000 ,000, 000
 
-EventBlockHitGame:				db	1,$28,$7e | dw 000,000					,000        | db 255      ,MovementRoutines2Block| dw BlockHitGameRoutine		| db 000,000 ,000, 000
+EventBlockHitGame:				db	1,$28,$7e | dw 000,000					,000        | db 255      ,MovementRoutines5Block| dw BlockHitGameRoutine		| db 000,000 ,000, 000
 EventJumpDownGame:				db	1,$28,$7e | dw 000,000					,000        | db 255      ,MovementRoutines2Block| dw JumpDownGameRoutine		| db 000,000 ,000, 000
 
 EventBasketBallGame:			db	1,$28,$7e | dw 000,000					,000        | db 255      ,MovementRoutines2Block| dw BasketBallGameRoutine					| db 000,000 ,000, 000
@@ -1027,8 +1027,6 @@ drillinggamePalette:                    			;palette file
   incbin "..\grapx\drillinggame\maps\tileset.SC5",$7680+7,32
 upgrademenuPalette:                    			;palette file
   incbin "..\grapx\ship\sciencelab\upgrademenu2.SC5",$7680+7,32
-DrillingLocationsPalette:
-  incbin "..\grapx\drillinglocations\drillinglocations.SC5",$7680+7,32
 RacingGamePalette:
   incbin "..\grapx\RacingGame\TrackStraightPalette.SC5",$7680+7,32
 
@@ -1125,11 +1123,13 @@ LoadRacingGameGfx:
   jp		SetPalette
 
 LoadDrillingLocationsGfx:
+ret
   ld    hl,DrillingLocationsPalette
   ld    a,DrillingLocationsGfxBlock     			;block to copy graphics from
 	jp		LoadGfx212High
 
 LoadUpgradeMenuGfx:
+ret
   ld    hl,upgrademenuPalette
   ld    a,UpgradeMenuGfxBlock     			;block to copy graphics from
 	jp		LoadGfx212High
@@ -2787,6 +2787,10 @@ SpawnFrequencyStar:				rb	1
 SpawnFrequencyExtraTime:	rb	1
 PenguinGameRandomValue:		rb	1
 PenguinGameTimeExtended?:	rb	1
+
+CannonRow:								rb	1
+PutNewBlocksCounter:			rb	1
+BlocksColumnsTablePointer:			rb	2
 
 endenginepage3variables:  equ $+enginepage3length
 org variables
