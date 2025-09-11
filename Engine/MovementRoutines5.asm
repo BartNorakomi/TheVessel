@@ -11,7 +11,10 @@ BlockHitGameRoutine:
   inc   a
   ld    (framecounter2),a
 
+  call  CheckGameOverBlockHitGame
   call  MoveCannon
+  call  AnimateBlockExplosion
+  call  CheckInitiateExplosionEntireColumn
   call  MoveProjectile
   call  CheckProjectileHitsBlock
   call  CheckShootNewProjectile
@@ -51,6 +54,11 @@ BlockHitGameRoutine:
   xor   a
   ld    (CopyPageToPage212High+sPage),a
   ld    a,3
+  ld    (CopyPageToPage212High+dPage),a
+  ld    hl,CopyPageToPage212High
+  call  DoCopy
+  ;copy page 0 to page 1
+  ld    a,1
   ld    (CopyPageToPage212High+dPage),a
   ld    hl,CopyPageToPage212High
   call  DoCopy
@@ -101,73 +109,548 @@ ResetVariablesBlockHitGame:
 
 BlocksColumnsTable:
   db    1,1,1,1,0
+
   db    0,0,1,1,1
-  db    1,0,1,1,1
-  db    0,1,1,1,0
-  db    1,1,0,1,1
-  db    1,1,1,0,1
-  db    0,0,1,1,1
-  db    1,0,1,1,0
-  db    1,0,1,1,1
-  db    1,1,0,1,0
-  db    0,1,0,1,1
-  db    0,1,1,0,1
   db    1,0,1,0,1
+  db    0,1,1,1,0
+  db    0,1,0,1,0
+
+  db    1,0,1,0,1
+  db    0,0,1,1,1
+  db    1,1,0,1,0
+  db    1,0,0,0,1
+
+  db    0,1,1,1,0
+  db    0,0,1,1,1
+  db    1,0,0,1,1
+  db    1,1,0,0,0
+
   db    1,1,1,0,0
-  db    1,0,1,1,1
+  db    0,0,1,1,1
+  db    1,0,0,1,0
+  db    0,1,0,1,1
+
+  db    0,0,1,0,1
+  db    1,0,0,1,1
+  db    0,1,0,1,1
+  db    1,0,1,0,0
+
+  db    0,1,1,1,0
+  db    1,0,0,1,1
+  db    0,0,1,0,1
+  db    0,1,0,1,0
+
+  db    1,1,0,0,0
+  db    0,0,1,1,1
+  db    1,1,0,1,0
+  db    0,1,0,0,1
+
+  db    1,0,1,0,1
+  db    0,1,0,1,0
   db    1,0,1,1,0
-  db    0,1,0,1,1
+  db    1,0,0,1,1
+
+  db    0,1,1,0,0
+  db    1,0,0,1,1
   db    0,1,1,0,1
-  db    0,0,1,0,1
-  db    1,0,1,1,1
-  db    1,0,1,1,1
-  db    0,0,0,1,0
-  db    0,1,0,1,1
+  db    0,0,0,1,1
+
+  db    1,1,0,0,0
+  db    0,0,1,1,1
+  db    0,1,1,0,0
+  db    1,0,0,1,1
+
   db    0,1,1,0,1
-  db    0,0,1,0,1
-  db    1,0,0,0,0
-  db    1,0,1,1,1
-  db    0,0,0,1,0
-  db    0,1,0,1,1
+  db    1,0,0,1,1
+  db    1,0,1,0,1
+  db    0,0,0,1,1
+
+  db    0,1,1,1,0
+  db    1,0,0,1,1
   db    0,1,1,0,1
-  db    0,0,1,0,1
-  db    1,0,0,0,0
-  db    1,0,1,1,1
-  db    0,0,0,1,0
-  db    0,1,0,1,1
+  db    1,0,0,0,1
+
+  db    0,1,1,1,0
+  db    1,0,0,1,1
+  db    0,1,0,1,0
+  db    1,0,1,0,0
+
   db    0,1,1,0,1
-  db    0,0,1,0,1
-  db    1,0,0,0,0
-  db    1,0,1,1,1
-  db    0,0,0,1,0
-  db    0,1,0,1,1
+  db    0,0,1,1,1
+  db    1,1,0,1,0
+  db    0,0,0,1,1
+
+  db    0,1,1,1,0
+  db    1,0,0,1,1
   db    0,1,1,0,1
-  db    0,0,1,0,1
-  db    1,0,0,0,0
-  db    1,0,1,1,1
-  db    0,0,0,1,0
-  db    0,1,0,1,1
+  db    1,0,0,0,1
+
+  db    0,1,1,1,0
+  db    1,0,0,1,1
+  db    0,1,0,1,0
+  db    1,0,1,0,0
+
   db    0,1,1,0,1
-  db    0,0,1,0,1
-  db    1,0,0,0,0
-  db    1,0,1,1,1
-  db    0,0,0,1,0
-  db    0,1,0,1,1
-  db    0,1,1,0,1
-  db    0,0,1,0,1
-  db    1,0,0,0,0
-  db    1,0,1,1,1
-  db    0,0,0,1,0
-  db    0,1,0,1,1
-  db    0,1,1,0,1
-  db    0,0,1,0,1
-  db    1,0,0,0,0
-  db    1,0,1,1,1
-  db    0,0,0,1,0
-  db    0,1,0,1,1
-  db    0,1,1,0,1
-  db    0,0,1,0,1
-  db    1,0,0,0,0
+  db    0,0,1,1,1
+  db    1,1,0,1,0
+  db    0,0,0,1,1
+
+CheckGameOverBlockHitGame:
+;
+; bit	7	  6	  5		    4		    3		    2		  1		  0
+;		  0	  0	  trig-b	trig-a	right	  left	down	up	(joystick)
+;		  F5	F1	'M'		  space	  right	  left	down	up	(keyboard)
+;;
+	ld		a,(Controls)
+	bit		6,a           ;f1 pressed ?
+  jr    nz,.GameOver
+
+
+
+  ret
+
+
+  .GameOver:
+	ld    a,(screenpage)
+  or    a
+  ret   nz
+
+  ld    hl,BlockHitGameOverPart1Address
+  ld    a,BlockHitGameOverGfxBlock
+  call  SetGfxAt8000InRam                             ;in: hl=adress in rom page 1, a=block, out: puts gfx in page 2 in ram at $8000
+
+  call  WaitVblank
+  call  WaitVblank
+
+  ld    hl,$8000 + (000*128) + (000/2) - 128
+  ld    de,$8000 + (012*128) + (064/2) - 128
+  ld    bc,$0000 + (020*256) + (128/2)
+  call  CopyRamToVram                       ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
+  call  WaitVblank
+
+  ld    hl,$8000 + (020*128) + (000/2) - 128
+  ld    de,$8000 + (032*128) + (064/2) - 128
+  ld    bc,$0000 + (020*256) + (128/2)
+  call  CopyRamToVram                       ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
+  call  WaitVblank
+
+  ld    hl,$8000 + (040*128) + (000/2) - 128
+  ld    de,$8000 + (052*128) + (064/2) - 128
+  ld    bc,$0000 + (020*256) + (128/2)
+  call  CopyRamToVram                       ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
+  call  WaitVblank
+
+  ld    hl,$8000 + (060*128) + (000/2) - 128
+  ld    de,$8000 + (072*128) + (064/2) - 128
+  ld    bc,$0000 + (020*256) + (128/2)
+  call  CopyRamToVram                       ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
+  call  WaitVblank
+
+  ld    hl,$8000 + (080*128) + (000/2) - 128
+  ld    de,$8000 + (092*128) + (064/2) - 128
+  ld    bc,$0000 + (020*256) + (128/2)
+  call  CopyRamToVram                       ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
+  call  WaitVblank
+
+  ld    hl,$8000 + (100*128) + (000/2) - 128
+  ld    de,$8000 + (112*128) + (064/2) - 128
+  ld    bc,$0000 + (019*256) + (128/2)
+  call  CopyRamToVram                       ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
+
+;check if current score is new highscore
+
+  ld    hl,10
+  ld    (HighScoreBlockHit),hl
+
+
+  .EndCheckNewHighScore:
+  ;set completed %
+  ld    hl,(HighScoreBlockHit)
+  ld    a,l
+  cp    101
+  jr    c,.SetCompletePercentage
+  ld    a,100
+  .SetCompletePercentage:
+  ld    (BlockHitCompletePercentage),a
+
+;  call  .SetScore
+;  call  .SetBestScore
+;  call  .SetCompleted
+;  call  .SetPercentageSymbol
+
+  ld    a,1*32 + 31
+	ld    (PageOnNextVblank),a
+  call  SpritesOff
+
+  xor   a
+  ld    (freezecontrols?),a  
+  call  STOPWAITSPACEPRESSED
+
+  jp    BackToTitleScreenBlockHit
+
+.PercentageSymbol:                     ;freely usable anywhere
+  db    163,000,060,001                 ;sx,--,sy,spage
+  db    169,000,107,001                 ;dx,--,dy,dpage
+  db    007,000,006,000                 ;nx,--,ny,--
+  db    000,%0000 0000,$90              ;fast copy -> Copy from right to left     
+  .SetPercentageSymbol:
+  ld    hl,.PercentageSymbol
+  ld    de,FreeToUseFastCopy0
+  ld    bc,15
+  ldir
+
+  ld    a,(PutLetterNonTransparant+dx)
+  ld    (FreeToUseFastCopy0+dx),a
+  ld    hl,FreeToUseFastCopy0
+  call  DoCopy
+  ret
+
+  .CompletedDX: equ 148
+  .CompletedDY: equ 105
+  .SetCompleted:
+	ld    a,1
+  ld    (PutLetterNonTransparant+dPage),a             ;set page where to put text
+  ld    a,.CompletedDX
+  ld    (PutLetterNonTransparant+dx),a
+  ld    a,.CompletedDY
+  ld    (PutLetterNonTransparant+dy),a
+
+  ld    hl,(BikeRaceCompletePercentage)
+  ld    h,0
+  call  NUM_TO_ASCII                      ;HL = 16-bit number (0-65535), Output: ASCII string stored at Ascii5Byte:
+  call  SetHLToAscii5ByteSkip0
+  call  .PutTextLoopDark
+  ret
+
+  .BestScoreDX: equ 138 - 4
+  .BestScoreDY: equ 079 + 13
+  .SetBestScore:
+	ld    a,1
+  ld    (PutLetterNonTransparant+dPage),a             ;set page where to put text
+  ld    a,.BestScoreDX
+  ld    (PutLetterNonTransparant+dx),a
+  ld    a,.BestScoreDY
+  ld    (PutLetterNonTransparant+dy),a
+
+  ld    a,(PenguinGameLevelHighest)
+  cp    10
+  jr    nc,.GoSetHighestLevel
+  ld    a,(PutLetterNonTransparant+dx)
+  add   a,7
+  ld    (PutLetterNonTransparant+dx),a
+  .GoSetHighestLevel:
+
+  ld    a,(PenguinGameLevelHighest)
+  ld    l,a
+  ld    h,0
+  call  NUM_TO_ASCII                      ;HL = 16-bit number (0-65535), Output: ASCII string stored at Ascii5Byte:
+  call  SetHLToAscii5ByteSkip0
+  call  .PutTextLoopDark
+
+  ld    a,.BestScoreDX+17
+  ld    (PutLetterNonTransparant+dx),a
+
+  ld    a,(PenguinGameLapsHighest)
+  ld    l,a
+  ld    h,0
+  call  NUM_TO_ASCII                      ;HL = 16-bit number (0-65535), Output: ASCII string stored at Ascii5Byte:
+  call  SetHLToAscii5ByteSkip0
+  call  .PutTextLoopDark
+  ret
+
+  .ScoreDX: equ 138
+  .ScoreDY: equ 079
+  .SetScore:
+	ld    a,1
+  ld    (PutLetterNonTransparant+dPage),a             ;set page where to put text
+  ld    a,.ScoreDX
+  ld    (PutLetterNonTransparant+dx),a
+  ld    a,.ScoreDY
+  ld    (PutLetterNonTransparant+dy),a
+
+  ld    a,(PenguinGameLevel)
+  cp    10
+  jr    nc,.GoSetLevel
+  ld    a,(PutLetterNonTransparant+dx)
+  add   a,7
+  ld    (PutLetterNonTransparant+dx),a
+  .GoSetLevel:
+
+  ld    a,(PenguinGameLevel)
+  ld    l,a
+  ld    h,0
+  call  NUM_TO_ASCII                      ;HL = 16-bit number (0-65535), Output: ASCII string stored at Ascii5Byte:
+  call  SetHLToAscii5ByteSkip0
+  call  .PutTextLoopDark
+
+  ld    a,.ScoreDX+17
+  ld    (PutLetterNonTransparant+dx),a
+
+  ld    a,(PenguinGameLaps)
+  ld    l,a
+  ld    h,0
+  call  NUM_TO_ASCII                      ;HL = 16-bit number (0-65535), Output: ASCII string stored at Ascii5Byte:
+  call  SetHLToAscii5ByteSkip0
+  call  .PutTextLoopDark
+  ret
+
+  .PutTextLoopDark:
+  ld    a,6
+  ld    (PutLetterNonTransparant+nx),a
+  ld    a,9
+  ld    (PutLetterNonTransparant+ny),a
+
+  ld    a,(hl)
+  cp    255
+  ret   z
+  sub   a,$30                             ;0=$30
+  add   a,a                               ;*2
+  add   a,a                               ;*4
+  add   a,a                               ;*8
+  ld    (PutLetterNonTransparant+sx),a
+  push  hl
+  ld    hl,PutLetterNonTransparant
+  call  DoCopy
+  pop   hl
+
+  ld    a,(PutLetterNonTransparant+dx)
+  add   a,7
+  ld    (PutLetterNonTransparant+dx),a
+  inc   hl
+  jr    .PutTextLoopDark
+
+
+
+
+
+
+
+
+
+
+
+
+
+;this routine puts blockhit titlescreen in page 0, while game screen is in page 1 
+BackToTitleScreenBlockHit:
+  ;set buttons
+  ld    hl,PenguinBikeRaceButtonsPart1Address
+  ld    a,PenguinBikeRaceButtonsGfxBlock
+  call  SetGfxAt8000InRam                             ;in: hl=adress in rom page 1, a=block, out: puts gfx in page 2 in ram at $8000
+
+  call  WaitVblank
+  call  WaitVblank
+
+  ld    hl,$8000 + (000*128) + (000/2) - 128
+  ld    de,$8000 + (221*128) + (000/2) - 128
+  ld    bc,$0000 + (010*256) + (256/2)              ;10 lines for the buttons
+  call  CopyRamToVram                       ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
+
+  ;set title screen
+  ld    hl,BlockHitTitleScreenPart1Address
+  ld    a,BlockHitTitleScreenGfxBlock
+  call  SetGfxAt8000InRam                             ;in: hl=adress in rom page 1, a=block, out: puts gfx in page 2 in ram at $8000
+
+  call  WaitVblank
+  call  WaitVblank
+
+  ld    hl,$8000 + (000*128) + (000/2) - 128
+  ld    de,$0000 + (000*128) + (000/2) - 128
+
+  ld    b,12                                        ;12 * 10 lines=120 lines
+  .loop:
+  push  bc
+  call  .Copy10lines
+  ld    bc,10*128
+  add   hl,bc
+  ex    de,hl
+  add   hl,bc
+  ex    de,hl
+  pop   bc
+  djnz  .loop
+
+  ld    bc,$0000 + (008*256) + (256/2)              ;8 more lines
+  call  CopyRamToVram                       ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
+
+  ld    hl,BlockHitTitleScreenPart2Address
+  ld    a,BlockHitTitleScreenGfxBlock
+  call  SetGfxAt8000InRam                             ;in: hl=adress in rom page 1, a=block, out: puts gfx in page 2 in ram at $8000
+
+  call  WaitVblank
+  call  WaitVblank
+
+  ld    hl,$8000 + (000*128) + (000/2) - 128
+  ld    de,$0000 + (128*128) + (000/2) - 128
+  ld    bc,$0000 + (007*256) + (256/2)              ;7 more lines
+  call  CopyRamToVram                       ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
+
+  ;set palette
+  ld    hl,.BlockHitTitleScreenPalette
+  ld    de,ArcadeGamePalette
+  ld    bc,32
+  ldir
+
+  ld    a,0*32 + 31
+	ld    (PageOnNextVblank),a
+  call  screenon
+
+  .Engine:
+  ld    a,(framecounter2)
+  inc   a
+  ld    (framecounter2),a
+  call  PopulateControls
+  call  .SelectButton
+  call  .BlinkSelectedButton
+
+  xor   a
+  ld    hl,vblankintflag
+  .checkflag:
+  cp    (hl)
+  jr    z,.checkflag
+  ld    (hl),a
+  jp    .Engine
+
+  .SelectButton:
+;
+; bit	7	  6	  5		    4		    3		    2		  1		  0
+;		  0	  0	  trig-b	trig-a	right	  left	down	up	(joystick)
+;		  F5	F1	'M'		  space	  right	  left	down	up	(keyboard)
+;
+	ld		a,(NewPrContr)
+	bit		5,a           ;trig b pressed ?
+  jr    nz,.TriggerBPressed
+	bit		4,a           ;trig a pressed ?
+  jr    nz,.TriggerAPressed
+  ret
+  .TriggerBPressed:
+  ld    a,0                                ;back to arcade hall 1
+  ld    (CurrentRoom),a
+  ld    a,1
+  ld    (ChangeRoom?),a
+  pop   af
+  ret
+
+  .TriggerAPressed:
+  ;reset time, level and lap
+  ld    hl,PenguinBikeRacePart1Address
+  ld    a,PenguinBikeRaceGfxBlock
+  call  SetGfxAt8000InRam                             ;in: hl=adress in rom page 1, a=block, out: puts gfx in page 2 in ram at $8000
+
+  ld    a,1
+  ld    (Vdp_Write_HighPage?),a
+  ld    hl,$8000 + (008*128) + (000/2) - 128
+  ld    de,$0000 + (008*128) + (000/2) - 128
+  ld    bc,$0000 + (006*256) + (256/2)
+  call  CopyRamToVram                       ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
+  xor   a
+  ld    (Vdp_Write_HighPage?),a
+
+  call  ResetVariablesPenguinRace
+  call  WriteSpatToVram
+  ld    a,2*32 + 31
+	ld    (PageOnNextVblank),a
+
+  call  SpritesOn
+
+  ld    hl,.CopyPage2ToPage3
+  call  DoCopy
+  ld    hl,.CopyPage2ToPage1
+  call  DoCopy
+  ld    hl,.CopyPage2ToPage0
+  call  DoCopy
+  call  WaitVdpReady
+  call  WaitVblank
+  call  WaitVblank
+;.q: jp .q
+
+  pop   af
+  xor   a
+	ld		(NewPrContr),a
+  ret
+
+  .CopyPage2ToPage1:
+	db		0,0,0,2
+	db		0,0,0,1
+	db		0,1,135,0
+	db		0,0,$d0	
+  .CopyPage2ToPage3:
+	db		0,0,0,2
+	db		0,0,0,3
+	db		0,1,135,0
+	db		0,0,$d0	
+  .CopyPage2ToPage0:
+	db		0,0,0,2
+	db		0,0,0,0
+	db		0,1,135,0
+	db		0,0,$d0	
+
+  .BlinkSelectedButton:
+  ld    a,(framecounter2)
+  and   31
+  cp    16
+  jr    c,.ButtonOff
+
+  .ButtonOn:
+  ld    hl,.ShowStartButtonBlinkOn
+  call  DoCopy
+  ret
+
+  .ButtonOff:
+  ld    hl,.ShowStartButtonBlinkOff
+  call  DoCopy
+  ret
+
+  .ShowStartButtonBlinkOff:
+  db    000,000,221,001                 ;sx,--,sy,spage
+  db    110,000,123,000                 ;dx,--,dy,dpage
+  db    038,000,010,000                 ;nx,--,ny,--
+  db    000,%0000 0000,$d0              ;fast copy -> Copy from right to left     
+
+  .ShowStartButtonBlinkOn:
+  db    038,000,221,001                 ;sx,--,sy,spage
+  db    110,000,123,000                 ;dx,--,dy,dpage
+  db    038,000,010,000                 ;nx,--,ny,--
+  db    000,%0000 0000,$d0              ;fast copy -> Copy from right to left     
+
+
+  .BlockHitTitleScreenPalette:
+  incbin "..\grapx\BlockHit\titlescreen\TitleScreen.sc5",$7680+7,32
+
+  .Copy10lines:
+  push  hl
+  push  de
+  ld    bc,$0000 + (010*256) + (256/2)
+  call  CopyRamToVram                       ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
+  call  WaitVblank
+  pop   de
+  pop   hl
+  ret
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 PutNewBlocks:
   ld    a,(PutNewBlocksCounter)
@@ -254,10 +737,12 @@ SetBlockHitGameSprites:
 	call	SetVdp_Write
 
   ;there are 13 different blocks with sizes from 1 pixel to 13 pixels, we write them to character table, sprites can switch size with the 3d byte in the spat table
+  ;there are 13 different explosion frames, we write them also to character table, sprites can switch size with the 3d byte in the spat table
 	ld		hl,BlockCharacter13PixWide	;sprite 0 character table in VRAM
 	ld		c,$98
 	call	outix384		;write sprite color of pointer and hand to vram
-	call	outix32		  ;write sprite color of pointer and hand to vram
+	call	outix384		;write sprite color of pointer and hand to vram
+	call	outix64		  ;write sprite color of pointer and hand to vram
 
 	xor		a				;page 0/1
 	ld		hl,sprcoladdr+0*16	;sprite 0 color table in VRAM
@@ -343,9 +828,23 @@ CheckProjectileHitsBlock:
   jr    nz,.CheckNextBlock
   inc   hl                            ;x block
   ld    a,(spat+1+31*4)               ;x projectile
+  add   a,26
+  jr    nc,.NotCarry
+  ld    a,255
+  .NotCarry:
+
   cp    (hl)
   dec   hl                            ;y block
   jr    c,.CheckNextBlock
+
+  ;we hit this block, first check if this block is already exploding
+  inc   hl                            ;x block
+  inc   hl                            ;character block
+  ld    a,(hl)
+  cp    13*4                          ;starting frame explosion
+  dec   hl                            ;x block
+  dec   hl                            ;y block
+  jr    nc,.CheckNextBlock
 
   ;we hit this block, remove projectile
   ld    a,1
@@ -354,7 +853,7 @@ CheckProjectileHitsBlock:
   ld    (spat+0+31*4),a               ;y projectile
 
 ;  ld    a,(RemoveBlocksThatWeHit?)    ;maybe this can be used if a certain weapon is picked up ?
-  or    a
+;  or    a
 ;  jr    nz,.RemoveBlockThatWeHit
 
   ;add a new block to the spat in front of the block we hit
@@ -385,7 +884,7 @@ CheckProjectileHitsBlock:
   inc   hl
   inc   hl                            ;character block
   ld    (hl),0
-  jp    CheckRemoveEntireColumn
+  ret
 
   .RemoveBlockThatWeHit:              ;maybe this can be used if a certain weapon is picked up ?
   ld    (hl),213
@@ -398,8 +897,31 @@ CheckProjectileHitsBlock:
   djnz  .loop
   ret
 
-CheckRemoveEntireColumn:              ;in: a=x block we just added
-  ;search 5 blocks with the same x
+CheckInitiateExplosionEntireColumn:
+  ;first search for the lowest x value among all blocks with character nr 0 (completely normal block)
+  ld    hl,spat+2                     ;character block 1
+  ld    de,4
+  ld    b,31                          ;check first 31 sprites (last sprite is player projectile)
+  ld    c,255                         ;lowest x value among all blocks with character nr 0 (completely normal block)
+
+  .loop3:
+  ld    a,(hl)
+  or    a                             ;check if this block is character nr 0 (completely normal block)
+  jr    nz,.CheckNextBlock
+  dec   hl                            ;x block
+  ld    a,(hl)
+  inc   hl                            ;character block
+  cp    1
+  jr    z,.CheckNextBlock
+  cp    c
+  jr    nc,.CheckNextBlock
+  ld    c,a                           ;lowest x value among all blocks with character nr 0 (completely normal block)
+  .CheckNextBlock:
+  add   hl,de
+  djnz  .loop3
+
+  ;search if there are 5 blocks with this same x
+  ld    a,c                           ;lowest x value among all blocks with character nr 0 (completely normal block)
   ld    hl,spat+1                     ;x block 1
   ld    de,4
   ld    b,31                          ;check first 31 sprites (last sprite is player projectile)
@@ -414,30 +936,53 @@ CheckRemoveEntireColumn:              ;in: a=x block we just added
   djnz  .loop
 
   ld    b,a                           ;x block we just added
-
   ld    a,c
   cp    5
   ret   nz
-
   ld    a,b                           ;x block we just added
 
-  ;we found 5 blocks with the same x, remove them (or reduce their value by 1)
+  ;we found 5 blocks with character nr 0 (completely normal block) with the same x, set character value to 12*4 (starting animation of explosion)
   ld    hl,spat+1                     ;x block 1
   ld    de,4
   ld    b,31                          ;check first 31 sprites (last sprite is player projectile)
 
   .loop2:
   cp    (hl)
-  jr    nz,.EndCheckSameX2
+  jr    nz,.CheckNextBlock2
+  inc   hl                            ;character block
+  ld    (hl),13*4                     ;starting frame explosion
+  dec   hl                            ;x block
+  .CheckNextBlock2:
+  add   hl,de
+  djnz  .loop2
+  ret
 
+AnimateBlockExplosion:
+  ;we found 5 blocks with character nr 0 (completely normal block) with the same x, set character value to 12*4 (starting animation of explosion)
+  ld    hl,spat+2                     ;character block 1
+  ld    de,4
+  ld    b,31                          ;check first 31 sprites (last sprite is player projectile)
+
+  .loop:
+  ld    a,(hl)
+  cp    13*4
+  jr    c,.CheckNextBlock
+  add   a,4
+  ld    (hl),a  
+  cp    26*4
+  jp    nz,.CheckNextBlock
+
+  ;remove at end of animation
+  dec   hl                            ;x block
   ld    (hl),1
   dec   hl                            ;y block
   ld    (hl),213
-  inc   hl
+  inc   hl                            ;x block
+  inc   hl                            ;character block
 
-  .EndCheckSameX2:
+  .CheckNextBlock:
   add   hl,de
-  djnz  .loop2
+  djnz  .loop
   ret
 
 MoveCannon:
@@ -992,6 +1537,461 @@ BlockCharacter1PixWide:
   db 0
   db 0
   db 0
+
+
+
+
+
+
+
+
+
+BlockCharacterExploding01:
+  db 0
+  db 127
+  db 127
+  db 127
+  db 127
+  db 127
+  db 127
+  db 127
+  db 127
+  db 127
+  db 127
+  db 127
+  db 127
+  db 127
+  db 127
+  db 0
+  db 0
+  db 240
+  db 240
+  db 240
+  db 240
+  db 240
+  db 240
+  db 240
+  db 240
+  db 240
+  db 240
+  db 240
+  db 240
+  db 240
+  db 240
+  db 0
+
+BlockCharacterExploding02:
+  db 0
+  db 0
+  db 63
+  db 63
+  db 63
+  db 63
+  db 63
+  db 63
+  db 63
+  db 63
+  db 63
+  db 63
+  db 63
+  db 63
+  db 0
+  db 0
+  db 0
+  db 0
+  db 224
+  db 224
+  db 224
+  db 224
+  db 224
+  db 224
+  db 224
+  db 224
+  db 224
+  db 224
+  db 224
+  db 224
+  db 0
+  db 0
+
+BlockCharacterExploding03:
+  db 0
+  db 0
+  db 0
+  db 31
+  db 31
+  db 31
+  db 31
+  db 31
+  db 31
+  db 31
+  db 31
+  db 31
+  db 31
+  db 0
+  db 0
+  db 0
+  db 0
+  db 0
+  db 0
+  db 192
+  db 192
+  db 192
+  db 192
+  db 192
+  db 192
+  db 192
+  db 192
+  db 192
+  db 192
+  db 0
+  db 0
+  db 0
+
+BlockCharacterExploding04:
+  db 0
+  db 0
+  db 0
+  db 0
+  db 15
+  db 15
+  db 15
+  db 15
+  db 15
+  db 15
+  db 15
+  db 15
+  db 0
+  db 0
+  db 0
+  db 0
+  db 0
+  db 0
+  db 0
+  db 0
+  db 128
+  db 128
+  db 128
+  db 128
+  db 128
+  db 128
+  db 128
+  db 128
+  db 0
+  db 0
+  db 0
+  db 0
+
+BlockCharacterExploding05:
+  db 0
+  db 0
+  db 0
+  db 0
+  db 0
+  db 7
+  db 7
+  db 7
+  db 7
+  db 7
+  db 7
+  db 0
+  db 0
+  db 0
+  db 0
+  db 0
+  db 0
+  db 0
+  db 0
+  db 0
+  db 0
+  db 0
+  db 0
+  db 0
+  db 0
+  db 0
+  db 0
+  db 0
+  db 0
+  db 0
+  db 0
+  db 0
+
+BlockCharacterExploding06:
+  db 0
+  db 0
+  db 0
+  db 0
+  db 0
+  db 0
+  db 2
+  db 2
+  db 2
+  db 2
+  db 0
+  db 0
+  db 0
+  db 0
+  db 0
+  db 0
+  db 0
+  db 0
+  db 0
+  db 0
+  db 0
+  db 0
+  db 0
+  db 0
+  db 0
+  db 0
+  db 0
+  db 0
+  db 0
+  db 0
+  db 0
+  db 0
+
+BlockCharacterExploding07:
+  db 0
+  db 0
+  db 0
+  db 0
+  db 0
+  db 0
+  db 0
+  db 2
+  db 2
+  db 0
+  db 0
+  db 0
+  db 0
+  db 0
+  db 0
+  db 0
+  db 0
+  db 0
+  db 0
+  db 0
+  db 0
+  db 0
+  db 0
+  db 0
+  db 0
+  db 0
+  db 0
+  db 0
+  db 0
+  db 0
+  db 0
+  db 0
+
+BlockCharacterExploding08:
+  db 0
+  db 0
+  db 0
+  db 0
+  db 0
+  db 0
+  db 5
+  db 0
+  db 0
+  db 5
+  db 0
+  db 0
+  db 0
+  db 0
+  db 0
+  db 0
+  db 0
+  db 0
+  db 0
+  db 0
+  db 0
+  db 0
+  db 0
+  db 0
+  db 0
+  db 0
+  db 0
+  db 0
+  db 0
+  db 0
+  db 0
+  db 0
+
+BlockCharacterExploding09:
+  db 0
+  db 0
+  db 0
+  db 0
+  db 0
+  db 8
+  db 0
+  db 0
+  db 0
+  db 0
+  db 8
+  db 0
+  db 0
+  db 0
+  db 0
+  db 0
+  db 0
+  db 0
+  db 0
+  db 0
+  db 0
+  db 128
+  db 0
+  db 0
+  db 0
+  db 0
+  db 128
+  db 0
+  db 0
+  db 0
+  db 0
+  db 0
+
+BlockCharacterExploding10:
+  db 0
+  db 0
+  db 0
+  db 0
+  db 16
+  db 0
+  db 0
+  db 0
+  db 0
+  db 0
+  db 0
+  db 16
+  db 0
+  db 0
+  db 0
+  db 0
+  db 0
+  db 0
+  db 0
+  db 0
+  db 64
+  db 0
+  db 0
+  db 0
+  db 0
+  db 0
+  db 0
+  db 64
+  db 0
+  db 0
+  db 0
+  db 0
+
+BlockCharacterExploding11:
+  db 0
+  db 0
+  db 0
+  db 32
+  db 0
+  db 0
+  db 0
+  db 0
+  db 0
+  db 0
+  db 0
+  db 0
+  db 32
+  db 0
+  db 0
+  db 0
+  db 0
+  db 0
+  db 0
+  db 32
+  db 0
+  db 0
+  db 0
+  db 0
+  db 0
+  db 0
+  db 0
+  db 0
+  db 32
+  db 0
+  db 0
+  db 0
+
+BlockCharacterExploding12:
+  db 0
+  db 0
+  db 64
+  db 0
+  db 0
+  db 0
+  db 0
+  db 0
+  db 0
+  db 0
+  db 0
+  db 0
+  db 0
+  db 64
+  db 0
+  db 0
+  db 0
+  db 0
+  db 16
+  db 0
+  db 0
+  db 0
+  db 0
+  db 0
+  db 0
+  db 0
+  db 0
+  db 0
+  db 0
+  db 16
+  db 0
+  db 0
+
+BlockCharacterExploding13:
+  db 0
+  db 128
+  db 0
+  db 0
+  db 0
+  db 0
+  db 0
+  db 0
+  db 0
+  db 0
+  db 0
+  db 0
+  db 0
+  db 0
+  db 128
+  db 0
+  db 0
+  db 8
+  db 0
+  db 0
+  db 0
+  db 0
+  db 0
+  db 0
+  db 0
+  db 0
+  db 0
+  db 0
+  db 0
+  db 0
+  db 8
+  db 0
+
+
+
+
+
 
 
 

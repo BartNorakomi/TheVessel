@@ -888,8 +888,6 @@ HandlePenguinGameOver:
   inc   hl
   jr    .PutTextLoopDark
 
-  ret
-
 HandlePenguinGameHud:
   ld    a,(framecounter2)
   and   15

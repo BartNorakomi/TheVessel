@@ -3806,7 +3806,9 @@ BallsPurchased:               db %0000 0000     ;b0=tennisball,b1=billiardball,b
 CurrentBallsSelected:         db 0              ;0=basketball,1=tennisball,2=billiardball,3=baseball,4=soccerball,5=volleyball,6=bowlingball,7=golfball,8=beachball
 
 HighScoreRoadFighter: db 0
-HighScoreBlox: db 0
+
+BlockHitCompletePercentage: db 0
+HighScoreBlockHit:          dw 0
 
 BikeRaceCompletePercentage: db 0
 HighScoreBikeRace:          dw 0

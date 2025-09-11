@@ -718,6 +718,7 @@ UpgradeMenuGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
 
 DrillingLocationsGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
 PinPointIconGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
+BlockHitGameOverGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
 	phase	$4000
 	DrillingLocationsGfxPart1Address:
   incbin "..\grapx\DrillingLocations\DrillingLocationsPart1.sc5.pck"
@@ -725,12 +726,15 @@ PinPointIconGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSiz
   incbin "..\grapx\DrillingLocations\DrillingLocationsPart2.sc5.pck"
 	PinPointIconGfxPart1Address:
   incbin "..\grapx\DrillingLocations\PinPointIconPart1.sc5.pck"
+	BlockHitGameOverPart1Address:
+  incbin "..\grapx\BlockHit\GameOverPart1.sc5.pck"
 	.CheckBlockFull:	dw	$+$8000
 	dephase
 	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
 
 PenguinBikeRaceTitleScreenGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
 PenguinBikeRaceButtonsGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
+BlockHitTitleScreenGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
 	phase	$4000
 	PenguinBikeRaceTitleScreenPart1Address:
   incbin "..\grapx\penguinbikerace\titlescreen\TitleScreenPart1.sc5.pck"
@@ -738,6 +742,10 @@ PenguinBikeRaceButtonsGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /R
   incbin "..\grapx\penguinbikerace\titlescreen\TitleScreenPart2.sc5.pck"
 	PenguinBikeRaceButtonsPart1Address:
   incbin "..\grapx\penguinbikerace\titlescreen\ButtonsPart1.sc5.pck"
+	BlockHitTitleScreenPart1Address:
+  incbin "..\grapx\BlockHit\titlescreen\TitleScreenPart1.sc5.pck"
+	BlockHitTitleScreenPart2Address:
+  incbin "..\grapx\BlockHit\titlescreen\TitleScreenPart2.sc5.pck"
 	.CheckBlockFull:	dw	$+$8000
 	dephase
 	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
