@@ -734,6 +734,7 @@ BlockHitGameOverGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBloc
 
 PenguinBikeRaceTitleScreenGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
 PenguinBikeRaceButtonsGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
+BlockHitButtonsGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
 BlockHitTitleScreenGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
 	phase	$4000
 	PenguinBikeRaceTitleScreenPart1Address:
@@ -746,6 +747,9 @@ BlockHitTitleScreenGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomB
   incbin "..\grapx\BlockHit\titlescreen\TitleScreenPart1.sc5.pck"
 	BlockHitTitleScreenPart2Address:
   incbin "..\grapx\BlockHit\titlescreen\TitleScreenPart2.sc5.pck"
+	BlockHitButtonsPart1Address:
+  incbin "..\grapx\BlockHit\titlescreen\ButtonsPart1.sc5.pck"
+
 	.CheckBlockFull:	dw	$+$8000
 	dephase
 	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block

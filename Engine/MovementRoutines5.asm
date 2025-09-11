@@ -108,10 +108,10 @@ ResetVariablesBlockHitGame:
   ret
 
 BlocksColumnsTable:
-  db    1,1,1,1,0
+  db    2,1,1,1,0
 
-  db    0,0,1,1,1
-  db    1,0,1,0,1
+  db    0,0,1,1,2
+  db    1,0,1,0,2
   db    0,1,1,1,0
   db    0,1,0,1,0
 
@@ -205,10 +205,18 @@ CheckGameOverBlockHitGame:
 	bit		6,a           ;f1 pressed ?
   jr    nz,.GameOver
 
+  ;search for a block with x value 32
+  ld    hl,spat+1                     ;x block 1
+  ld    de,4
+  ld    b,31                          ;check first 31 sprites (last sprite is player projectile)
+  ld    a,48                          ;x value block hitting wall
 
-
+  .loop:
+  cp    (hl)
+  jr    z,.GameOver
+  add   hl,de
+  djnz  .loop
   ret
-
 
   .GameOver:
 	ld    a,(screenpage)
@@ -261,7 +269,6 @@ CheckGameOverBlockHitGame:
 
   ld    hl,10
   ld    (HighScoreBlockHit),hl
-
 
   .EndCheckNewHighScore:
   ;set completed %
@@ -434,8 +441,8 @@ CheckGameOverBlockHitGame:
 ;this routine puts blockhit titlescreen in page 0, while game screen is in page 1 
 BackToTitleScreenBlockHit:
   ;set buttons
-  ld    hl,PenguinBikeRaceButtonsPart1Address
-  ld    a,PenguinBikeRaceButtonsGfxBlock
+  ld    hl,BlockHitButtonsPart1Address
+  ld    a,BlockHitButtonsGfxBlock
   call  SetGfxAt8000InRam                             ;in: hl=adress in rom page 1, a=block, out: puts gfx in page 2 in ram at $8000
 
   call  WaitVblank
@@ -443,7 +450,15 @@ BackToTitleScreenBlockHit:
 
   ld    hl,$8000 + (000*128) + (000/2) - 128
   ld    de,$8000 + (221*128) + (000/2) - 128
-  ld    bc,$0000 + (010*256) + (256/2)              ;10 lines for the buttons
+  ld    bc,$0000 + (015*256) + (256/2)              ;10 lines for the buttons
+  call  CopyRamToVram                       ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
+
+  call  WaitVblank
+  call  WaitVblank
+
+  ld    hl,$8000 + (015*128) + (000/2) - 128
+  ld    de,$8000 + (236*128) + (000/2) - 128
+  ld    bc,$0000 + (015*256) + (256/2)              ;10 lines for the buttons
   call  CopyRamToVram                       ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
 
   ;set title screen
@@ -500,7 +515,7 @@ BackToTitleScreenBlockHit:
   ld    (framecounter2),a
   call  PopulateControls
   call  .SelectButton
-  call  .BlinkSelectedButton
+  call  .BlinkPlayButton
 
   xor   a
   ld    hl,vblankintflag
@@ -518,9 +533,9 @@ BackToTitleScreenBlockHit:
 ;
 	ld		a,(NewPrContr)
 	bit		5,a           ;trig b pressed ?
-  jr    nz,.TriggerBPressed
+  jp    nz,.TriggerBPressed
 	bit		4,a           ;trig a pressed ?
-  jr    nz,.TriggerAPressed
+  jp    nz,.TriggerAPressed
   ret
   .TriggerBPressed:
   ld    a,0                                ;back to arcade hall 1
@@ -528,90 +543,133 @@ BackToTitleScreenBlockHit:
   ld    a,1
   ld    (ChangeRoom?),a
   pop   af
+
+  ld    hl,.spatReset
+  ld    de,spat
+  ld    bc,32*4
+  ldir
   ret
+
+  .spatReset:						;sprite attribute table (y,x)
+	db		230,100,00,0	,230,100,04,0	,230,100,08,0	,230,116,12,0
+	db		230,116,16,0	,230,116,20,0	,230,100,24,0	,230,100,28,0
+	db		230,100,32,0	,230,116,36,0	,230,116,40,0	,230,116,44,0
+	db		230,132,48,0	,230,132,52,0	,230,230,56,0	,230,230,60,0
+
+	db		230,230,64,0	,230,230,68,0	,230,230,72,0	,230,230,76,0
+	db		230,230,80,0	,230,230,84,0	,230,230,88,0	,230,230,92,0
+	db		230,230,96,0	,230,230,100,0	,230,230,104,0	,230,230,108,0
+	db		230,230,112,0	,230,230,116,0	,230,230,120,0	,230,230,124,0
+
 
   .TriggerAPressed:
   ;reset time, level and lap
-  ld    hl,PenguinBikeRacePart1Address
-  ld    a,PenguinBikeRaceGfxBlock
-  call  SetGfxAt8000InRam                             ;in: hl=adress in rom page 1, a=block, out: puts gfx in page 2 in ram at $8000
+;  ld    hl,PenguinBikeRacePart1Address
+;  ld    a,PenguinBikeRaceGfxBlock
+;  call  SetGfxAt8000InRam                             ;in: hl=adress in rom page 1, a=block, out: puts gfx in page 2 in ram at $8000
 
-  ld    a,1
-  ld    (Vdp_Write_HighPage?),a
-  ld    hl,$8000 + (008*128) + (000/2) - 128
-  ld    de,$0000 + (008*128) + (000/2) - 128
-  ld    bc,$0000 + (006*256) + (256/2)
-  call  CopyRamToVram                       ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
-  xor   a
-  ld    (Vdp_Write_HighPage?),a
+;  ld    a,1
+;  ld    (Vdp_Write_HighPage?),a
+;  ld    hl,$8000 + (008*128) + (000/2) - 128
+;  ld    de,$0000 + (008*128) + (000/2) - 128
+;  ld    bc,$0000 + (006*256) + (256/2)
+;  call  CopyRamToVram                       ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
+;  xor   a
+;  ld    (Vdp_Write_HighPage?),a
 
-  call  ResetVariablesPenguinRace
-  call  WriteSpatToVram
-  ld    a,2*32 + 31
-	ld    (PageOnNextVblank),a
-
-  call  SpritesOn
-
-  ld    hl,.CopyPage2ToPage3
-  call  DoCopy
-  ld    hl,.CopyPage2ToPage1
-  call  DoCopy
-  ld    hl,.CopyPage2ToPage0
+  ld    hl,.CopyPage3ToPage1
   call  DoCopy
   call  WaitVdpReady
   call  WaitVblank
   call  WaitVblank
-;.q: jp .q
+
+  call  ResetVariablesBlockHitGame
+  ld    a,1*32 + 31
+	ld    (PageOnNextVblank),a
+  call  WriteSpatToVram
+  call  SpritesOn
+
+  ld    hl,.CopyPage3ToPage0
+  call  DoCopy
+
+  call  WaitVdpReady
+  call  WaitVblank
+  call  WaitVblank
 
   pop   af
   xor   a
 	ld		(NewPrContr),a
   ret
 
-  .CopyPage2ToPage1:
-	db		0,0,0,2
+  .CopyPage3ToPage1:
+	db		0,0,0,3
 	db		0,0,0,1
 	db		0,1,135,0
 	db		0,0,$d0	
-  .CopyPage2ToPage3:
-	db		0,0,0,2
+
+  .CopyPage3ToPage0:
 	db		0,0,0,3
-	db		0,1,135,0
-	db		0,0,$d0	
-  .CopyPage2ToPage0:
-	db		0,0,0,2
 	db		0,0,0,0
 	db		0,1,135,0
 	db		0,0,$d0	
 
-  .BlinkSelectedButton:
+  .BlinkPlayButton:
   ld    a,(framecounter2)
   and   31
-  cp    16
-  jr    c,.ButtonOff
+  cp    2
+  jr    c,.Button2
+  cp    4
+  jr    c,.Button3
+  cp    6
+  jr    c,.Button4
+  cp    8
+  jr    c,.Button3
+  cp    10
+  jr    c,.Button2
 
-  .ButtonOn:
-  ld    hl,.ShowStartButtonBlinkOn
+  .Button1:
+  ld    hl,.ShowButton1
   call  DoCopy
   ret
 
-  .ButtonOff:
-  ld    hl,.ShowStartButtonBlinkOff
+  .Button2:
+  ld    hl,.ShowButton2
   call  DoCopy
   ret
 
-  .ShowStartButtonBlinkOff:
+  .Button3:
+  ld    hl,.ShowButton3
+  call  DoCopy
+  ret
+
+  .Button4:
+  ld    hl,.ShowButton4
+  call  DoCopy
+  ret
+
+  .ShowButton1:
   db    000,000,221,001                 ;sx,--,sy,spage
-  db    110,000,123,000                 ;dx,--,dy,dpage
-  db    038,000,010,000                 ;nx,--,ny,--
+  db    088,000,103,000                 ;dx,--,dy,dpage
+  db    058,000,030,000                 ;nx,--,ny,--
   db    000,%0000 0000,$d0              ;fast copy -> Copy from right to left     
 
-  .ShowStartButtonBlinkOn:
-  db    038,000,221,001                 ;sx,--,sy,spage
-  db    110,000,123,000                 ;dx,--,dy,dpage
-  db    038,000,010,000                 ;nx,--,ny,--
-  db    000,%0000 0000,$d0              ;fast copy -> Copy from right to left     
+  .ShowButton2:
+  db    058,000,221,001                 ;sx,--,sy,spage
+  db    088,000,103,000                 ;dx,--,dy,dpage
+  db    058,000,030,000                 ;nx,--,ny,--
+  db    000,%0000 0000,$d0              ;fast copy -> Copy from right to left    
 
+  .ShowButton3:
+  db    116,000,221,001                 ;sx,--,sy,spage
+  db    088,000,103,000                 ;dx,--,dy,dpage
+  db    058,000,030,000                 ;nx,--,ny,--
+  db    000,%0000 0000,$d0              ;fast copy -> Copy from right to left   
+
+  .ShowButton4:
+  db    174,000,221,001                 ;sx,--,sy,spage
+  db    088,000,103,000                 ;dx,--,dy,dpage
+  db    058,000,030,000                 ;nx,--,ny,--
+  db    000,%0000 0000,$d0              ;fast copy -> Copy from right to left   
 
   .BlockHitTitleScreenPalette:
   incbin "..\grapx\BlockHit\titlescreen\TitleScreen.sc5",$7680+7,32
@@ -625,26 +683,6 @@ BackToTitleScreenBlockHit:
   pop   de
   pop   hl
   ret
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -693,6 +731,12 @@ PutNewBlocks:
   djnz  .loop
 
   .PutBlock:
+  inc   hl
+  inc   hl
+  ld    (hl),a                                ;put block color in the 4th byte of spat
+  dec   hl
+  dec   hl
+
   ld    (hl),250
   dec   hl                                    ;y block
   ld    (hl),c
@@ -705,6 +749,38 @@ PutNewBlocks:
   inc   ix
   add   hl,de
   djnz  .loop
+  ret
+
+
+
+	xor		a				;page 0/1
+	ld		hl,sprcoladdr+0*16	;sprite 0 color table in VRAM
+	call	SetVdp_Write
+
+  ld    b,32
+;  .loop:
+  push  bc
+	ld		hl,GreenBlockColor	;sprite 0 character table in VRAM
+	ld		c,$98
+	call	outix16	;write sprite color of pointer and hand to vram
+  pop   bc
+;  djnz  .loop
+  ret
+
+;RedBlockColor:
+  db 7,6,5,5,5,5,5,5,5,5,5,5,5,5,6,7
+;GreenBlockColor:
+  db 14,13,12,12,12,12,12,12,12,12,12,12,12,12,13,14
+;YellowBlockColor:
+  db 11,10,9,9,9,9,9,9,9,9,9,9,9,9,10,11
+
+
+
+
+
+
+
+
 
 MoveBlocks:
   ld    hl,spat+1                             ;x block 1
@@ -751,7 +827,7 @@ SetBlockHitGameSprites:
   ld    b,32
   .loop:
   push  bc
-	ld		hl,RedBlockColor	;sprite 0 character table in VRAM
+	ld		hl,GreenBlockColor	;sprite 0 character table in VRAM
 	ld		c,$98
 	call	outix16	;write sprite color of pointer and hand to vram
   pop   bc
@@ -760,6 +836,10 @@ SetBlockHitGameSprites:
 
 RedBlockColor:
   db 7,6,5,5,5,5,5,5,5,5,5,5,5,5,6,7
+GreenBlockColor:
+  db 14,13,12,12,12,12,12,12,12,12,12,12,12,12,13,14
+YellowBlockColor:
+  db 11,10,9,9,9,9,9,9,9,9,9,9,9,9,10,11
 
 CheckShootNewProjectile:
 ;
@@ -884,6 +964,8 @@ CheckProjectileHitsBlock:
   inc   hl
   inc   hl                            ;character block
   ld    (hl),0
+  inc   hl                            ;color block
+  ld    (hl),1
   ret
 
   .RemoveBlockThatWeHit:              ;maybe this can be used if a certain weapon is picked up ?
@@ -920,7 +1002,7 @@ CheckInitiateExplosionEntireColumn:
   add   hl,de
   djnz  .loop3
 
-  ;search if there are 5 blocks with this same x
+  ;search if there are 5 blocks with this same x and none of them already exploding
   ld    a,c                           ;lowest x value among all blocks with character nr 0 (completely normal block)
   ld    hl,spat+1                     ;x block 1
   ld    de,4
@@ -930,6 +1012,22 @@ CheckInitiateExplosionEntireColumn:
   .loop:
   cp    (hl)
   jr    nz,.EndCheckSameX
+
+
+;check if block is already exploding, if so don't increase c (amount of block with this x value)
+  inc   hl                            ;character block
+  push  af
+  ld    a,(hl)
+  cp    13*4                          ;starting frame explosion
+  jr    c,.NotExploding
+  dec   c
+  .NotExploding:
+  dec   hl                            ;x
+  pop   af
+
+
+
+
   inc   c
   .EndCheckSameX:
   add   hl,de
@@ -949,7 +1047,37 @@ CheckInitiateExplosionEntireColumn:
   .loop2:
   cp    (hl)
   jr    nz,.CheckNextBlock2
+
+;  ld    c,a
+;  ld    a,r
+;  rrca
+;  ld    a,c
+;  jr    c,.CheckNextBlock2
+
+
+
   inc   hl                            ;character block
+
+
+  
+
+;check if color is green, if so explode, otherwise reduce color value
+  ld    c,a
+  inc   hl                            ;color block
+  ld    a,(hl)
+  dec   a
+  ld    (hl),a
+  dec   hl
+  or    a
+  ld    a,c
+  jr    z,.ExplodeBlock
+  dec   hl                            ;x block
+  jr    .CheckNextBlock2
+  .ExplodeBlock:
+
+
+
+
   ld    (hl),13*4                     ;starting frame explosion
   dec   hl                            ;x block
   .CheckNextBlock2:
@@ -967,6 +1095,17 @@ AnimateBlockExplosion:
   ld    a,(hl)
   cp    13*4
   jr    c,.CheckNextBlock
+
+
+;  inc   hl                            ;block color
+;  ld    a,(hl)
+;  dec   hl                            ;character block
+;  dec   a
+;  jr    nz,.CheckNextBlock
+;  ld    a,(hl)
+
+
+
   add   a,4
   ld    (hl),a  
   cp    26*4
