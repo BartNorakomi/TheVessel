@@ -110,7 +110,7 @@ ResetVariablesBlockHitGame:
 BlocksColumnsTable:
   db    2,1,1,1,0
 
-  db    0,0,1,1,2
+  db    0,0,1,3,2
   db    1,0,1,0,2
   db    0,1,1,1,0
   db    0,1,0,1,0
@@ -688,7 +688,9 @@ BackToTitleScreenBlockHit:
 
 
 
-
+BlockColorGreen:    equ 1
+BlockColorYellow:   equ 2
+BlockColorRed:      equ 3
 
 PutNewBlocks:
   ld    a,(PutNewBlocksCounter)
@@ -731,11 +733,19 @@ PutNewBlocks:
   djnz  .loop
 
   .PutBlock:
+
   inc   hl
   inc   hl
-  ld    (hl),a                                ;put block color in the 4th byte of spat
+  ld    (hl),a                                ;put block color in the 4th byte of spat. block color (1=green, 2=yellow, 3=red)
   dec   hl
   dec   hl
+
+
+
+  call  ColorBlock                            ;in: a=block color (1=green, 2=yellow, 3=red), b=sprite number in reverse (30-0)
+
+
+
 
   ld    (hl),250
   dec   hl                                    ;y block
@@ -753,28 +763,47 @@ PutNewBlocks:
 
 
 
+
+
+ColorBlock:                                   ;in: a=block color (1=green, 2=yellow, 3=red), b=sprite number in reverse (30-0)
+  push  bc
+  push  de
+  push  hl
+  push  af
+
+  ld    a,31
+  sub   b
+  add   a,a                                 ;*2
+  add   a,a                                 ;*4
+  add   a,a                                 ;*8
+  ld    l,a
+  ld    h,0
+  add   hl,hl                               ;*16
+  ld    de,sprcoladdr
+  add   hl,de
 	xor		a				;page 0/1
-	ld		hl,sprcoladdr+0*16	;sprite 0 color table in VRAM
 	call	SetVdp_Write
 
-  ld    b,32
-;  .loop:
-  push  bc
+  pop   af                                  ;block color (1=green, 2=yellow, 3=red)
+  push  af
+
+  dec   a                                   ;1=green
 	ld		hl,GreenBlockColor	;sprite 0 character table in VRAM
+  jr    z,.GoSetBlockColor
+  dec   a                                   ;2=yellow
+	ld		hl,YellowBlockColor	;sprite 0 character table in VRAM
+  jr    z,.GoSetBlockColor
+	ld		hl,RedBlockColor	  ;sprite 0 character table in VRAM
+  .GoSetBlockColor:
+
 	ld		c,$98
 	call	outix16	;write sprite color of pointer and hand to vram
+
+  pop   af
+  pop   hl
+  pop   de
   pop   bc
-;  djnz  .loop
   ret
-
-;RedBlockColor:
-  db 7,6,5,5,5,5,5,5,5,5,5,5,5,5,6,7
-;GreenBlockColor:
-  db 14,13,12,12,12,12,12,12,12,12,12,12,12,12,13,14
-;YellowBlockColor:
-  db 11,10,9,9,9,9,9,9,9,9,9,9,9,9,10,11
-
-
 
 
 
@@ -965,7 +994,9 @@ CheckProjectileHitsBlock:
   inc   hl                            ;character block
   ld    (hl),0
   inc   hl                            ;color block
-  ld    (hl),1
+  ld    a,1
+  ld    (hl),a
+  call  ColorBlock                            ;in: a=block color (1=green, 2=yellow, 3=red), b=sprite number in reverse (30-0)
   ret
 
   .RemoveBlockThatWeHit:              ;maybe this can be used if a certain weapon is picked up ?
@@ -1067,6 +1098,10 @@ CheckInitiateExplosionEntireColumn:
   ld    a,(hl)
   dec   a
   ld    (hl),a
+
+  call  nz,ColorBlock                            ;in: a=block color (1=green, 2=yellow, 3=red), b=sprite number in reverse (30-0)
+
+
   dec   hl
   or    a
   ld    a,c
