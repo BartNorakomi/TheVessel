@@ -2791,6 +2791,9 @@ PenguinGameTimeExtended?:	rb	1
 CannonRow:								rb	1
 PutNewBlocksCounter:			rb	1
 BlocksColumnsTablePointer:			rb	2
+RequestShootProjectile?:	rb	1
+AnimateShootCannon?:	rb	1
+ScoreBlockHitGame:				rb	2
 
 endenginepage3variables:  equ $+enginepage3length
 org variables

@@ -657,8 +657,10 @@ ArcadeMachineGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSi
 BasketBallCourtGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
 PenguinBikeRaceGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
 BlockhitGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
+CannonSpritesGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
 BasketBallFontGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
 PenguinBikeRaceFontGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
+BlockHitFontGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
 BasketBallButtonsGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
 	phase	$4000
 	ArcadeMachinePart1Address:
@@ -681,6 +683,10 @@ BasketBallButtonsGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlo
   incbin "..\grapx\BasketBall\TitleScreen\ButtonsPart1.sc5.pck"
 	PenguinBikeRaceFontPart1Address:
   incbin "..\grapx\PenguinBikeRace\FontPart1.sc5.pck"
+	CannonSpritesPart1Address:
+  incbin "..\grapx\blockhit\CannonSpritesPart1.sc5.pck"
+	BlockHitFontPart1Address:
+  incbin "..\grapx\blockhit\FontPart1.sc5.pck"
 	.CheckBlockFull:	dw	$+$8000
 	dephase
 	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block

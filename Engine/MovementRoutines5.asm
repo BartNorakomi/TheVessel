@@ -11,17 +11,30 @@ BlockHitGameRoutine:
   inc   a
   ld    (framecounter2),a
 
-  call  CheckGameOverBlockHitGame
   call  MoveCannon
   call  AnimateBlockExplosion
   call  CheckInitiateExplosionEntireColumn
+  call  CheckGameOverBlockHitGame
   call  MoveProjectile
   call  CheckProjectileHitsBlock
   call  CheckShootNewProjectile
+  call  SetScoreBlockHitGame
   call  .HandlePhase                        ;load graphics, init variables
 
+;
+; bit	7	  6	  5		    4		    3		    2		  1		  0
+;		  0	  0	  trig-b	trig-a	right	  left	down	up	(joystick)
+;		  F5	F1	'M'		  space	  right	  left	down	up	(keyboard)
+;;
+  ld    b,3
+	ld		a,(Controls)
+	bit		3,a           ;f1 pressed ?
+  jr    z,.EndCheckRightPressed
+  ld    b,1
+  .EndCheckRightPressed:
+
   ld    a,(framecounter2)
-  and   3
+  and   b
   ret   nz
   call  PutNewBlocks
   call  MoveBlocks
@@ -50,26 +63,127 @@ BlockHitGameRoutine:
   ld    bc,$0000 + (007*256) + (256/2)
   call  CopyRamToVram                       ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
 
-  ;copy page 0 to page 3
+  ;copy page 0 to page 1
   xor   a
   ld    (CopyPageToPage212High+sPage),a
-  ld    a,3
-  ld    (CopyPageToPage212High+dPage),a
-  ld    hl,CopyPageToPage212High
-  call  DoCopy
-  ;copy page 0 to page 1
   ld    a,1
   ld    (CopyPageToPage212High+dPage),a
   ld    hl,CopyPageToPage212High
   call  DoCopy
+
+  ;copy page 0 to page 2
+  ld    a,2
+  ld    (CopyPageToPage212High+dPage),a
+  ld    hl,CopyPageToPage212High
+  call  DoCopy
+
+  ;set cannon sprites in page 3
+  ld    hl,CannonSpritesPart1Address
+  ld    a,CannonSpritesGfxBlock
+  call  SetGfxAt8000InRam                             ;in: hl=adress in rom page 1, a=block, out: puts gfx in page 2 in ram at $8000
+
+  ld    a,1
+  ld    (Vdp_Write_HighPage?),a
+  ld    hl,$8000 + (000*128) + (000/2) - 128
+  ld    de,$8000 + (026*128) + (008/2) - 128
+  ld    bc,$0000 + (100*256) + (102/2)
+  call  CopyRamToVram                       ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
+  xor   a
+  ld    (Vdp_Write_HighPage?),a
+
+  ;put cannon in screen
+;  ld    hl,PutCannon1RowHigher.Row3
+;  call  DoCopy
 
   call  SetArcadeMachine
   call  ResetVariablesBlockHitGame
 
+  ;set font at y=212 page 1
+  ld    hl,BlockHitFontPart1Address
+  ld    a,BlockHitFontGfxBlock
+  call  SetGfxAt8000InRam                             ;in: hl=adress in rom page 1, a=block, out: puts gfx in page 2 in ram at $8000
+
+  ld    hl,$8000 + (000*128) + (000/2) - 128
+  ld    de,$8000 + (212*128) + (000/2) - 128
+  ld    bc,$0000 + (009*256) + (256/2)
+  call  CopyRamToVram                       ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
+
   ld    a,1
   ld    (SetArcadeGamePalette?),a           ;action on vblank: 1=set palette, 2=set palette and write spat to vram
   call  SetInterruptHandlerArcadeMachine   	;sets Vblank and lineint for hud
+  jp    BackToTitleScreenBlockHit
+
+SetScoreBlockHitGame:
+;
+; bit	7	  6	  5		    4		    3		    2		  1		  0
+;		  0	  0	  trig-b	trig-a	right	  left	down	up	(joystick)
+;		  F5	F1	'M'		  space	  right	  left	down	up	(keyboard)
+;;
+  ld    b,31
+	ld		a,(Controls)
+	bit		3,a           ;f1 pressed ?
+  jr    z,.EndCheckRightPressed
+  ld    b,7
+  .EndCheckRightPressed:
+
+  ld    a,(framecounter2)
+  and   b
+  ret   nz
+
+  ld    hl,(ScoreBlockHitGame)
+  inc   hl
+  ld    (ScoreBlockHitGame),hl
+
+  ld    hl,.EraseScore
+  call  DoCopy
+
+  xor   a
+  ld    (PutLetterNonTransparant+dPage),a             ;set page where to put text
+  ld    a,152
+  ld    (PutLetterNonTransparant+dx),a
+  ld    a,8
+  ld    (PutLetterNonTransparant+dy),a
+
+  ld    hl,(ScoreBlockHitGame)
+  call  NUM_TO_ASCII                      ;HL = 16-bit number (0-65535), Output: ASCII string stored at Ascii5Byte:
+  call  SetHLToAscii5ByteSkip0
+  ld    a,$98
+  ld    (PutLetterNonTransparant+copytype),a
+  call  .PutTextLoop
+  ld    a,$90
+  ld    (PutLetterNonTransparant+copytype),a
   ret
+
+  .EraseScore:
+	db		152,0,008,2
+	db		152,0,008,0
+	db		024,0,006,0
+	db		0,0,$d0	
+  
+  .PutTextLoop:
+  ld    a,4
+  ld    (PutLetterNonTransparant+nx),a
+  ld    a,6
+  ld    (PutLetterNonTransparant+ny),a
+
+  ld    a,(hl)
+  cp    255
+  ret   z
+  sub   a,$30                             ;0=$30
+  add   a,a                               ;*2
+  add   a,a                               ;*4
+  add   a,192
+  ld    (PutLetterNonTransparant+sx),a
+  push  hl
+  ld    hl,PutLetterNonTransparant
+  call  DoCopy
+  pop   hl
+
+  ld    a,(PutLetterNonTransparant+dx)
+  add   a,5
+  ld    (PutLetterNonTransparant+dx),a
+  inc   hl
+  jr    .PutTextLoop
 
 ResetVariablesBlockHitGame:
   ld    hl,BlockhitPalette
@@ -101,19 +215,36 @@ ResetVariablesBlockHitGame:
   ld    (CannonRow),a
   ld    a,1
   ld    (PutNewBlocksCounter),a
+  xor   a
+  ld    (RequestShootProjectile?),a
+  ld    (AnimateShootCannon?),a
   ld    hl,BlocksColumnsTable-5
   ld    (BlocksColumnsTablePointer),hl
-
+  ld    hl,0
+  ld    (ScoreBlockHitGame),hl
   call  SetBlockHitGameSprites
   ret
 
 BlocksColumnsTable:
-  db    2,1,1,1,0
+;level 1
+;every 4th needs 3 empty spaces, the other 3 will have 2 empty spaces
+  db    0,0,0,0,0
+  db    0,0,0,0,0
 
-  db    0,0,1,3,2
-  db    1,0,1,0,2
+  db    0,0,1,1,1
+  db    1,0,1,0,1
   db    0,1,1,1,0
   db    0,1,0,1,0
+
+  db    1,1,0,0,1
+  db    0,0,1,1,1
+  db    1,1,1,0,0
+  db    1,0,0,0,1
+
+  db    0,1,1,1,0
+  db    1,0,0,0,1
+  db    1,1,0,1,1
+  db    0,1,1,0,0
 
   db    1,0,1,0,1
   db    0,0,1,1,1
@@ -163,7 +294,13 @@ BlocksColumnsTable:
   db    0,1,1,0,1
   db    1,0,0,1,1
   db    1,0,1,0,1
-  db    0,0,0,1,1
+  db    1,1,1,1,1
+
+;level 2
+  db    0,0,0,0,0
+  db    0,0,0,0,0
+  db    0,0,0,0,0
+  db    0,0,0,0,0
 
   db    0,1,1,1,0
   db    1,0,0,1,1
@@ -176,7 +313,7 @@ BlocksColumnsTable:
   db    1,0,1,0,0
 
   db    0,1,1,0,1
-  db    0,0,1,1,1
+  db    0,0,2,1,1
   db    1,1,0,1,0
   db    0,0,0,1,1
 
@@ -191,9 +328,923 @@ BlocksColumnsTable:
   db    1,0,1,0,0
 
   db    0,1,1,0,1
-  db    0,0,1,1,1
+  db    0,0,2,1,1
   db    1,1,0,1,0
   db    0,0,0,1,1
+
+  db    0,1,1,1,0
+  db    0,0,1,1,1
+  db    1,0,0,1,1
+  db    1,1,0,0,0
+
+  db    1,1,1,0,0
+  db    0,0,1,1,1
+  db    1,0,0,1,0
+  db    0,1,0,1,1
+
+  db    0,0,1,0,1
+  db    1,0,0,1,1
+  db    0,1,0,1,1
+  db    1,0,1,0,0
+
+  db    0,1,1,1,0
+  db    1,0,0,1,1
+  db    0,0,0,0,1
+  db    0,1,0,1,0
+
+  db    1,1,1,0,0
+  db    0,0,0,1,1
+  db    1,1,0,1,0
+  db    0,1,0,0,0
+
+  db    1,0,1,0,1
+  db    0,1,0,1,0
+  db    1,0,1,1,0
+  db    1,0,0,1,0
+
+  db    0,1,1,0,0
+  db    1,0,0,1,1
+  db    0,1,1,0,1
+  db    0,0,0,1,0
+
+  db    1,1,0,0,0
+  db    0,0,1,1,1
+  db    0,1,1,0,0
+  db    1,0,0,1,1
+
+  db    0,1,1,0,1
+  db    1,0,0,1,1
+  db    1,0,1,0,1
+  db    1,1,1,1,1
+
+;level 3
+  db    0,0,0,0,0
+  db    0,0,0,0,0
+  db    0,0,0,0,0
+  db    0,0,0,0,0
+
+  db    0,2,1,1,0
+  db    1,0,0,1,1
+  db    0,1,1,0,1
+  db    1,0,0,0,1
+
+  db    0,2,1,1,0
+  db    1,0,0,1,1
+  db    0,1,0,1,0
+  db    2,0,1,0,0
+
+  db    0,2,1,0,1
+  db    0,0,2,1,1
+  db    1,1,0,1,0
+  db    0,0,0,1,1
+
+  db    0,2,2,1,0
+  db    1,0,0,1,1
+  db    0,1,1,0,1
+  db    1,0,0,0,1
+
+  db    0,1,1,2,0
+  db    1,0,0,1,1
+  db    0,1,0,2,0
+  db    1,0,1,0,0
+
+  db    0,1,0,0,1
+  db    0,0,2,1,1
+  db    1,0,0,1,0
+  db    0,1,0,1,1
+
+  db    0,0,1,1,0
+  db    0,1,1,0,1
+  db    1,0,0,1,1
+  db    1,1,0,0,0
+
+  db    1,1,1,0,0
+  db    0,0,1,1,1
+  db    1,0,0,1,0
+  db    0,1,0,1,1
+
+  db    0,0,1,0,1
+  db    1,0,0,1,1
+  db    0,1,0,1,1
+  db    1,0,1,0,0
+
+  db    0,1,1,1,0
+  db    1,0,0,1,1
+  db    0,0,0,0,1
+  db    0,1,0,1,0
+
+  db    1,1,1,0,0
+  db    0,0,0,1,1
+  db    1,1,0,1,0
+  db    0,1,0,0,0
+
+  db    1,0,1,0,1
+  db    0,1,0,1,0
+  db    1,0,1,1,0
+  db    1,0,0,1,0
+
+  db    0,1,1,0,0
+  db    1,0,0,1,1
+  db    0,1,1,0,1
+  db    0,0,0,1,0
+
+  db    1,1,0,0,0
+  db    0,0,1,1,1
+  db    0,2,2,0,0
+  db    1,0,0,1,1
+
+  db    0,1,1,0,1
+  db    1,0,0,1,1
+  db    1,0,1,0,1
+  db    1,1,1,1,1
+
+;level 4
+  db    0,0,0,0,0
+  db    0,0,0,0,0
+  db    0,0,0,0,0
+  db    0,0,0,0,0
+
+db 1
+
+  db    0,1,1,1,0
+  db    0,0,1,1,1
+  db    1,0,0,1,1
+  db    0,1,0,0,0
+
+  db    0,1,1,0,0
+  db    0,0,0,1,1
+  db    1,0,0,1,0
+  db    0,1,0,0,1
+
+  db    0,0,1,0,1
+  db    1,0,0,1,1
+  db    0,1,0,0,1
+  db    1,0,0,0,0
+
+  db    0,1,1,1,0
+  db    0,0,0,1,1
+  db    0,0,0,0,1
+  db    0,1,0,1,0
+
+  db    1,0,1,0,0
+  db    0,0,0,0,1
+  db    1,1,0,1,0
+  db    0,1,0,0,0
+
+  db    1,0,1,0,1
+  db    0,0,0,1,0
+  db    1,0,1,1,0
+  db    1,0,0,1,0
+
+  db    0,1,1,1,0
+  db    1,0,0,1,1
+  db    0,0,0,0,1
+  db    0,1,0,1,0
+
+  db    1,1,1,0,0
+  db    0,0,0,1,1
+  db    1,1,0,1,0
+  db    0,1,0,0,0
+
+  db    1,0,1,0,1
+  db    0,1,0,1,0
+  db    1,0,1,1,0
+  db    1,0,0,1,0
+
+  db    0,1,1,1,0
+  db    1,0,0,1,1
+  db    0,0,2,0,1
+  db    0,2,0,1,0
+
+  db    1,1,0,0,0
+  db    0,0,1,1,1
+  db    1,1,0,1,0
+  db    0,2,0,0,1
+
+  db    1,0,1,0,1
+  db    0,1,0,1,0
+  db    1,0,2,1,0
+  db    1,0,0,1,1
+
+  db    0,1,1,0,0
+  db    1,0,0,1,1
+  db    0,1,2,0,1
+  db    0,0,0,1,1
+
+  db    1,1,0,0,0
+  db    0,0,1,1,1
+  db    0,2,2,0,0
+  db    1,0,0,1,1
+
+  db    0,1,1,0,1
+  db    1,0,0,2,2
+  db    2,0,2,0,1
+  db    1,1,1,1
+
+;level 5
+  db    0,0,0,0,0
+  db    0,0,0,0,0
+  db    0,0,0,0,0
+  db    0,0,0,0,0
+
+  db    1,2,1,0,0
+  db    0,0,1,0,1
+  db    1,0,0,1,0
+  db    0,1,0,1,0
+
+  db    0,0,1,0,2
+  db    1,0,0,2,2
+  db    0,2,0,1,1
+  db    2,0,1,0,0
+
+  db    0,2,1,1,0
+  db    2,0,0,1,1
+  db    0,0,0,0,1
+  db    0,2,0,2,0
+
+  db    1,2,1,0,0
+  db    0,0,0,2,1
+  db    1,1,0,1,0
+  db    0,2,0,0,0
+
+  db    1,0,1,0,1
+  db    0,1,0,1,0
+  db    1,0,0,0,0
+  db    1,0,0,1,0
+
+  db    0,1,1,0,0
+  db    1,0,0,0,1
+  db    0,1,0,1,1
+  db    0,1,1,0,0
+
+  db    1,0,0,0,1
+  db    0,0,1,1,0
+  db    1,1,0,1,0
+  db    1,0,0,0,1
+
+  db    0,3,1,1,0
+  db    0,0,1,1,1
+  db    2,0,0,1,1
+  db    1,1,0,0,0
+
+  db    1,3,1,0,0
+  db    0,0,1,1,1
+  db    1,0,0,1,0
+  db    0,1,0,2,1
+
+  db    0,0,1,0,1
+  db    1,0,0,1,1
+  db    0,1,0,1,1
+  db    1,0,3,0,0
+
+  db    0,1,1,1,0
+  db    1,0,0,1,1
+  db    0,0,2,0,1
+  db    0,3,0,1,0
+
+  db    1,1,0,0,0
+  db    0,0,1,1,1
+  db    1,1,0,1,0
+  db    0,2,0,0,1
+
+  db    1,0,1,0,1
+  db    0,1,0,1,0
+  db    1,0,2,1,0
+  db    1,0,0,1,1
+
+  db    0,1,1,0,0
+  db    1,0,0,1,1
+  db    0,1,2,0,1
+  db    0,0,0,1,1
+
+  db    1,1,0,0,0
+  db    0,0,1,1,1
+  db    0,1,2,0,0
+  db    1,0,0,1,1
+
+  db    0,1,1,0,1
+  db    1,0,0,2,1
+  db    1,0,1,0,1
+  db    1,1,1,1,1
+
+;level 6
+  db    0,0,0,0,0
+  db    0,0,0,0,0
+  db    0,0,0,0,0
+  db    0,0,0,0,0
+
+  db    0,2,1,1,0
+  db    3,3,0,3,1
+  db    0,1,0,1,0
+  db    2,0,1,0,0
+
+  db    0,2,1,0,1
+  db    0,0,2,1,1
+  db    1,1,0,1,0
+  db    0,0,0,1,1
+
+  db    0,2,1,1,0
+  db    1,0,0,1,1
+  db    0,1,3,0,1
+  db    1,0,0,0,1
+
+  db    0,1,1,2,0
+  db    1,0,0,1,1
+  db    0,1,0,2,0
+  db    1,0,1,0,0
+
+  db    0,1,0,0,1
+  db    0,0,2,1,1
+  db    1,0,0,1,0
+  db    0,1,0,1,1
+
+  db    0,0,1,3,0
+  db    0,1,1,0,1
+  db    2,0,0,1,1
+  db    1,1,0,0,0
+
+  db    3,1,1,0,0
+  db    0,0,1,1,1
+  db    1,0,0,1,0
+  db    0,1,0,1,1
+
+  db    0,0,1,0,1
+  db    1,0,0,2,1
+  db    0,1,0,1,1
+  db    1,0,1,0,0
+
+  db    0,2,2,3,0
+  db    1,0,0,2,1
+  db    0,0,0,0,1
+  db    0,1,0,2,0
+
+  db    1,1,1,1,1
+  db    0,0,0,0,0
+  db    1,1,0,1,0
+  db    0,2,0,0,0
+
+  db    1,0,1,0,1
+  db    0,1,0,1,0
+  db    1,0,1,1,0
+  db    1,0,0,1,0
+
+  db    0,2,2,0,0
+  db    2,0,0,2,2
+  db    0,2,2,0,2
+  db    0,0,0,2,0
+
+  db    2,2,0,0,0
+  db    0,0,1,1,1
+  db    0,1,1,0,0
+  db    2,0,0,2,2
+
+  db    0,1,1,0,2
+  db    2,0,0,1,2
+  db    2,0,2,0,2
+  db    1,1,1,1,1
+
+;level 7
+  db    0,0,0,0,0
+  db    0,0,0,0,0
+  db    0,0,0,0,0
+  db    0,0,0,0,0
+
+  db    0,0,2,2,2
+  db    2,0,2,0,2
+  db    0,2,2,2,0
+  db    0,2,0,2,0
+
+  db    2,2,0,0,2
+  db    0,0,2,2,2
+  db    2,2,2,0,0
+  db    2,0,0,0,2
+
+  db    1,1,1,1,1
+  db    0,0,0,0,0
+  db    2,2,0,2,2
+  db    0,2,2,0,0
+
+  db    2,0,2,0,2
+  db    0,0,2,2,2
+  db    2,2,0,2,0
+  db    2,0,0,0,2
+
+  db    0,2,2,2,0
+  db    0,0,2,2,2
+  db    2,0,0,2,2
+  db    2,2,0,0,0
+
+  db    2,2,2,0,0
+  db    0,0,2,2,2
+  db    2,0,0,2,0
+  db    0,2,0,2,2
+
+  db    1,1,1,1,1
+  db    0,0,0,0,0
+  db    0,0,0,0,0
+  db    2,0,2,0,0
+
+  db    0,2,2,2,0
+  db    2,0,0,2,2
+  db    0,0,2,0,2
+  db    0,2,0,2,0
+
+  db    2,2,0,0,0
+  db    0,0,2,2,2
+  db    2,2,0,2,0
+  db    0,2,0,0,2
+
+  db    2,0,2,0,2
+  db    0,2,0,2,0
+  db    2,0,2,2,0
+  db    2,0,0,2,2
+
+  db    2,0,0,0,0
+  db    1,1,1,1,1
+  db    0,0,0,0,0
+  db    0,0,0,0,0
+
+  db    2,2,0,0,0
+  db    0,0,2,2,2
+  db    0,2,2,0,0
+  db    2,0,0,2,2
+
+  db    0,2,2,0,2
+  db    2,0,0,2,2
+  db    2,0,2,0,2
+  db    1,1,1,1,1
+
+;level 8
+  db    0,0,0,0,0
+  db    0,0,0,0,0
+  db    0,0,0,0,0
+  db    0,0,0,0,0
+
+  db    0,3,1,1,0
+  db    0,0,1,1,1
+  db    1,0,0,1,1
+  db    0,1,0,0,0
+
+  db    0,1,3,0,0
+  db    0,0,0,1,1
+  db    1,0,0,1,0
+  db    0,1,0,0,1
+
+  db    0,0,3,0,1
+  db    1,0,0,1,1
+  db    0,1,0,0,1
+  db    1,0,0,0,0
+
+  db    0,3,1,1,0
+  db    0,0,0,1,1
+  db    1,0,0,0,1
+  db    0,1,0,1,0
+
+  db    1,0,3,0,0
+  db    0,0,0,0,1
+  db    1,1,0,1,0
+  db    0,1,0,0,0
+
+  db    1,0,3,0,1
+  db    0,0,0,1,0
+  db    1,0,1,1,0
+  db    1,0,0,1,1
+
+  db    0,3,1,1,0
+  db    1,0,0,1,1
+  db    0,0,0,0,1
+  db    0,1,0,1,0
+
+  db    1,1,3,0,0
+  db    0,0,0,1,1
+  db    1,1,0,1,0
+  db    0,1,0,0,0
+
+  db    3,0,1,0,1
+  db    0,1,0,1,0
+  db    1,0,1,1,0
+  db    1,0,0,1,0
+
+  db    0,1,1,1,0
+  db    3,0,0,1,1
+  db    0,0,2,0,1
+  db    0,2,0,1,0
+
+  db    1,1,0,0,0
+  db    0,0,2,1,1
+  db    1,1,0,1,0
+  db    0,2,0,0,1
+
+  db    1,0,1,0,1
+  db    0,1,0,1,0
+  db    1,0,2,1,0
+  db    1,0,0,2,1
+
+  db    0,1,1,0,0
+  db    1,0,0,1,1
+  db    0,1,2,0,1
+  db    0,0,0,1,2
+
+  db    1,1,0,0,0
+  db    0,0,1,1,3
+  db    0,2,2,0,0
+  db    1,0,0,1,1
+
+  db    0,1,1,0,3
+  db    1,0,0,2,2
+  db    2,0,2,0,1
+  db    1,1,1,1,1
+
+  db    0,0,0,0,0
+  db    2,0,0,2,2
+  db    2,0,2,0,2
+  db    1,1,1,1,1
+
+;level 9
+  db    0,0,0,0,0
+  db    0,0,0,0,0
+  db    0,0,0,0,0
+  db    0,0,0,0,0
+
+  db    0,3,1,0,1
+  db    0,0,2,1,1
+  db    0,0,0,0,0
+  db    1,1,1,1,1
+
+  db    0,1,1,1,0
+  db    0,0,1,3,1
+  db    0,0,0,0,0
+  db    1,1,1,1,1
+
+  db    1,1,3,0,0
+  db    0,0,1,1,1
+  db    0,0,0,0,0
+  db    1,1,1,1,1
+
+  db    0,0,1,0,1
+  db    1,0,0,3,1
+  db    0,0,0,0,0
+  db    1,1,1,1,1
+
+  db    0,1,1,1,0
+  db    1,0,0,1,3
+  db    0,0,0,0,0
+  db    1,1,1,1,1
+
+  db    1,1,1,0,0
+  db    0,0,0,3,1
+  db    1,1,0,1,0
+  db    0,1,1,0,0
+
+  db    0,0,0,0,1
+  db    0,0,0,0,0
+  db    1,1,3,1,1
+  db    1,0,1,1,0
+  db    1,0,0,1,0
+
+  db    0,1,2,0,0
+  db    1,0,0,1,1
+  db    0,0,0,0,0
+  db    1,1,1,1,1
+
+  db    1,1,0,0,0
+  db    0,0,3,1,1
+  db    0,1,1,0,0
+  db    1,0,0,1,3
+
+  db    0,0,0,0,0
+  db    1,1,1,1,1
+  db    0,1,1,0,1
+  db    1,0,0,0,1
+
+  db    0,2,1,1,0
+  db    1,0,0,3,1
+  db    0,0,0,0,0
+  db    1,1,1,1,1
+
+  db    0,2,1,0,1
+  db    0,0,2,3,1
+  db    1,1,0,1,0
+  db    0,0,0,1,1
+
+  db    0,2,2,1,0
+  db    1,0,0,3,1
+  db    0,0,0,0,0
+  db    1,1,1,1,1
+
+  db    0,1,1,2,0
+  db    1,0,0,1,1
+  db    0,1,0,2,0
+  db    1,0,2,0,0
+
+  db    0,0,0,0,0
+  db    2,0,0,2,2
+  db    2,0,3,0,2
+  db    1,1,1,1,1
+
+;level 10
+  db    0,0,0,0,0
+  db    0,0,0,0,0
+  db    0,0,0,0,0
+  db    0,0,0,0,0
+
+  db    1,1,0,0,2
+  db    0,0,1,1,1
+  db    1,2,1,0,0
+  db    1,0,0,0,3
+
+  db    0,1,1,1,0
+  db    2,0,0,0,1
+  db    1,1,0,2,1
+  db    0,1,3,0,0
+
+  db    1,0,1,0,1
+  db    0,0,1,1,1
+  db    1,2,0,1,0
+  db    1,0,0,0,1
+
+  db    0,3,3,3,0
+  db    0,0,1,1,1
+  db    1,0,0,2,1
+  db    1,1,0,0,0
+
+  db    2,2,1,0,0
+  db    0,0,2,2,2
+  db    1,0,0,3,0
+  db    0,1,0,1,1
+
+  db    0,0,1,0,1
+  db    1,0,0,1,1
+  db    0,1,0,2,1
+  db    1,0,3,0,0
+
+  db    0,1,1,1,0
+  db    1,0,0,2,1
+  db    0,0,1,0,1
+  db    0,2,0,1,0
+
+  db    1,3,0,0,0
+  db    0,0,1,2,1
+  db    1,1,0,1,0
+  db    0,1,0,0,1
+
+  db    1,0,2,0,1
+  db    0,1,0,2,0
+  db    2,0,1,1,0
+  db    1,0,0,1,2
+
+  db    0,3,1,0,0
+  db    1,0,0,1,1
+  db    0,1,1,0,1
+  db    0,0,0,1,1
+
+  db    1,1,0,0,0
+  db    0,0,2,1,1
+  db    0,1,1,0,0
+  db    1,0,0,1,3
+
+  db    0,2,1,0,1
+  db    1,0,0,1,1
+  db    1,0,3,0,2
+  db    1,1,1,1,1
+
+;level 11
+  db    0,0,0,0,0
+  db    0,0,0,0,0
+  db    0,0,0,0,0
+  db    0,0,0,0,0
+
+  db    0,2,1,1,0
+  db    3,3,0,3,1
+  db    0,1,0,1,0
+  db    2,0,1,0,0
+
+  db    0,3,1,0,1
+  db    0,0,2,1,1
+  db    1,1,0,1,0
+  db    0,0,0,1,1
+
+  db    0,3,1,1,0
+  db    1,0,0,1,1
+  db    0,1,3,0,1
+  db    1,0,0,0,1
+
+  db    0,1,1,2,0
+  db    1,0,0,1,1
+  db    0,1,0,2,0
+  db    1,0,3,0,0
+
+  db    0,1,0,0,1
+  db    0,0,2,1,1
+  db    1,0,0,3,0
+  db    0,1,0,1,1
+
+  db    0,0,1,3,0
+  db    0,1,1,0,1
+  db    2,0,0,1,1
+  db    1,1,0,0,0
+
+  db    3,1,1,0,0
+  db    0,0,1,1,1
+  db    1,0,0,1,0
+  db    0,1,0,3,1
+
+  db    0,0,1,0,1
+  db    1,0,0,2,1
+  db    0,1,0,1,1
+  db    1,0,1,0,0
+
+  db    0,2,2,3,0
+  db    1,0,0,2,1
+  db    0,0,0,0,1
+  db    0,2,0,2,0
+
+  db    1,1,1,1,1
+  db    0,0,0,0,0
+  db    1,3,0,1,0
+  db    0,2,0,0,0
+
+  db    1,1,1,1,1
+
+;level 12
+  db    0,0,0,0,0
+  db    0,0,0,0,0
+  db    0,0,0,0,0
+  db    0,0,0,0,0
+
+  db    0,2,1,1,0
+  db    3,3,0,3,1
+  db    0,1,0,1,0
+  db    2,0,1,0,0
+
+  db    0,3,1,0,1
+  db    0,0,2,1,1
+  db    1,1,0,3,0
+  db    0,0,0,1,1
+
+  db    0,3,1,1,0
+  db    1,0,0,1,1
+  db    0,1,3,0,1
+  db    1,0,0,0,1
+
+  db    0,1,3,2,0
+  db    1,0,0,1,1
+  db    0,1,0,2,0
+  db    1,0,3,0,0
+
+  db    0,1,0,0,1
+  db    0,0,2,1,1
+  db    1,0,0,3,0
+  db    0,3,0,1,1
+
+  db    0,0,1,3,0
+  db    0,1,1,0,1
+  db    2,0,0,1,1
+  db    1,3,0,0,0
+
+  db    3,1,1,0,0
+  db    0,0,1,1,1
+  db    1,0,0,1,0
+  db    0,1,0,3,1
+
+  db    0,0,1,0,1
+  db    1,0,0,2,1
+  db    0,1,0,1,1
+  db    1,0,1,0,0
+
+  db    0,2,2,3,0
+  db    1,0,0,2,3
+  db    0,0,0,0,1
+  db    0,2,0,2,0
+
+  db    1,1,1,1,1
+  db    0,0,0,0,0
+  db    1,3,0,1,0
+  db    0,2,0,0,0
+
+  db    1,1,1,1,1
+
+;level 13
+  db    0,0,0,0,0
+  db    0,0,0,0,0
+  db    0,0,0,0,0
+  db    0,0,0,0,0
+
+  db    0,2,2,1,0
+  db    3,3,0,3,1
+  db    0,1,0,1,0
+  db    2,0,1,0,0
+
+  db    0,3,1,0,1
+  db    0,0,2,1,1
+  db    1,2,0,3,0
+  db    0,0,0,1,1
+
+  db    0,3,1,1,0
+  db    1,0,0,1,1
+  db    0,1,3,0,2
+  db    1,0,0,0,1
+
+  db    0,1,3,2,0
+  db    1,0,0,1,1
+  db    0,1,0,2,0
+  db    2,0,3,0,0
+
+  db    0,1,0,0,1
+  db    0,0,2,1,1
+  db    1,0,0,3,0
+  db    0,3,0,1,1
+
+  db    0,0,1,3,0
+  db    0,1,1,0,1
+  db    2,0,0,1,1
+  db    1,3,0,0,0
+
+  db    3,1,1,0,0
+  db    0,0,1,2,1
+  db    1,0,0,1,0
+  db    0,1,0,3,1
+
+  db    0,0,1,0,1
+  db    1,0,0,2,1
+  db    0,1,0,1,1
+  db    1,0,1,0,0
+
+  db    0,2,2,3,0
+  db    1,0,0,2,3
+  db    0,0,0,0,1
+  db    0,2,0,2,0
+
+  db    1,1,1,1,1
+  db    0,0,0,0,0
+  db    1,3,0,2,0
+  db    0,2,0,0,0
+
+  db    1,1,1,1,1
+
+;level 14
+  db    0,0,0,0,0
+  db    0,0,0,0,0
+  db    0,0,0,0,0
+  db    0,0,0,0,0
+
+  db    0,2,2,1,0
+  db    3,3,0,3,1
+  db    0,1,0,1,0
+  db    2,0,1,0,0
+
+  db    0,3,1,0,1
+  db    0,0,2,1,1
+  db    1,2,0,3,0
+  db    0,0,0,2,1
+
+  db    0,3,1,2,0
+  db    1,0,0,1,1
+  db    0,1,3,0,2
+  db    1,0,0,0,1
+
+  db    0,1,3,2,0
+  db    1,0,0,1,1
+  db    0,2,0,2,0
+  db    2,0,3,0,0
+
+  db    0,2,0,0,1
+  db    0,0,2,1,1
+  db    1,0,0,3,0
+  db    0,3,0,1,1
+
+  db    0,0,1,3,0
+  db    0,1,1,0,1
+  db    2,0,0,1,1
+  db    1,3,0,0,0
+
+  db    3,1,1,0,0
+  db    0,0,1,2,1
+  db    1,0,0,1,0
+  db    0,1,0,3,2
+
+  db    0,0,1,0,1
+  db    1,0,0,2,1
+  db    0,1,0,1,1
+  db    1,0,2,0,0
+
+  db    0,2,2,3,0
+  db    1,0,0,2,3
+  db    0,0,0,0,1
+  db    0,2,0,2,0
+
+  db    1,1,1,1,1
+  db    0,0,0,0,0
+  db    2,3,0,2,0
+  db    0,2,0,0,0
+
+  db    1,1,1,1,1
+
+;level 15
+  db    0,0,0,0,0
+  db    0,0,0,0,0
+  db    0,0,0,0,0
+  db    0,0,0,0,0
 
 CheckGameOverBlockHitGame:
 ;
@@ -212,8 +1263,17 @@ CheckGameOverBlockHitGame:
   ld    a,48                          ;x value block hitting wall
 
   .loop:
-  cp    (hl)
+  ld    a,(hl)
+  dec   a
+  jr    z,.CheckNextBlock
+  cp    48
+  jr    nc,.CheckNextBlock
+  inc   hl                            ;character block
+  ld    a,(hl)
+  or    a                             ;check if this block is character nr 0 (completely normal block)
   jr    z,.GameOver
+  ld    a,48                          ;x value block hitting wall
+  .CheckNextBlock:
   add   hl,de
   djnz  .loop
   ret
@@ -222,6 +1282,9 @@ CheckGameOverBlockHitGame:
 	ld    a,(screenpage)
   or    a
   ret   nz
+
+  ld    hl,.CopyScoreToPage1
+  call  DoCopy
 
   ld    hl,BlockHitGameOverPart1Address
   ld    a,BlockHitGameOverGfxBlock
@@ -266,24 +1329,29 @@ CheckGameOverBlockHitGame:
   call  CopyRamToVram                       ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
 
 ;check if current score is new highscore
-
-  ld    hl,10
-  ld    (HighScoreBlockHit),hl
-
-  .EndCheckNewHighScore:
-  ;set completed %
+  ld    de,(ScoreBlockHitGame)
   ld    hl,(HighScoreBlockHit)
-  ld    a,l
+  xor   a
+  sbc   hl,de
+  jr    nc,.EndCheckNewHighScore
+  ld    (HighScoreBlockHit),de
+  .EndCheckNewHighScore:
+
+;set completed % (highscore / 6500 * 100) = (highscore / 65)
+  ld    bc,(HighScoreBlockHit)
+  ld    de,65
+  call  DivideBCbyDE          ; Out: BC = result, HL = rest
+  ld    a,c
   cp    101
   jr    c,.SetCompletePercentage
   ld    a,100
   .SetCompletePercentage:
   ld    (BlockHitCompletePercentage),a
 
-;  call  .SetScore
-;  call  .SetBestScore
-;  call  .SetCompleted
-;  call  .SetPercentageSymbol
+  call  .SetScore
+  call  .SetBestScore
+  call  .SetCompleted
+  call  .SetPercentageSymbol
 
   ld    a,1*32 + 31
 	ld    (PageOnNextVblank),a
@@ -295,9 +1363,16 @@ CheckGameOverBlockHitGame:
 
   jp    BackToTitleScreenBlockHit
 
-.PercentageSymbol:                     ;freely usable anywhere
-  db    163,000,060,001                 ;sx,--,sy,spage
-  db    169,000,107,001                 ;dx,--,dy,dpage
+  .CopyScoreToPage1:
+  db    152,000,008,000                 ;sx,--,sy,spage
+  db    152,000,008,001                 ;dx,--,dy,dpage
+  db    032,000,006,000                 ;nx,--,ny,--
+  db    000,%0000 0000,$d0              ;fast copy -> Copy from right to left     
+  
+
+  .PercentageSymbol:                     ;freely usable anywhere
+  db    151,000,060,001                 ;sx,--,sy,spage
+  db    000,000,107,001                 ;dx,--,dy,dpage
   db    007,000,006,000                 ;nx,--,ny,--
   db    000,%0000 0000,$90              ;fast copy -> Copy from right to left     
   .SetPercentageSymbol:
@@ -322,7 +1397,7 @@ CheckGameOverBlockHitGame:
   ld    a,.CompletedDY
   ld    (PutLetterNonTransparant+dy),a
 
-  ld    hl,(BikeRaceCompletePercentage)
+  ld    hl,(BlockHitCompletePercentage)
   ld    h,0
   call  NUM_TO_ASCII                      ;HL = 16-bit number (0-65535), Output: ASCII string stored at Ascii5Byte:
   call  SetHLToAscii5ByteSkip0
@@ -339,27 +1414,7 @@ CheckGameOverBlockHitGame:
   ld    a,.BestScoreDY
   ld    (PutLetterNonTransparant+dy),a
 
-  ld    a,(PenguinGameLevelHighest)
-  cp    10
-  jr    nc,.GoSetHighestLevel
-  ld    a,(PutLetterNonTransparant+dx)
-  add   a,7
-  ld    (PutLetterNonTransparant+dx),a
-  .GoSetHighestLevel:
-
-  ld    a,(PenguinGameLevelHighest)
-  ld    l,a
-  ld    h,0
-  call  NUM_TO_ASCII                      ;HL = 16-bit number (0-65535), Output: ASCII string stored at Ascii5Byte:
-  call  SetHLToAscii5ByteSkip0
-  call  .PutTextLoopDark
-
-  ld    a,.BestScoreDX+17
-  ld    (PutLetterNonTransparant+dx),a
-
-  ld    a,(PenguinGameLapsHighest)
-  ld    l,a
-  ld    h,0
+  ld    hl,(HighScoreBlockHit)
   call  NUM_TO_ASCII                      ;HL = 16-bit number (0-65535), Output: ASCII string stored at Ascii5Byte:
   call  SetHLToAscii5ByteSkip0
   call  .PutTextLoopDark
@@ -375,27 +1430,7 @@ CheckGameOverBlockHitGame:
   ld    a,.ScoreDY
   ld    (PutLetterNonTransparant+dy),a
 
-  ld    a,(PenguinGameLevel)
-  cp    10
-  jr    nc,.GoSetLevel
-  ld    a,(PutLetterNonTransparant+dx)
-  add   a,7
-  ld    (PutLetterNonTransparant+dx),a
-  .GoSetLevel:
-
-  ld    a,(PenguinGameLevel)
-  ld    l,a
-  ld    h,0
-  call  NUM_TO_ASCII                      ;HL = 16-bit number (0-65535), Output: ASCII string stored at Ascii5Byte:
-  call  SetHLToAscii5ByteSkip0
-  call  .PutTextLoopDark
-
-  ld    a,.ScoreDX+17
-  ld    (PutLetterNonTransparant+dx),a
-
-  ld    a,(PenguinGameLaps)
-  ld    l,a
-  ld    h,0
+  ld    hl,(ScoreBlockHitGame)
   call  NUM_TO_ASCII                      ;HL = 16-bit number (0-65535), Output: ASCII string stored at Ascii5Byte:
   call  SetHLToAscii5ByteSkip0
   call  .PutTextLoopDark
@@ -577,7 +1612,7 @@ BackToTitleScreenBlockHit:
 ;  xor   a
 ;  ld    (Vdp_Write_HighPage?),a
 
-  ld    hl,.CopyPage3ToPage1
+  ld    hl,.CopyPage2ToPage1
   call  DoCopy
   call  WaitVdpReady
   call  WaitVblank
@@ -589,7 +1624,7 @@ BackToTitleScreenBlockHit:
   call  WriteSpatToVram
   call  SpritesOn
 
-  ld    hl,.CopyPage3ToPage0
+  ld    hl,.CopyPage2ToPage0
   call  DoCopy
 
   call  WaitVdpReady
@@ -601,14 +1636,14 @@ BackToTitleScreenBlockHit:
 	ld		(NewPrContr),a
   ret
 
-  .CopyPage3ToPage1:
-	db		0,0,0,3
+  .CopyPage2ToPage1:
+	db		0,0,0,2
 	db		0,0,0,1
 	db		0,1,135,0
 	db		0,0,$d0	
 
-  .CopyPage3ToPage0:
-	db		0,0,0,3
+  .CopyPage2ToPage0:
+	db		0,0,0,2
 	db		0,0,0,0
 	db		0,1,135,0
 	db		0,0,$d0	
@@ -863,6 +1898,8 @@ SetBlockHitGameSprites:
   djnz  .loop
   ret
 
+;GrayBlockColor:
+;  db 0,2,1,1,1,1,1,1,1,1,1,1,1,1,2,0
 RedBlockColor:
   db 7,6,5,5,5,5,5,5,5,5,5,5,5,5,6,7
 GreenBlockColor:
@@ -876,11 +1913,30 @@ CheckShootNewProjectile:
 ;		  0	  0	  trig-b	trig-a	right	  left	down	up	(joystick)
 ;		  F5	F1	'M'		  space	  right	  left	down	up	(keyboard)
 ;
+
+  ld    a,(RequestShootProjectile?)
+  or    a
+  jr    nz,.HandleRequest
+
 	ld		a,(NewPrContr)
   bit   4,a                           ;space pressed ?
   ret   z
 
-  ld    a,48
+  .HandleRequest:
+  ld    a,(spat+1+31*4)               ;x projectile
+  dec   a
+  jr    z,.EndCheckProjectileInPlay
+  ld    a,1
+  ld    (RequestShootProjectile?),a
+  ret
+  .EndCheckProjectileInPlay:
+
+  ld    a,1
+  ld    (AnimateShootCannon?),a
+  xor   a
+  ld    (RequestShootProjectile?),a
+
+  ld    a,47
   ld    (spat+1+31*4),a               ;x projectile
   xor   a
   ld    (spat+2+31*4),a               ;character projectile
@@ -909,7 +1965,7 @@ MoveProjectile:
   ld    a,(spat+1+31*4)               ;x projectile
   dec   a
   ret   z                             ;dont move if x projectile=1 (that means projectile is not in play)
-  add   a,10
+  add   a,20
   ld    (spat+1+31*4),a               ;x projectile
 ;  cp    240
   ret   nc
@@ -1070,6 +2126,14 @@ CheckInitiateExplosionEntireColumn:
   ret   nz
   ld    a,b                           ;x block we just added
 
+
+  ld    hl,(ScoreBlockHitGame)
+  ld    de,5
+  add   hl,de
+  ld    (ScoreBlockHitGame),hl
+
+
+
   ;we found 5 blocks with character nr 0 (completely normal block) with the same x, set character value to 12*4 (starting animation of explosion)
   ld    hl,spat+1                     ;x block 1
   ld    de,4
@@ -1159,6 +2223,29 @@ AnimateBlockExplosion:
   djnz  .loop
   ret
 
+HandleAnimateShootCannon:
+  ld    a,(AnimateShootCannon?)
+  or    a
+  ret   z
+  inc   a
+  ld    (AnimateShootCannon?),a
+  cp    4
+  ld    b,42
+  jr    c,.SxFound
+  cp    6
+  ld    b,76
+  jr    c,.SxFound
+  cp    8
+  ld    b,42
+  jr    c,.SxFound
+  xor   a
+  ld    (AnimateShootCannon?),a
+
+  .SxFound:
+  ld    a,b
+  ld    (FreeToUseFastCopy0+sx),a
+  ret
+
 MoveCannon:
 ;
 ; bit	7	  6	  5		    4		    3		    2		  1		  0
@@ -1167,7 +2254,7 @@ MoveCannon:
 ;
 	ld		a,(NewPrContr)
   and   %0000 0011
-  ret   z
+  jp    z,PutCannonSameRow
   cp    %0000 0001
   jr    z,.UpPressed
 
@@ -1186,80 +2273,76 @@ MoveCannon:
   ld    (CannonRow),a
   jp    PutCannon1RowHigher
 
+PutCannonSameRow:
+  ld    a,(CannonRow)
+  cp    5
+  jp    z,PutCannon1RowLower
 PutCannon1RowHigher:
+  ld    hl,.Cannon
+  ld    de,FreeToUseFastCopy0
+  ld    bc,15
+  ldir
+
+  call  HandleAnimateShootCannon
+
   ld    a,(CannonRow)
   dec   a
-  ld    hl,.Row1
-  jp    z,DoCopy
+  ld    b,16                              ;dy
+  jr    z,.SyFound
   dec   a
-  ld    hl,.Row2
-  jp    z,DoCopy
+  ld    b,38                              ;dy
+  jr    z,.SyFound
   dec   a
-  ld    hl,.Row3
-  jp    z,DoCopy
-  ld    hl,.Row4
+  ld    b,60                              ;dy
+  jr    z,.SyFound
+  dec   a
+  ld    b,82                              ;dy
+  jr    z,.SyFound
+  ld    b,104                             ;dy
+  jr    z,.SyFound
+
+  .SyFound:
+  ld    a,b
+  ld    (FreeToUseFastCopy0+dy),a
+  ld    hl,FreeToUseFastCopy0
   jp    DoCopy
 
-.Row1:
-	db		008,0,064,3
-	db		008,0,020,0
-	db		034,0,026+22,0
-	db		0,0,$d0
-
-.Row2:
-	db		008,0,064,3
-	db		008,0,042,0
-	db		034,0,026+22,0
-	db		0,0,$d0
-
-.Row3:
-	db		008,0,064,3
-	db		008,0,064,0
-	db		034,0,026+22,0
-	db		0,0,$d0
-
-.Row4:
-	db		008,0,064,3
-	db		008,0,086,0
-	db		034,0,026+22,0
+.Cannon:
+	db		008,0,060,3
+	db		008,0,000,0
+	db		034,0,026+22+4,0
 	db		0,0,$d0
 
 PutCannon1RowLower:
+  ld    hl,.Cannon
+  ld    de,FreeToUseFastCopy0
+  ld    bc,15
+  ldir
+
+  call  HandleAnimateShootCannon
+
   ld    a,(CannonRow)
   sub   a,2
-  ld    hl,.Row2
-  jp    z,DoCopy
+  ld    b,16                              ;dy
+  jr    z,.SyFound
   dec   a
-  ld    hl,.Row3
-  jp    z,DoCopy
+  ld    b,38                              ;dy
+  jr    z,.SyFound
   dec   a
-  ld    hl,.Row4
-  jp    z,DoCopy
-  ld    hl,.Row5
+  ld    b,60                              ;dy
+  jr    z,.SyFound
+  ld    b,82                              ;dy
+
+  .SyFound:
+  ld    a,b
+  ld    (FreeToUseFastCopy0+dy),a
+  ld    hl,FreeToUseFastCopy0
   jp    DoCopy
 
-.Row2:
-	db		008,0,064-22,3
-	db		008,0,042-22,0
-	db		034,0,026+22,0
-	db		0,0,$d0
-
-.Row3:
-	db		008,0,064-22,3
-	db		008,0,064-22,0
-	db		034,0,026+22,0
-	db		0,0,$d0
-
-.Row4:
-	db		008,0,064-22,3
-	db		008,0,086-22,0
-	db		034,0,026+22,0
-	db		0,0,$d0
-
-.Row5:
-	db		008,0,064-22,3
-	db		008,0,108-22,0
-	db		034,0,026+22,0
+.Cannon:
+	db		008,0,060-22,3
+	db		008,0,000,0
+	db		034,0,026+22+4,0
 	db		0,0,$d0
 
 BlockhitPalette:
