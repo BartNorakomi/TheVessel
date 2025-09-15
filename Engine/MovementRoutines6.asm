@@ -11,6 +11,11 @@ JumpDownGameRoutine:
   ld    a,0*32 + 31                         ;force page 0 on vblank
 	ld    (PageOnNextVblank),a
 
+
+
+call spritesoff
+
+
   call  ScrollBackgroundJumpDownGame
   call  BuildUpBackgroundJumpDownGame
   call  CheckBuildUpNewRowJumpDownGame
@@ -106,10 +111,17 @@ JumpDownGameRoutine:
 	db		14+ (14 * 16),0,$80
 
 ScrollBackgroundJumpDownGame:
+  ld    a,(Scroll27LinesDown?)
+  or    a
+  ret   z
+  dec   a
+  ld    (Scroll27LinesDown?),a
+
   ld    a,(r23onLineIntJumpDownGame)
   inc   a
-;  ld    (r23onLineIntJumpDownGame),a
+  ld    (r23onLineIntJumpDownGame),a
   ret
+
 
 CheckBuildUpNewRowJumpDownGame:
 ;
@@ -118,43 +130,55 @@ CheckBuildUpNewRowJumpDownGame:
 ;		  F5	F1	'M'		  space	  right	  left	down	up	(keyboard)
 ;
 	ld		a,(NewPrContr)
+	ld		a,(Controls)
 	bit		4,a           ;trig a pressed ?
   ret   z
 
+  ld    a,(Scroll27LinesDown?)
+  or    a
+  ret   nz
+
   ld    a,1
   ld    (BuildUpNewRowJumpDownGame?),a
+  ld    a,27
+  ld    (Scroll27LinesDown?),a
   ret
 
-TileSXSYTableJumpDownGame:
-  db    000,000, 036,000,  072,000,  108,000,  144,000,  180,000,  216,000
-  db    000,056, 036,056,  072,056,  108,056,  144,056,  180,056,  216,056
-  db    000,112, 036,112,  072,112,  108,112,  144,112,  180,112,  216,112
+EraseRowJumpDownGameStep1:
+  ld    a,(JumpDownGameTilesY)
+  add   a,60 ;56
+  ld    (EraseRowJumpDownGameCopy+dy),a
 
-TileRowTable:
-  db  000,001,002,003,004,005,006
-  db    007,008,009,010,011,012
-  db  013,014,015,016,017,018,019
-  db    000,000,000,000,000,000
-  db  000,000,000,000,000,000,000
-  db    000,000,000,000,000,000
-  db  000,000,000,000,000,000,000
-  db    000,000,000,000,000,000
-  db  000,000,000,000,000,000,000
-  db    000,000,000,000,000,000
-  db  000,000,000,000,000,000,000
-  db    000,000,000,000,000,000
-  db  000,000,000,000,000,000,000
-  db    000,000,000,000,000,000
-  db  000,000,000,000,000,000,000
-  db    000,000,000,000,000,000
-  db  000,000,000,000,000,000,000
-  db    000,000,000,000,000,000
-  db  000,000,000,000,000,000,000
+  ld    hl,EraseRowJumpDownGameCopy
+  call  DoCopy
+  ret
+
+EraseRowJumpDownGameStep2:
+  ld    a,(JumpDownGameTilesY)
+  add   a,60 ;56
+  ld    (EraseRowJumpDownGameCopy+dy),a
+
+  cp    256-27
+  ret   c
+
+  xor   a
+  ld    (EraseRowJumpDownGameCopy+dy),a
+
+  ld    hl,EraseRowJumpDownGameCopy
+  call  DoCopy
+  ret
 
 BuildUpBackgroundJumpDownGame:
   ld    a,(BuildUpNewRowJumpDownGame?)
   or    a
   ret   z
+
+  inc   a
+  ld    (BuildUpNewRowJumpDownGame?),a
+  cp    2
+  jr    z,EraseRowJumpDownGameStep1
+  cp    3
+  jr    z,EraseRowJumpDownGameStep2
 
   ld    a,(PutRemainderTile?)
   or    a
@@ -298,23 +322,16 @@ BuildUpBackgroundJumpDownGame:
   ld    (PutTileJumpDownGame+sy),a
   ret
 
-
-
-
-
 ResetVariablesJumpDownGame:
   ld    hl,JumpDownPalette
   ld    de,ArcadeGamePalette
   ld    bc,32
   ldir
 
-  xor   a
-  ld    a,200
+  ld    a,110
   ld    (r23onLineIntJumpDownGame),a
   ld    a,23
   ld    (JumpDownGameTilesX),a
-  xor   a
-
   ld    a,256-30
   ld    (JumpDownGameTilesY),a
   ld    a,1
@@ -326,12 +343,111 @@ ResetVariablesJumpDownGame:
 
   xor   a
   ld    (PutRemainderTile?),a
+  ld    (Scroll27LinesDown?),a
   ret
 
 JumpDownPalette:
   incbin "..\grapx\JumpDown\tiles.sc5",$7680+7,32
 
+TileSXSYTableJumpDownGame:
+  db    000,000, 036,000,  072,000,  108,000,  144,000,  180,000,  216,000
+  db    000,056, 036,056,  072,056,  108,056,  144,056,  180,056,  216,056
+  db    000,112, 036,112,  072,112,  108,112,  144,112,  180,112,  216,112
 
+TileRowTable:
+  db  000,000,000,000,000,000
+  db    000,000,001,000,000
+  db  000,000,001,001,000,000
+  db    000,001,001,001,000
+  db  000,001,001,001,001,000
+  db    001,001,001,001,001
+  db  001,001,001,001,001,001
+  db    001,001,001,001,001
+  db  001,001,001,001,001,001
+  db    001,001,001,001,001
+  db  001,000,001,001,001,001
+  db    001,001,001,001,001
+  db  001,001,001,001,001,001
+  db    001,001,001,001,001
+  db  002,001,001,001,001,001
+  db    002,001,000,001,001
+  db  002,001,001,001,001,001
+  db    002,001,001,001,001
+  db  002,001,001,001,000,001
+  db    002,001,001,001,001
+  db  001,001,001,001,001,001
+  db    001,001,001,001,000
+  db  001,001,001,001,001,001
+  db    001,001,001,001,001
+  db  001,001,001,001,001,001
+  db    000,001,001,001,001
+  db  000,001,001,001,001,001
+  db    001,001,001,001,001
+  db  001,001,001,001,001,001
+  db    001,001,001,001,001
+  db  001,001,000,001,001,001
+  db    001,001,000,001,001
+  db  001,001,001,001,001,001
+  db    001,001,001,001,001
+  db  001,001,001,001,001,001
+  db    001,001,001,001,001
+  db  002,001,001,001,001,001
+  db    002,001,001,001,001
+  db  002,001,001,001,001,001
+  db    002,001,001,001,001
+  db  002,001,001,001,001,001
+  db    002,001,001,001,001
+  db  001,001,001,001,001,001
+  db    001,001,001,001,001
+  db  001,001,001,001,001,001
+  db    001,001,001,001,001
+  db  001,001,001,001,001,001
+  db    001,001,001,001,001
+  db  001,001,001,001,001,001
+  db    001,001,001,001,001
+  db  001,001,001,001,001,001
+  db    001,001,001,001,001
+  db  001,001,001,001,001,001
+  db    001,001,001,001,001
+  db  001,001,001,001,001,001
+  db    001,001,001,001,001
+  db  001,001,001,001,001,001
+  db    001,001,001,001,001
+  db  002,001,001,001,001,001
+  db    002,001,001,001,001
+  db  002,001,001,001,001,001
+  db    002,001,001,001,001
+  db  002,001,001,001,001,001
+  db    002,001,001,001,001
+  db  001,001,001,001,001,001
+  db    001,001,001,001,001
+  db  001,001,001,001,001,001
+  db    001,001,001,001,001
+  db  001,001,001,001,001,001
+  db    001,001,001,001,001
+  db  001,001,001,001,001,001
+  db    001,001,001,001,001
+  db  001,001,001,001,001,001
+  db    001,001,001,001,001
+  db  001,001,001,001,001,001
+  db    001,001,001,001,001
+  db  001,001,001,001,001,001
+  db    001,001,001,001,001
+  db  001,001,001,001,001,001
+  db    001,001,001,001,001
+  db  002,001,001,001,001,001
+  db    002,001,001,001,001
+  db  002,001,001,001,001,001
+  db    002,001,001,001,001
+  db  002,001,001,001,001,001
+  db    002,001,001,001,001
+  db  001,001,001,001,001,001
+  db    001,001,001,001,001
+  db  001,001,001,001,001,001
+  db    001,001,001,001,001
+  db  001,001,001,001,001,001
+  db    001,001,001,001,001
+  db  001,001,001,001,001,001
 
 
 

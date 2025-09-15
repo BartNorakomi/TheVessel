@@ -1757,6 +1757,12 @@ PutTileJumpDownGame:
   db    036,000,056,000                 ;nx,--,ny,--
   db    000,000,$98              				;transparant copy
 
+EraseRowJumpDownGameCopy:
+  db    000,000,000,000                 ;sx,--,sy,spage
+  db    022,000,000,001                 ;dx,--,dy,dpage
+  db    212,000,027,000                 ;nx,--,ny,--
+	db		5+ (0 * 16),0,$c0
+
 
 STOPWAITSPACEPRESSED:
   call  PopulateControls
@@ -2831,6 +2837,7 @@ Row6Wide?:								rb	1
 BuildUpNewRowJumpDownGame?:	rb	1
 PutRemainderTile?:				rb	1
 TileRowTablePointer:			rb	2
+Scroll27LinesDown?:				rb	1
 
 endenginepage3variables:  equ $+enginepage3length
 org variables
