@@ -1,7 +1,7 @@
 phase	$c000
 
 StartAtTitleScreen?:                equ 0
-MusicOn?:                           equ 1
+MusicOn?:                           equ 0
 Promo?:                             equ 0
 ConversationsOn?:                  	equ 1
 
@@ -152,7 +152,7 @@ EventRacingGameCongratulations: db	1,$28,$7e | dw 000,000			,000        | db 255
 ObjectPenguin: 						db  1,000,000 | dw 000,000		,PenguinBikeRace_0    | db 255  ,MovementRoutines4Block | dw PenguinMovementRoutine				| db 000,000 ,000, 000
 
 EventBlockHitGame:				db	1,$28,$7e | dw 000,000					,000        | db 255      ,MovementRoutines5Block| dw BlockHitGameRoutine		| db 000,000 ,000, 000
-EventJumpDownGame:				db	1,$28,$7e | dw 000,000					,000        | db 255      ,MovementRoutines2Block| dw JumpDownGameRoutine		| db 000,000 ,000, 000
+EventJumpDownGame:				db	1,$28,$7e | dw 000,000					,000        | db 255      ,MovementRoutines6Block| dw JumpDownGameRoutine		| db 000,000 ,000, 000
 
 EventBasketBallGame:			db	1,$28,$7e | dw 000,000					,000        | db 255      ,MovementRoutines2Block| dw BasketBallGameRoutine					| db 000,000 ,000, 000
 ObjectBasket:  						db  1,025,084 | dw 000,000		,Basketball_15end     | db 255      ,MovementRoutines2Block | dw BasketMovementRoutine				| db 001,000 ,000, 000
@@ -1751,6 +1751,13 @@ PutLetterNonTransparant:
   db    004,000,006,000                 ;nx,--,ny,--
   db    000,000,$90              				;transparant copy
 
+PutTileJumpDownGame:
+  db    000,000,056,003                 ;sx,--,sy,spage
+  db    000,000,000,001                 ;dx,--,dy,dpage
+  db    036,000,056,000                 ;nx,--,ny,--
+  db    000,000,$98              				;transparant copy
+
+
 STOPWAITSPACEPRESSED:
   call  PopulateControls
 ;
@@ -1800,6 +1807,28 @@ SetTempisr:
 	pop		af
 	ei	
 	ret
+
+SetInterruptHandlerJumpDownGame:
+  di
+  ld    hl,InterruptHandlerJumpDownGame
+  ld    ($38+1),hl          ;set new normal interrupt
+  ld    a,$c3               ;jump command
+  ld    ($38),a
+  ;lineinterrupt on
+  ld    a,(VDP_0)                       ;set ei1
+  or    16                              ;ei1 checks for lineint and vblankint
+  ld    (VDP_0),a                       ;ei0 (which is default at boot) only checks vblankint
+  out   ($99),a
+  ld    a,128
+  out   ($99),a
+
+  ld    a,LineIntHeightJumpDownGameBottom
+  ld    (LineIntHeightJumpDownGame),a
+  out   ($99),a
+  ld    a,19+128                        ;set lineinterrupt height
+  ei
+  out   ($99),a 
+  ret
 
 SetInterruptHandlerArcadeMachine:
   di
@@ -2794,6 +2823,14 @@ BlocksColumnsTablePointer:			rb	2
 RequestShootProjectile?:	rb	1
 AnimateShootCannon?:	rb	1
 ScoreBlockHitGame:				rb	2
+LineIntHeightJumpDownGame:	rb	1
+r23onLineIntJumpDownGame:	rb	1
+JumpDownGameTilesX:				rb	1
+JumpDownGameTilesY:				rb	1
+Row6Wide?:								rb	1
+BuildUpNewRowJumpDownGame?:	rb	1
+PutRemainderTile?:				rb	1
+TileRowTablePointer:			rb	2
 
 endenginepage3variables:  equ $+enginepage3length
 org variables

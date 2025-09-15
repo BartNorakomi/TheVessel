@@ -691,17 +691,12 @@ BasketBallButtonsGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlo
 	dephase
 	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
 
-JumpDownGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
 BasketBallGameOverGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
 BasketBallTitleScreenGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
 BasketBallShopGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
 PenguinBikeRaceGameOverGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
 UpgradeMenuGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
 	phase	$4000
-	JumpDownPart1Address:
-  incbin "..\grapx\JumpDown\JumpDownPart1.sc5.pck"
-	JumpDownPart2Address:
-  incbin "..\grapx\JumpDown\JumpDownPart2.sc5.pck"
 	BasketBallGameOverPart1Address:
   incbin "..\grapx\BasketBall\GameOverPart1.sc5.pck"
 	BasketBallTitleScreenPart1Address:
@@ -742,6 +737,7 @@ PenguinBikeRaceTitleScreenGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1
 PenguinBikeRaceButtonsGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
 BlockHitButtonsGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
 BlockHitTitleScreenGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
+JumpDownTilesGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
 	phase	$4000
 	PenguinBikeRaceTitleScreenPart1Address:
   incbin "..\grapx\penguinbikerace\titlescreen\TitleScreenPart1.sc5.pck"
@@ -755,7 +751,10 @@ BlockHitTitleScreenGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomB
   incbin "..\grapx\BlockHit\titlescreen\TitleScreenPart2.sc5.pck"
 	BlockHitButtonsPart1Address:
   incbin "..\grapx\BlockHit\titlescreen\ButtonsPart1.sc5.pck"
-
+	JumpDownTilesPart1Address:
+  incbin "..\grapx\JumpDown\TilesPart1.sc5.pck"
+	JumpDownTilesPart2Address:
+  incbin "..\grapx\JumpDown\TilesPart2.sc5.pck"
 	.CheckBlockFull:	dw	$+$8000
 	dephase
 	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
@@ -2274,6 +2273,11 @@ MovementRoutines4Block:	equ ($-RomStartAddress) and (romsize-1) /RomBlockSize ;$
 ;movement routines5
 MovementRoutines5Block:	equ ($-RomStartAddress) and (romsize-1) /RomBlockSize ;$04
 								include "MovementRoutines5.asm"  
+								DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
+
+;movement routines6
+MovementRoutines6Block:	equ ($-RomStartAddress) and (romsize-1) /RomBlockSize ;$04
+								include "MovementRoutines6.asm"  
 								DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
 
 

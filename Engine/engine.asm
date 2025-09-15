@@ -59,29 +59,6 @@ CheckLeaveRoom:
 
 vblankintflag:  db  0
 
-InterruptHandlerArcadeMachine:
-  push  af
-  
-  ld    a,1               ;set s#1
-  out   ($99),a
-  ld    a,15+128
-  out   ($99),a
-  in    a,($99)           ;check and acknowledge line interrupt
-  rrca
-  jp    c,LineIntArcadeMachine ;palette split
-  
-  xor   a                 ;set s#0
-  out   ($99),a
-  ld    a,15+128
-  out   ($99),a
-  in    a,($99)           ;check and acknowledge vblank interrupt
-  rlca
-  jp    c,vblank          ;vblank detected, so jp to that routine
- 
-  pop   af 
-  ei
-  ret
-
 InterruptHandlerDrillingGame:
   push  af
   
@@ -780,7 +757,122 @@ LineInt:
   pop   bc
   pop   af 
   ei
+  ret
+
+
+InterruptHandlerJumpDownGame:
+  push  af
+  
+  ld    a,1               ;set s#1
+  out   ($99),a
+  ld    a,15+128
+  out   ($99),a
+  in    a,($99)           ;check and acknowledge line interrupt
+  rrca
+  jp    c,LineIntJumpDownGame ;palette split
+  
+  xor   a                 ;set s#0
+  out   ($99),a
+  ld    a,15+128
+  out   ($99),a
+  in    a,($99)           ;check and acknowledge vblank interrupt
+  rlca
+  jp    c,vblank          ;vblank detected, so jp to that routine
+ 
+  pop   af 
+  ei
+  ret
+
+;PageOnLineIntArcadeMachine: db  0*32 + 31
+LineIntHeightJumpDownGameTop: equ 5
+LineIntHeightJumpDownGameBottom: equ 133
+LineIntJumpDownGame:
+  ld    a,(LineIntHeightJumpDownGame)
+  cp    LineIntHeightJumpDownGameBottom
+  jr    z,.BottomLineInt
+
+  .TopLineInt:
+  push  bc
+
+  ld    a,(r23onLineIntJumpDownGame)
+  ld    b,a
+  ld    a,LineIntHeightJumpDownGameBottom
+  ld    (LineIntHeightJumpDownGame),a
+
+  ld    a,1*32 + 31                     ;set page 1
+  out   ($99),a
+  ld    a,2+128
+  out   ($99),a  
+
+  ld    a,b                             ;set r#23 (vertical screen offset)
+  out   ($99),a
+  ld    a,23+128
+  out   ($99),a  
+
+  ld    a,LineIntHeightJumpDownGameBottom
+  add   a,b
+  out   ($99),a
+  ld    a,19+128                        ;set lineinterrupt height
+  out   ($99),a 
+
+  pop   bc
+  pop   af
+  ei
   ret  
+
+  .BottomLineInt:
+  push  bc
+  ld    a,LineIntHeightJumpDownGameTop
+  ld    (LineIntHeightJumpDownGame),a
+  ld    b,LineIntHeightJumpDownGameTop
+
+  ld    a,(PageOnLineIntArcadeMachine)  ;set page
+  out   ($99),a
+  ld    a,2+128
+  out   ($99),a  
+
+  xor   a                               ;reset r#23 (vertical screen offset)
+  out   ($99),a
+  ld    a,23+128
+  out   ($99),a  
+
+  ld    a,b
+  out   ($99),a
+  ld    a,19+128                        ;set lineinterrupt height
+  out   ($99),a 
+
+  push  hl
+  ld    hl,ArcadeMachinePalette         ;set palette
+  call	SetPalette
+
+  pop   hl
+  pop   bc
+  pop   af
+  ei
+  ret  
+
+InterruptHandlerArcadeMachine:
+  push  af
+  
+  ld    a,1               ;set s#1
+  out   ($99),a
+  ld    a,15+128
+  out   ($99),a
+  in    a,($99)           ;check and acknowledge line interrupt
+  rrca
+  jp    c,LineIntArcadeMachine ;palette split
+  
+  xor   a                 ;set s#0
+  out   ($99),a
+  ld    a,15+128
+  out   ($99),a
+  in    a,($99)           ;check and acknowledge vblank interrupt
+  rlca
+  jp    c,vblank          ;vblank detected, so jp to that routine
+ 
+  pop   af 
+  ei
+  ret
 
 PageOnLineIntArcadeMachine: db  0*32 + 31
 LineIntHeightArcadeMachine: equ 133
@@ -3791,7 +3883,7 @@ CompareHLwithDE:
   ret
 
 StartSaveGameData:
-CurrentRoom:  db  21                    ;0=arcadehall1, 1=arcadehall2, 2=biopod, 3=hydroponicsbay, 4=hangarbay, 5=trainingdeck, 6=reactorchamber, 7=sleepingquarters, 8=armoryvault, 9=holodeck, 10=medicalbay
+CurrentRoom:  db  22                    ;0=arcadehall1, 1=arcadehall2, 2=biopod, 3=hydroponicsbay, 4=hangarbay, 5=trainingdeck, 6=reactorchamber, 7=sleepingquarters, 8=armoryvault, 9=holodeck, 10=medicalbay
                                         ;11=sciencelab, 12=drillinggame, 13=upgrademenu, 14=drillinglocations, 15=racinggame, 16=racing game title screen, 17=racing game level progress, 18=racing game congratulations
                                         ;19=basketball game, 20=penguin bike race, 21=blockhit game, 22=jumpdown game
 GamesPlayed:  db 9                      ;increases after leaving a game. max=255

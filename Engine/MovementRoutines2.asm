@@ -2,7 +2,6 @@
 ;DrillingLocationsRoutine
 ;PenguinBikeRaceGameRoutine
 ;BlockHitGameRoutine
-;JumpDownGameRoutine
 ;BasketMovementRoutine
 ;BasketBallGameRoutine
 ;BackToTitleScreenBasketBall
@@ -4941,49 +4940,6 @@ CheckBounceOnLeftRimRightSide:
 
 
 
-JumpDownGameRoutine:
-  ld    a,1
-  ld    (framecounter),a                    ;we force framecounter to 1 so that the sf2 object handler doesn't swap page ever
-  ld    a,0*32 + 31                         ;force page 0
-	ld    (PageOnNextVblank),a
-
-  ld    hl,JumpDownPalette
-  call	SetPalette
-
-  call  CheckEndArcadeGameTriggerB
-
-  call  .HandlePhase                        ;load graphics, init variables
-  ret
-
-  .HandlePhase:
-  bit   0,(iy+ObjectPhase)
-  ret   nz
-  ld    (iy+ObjectPhase),1
-
-  ld    hl,JumpDownPart1Address
-  ld    a,JumpDownGfxBlock
-  call  SetGfxAt8000InRam                             ;in: hl=adress in rom page 1, a=block, out: puts gfx in page 2 in ram at $8000
-
-  ld    hl,$8000 + (000*128) + (000/2) - 128
-  ld    de,$0000 + (000*128) + (000/2) - 128
-  ld    bc,$0000 + (128*256) + (256/2)
-  call  CopyRamToVram                       ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
-
-  ld    hl,JumpDownPart2Address
-  ld    a,JumpDownGfxBlock
-  call  SetGfxAt8000InRam                             ;in: hl=adress in rom page 1, a=block, out: puts gfx in page 2 in ram at $8000
-
-  ld    hl,$8000 + (000*128) + (000/2) - 128
-  ld    de,$0000 + (128*128) + (000/2) - 128
-  ld    bc,$0000 + (007*256) + (256/2)
-  call  CopyRamToVram                       ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
-
-  call  SetArcadeMachine
-  call  SetInterruptHandlerArcadeMachine   	;sets Vblank and lineint for hud
-  ret
-
-JumpDownPalette:
-  incbin "..\grapx\JumpDown\JumpDown.sc5",$7680+7,32
 
 CheckEndArcadeGameTriggerB:
 ;
