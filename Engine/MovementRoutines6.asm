@@ -11,11 +11,20 @@ JumpDownGameRoutine:
   ld    a,0*32 + 31                         ;force page 0 on vblank
 	ld    (PageOnNextVblank),a
 
-  call  SetBunnySprite
+  call  .HandlePhase                        ;load graphics, init variables
+  call  CheckBunnyInLavaNothingOrIce
+  call  CheckBunnyOffScreen
+  call  SetBunnySpatCoordinates
+  call  CheckShouldBunnyJump
+halt
+halt
+;  call  BackdropGreen
+  call  HandleBunnyJumpAndSetSpriteCharacterAndColor
+  call  HandleBunnyDied
+;  call  BackdropBlack
   call  ScrollBackgroundJumpDownGame
   call  BuildUpBackgroundJumpDownGame
-  call  CheckBuildUpNewRowJumpDownGame
-  call  .HandlePhase                        ;load graphics, init variables
+  call  Scroll4RowsAtStartOfGame
   ret
 
   .HandlePhase:
@@ -106,7 +115,7 @@ JumpDownGameRoutine:
 	db		1,0,0,1
 	db		14+ (14 * 16),0,$80
 
-SetBunnySprite:
+SetBunnySpatCoordinates:
   ld    a,(BunnyX)
   ld    (spat+1+00*4),a
   ld    (spat+1+01*4),a
@@ -119,10 +128,23 @@ SetBunnySprite:
   ld    (spat+1+03*4),a
   ld    (spat+1+06*4),a
   ld    (spat+1+07*4),a
+  ld    (spat+1+10*4),a
   ld    (spat+1+11*4),a
-  ld    (spat+1+12*4),a
 
   ld    a,(BunnyY)
+  cp    216
+  jr    nz,.EndCheck216
+  inc   a
+  .EndCheck216:
+  cp    216-16
+  jr    nz,.EndCheck200
+  inc   a
+  .EndCheck200:
+  cp    216-16-16
+  jr    nz,.EndCheck184
+  inc   a
+  .EndCheck184:
+
   ld    (spat+0+00*4),a
   ld    (spat+0+01*4),a
   ld    (spat+0+02*4),a
@@ -151,20 +173,509 @@ ScrollBackgroundJumpDownGame:
   ld    (r23onLineIntJumpDownGame),a
   ret
 
-CheckBuildUpNewRowJumpDownGame:
+HandleBunnyDied:
+  ld    a,(BunnyDied?)
+  or    a
+  ret   z
+
+  ld    a,(BunnyFacingRight?)
+  or    a
+  jp    z,.Left
+
+  .Right:
+  ld    a,(BunnyDied?)
+  inc   a
+  ld    (BunnyDied?),a
+  sub   20
+	ld		hl,BunnyCharSprites+72*32	;sprite 0 character table in VRAM
+	ld		de,BunnyColSprites+72*16	;sprite 0 character table in VRAM
+  jp    c,SetBunnyCharacterAndColor
+  sub   20
+	ld		hl,BunnyCharSprites+84*32	;sprite 0 character table in VRAM
+	ld		de,BunnyColSprites+84*16	;sprite 0 character table in VRAM
+  jp    c,SetBunnyCharacterAndColor
+  sub   20
+	ld		hl,BunnyCharSprites+72*32	;sprite 0 character table in VRAM
+	ld		de,BunnyColSprites+72*16	;sprite 0 character table in VRAM
+  jp    c,SetBunnyCharacterAndColor
+  sub   20
+	ld		hl,BunnyCharSprites+84*32	;sprite 0 character table in VRAM
+	ld		de,BunnyColSprites+84*16	;sprite 0 character table in VRAM
+  jp    c,SetBunnyCharacterAndColor
+  sub   6
+	ld		hl,BunnyCharSprites+120*32	;sprite 0 character table in VRAM
+	ld		de,BunnyColSprites+120*16	;sprite 0 character table in VRAM
+  jp    c,SetBunnyCharacterAndColor
+  sub   6
+	ld		hl,BunnyCharSprites+132*32	;sprite 0 character table in VRAM
+	ld		de,BunnyColSprites+132*16	;sprite 0 character table in VRAM
+  jp    c,SetBunnyCharacterAndColor
+  sub   6
+	ld		hl,BunnyCharSprites+144*32	;sprite 0 character table in VRAM
+	ld		de,BunnyColSprites+144*16	;sprite 0 character table in VRAM
+  jp    c,SetBunnyCharacterAndColor
+  sub   6
+	ld		hl,BunnyCharSprites+156*32	;sprite 0 character table in VRAM
+	ld		de,BunnyColSprites+156*16	;sprite 0 character table in VRAM
+  jp    c,SetBunnyCharacterAndColor
+  sub   6
+	ld		hl,BunnyCharSprites+168*32	;sprite 0 character table in VRAM
+	ld		de,BunnyColSprites+168*16	;sprite 0 character table in VRAM
+  jp    c,SetBunnyCharacterAndColor
+  sub   6
+	ld		hl,BunnyCharSprites+180*32	;sprite 0 character table in VRAM
+	ld		de,BunnyColSprites+180*16	;sprite 0 character table in VRAM
+  jp    c,SetBunnyCharacterAndColor
+  ret
+
+
+  .Left:
+  ld    a,(BunnyDied?)
+  inc   a
+  ld    (BunnyDied?),a
+  sub   20
+	ld		hl,BunnyCharSprites+96*32	;sprite 0 character table in VRAM
+	ld		de,BunnyColSprites+96*16	;sprite 0 character table in VRAM
+  jp    c,SetBunnyCharacterAndColor
+  sub   20
+	ld		hl,BunnyCharSprites+108*32	;sprite 0 character table in VRAM
+	ld		de,BunnyColSprites+108*16	;sprite 0 character table in VRAM
+  jp    c,SetBunnyCharacterAndColor
+  sub   20
+	ld		hl,BunnyCharSprites+96*32	;sprite 0 character table in VRAM
+	ld		de,BunnyColSprites+96*16	;sprite 0 character table in VRAM
+  jp    c,SetBunnyCharacterAndColor
+  sub   20
+	ld		hl,BunnyCharSprites+108*32	;sprite 0 character table in VRAM
+	ld		de,BunnyColSprites+108*16	;sprite 0 character table in VRAM
+  jp    c,SetBunnyCharacterAndColor
+  sub   6
+	ld		hl,BunnyCharSprites+120*32	;sprite 0 character table in VRAM
+	ld		de,BunnyColSprites+120*16	;sprite 0 character table in VRAM
+  jp    c,SetBunnyCharacterAndColor
+  sub   6
+	ld		hl,BunnyCharSprites+132*32	;sprite 0 character table in VRAM
+	ld		de,BunnyColSprites+132*16	;sprite 0 character table in VRAM
+  jp    c,SetBunnyCharacterAndColor
+  sub   6
+	ld		hl,BunnyCharSprites+144*32	;sprite 0 character table in VRAM
+	ld		de,BunnyColSprites+144*16	;sprite 0 character table in VRAM
+  jp    c,SetBunnyCharacterAndColor
+  sub   6
+	ld		hl,BunnyCharSprites+156*32	;sprite 0 character table in VRAM
+	ld		de,BunnyColSprites+156*16	;sprite 0 character table in VRAM
+  jp    c,SetBunnyCharacterAndColor
+  sub   6
+	ld		hl,BunnyCharSprites+168*32	;sprite 0 character table in VRAM
+	ld		de,BunnyColSprites+168*16	;sprite 0 character table in VRAM
+  jp    c,SetBunnyCharacterAndColor
+  sub   6
+	ld		hl,BunnyCharSprites+180*32	;sprite 0 character table in VRAM
+	ld		de,BunnyColSprites+180*16	;sprite 0 character table in VRAM
+  jp    c,SetBunnyCharacterAndColor
+  ret
+
+SpiderWebJump:
+  ld    a,(BunnyFacingRight?)
+  or    a
+  jr    z,SpiderWebJumpLeft
+SpiderWebJumpRight:
+  ld    a,(AnimateSpiderWebJump?)
+  inc   a
+  ld    (AnimateSpiderWebJump?),a
+
+  cp    13
+	ld		hl,BunnyCharSprites+12*32	;sprite 0 character table in VRAM
+	ld		de,BunnyColSprites+12*16	;sprite 0 character table in VRAM
+  jp    c,SetBunnyCharacterAndColor
+
+  xor   a
+  ld    (AnimateSpiderWebJump?),a
+
+	ld		hl,BunnyCharSprites+0*32	;sprite 0 character table in VRAM
+	ld		de,BunnyColSprites+0*16	;sprite 0 character table in VRAM
+  jp    SetBunnyCharacterAndColor
+SpiderWebJumpLeft:
+  ld    a,(AnimateSpiderWebJump?)
+  inc   a
+  ld    (AnimateSpiderWebJump?),a
+
+  cp    13
+	ld		hl,BunnyCharSprites+48*32	;sprite 0 character table in VRAM
+	ld		de,BunnyColSprites+48*16	;sprite 0 character table in VRAM
+  jp    c,SetBunnyCharacterAndColor
+
+  xor   a
+  ld    (AnimateSpiderWebJump?),a
+
+	ld		hl,BunnyCharSprites+36*32	;sprite 0 character table in VRAM
+	ld		de,BunnyColSprites+36*16	;sprite 0 character table in VRAM
+  jp    SetBunnyCharacterAndColor
+
+HandleBunnyJumpAndSetSpriteCharacterAndColor:
+  ld    a,(AnimateSpiderWebJump?)
+  or    a
+  jp    nz,SpiderWebJump
+
+  ld    a,(Scroll27LinesDown?)
+  or    a
+  ret   z
+
+  ld    a,(JumpBunnyLeft?)
+  or    a
+  jp    nz,JumpBunnyLeft
+  ld    a,(JumpBunnyRight?)
+  or    a
+  ret   z
+JumpBunnyRight:
+  ld    a,1
+  ld    (BunnyFacingRight?),a
+
+  ld    a,(BunnySlidingOnIce?)
+  or    a
+  jp    nz,SlideOnIceBunnyRight
+
+  call  .MoveBunnyRight
+  ld    a,(JumpBunnyRight?)
+  inc   a
+  ld    (JumpBunnyRight?),a
+
+  cp    13
+	ld		hl,BunnyCharSprites+12*32	;sprite 0 character table in VRAM
+	ld		de,BunnyColSprites+12*16	;sprite 0 character table in VRAM
+  jp    c,SetBunnyCharacterAndColor
+  cp    28
+	ld		hl,BunnyCharSprites+24*32	;sprite 0 character table in VRAM
+	ld		de,BunnyColSprites+24*16	;sprite 0 character table in VRAM
+  jp    c,SetBunnyCharacterAndColor
+
+  xor   a
+  ld    (JumpBunnyRight?),a
+
+	ld		hl,BunnyCharSprites+0*32	;sprite 0 character table in VRAM
+	ld		de,BunnyColSprites+0*16	;sprite 0 character table in VRAM
+  jp    SetBunnyCharacterAndColor
+
+  .MoveBunnyRight:
+  ld    a,(JumpBunnyRight?)
+  add   a,a
+  ld    e,a
+  ld    d,0
+  ld    hl,.JumpRightTable-2
+  add   hl,de                               ;x increase
+  ld    a,(BunnyX)
+  add   a,(hl)
+  ld    (BunnyX),a
+  inc   hl                                  ;y increase
+  ld    a,(BunnyY)
+  add   a,(hl)
+  ld    (BunnyY),a
+  ret
+
+  .JumpRightTable:
+  db    +1,-2,  +0,-2,  +1,-1,  +1,-1,  +0,-0,  +1,+0,  +1,+1,  +0,+0,  +1,+1,  +1,+1
+  db    +0,+0,  +1,+1,  +1,+1,  +0,+1,  +1,+2,  +1,+1,  +0,+1,  +1,+2,  +1,+1,  +0,+2
+  db    +1,+2,  +1,+2,  +0,+2,  +1,+3,  +1,+3,  +0,+3,  +1,+3
+
+SlideOnIceBunnyRight:
+  call  .MoveBunnyRight
+  ld    a,(JumpBunnyRight?)
+  inc   a
+  ld    (JumpBunnyRight?),a
+
+  cp    14
+	ld		hl,BunnyCharSprites+0*32	;sprite 0 character table in VRAM
+	ld		de,BunnyColSprites+0*16	;sprite 0 character table in VRAM
+  jp    c,SetBunnyCharacterAndColor
+  cp    28
+	ld		hl,BunnyCharSprites+24*32	;sprite 0 character table in VRAM
+	ld		de,BunnyColSprites+24*16	;sprite 0 character table in VRAM
+  jp    c,SetBunnyCharacterAndColor
+
+  xor   a
+  ld    (JumpBunnyRight?),a
+  ld    (BunnySlidingOnIce?),a
+
+	ld		hl,BunnyCharSprites+0*32	;sprite 0 character table in VRAM
+	ld		de,BunnyColSprites+0*16	;sprite 0 character table in VRAM
+  jp    SetBunnyCharacterAndColor
+
+  .MoveBunnyRight:
+  ld    a,(JumpBunnyRight?)
+  add   a,a
+  ld    e,a
+  ld    d,0
+  ld    hl,.JumpRightTable-2
+  add   hl,de                               ;x increase
+  ld    a,(BunnyX)
+  add   a,(hl)
+  ld    (BunnyX),a
+  inc   hl                                  ;y increase
+  ld    a,(BunnyY)
+  add   a,(hl)
+  ld    (BunnyY),a
+  ret
+
+  .JumpRightTable:
+  db    +1,+0,  +0,+0,  +1,+0,  +1,+0,  +0,+0,  +1,+0,  +1,+0,  +0,+0,  +1,+0,  +1,+0
+  db    +0,+0,  +1,+0,  +1,+0,  +0,+1,  +1,+2,  +1,+1,  +0,+1,  +1,+1,  +1,+2,  +0,+1
+  db    +1,+2,  +1,+2,  +0,+2,  +1,+3,  +1,+3,  +0,+3,  +1,+3
+
+JumpBunnyLeft:
+  xor   a
+  ld    (BunnyFacingRight?),a
+
+  ld    a,(BunnySlidingOnIce?)
+  or    a
+  jp    nz,SlideOnIceBunnyLeft
+
+  call  .MoveBunnyLeft
+  ld    a,(JumpBunnyLeft?)
+  inc   a
+  ld    (JumpBunnyLeft?),a
+
+  cp    13
+	ld		hl,BunnyCharSprites+48*32	;sprite 0 character table in VRAM
+	ld		de,BunnyColSprites+48*16	;sprite 0 character table in VRAM
+  jp    c,SetBunnyCharacterAndColor
+  cp    28
+	ld		hl,BunnyCharSprites+60*32	;sprite 0 character table in VRAM
+	ld		de,BunnyColSprites+60*16	;sprite 0 character table in VRAM
+  jp    c,SetBunnyCharacterAndColor
+
+  xor   a
+  ld    (JumpBunnyLeft?),a
+
+	ld		hl,BunnyCharSprites+36*32	;sprite 0 character table in VRAM
+	ld		de,BunnyColSprites+36*16	;sprite 0 character table in VRAM
+  jp    SetBunnyCharacterAndColor
+
+  .MoveBunnyLeft:
+  ld    a,(JumpBunnyLeft?)
+  add   a,a
+  ld    e,a
+  ld    d,0
+  ld    hl,.JumpLeftTable-2
+  add   hl,de                               ;x increase
+  ld    a,(BunnyX)
+  add   a,(hl)
+  ld    (BunnyX),a
+  inc   hl                                  ;y increase
+  ld    a,(BunnyY)
+  add   a,(hl)
+  ld    (BunnyY),a
+  ret
+
+  .JumpLeftTable:
+  db    -1,-2,  -0,-2,  -1,-1,  -1,-1,  -0,-0,  -1,+0,  -1,+1,  -0,+0,  -1,+1,  -1,+1
+  db    -0,+0,  -1,+1,  -1,+1,  -0,+1,  -1,+2,  -1,+1,  -0,+1,  -1,+2,  -1,+1,  -0,+2
+  db    -1,+2,  -1,+2,  -0,+2,  -1,+3,  -1,+3,  -0,+3,  -1,+3
+
+SlideOnIceBunnyLeft:
+  call  .MoveBunnyLeft
+  ld    a,(JumpBunnyLeft?)
+  inc   a
+  ld    (JumpBunnyLeft?),a
+
+  cp    14
+	ld		hl,BunnyCharSprites+36*32	;sprite 0 character table in VRAM
+	ld		de,BunnyColSprites+36*16	;sprite 0 character table in VRAM
+  jp    c,SetBunnyCharacterAndColor
+  cp    28
+	ld		hl,BunnyCharSprites+60*32	;sprite 0 character table in VRAM
+	ld		de,BunnyColSprites+60*16	;sprite 0 character table in VRAM
+  jp    c,SetBunnyCharacterAndColor
+
+  xor   a
+  ld    (JumpBunnyLeft?),a
+  ld    (BunnySlidingOnIce?),a
+
+	ld		hl,BunnyCharSprites+36*32	;sprite 0 character table in VRAM
+	ld		de,BunnyColSprites+36*16	;sprite 0 character table in VRAM
+  jp    SetBunnyCharacterAndColor
+
+  .MoveBunnyLeft:
+  ld    a,(JumpBunnyLeft?)
+  add   a,a
+  ld    e,a
+  ld    d,0
+  ld    hl,.JumpLeftTable-2
+  add   hl,de                               ;x increase
+  ld    a,(BunnyX)
+  add   a,(hl)
+  ld    (BunnyX),a
+  inc   hl                                  ;y increase
+  ld    a,(BunnyY)
+  add   a,(hl)
+  ld    (BunnyY),a
+  ret
+
+  .JumpLeftTable:
+  db    -1,+0,  -0,+0,  -1,+0,  -1,+0,  -0,+0,  -1,+0,  -1,+0,  -0,+0,  -1,+0,  -1,+0
+  db    -0,+0,  -1,+0,  -1,+0,  -0,+1,  -1,+2,  -1,+1,  -0,+1,  -1,+1,  -1,+2,  -0,+1
+  db    -1,+2,  -1,+2,  -0,+2,  -1,+3,  -1,+3,  -0,+3,  -1,+3
+
+CheckShouldBunnyJump:
+  ld    a,(Scroll4RowsAtStartOfGame?)
+  dec   a
+  ret   nz
+
+  ld    a,(Scroll27LinesDown?)
+  or    a
+  ret   nz
+
+  ld    a,(BunnyDied?)
+  or    a
+  ret   nz
+
 ;
 ; bit	7	  6	  5		    4		    3		    2		  1		  0
 ;		  0	  0	  trig-b	trig-a	right	  left	down	up	(joystick)
 ;		  F5	F1	'M'		  space	  right	  left	down	up	(keyboard)
 ;
-	ld		a,(NewPrContr)
-	ld		a,(Controls)
-	bit		4,a           ;trig a pressed ?
-  ret   z
+  call  GetTileBunnyStandsOn
+  cp    JumpDownSpiderWebTile
+  jp    z,BunnyStandsInSpiderWeb
+  cp    JumpDownReverseControlsTile
+  ld    b,%0000 0100
+  jp    z,.EndCheckReverseControls
+  ld    b,%0000 1000
+  .EndCheckReverseControls:
 
+	ld		a,(Controls)
+  and   %0000 1100
+  ret   z
+  cp    b
+  jr    z,.JumpRight
+
+  .JumpLeft:
+  call  CheckTreeWhenJumpingLeft
+  ld    a,1
+  ld    (JumpBunnyLeft?),a
+  ld    a,1
+  ld    (BuildUpNewRowJumpDownGame?),a
+  ld    a,27
+  ld    (Scroll27LinesDown?),a
+  ret
+
+  .JumpRight:
+  call  CheckTreeWhenJumpingRight
+  ld    a,1
+  ld    (JumpBunnyRight?),a
+  ld    a,1
+  ld    (BuildUpNewRowJumpDownGame?),a
+  ld    a,27
+  ld    (Scroll27LinesDown?),a
+  ret
+
+BunnyStandsInSpiderWeb:
+	ld		a,(NewPrContr)
+  and   %0000 1100
+  ret   z
+  cp    %0000 1000
+  jr    z,.JumpRight
+
+  .JumpLeft:
+  call  CheckTreeWhenJumpingLeft
+
+  ld    a,(AnimateSpiderWebJump?)
+  or    a
+  ret   nz
+  ld    a,1
+  ld    (AnimateSpiderWebJump?),a
+  xor   a
+  ld    (BunnyFacingRight?),a
+
+  ld    a,(SpiderWeb3TimesPressed?)
+  inc   a
+  ld    (SpiderWeb3TimesPressed?),a
+  cp    3
+  ret   nz
+  xor   a
+  ld    (SpiderWeb3TimesPressed?),a
+  ld    (AnimateSpiderWebJump?),a
+
+  ld    a,1
+  ld    (JumpBunnyLeft?),a
+  ld    a,1
+  ld    (BuildUpNewRowJumpDownGame?),a
+  ld    a,27
+  ld    (Scroll27LinesDown?),a
+  ret
+
+  .JumpRight:
+  call  CheckTreeWhenJumpingRight
+
+  ld    a,(AnimateSpiderWebJump?)
+  or    a
+  ret   nz
+  ld    a,1
+  ld    (AnimateSpiderWebJump?),a
+  ld    (BunnyFacingRight?),a
+
+  ld    a,(SpiderWeb3TimesPressed?)
+  inc   a
+  ld    (SpiderWeb3TimesPressed?),a
+  cp    3
+  ret   nz
+  xor   a
+  ld    (SpiderWeb3TimesPressed?),a
+  ld    (AnimateSpiderWebJump?),a
+
+  ld    a,1
+  ld    (JumpBunnyRight?),a
+  ld    a,1
+  ld    (BuildUpNewRowJumpDownGame?),a
+  ld    a,27
+  ld    (Scroll27LinesDown?),a
+  ret
+
+
+CheckTreeWhenJumpingLeft:
+  ld    a,(BunnyX)
+  cp    4+18
+  ret   z                                   ;don't check if we are on the outer left tile
+
+  call  GetTileBunnyStandsOn
+  ld    de,5
+  add   hl,de
+  ld    a,(hl)
+
+  cp    JumpDownTreeTile
+  ret   c
+  cp    JumpDownTreeTile+3
+  ret   nc
+  pop   af
+  ret
+
+CheckTreeWhenJumpingRight:
+  ld    a,(BunnyX)
+  cp    220-18
+  ret   z                                   ;don't check if we are on the outer left tile
+
+  call  GetTileBunnyStandsOn
+  ld    de,6
+  add   hl,de
+  ld    a,(hl)
+
+  cp    JumpDownTreeTile
+  ret   c
+  cp    JumpDownTreeTile+3
+  ret   nc
+  pop   af
+  ret
+
+Scroll4RowsAtStartOfGame:
   ld    a,(Scroll27LinesDown?)
   or    a
   ret   nz
+
+  ld    a,(Scroll4RowsAtStartOfGame?)
+  dec   a
+  ret   z
+  ld    (Scroll4RowsAtStartOfGame?),a
+  cp    7
+  ret   nc
 
   ld    a,1
   ld    (BuildUpNewRowJumpDownGame?),a
@@ -227,7 +738,7 @@ BuildUpBackgroundJumpDownGame:
   ld    (TileRowTablePointer),hl
 
   ld    a,(JumpDownGameTilesX)
-  add   a,35
+  add   a,36
   ld    (JumpDownGameTilesX),a
   cp    215
   ret   c
@@ -242,9 +753,9 @@ BuildUpBackgroundJumpDownGame:
   xor   1
   ld    (Row6Wide?),a
 
-  ld    a,23
+  ld    a,22-2
   jr    nz,.SetDX
-  ld    a,40
+  ld    a,40-2
   .SetDX:
   ld    (JumpDownGameTilesX),a
 
@@ -263,10 +774,10 @@ BuildUpBackgroundJumpDownGame:
   ld    a,(Row6Wide?)
   or    a
 
-  ld    a,23
+  ld    a,22-2
   ld    de,-6                         ;width row (amount of tiles in this row)
   jr    nz,.SetDX2
-  ld    a,40
+  ld    a,40-2
   ld    de,-5                         ;width row (amount of tiles in this row)
   .SetDX2:
   ld    (JumpDownGameTilesX),a
@@ -302,7 +813,7 @@ BuildUpBackgroundJumpDownGame:
   ld    (TileRowTablePointer),hl
 
   ld    a,(JumpDownGameTilesX)
-  add   a,35
+  add   a,36
   ld    (JumpDownGameTilesX),a
   cp    215
   ret   c
@@ -320,9 +831,9 @@ BuildUpBackgroundJumpDownGame:
   xor   1
   ld    (Row6Wide?),a
 
-  ld    a,23
+  ld    a,22-2
   jr    nz,.SetDX3
-  ld    a,40
+  ld    a,40-2
   .SetDX3:
   ld    (JumpDownGameTilesX),a
 
@@ -356,11 +867,11 @@ ResetVariablesJumpDownGame:
   ld    bc,32
   ldir
 
-  ld    a,110
+  ld    a,110-27-27
   ld    (r23onLineIntJumpDownGame),a
-  ld    a,23
+  ld    a,20
   ld    (JumpDownGameTilesX),a
-  ld    a,256-30
+  ld    a,218-2
   ld    (JumpDownGameTilesY),a
   ld    a,1
   ld    (Row6Wide?),a
@@ -372,17 +883,25 @@ ResetVariablesJumpDownGame:
   xor   a
   ld    (PutRemainderTile?),a
   ld    (Scroll27LinesDown?),a
+  ld    (JumpBunnyLeft?),a
+  ld    (JumpBunnyRight?),a
+  ld    (BunnyDied?),a
+  ld    (BunnySlidingOnIce?),a
+  ld    (SpiderWeb3TimesPressed?),a
+  ld    (AnimateSpiderWebJump?),a
 
-  ld    a,100
+  ld    a,112
   ld    (BunnyX),a
-  ld    a,150
+  ld    a,230+2
   ld    (BunnyY),a
+
+  ld    a,18
+  ld    (Scroll4RowsAtStartOfGame?),a
 
   call  SetJumpDownGameSprites
   ret
 
 SetJumpDownGameSprites:
-
   ;clear all sprite characters
 	xor		a				;page 0/1
 	ld		hl,sprcharaddr+0*32	;sprite 0 character table in VRAM
@@ -397,13 +916,20 @@ SetJumpDownGameSprites:
   dec   c
   jp    nz,.loop
 
+	ld		hl,BunnyCharSprites+0*32	;sprite 0 character table in VRAM
+	ld		de,BunnyColSprites+0*16	;sprite 0 character table in VRAM
+  call  SetBunnyCharacterAndColor
+  ret
 
+SetBunnyCharacterAndColor:
+  push  de
+  push  hl
   ;write sprite character
 	xor		a				;page 0/1
 	ld		hl,sprcharaddr+0*32	;sprite 0 character table in VRAM
 	call	SetVdp_Write
 
-	ld		hl,BunnyCharSprites+0*32	;sprite 0 character table in VRAM
+  pop   hl
 	ld		c,$98
 	call	outix384		;write sprite color of pointer and hand to vram
 
@@ -411,7 +937,7 @@ SetJumpDownGameSprites:
 	ld		hl,sprcoladdr+0*16	;sprite 0 color table in VRAM
 	call	SetVdp_Write
 
-	ld		hl,BunnyColSprites+0*16	;sprite 0 character table in VRAM
+  pop   hl
 	ld		c,$98
 	call	outix192		;write sprite color of pointer and hand to vram
   ret
@@ -421,9 +947,154 @@ SetJumpDownGameSprites:
 	BunnyColSprites:
 	include "..\grapx\JumpDown\sprites\Bunny.tcs.gen"
 
-
 JumpDownPalette:
   incbin "..\grapx\JumpDown\tiles.sc5",$7680+7,32
+
+CheckBunnyOffScreen:
+  ld    a,(BunnyX)
+  cp    4
+  jp    z,BunnyDied
+  cp    220
+  jp    z,BunnyDied
+  ret
+
+BunnyDied:
+  ld    a,(BunnyDied?)
+  or    a
+  ret   nz
+  ld    a,1
+  ld    (BunnyDied?),a
+  ret
+
+
+CheckBunnyInLavaNothingOrIce:
+  call  GetTileBunnyStandsOn
+  cp    JumpDownLavaTile
+  jp    z,BunnyDied
+  cp    JumpDownNothingTile
+  jp    z,BunnyDied
+  cp    JumpDownIceTile
+  jr    z,.JumpedOnIce
+  ret
+
+  .JumpedOnIce:
+  ld    a,(BunnyFacingRight?)
+  or    a
+  jr    nz,.JumpRight
+
+  .JumpLeft:
+  call  CheckTreeWhenJumpingLeft
+  ld    a,1
+  ld    (JumpBunnyLeft?),a
+  ld    (BunnySlidingOnIce?),a
+  ld    a,1
+  ld    (BuildUpNewRowJumpDownGame?),a
+  ld    a,27
+  ld    (Scroll27LinesDown?),a
+  ret
+
+  .JumpRight:
+  call  CheckTreeWhenJumpingRight
+  ld    a,1
+  ld    (JumpBunnyRight?),a
+  ld    (BunnySlidingOnIce?),a
+  ld    a,1
+  ld    (BuildUpNewRowJumpDownGame?),a
+  ld    a,27
+  ld    (Scroll27LinesDown?),a
+  ret
+  ret
+
+JumpDownTreeTile: equ 2
+JumpDownLavaTile: equ 5
+JumpDownNothingTile: equ 0
+JumpDownIceTile: equ 8
+JumpDownReverseControlsTile: equ 9
+JumpDownSpiderWebTile: equ 7
+
+GetTileBunnyStandsOn:
+  ld    a,(Scroll4RowsAtStartOfGame?)
+  dec   a
+  ld    a,1
+  ret   nz
+
+  ld    a,(Scroll4RowsAtStartOfGame?)
+  dec   a
+  ld    a,1
+  ret   nz
+
+  ld    a,(BuildUpNewRowJumpDownGame?)
+  or    a
+  ld    a,1
+  ret   nz
+
+  ld    hl,(TileRowTablePointer)
+
+  ld    a,(Row6Wide?)
+  or    a
+  ld    de,27                                ;4 rows above the last row put in play
+  jr    nz,.WidthFound
+  ld    de,28                                ;4 rows above the last row put in play
+  .WidthFound:
+
+  xor    a
+  sbc   hl,de                                 ;we are now on the row the bunny is sitting
+
+  ld    a,(BunnyX)
+
+  ;this row is 5 tiles wide
+  ld    e,0                                   ;first tile of this row
+  cp    112-36-36
+  jr    z,.TileFound
+
+  inc   e                                     ;next tile
+  cp    112-36
+  jr    z,.TileFound
+
+  inc   e                                     ;next tile
+  cp    112
+  jr    z,.TileFound
+
+  inc   e                                     ;next tile
+  cp    112+36
+  jr    z,.TileFound
+
+  inc   e                                     ;next tile
+  cp    112+36+36
+  jr    z,.TileFound
+
+  ;this row is 6 tiles wide
+  ld    e,0                                   ;first tile of this row
+  cp    94-36-36
+  jr    z,.TileFound
+
+  inc   e                                     ;next tile
+  cp    94-36
+  jr    z,.TileFound
+
+  inc   e                                     ;next tile
+  cp    94
+  jr    z,.TileFound
+
+  inc   e                                     ;next tile
+  cp    94+36
+  jr    z,.TileFound
+
+  inc   e                                     ;next tile
+  cp    94+36+36
+  jr    z,.TileFound
+
+  inc   e                                     ;next tile
+  cp    94+36+36+36
+  jr    z,.TileFound
+
+  ld    a,1                                   ;if no tile is found, bunny is still jumping, just take tile=1, this is normal tile
+  ret
+
+  .TileFound:
+  add   hl,de
+  ld    a,(hl)
+  ret
 
 TileSXSYTableJumpDownGame:
   db    000,000, 036,000,  072,000,  108,000,  144,000,  180,000,  216,000
@@ -433,19 +1104,19 @@ TileSXSYTableJumpDownGame:
 TileRowTable:
   db  000,000,000,000,000,000
   db    000,000,001,000,000
-  db  000,000,001,001,000,000
-  db    000,001,001,001,000
-  db  000,001,001,001,001,000
-  db    001,001,001,001,001
+  db  000,000,007,007,000,000
+  db    000,007,007,007,000
+  db  000,007,001,008,003,000
+  db    001,007,001,003,001
+  db  001,008,008,007,001,001
+  db    002,001,008,001,001
+  db  001,002,008,008,005,001
+  db    001,004,008,002,001
+  db  001,000,001,008,001,001
+  db    001,002,001,001,001
   db  001,001,001,001,001,001
-  db    001,001,001,001,001
-  db  001,001,001,001,001,001
-  db    001,001,001,001,001
-  db  001,000,001,001,001,001
-  db    001,001,001,001,001
-  db  001,001,001,001,001,001
-  db    001,001,001,001,001
-  db  002,001,001,001,001,001
+  db    001,001,001,008,001
+  db  002,001,001,008,001,001
   db    002,001,000,001,001
   db  002,001,001,001,001,001
   db    002,001,001,001,001

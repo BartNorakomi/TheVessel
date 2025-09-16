@@ -1,7 +1,7 @@
 phase	$c000
 
 StartAtTitleScreen?:                equ 0
-MusicOn?:                           equ 0
+MusicOn?:                           equ 1
 Promo?:                             equ 0
 ConversationsOn?:                  	equ 1
 
@@ -1759,8 +1759,8 @@ PutTileJumpDownGame:
 
 EraseRowJumpDownGameCopy:
   db    000,000,000,000                 ;sx,--,sy,spage
-  db    022,000,000,001                 ;dx,--,dy,dpage
-  db    212,000,027,000                 ;nx,--,ny,--
+  db    020,000,000,001                 ;dx,--,dy,dpage
+  db    216,000,027,000                 ;nx,--,ny,--
 	db		0+ (0 * 16),0,$c0
 
 
@@ -2840,6 +2840,14 @@ TileRowTablePointer:			rb	2
 Scroll27LinesDown?:				rb	1
 BunnyX:										rb	1
 BunnyY:										rb	2
+Scroll4RowsAtStartOfGame?:	rb	1
+JumpBunnyLeft?:						rb	1
+JumpBunnyRight?:					rb	1
+BunnyDied?:								rb	1
+BunnyFacingRight?:				rb	1
+BunnySlidingOnIce?:				rb	1
+SpiderWeb3TimesPressed?:	rb	1
+AnimateSpiderWebJump?:		rb	1
 
 endenginepage3variables:  equ $+enginepage3length
 org variables

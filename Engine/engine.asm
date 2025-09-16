@@ -815,6 +815,13 @@ LineIntJumpDownGame:
   ld    a,19+128                        ;set lineinterrupt height
   out   ($99),a 
 
+  ld    a,(VDP_8)                       ;sprites on
+  and   %11111101
+  ld    (VDP_8),a
+  out   ($99),a
+  ld    a,8+128
+  out   ($99),a
+
   pop   bc
   pop   af
   ei
@@ -840,6 +847,14 @@ LineIntJumpDownGame:
   out   ($99),a
   ld    a,19+128                        ;set lineinterrupt height
   out   ($99),a 
+
+  ld    a,(VDP_8)                       ;sprites off
+  or    %00000010
+  ld    (VDP_8),a
+  out   ($99),a
+  ld    a,8+128
+  out   ($99),a
+
 
   push  hl
   ld    hl,ArcadeMachinePalette         ;set palette
