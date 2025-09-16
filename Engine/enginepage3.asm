@@ -1761,7 +1761,7 @@ EraseRowJumpDownGameCopy:
   db    000,000,000,000                 ;sx,--,sy,spage
   db    022,000,000,001                 ;dx,--,dy,dpage
   db    212,000,027,000                 ;nx,--,ny,--
-	db		5+ (0 * 16),0,$c0
+	db		0+ (0 * 16),0,$c0
 
 
 STOPWAITSPACEPRESSED:
@@ -2838,6 +2838,8 @@ BuildUpNewRowJumpDownGame?:	rb	1
 PutRemainderTile?:				rb	1
 TileRowTablePointer:			rb	2
 Scroll27LinesDown?:				rb	1
+BunnyX:										rb	1
+BunnyY:										rb	2
 
 endenginepage3variables:  equ $+enginepage3length
 org variables

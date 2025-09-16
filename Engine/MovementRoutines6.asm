@@ -11,11 +11,7 @@ JumpDownGameRoutine:
   ld    a,0*32 + 31                         ;force page 0 on vblank
 	ld    (PageOnNextVblank),a
 
-
-
-call spritesoff
-
-
+  call  SetBunnySprite
   call  ScrollBackgroundJumpDownGame
   call  BuildUpBackgroundJumpDownGame
   call  CheckBuildUpNewRowJumpDownGame
@@ -110,6 +106,39 @@ call spritesoff
 	db		1,0,0,1
 	db		14+ (14 * 16),0,$80
 
+SetBunnySprite:
+  ld    a,(BunnyX)
+  ld    (spat+1+00*4),a
+  ld    (spat+1+01*4),a
+  ld    (spat+1+04*4),a
+  ld    (spat+1+05*4),a
+  ld    (spat+1+08*4),a
+  ld    (spat+1+09*4),a
+  add   a,16
+  ld    (spat+1+02*4),a
+  ld    (spat+1+03*4),a
+  ld    (spat+1+06*4),a
+  ld    (spat+1+07*4),a
+  ld    (spat+1+11*4),a
+  ld    (spat+1+12*4),a
+
+  ld    a,(BunnyY)
+  ld    (spat+0+00*4),a
+  ld    (spat+0+01*4),a
+  ld    (spat+0+02*4),a
+  ld    (spat+0+03*4),a
+  add   a,16
+  ld    (spat+0+04*4),a
+  ld    (spat+0+05*4),a
+  ld    (spat+0+06*4),a
+  ld    (spat+0+07*4),a
+  add   a,16
+  ld    (spat+0+08*4),a
+  ld    (spat+0+09*4),a
+  ld    (spat+0+10*4),a
+  ld    (spat+0+11*4),a
+  ret
+
 ScrollBackgroundJumpDownGame:
   ld    a,(Scroll27LinesDown?)
   or    a
@@ -121,7 +150,6 @@ ScrollBackgroundJumpDownGame:
   inc   a
   ld    (r23onLineIntJumpDownGame),a
   ret
-
 
 CheckBuildUpNewRowJumpDownGame:
 ;
@@ -344,7 +372,55 @@ ResetVariablesJumpDownGame:
   xor   a
   ld    (PutRemainderTile?),a
   ld    (Scroll27LinesDown?),a
+
+  ld    a,100
+  ld    (BunnyX),a
+  ld    a,150
+  ld    (BunnyY),a
+
+  call  SetJumpDownGameSprites
   ret
+
+SetJumpDownGameSprites:
+
+  ;clear all sprite characters
+	xor		a				;page 0/1
+	ld		hl,sprcharaddr+0*32	;sprite 0 character table in VRAM
+	call	SetVdp_Write
+
+  ld    c,4
+  ld    b,0
+  .loop:
+  xor   a
+  out   ($98),a
+  djnz  .loop
+  dec   c
+  jp    nz,.loop
+
+
+  ;write sprite character
+	xor		a				;page 0/1
+	ld		hl,sprcharaddr+0*32	;sprite 0 character table in VRAM
+	call	SetVdp_Write
+
+	ld		hl,BunnyCharSprites+0*32	;sprite 0 character table in VRAM
+	ld		c,$98
+	call	outix384		;write sprite color of pointer and hand to vram
+
+	xor		a				;page 0/1
+	ld		hl,sprcoladdr+0*16	;sprite 0 color table in VRAM
+	call	SetVdp_Write
+
+	ld		hl,BunnyColSprites+0*16	;sprite 0 character table in VRAM
+	ld		c,$98
+	call	outix192		;write sprite color of pointer and hand to vram
+  ret
+
+	BunnyCharSprites:
+	include "..\grapx\JumpDown\sprites\Bunny.tgs.gen"
+	BunnyColSprites:
+	include "..\grapx\JumpDown\sprites\Bunny.tcs.gen"
+
 
 JumpDownPalette:
   incbin "..\grapx\JumpDown\tiles.sc5",$7680+7,32
