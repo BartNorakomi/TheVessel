@@ -753,8 +753,8 @@ JumpDownTilesGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSi
   incbin "..\grapx\BlockHit\titlescreen\ButtonsPart1.sc5.pck"
 	JumpDownTilesPart1Address:
   incbin "..\grapx\JumpDown\TilesPart1.sc5.pck"
-	JumpDownTilesPart2Address:
-  incbin "..\grapx\JumpDown\TilesPart2.sc5.pck"
+;	JumpDownTilesPart2Address:
+;  incbin "..\grapx\JumpDown\TilesPart2.sc5.pck"
 	.CheckBlockFull:	dw	$+$8000
 	dephase
 	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block

@@ -72,14 +72,14 @@ halt
   ld    bc,$0000 + (128*256) + (256/2)
   call  CopyRamToVram                       ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
 
-  ld    hl,JumpDownTilesPart2Address
-  ld    a,JumpDownTilesGfxBlock
-  call  SetGfxAt8000InRam                             ;in: hl=adress in rom page 1, a=block, out: puts gfx in page 2 in ram at $8000
+;  ld    hl,JumpDownTilesPart2Address
+;  ld    a,JumpDownTilesGfxBlock
+;  call  SetGfxAt8000InRam                             ;in: hl=adress in rom page 1, a=block, out: puts gfx in page 2 in ram at $8000
 
-  ld    hl,$8000 + (000*128) + (000/2) - 128
-  ld    de,$8000 + (128*128) + (000/2) - 128
-  ld    bc,$0000 + (040*256) + (256/2)
-  call  CopyRamToVram                       ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
+;  ld    hl,$8000 + (000*128) + (000/2) - 128
+;  ld    de,$8000 + (128*128) + (000/2) - 128
+;  ld    bc,$0000 + (040*256) + (256/2)
+;  call  CopyRamToVram                       ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
   xor   a
   ld    (Vdp_Write_HighPage?),a
 
@@ -141,9 +141,10 @@ HandleTrampolineObject:
   ret
 
   .HandleTrampoline1:
+  ld    hl,spat+0+20*4                  ;y Trampoline 1
   ld    a,(ix+On?)
   or    a
-  ret   z
+  jp    z,PutJumpDownGameObjectOutOfScreen
   call  CheckJumpDownGameObjectOutOfScreenTop
   ld    hl,spat+1+20*4                  ;x Trampoline 1
   call  CheckCollisionTrampoline
@@ -152,9 +153,10 @@ HandleTrampolineObject:
   jp    SetXYSpatTrampoline
 
   .HandleTrampoline2:
+  ld    hl,spat+0+24*4                  ;y Trampoline 2
   ld    a,(ix+On?)
   or    a
-  ret   z
+  jp    z,PutJumpDownGameObjectOutOfScreen
   call  CheckJumpDownGameObjectOutOfScreenTop
   ld    hl,spat+1+24*4                  ;x Trampoline 2
   call  CheckCollisionTrampoline
@@ -212,6 +214,20 @@ AnimateTrampolineWhenBunnyJumpsOnIt:
   inc   (ix+y)
   ret
 
+PutJumpDownGameObjectOutOfScreen:
+  ld    de,4
+  ld    a,(r23onLineIntJumpDownGame)
+  sub   a,20
+
+  ld    (hl),a
+  add   hl,de
+  ld    (hl),a
+  add   hl,de
+  ld    (hl),a
+  add   hl,de
+  ld    (hl),a
+  ret
+
 SetXYSpatTrampoline:
   ld    de,4
 
@@ -245,9 +261,10 @@ HandleSpikeObject:
   ret
 
   .HandleSpike1:
+  ld    hl,spat+0+12*4                  ;y spike 1
   ld    a,(ix+On?)
   or    a
-  ret   z
+  jp    z,PutJumpDownGameObjectOutOfScreen
   call  CheckJumpDownGameObjectOutOfScreenTop
   ld    hl,spat+0+12*4                  ;y spike 1
   call  SetXYSpatSpike
@@ -258,9 +275,10 @@ HandleSpikeObject:
   jp    SetSpike1CharacterAndColor
 
   .HandleSpike2:
+  ld    hl,spat+0+16*4                  ;y spike 2
   ld    a,(ix+On?)
   or    a
-  ret   z
+  jp    z,PutJumpDownGameObjectOutOfScreen
   call  CheckJumpDownGameObjectOutOfScreenTop
   ld    hl,spat+0+16*4                  ;y spike 2
   call  SetXYSpatSpike
@@ -996,8 +1014,11 @@ CheckShouldBunnyJump:
   jp    z,.EndCheckReverseControls
   ld    b,%0000 1000
   .EndCheckReverseControls:
-
+  cp    JumpDownSandTile
+	ld		a,(NewPrContr)
+  jr    z,.SandTileFound
 	ld		a,(Controls)
+  .SandTileFound:
   and   %0000 1100
   ret   z
   cp    b
@@ -1622,6 +1643,7 @@ JumpDownSpikeTile: equ 6
 JumpDownSpiderWebTile: equ 7
 JumpDownIceTile: equ 8
 JumpDownReverseControlsTile: equ 9
+JumpDownSandTile: equ 11
 JumpDownTrampolineTile: equ 13
 
 GetTileBunnyStandsOn:
@@ -1717,9 +1739,9 @@ TileSXSYTableJumpDownGame:
 TileRowTable:
   db  000,000,000,000,000,000
   db    000,000,001,000,000
-  db  000,000,013,001,000,000
+  db  000,000,013,011,000,000
   db    000,007,001,013,000
-  db  000,001,001,008,001,000
+  db  000,001,011,008,001,000
   db    001,007,001,003,001
   db  001,008,008,001,001,001
   db    002,001,008,001,001
