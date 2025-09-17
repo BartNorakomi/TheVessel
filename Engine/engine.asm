@@ -784,7 +784,7 @@ InterruptHandlerJumpDownGame:
   ret
 
 ;PageOnLineIntArcadeMachine: db  0*32 + 31
-LineIntHeightJumpDownGameTop: equ 5
+LineIntHeightJumpDownGameTop: equ 4
 LineIntHeightJumpDownGameBottom: equ 133
 LineIntJumpDownGame:
   ld    a,(LineIntHeightJumpDownGame)
@@ -798,6 +798,16 @@ LineIntJumpDownGame:
   ld    b,a
   ld    a,LineIntHeightJumpDownGameBottom
   ld    (LineIntHeightJumpDownGame),a
+
+  push ix | pop ix | push ix | pop ix | push ix | pop ix | push ix | pop ix | nop | nop | nop | nop | nop
+
+
+  ld    a,(VDP_8)                       ;sprites on
+  and   %11111101
+  ld    (VDP_8),a
+  out   ($99),a
+  ld    a,8+128
+  out   ($99),a
 
   ld    a,1*32 + 31                     ;set page 1
   out   ($99),a
@@ -815,12 +825,7 @@ LineIntJumpDownGame:
   ld    a,19+128                        ;set lineinterrupt height
   out   ($99),a 
 
-  ld    a,(VDP_8)                       ;sprites on
-  and   %11111101
-  ld    (VDP_8),a
-  out   ($99),a
-  ld    a,8+128
-  out   ($99),a
+
 
   pop   bc
   pop   af

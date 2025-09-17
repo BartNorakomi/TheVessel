@@ -2848,6 +2848,8 @@ BunnyFacingRight?:				rb	1
 BunnySlidingOnIce?:				rb	1
 SpiderWeb3TimesPressed?:	rb	1
 AnimateSpiderWebJump?:		rb	1
+JumpBunnyLeftOnTrampoline?:	rb	1
+JumpBunnyRightOnTrampoline?:	rb	1
 
 endenginepage3variables:  equ $+enginepage3length
 org variables

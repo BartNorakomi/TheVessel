@@ -10,17 +10,23 @@ JumpDownGameRoutine:
   ld    (framecounter),a                    ;we force framecounter to 1 so that the sf2 object handler doesn't swap page ever
   ld    a,0*32 + 31                         ;force page 0 on vblank
 	ld    (PageOnNextVblank),a
+  ld    a,(framecounter2)
+  inc  a
+  ld    (framecounter2),a
 
   call  .HandlePhase                        ;load graphics, init variables
-  call  CheckBunnyInLavaNothingOrIce
+  call  CheckBunnyInLavaNothingIceOrSpike
   call  CheckBunnyOffScreen
   call  SetBunnySpatCoordinates
+  call  CheckShouldBunnyJumpOnTrampoline
   call  CheckShouldBunnyJump
 halt
 halt
 ;  call  BackdropGreen
   call  HandleBunnyJumpAndSetSpriteCharacterAndColor
   call  HandleBunnyDied
+  call  HandleSpikeObject
+  call  HandleTrampolineObject
 ;  call  BackdropBlack
   call  ScrollBackgroundJumpDownGame
   call  BuildUpBackgroundJumpDownGame
@@ -115,6 +121,280 @@ halt
 	db		1,0,0,1
 	db		14+ (14 * 16),0,$80
 
+CheckJumpDownGameObjectOutOfScreenTop:
+  ld    a,(r23onLineIntJumpDownGame)
+  ld    b,a
+  ld    a,(ix+y)
+  sub   a,b
+  cp    232
+  ret   nz
+  ld    (ix+On?),0
+  ret
+
+BunnyJumpedOnTrampoline?: equ 3
+;when jumping on trampoline trampoline can retract 10 pixels down
+HandleTrampolineObject:
+  ld    ix,FreeToUseObject2
+  call  .HandleTrampoline1
+  ld    ix,FreeToUseObject3
+  call  .HandleTrampoline2
+  ret
+
+  .HandleTrampoline1:
+  ld    a,(ix+On?)
+  or    a
+  ret   z
+  call  CheckJumpDownGameObjectOutOfScreenTop
+  ld    hl,spat+1+20*4                  ;x Trampoline 1
+  call  CheckCollisionTrampoline
+  call  AnimateTrampolineWhenBunnyJumpsOnIt
+  ld    hl,spat+1+20*4                  ;x Trampoline 1
+  jp    SetXYSpatTrampoline
+
+  .HandleTrampoline2:
+  ld    a,(ix+On?)
+  or    a
+  ret   z
+  call  CheckJumpDownGameObjectOutOfScreenTop
+  ld    hl,spat+1+24*4                  ;x Trampoline 2
+  call  CheckCollisionTrampoline
+  call  AnimateTrampolineWhenBunnyJumpsOnIt
+  ld    hl,spat+1+24*4                  ;x Trampoline 2
+  jp    SetXYSpatTrampoline
+
+CheckCollisionTrampoline:
+  ld    a,(spat+1)                      ;bunny x
+  sub   a,30
+  cp    (hl)
+  ret   nc
+  add   a,50
+  cp    (hl)
+  ret   c
+
+  dec   hl                              ;y trampoline
+  ld    a,(spat+0)                      ;bunny y
+  add   a,11+22
+  cp    (hl)
+  ret   nz
+
+  ld    a,(ix+BunnyJumpedOnTrampoline?)
+  or    a
+  ret   nz
+  ld    (ix+BunnyJumpedOnTrampoline?),1
+  ret
+
+AnimateTrampolineWhenBunnyJumpsOnIt:
+  ld    a,(ix+BunnyJumpedOnTrampoline?)
+  or    a
+  ret   z
+  inc   a
+  ld    (ix+BunnyJumpedOnTrampoline?),a
+  cp    10
+  jr    c,.MoveTrampolineDown
+  cp    14
+  jr    c,.MoveTrampolineUp
+
+  cp    30
+  ret   c
+  xor   a
+  ld    (ix+BunnyJumpedOnTrampoline?),a
+  ret
+
+  .MoveTrampolineUp:
+  dec   (ix+y)
+  dec   (ix+y)
+  dec   (ix+y)
+  dec   (ix+y)
+  ret
+
+  .MoveTrampolineDown:
+  inc   (ix+y)
+  inc   (ix+y)
+  ret
+
+SetXYSpatTrampoline:
+  ld    de,4
+
+  ld    a,(ix+x)
+  ld    (hl),a
+  add   hl,de
+  ld    (hl),a
+  add   hl,de
+  add   a,16
+  ld    (hl),a
+  add   hl,de
+  ld    (hl),a
+
+  dec   hl                              ;y sprite
+  ld    de,-4
+  ld    a,(ix+y)
+  ld    (hl),a
+  add   hl,de
+  ld    (hl),a
+  add   hl,de
+  ld    (hl),a
+  add   hl,de
+  ld    (hl),a
+  ret
+
+HandleSpikeObject:
+  ld    ix,FreeToUseObject0
+  call  .HandleSpike1
+  ld    ix,FreeToUseObject1
+  call  .HandleSpike2
+  ret
+
+  .HandleSpike1:
+  ld    a,(ix+On?)
+  or    a
+  ret   z
+  call  CheckJumpDownGameObjectOutOfScreenTop
+  ld    hl,spat+0+12*4                  ;y spike 1
+  call  SetXYSpatSpike
+  ld    a,(framecounter2)
+  and   1
+  ret   nz
+  call  SetSpikeAnimationInHLDE
+  jp    SetSpike1CharacterAndColor
+
+  .HandleSpike2:
+  ld    a,(ix+On?)
+  or    a
+  ret   z
+  call  CheckJumpDownGameObjectOutOfScreenTop
+  ld    hl,spat+0+16*4                  ;y spike 2
+  call  SetXYSpatSpike
+  ld    a,(framecounter2)
+  and   1
+  ret   nz
+  call  SetSpikeAnimationInHLDE
+  jp    SetSpike2CharacterAndColor
+
+SetXYSpatSpike:
+  ld    de,4
+  ld    a,(ix+y)
+  ld    (hl),a
+  add   hl,de
+  ld    (hl),a
+  add   hl,de
+  add   a,16
+  ld    (hl),a
+  add   hl,de
+  ld    (hl),a
+
+  inc   hl                              ;x sprite
+
+  ld    de,-4
+  ld    a,(ix+x)
+  ld    (hl),a
+  add   hl,de
+  ld    (hl),a
+  add   hl,de
+  ld    (hl),a
+  add   hl,de
+  ld    (hl),a
+  ret
+
+SetSpike1CharacterAndColor:
+  push  de
+  push  hl
+  ;write sprite character
+	xor		a				;page 0/1
+	ld		hl,sprcharaddr+12*32	;sprite 0 character table in VRAM
+	call	SetVdp_Write
+
+  pop   hl
+	ld		c,$98
+	call	outix128		;write sprite color of pointer and hand to vram
+
+	xor		a				;page 0/1
+	ld		hl,sprcoladdr+12*16	;sprite 0 color table in VRAM
+	call	SetVdp_Write
+
+  pop   hl
+	ld		c,$98
+	call	outix64		;write sprite color of pointer and hand to vram
+  ret
+
+SetSpike2CharacterAndColor:
+  push  de
+  push  hl
+  ;write sprite character
+	xor		a				;page 0/1
+	ld		hl,sprcharaddr+16*32	;sprite 0 character table in VRAM
+	call	SetVdp_Write
+
+  pop   hl
+	ld		c,$98
+	call	outix128		;write sprite color of pointer and hand to vram
+
+	xor		a				;page 0/1
+	ld		hl,sprcoladdr+16*16	;sprite 0 color table in VRAM
+	call	SetVdp_Write
+
+  pop   hl
+	ld		c,$98
+	call	outix64		;write sprite color of pointer and hand to vram
+  ret
+
+SetSpikeAnimationInHLDE:
+  ld    a,(framecounter2)
+  srl   a                                   ;/2
+  and   31
+  add   a,a
+  add   a,a                               ;*4
+  ld    e,a
+  ld    d,0
+  ld    ix,.SpikeAnimation
+  add   ix,de
+  ld    l,(ix+0)
+  ld    h,(ix+1)
+  ld    e,(ix+2)
+  ld    d,(ix+3)
+  ret
+
+  .SpikeAnimation:
+  dw  SpikesCharSprites+00*32,SpikesColSprites+00*16
+  dw  SpikesCharSprites+00*32,SpikesColSprites+00*16
+  dw  SpikesCharSprites+00*32,SpikesColSprites+00*16
+  dw  SpikesCharSprites+00*32,SpikesColSprites+00*16
+  dw  SpikesCharSprites+00*32,SpikesColSprites+00*16
+  dw  SpikesCharSprites+00*32,SpikesColSprites+00*16
+  dw  SpikesCharSprites+00*32,SpikesColSprites+00*16
+  dw  SpikesCharSprites+00*32,SpikesColSprites+00*16
+
+  dw  SpikesCharSprites+04*32,SpikesColSprites+04*16
+  dw  SpikesCharSprites+08*32,SpikesColSprites+08*16
+  dw  SpikesCharSprites+12*32,SpikesColSprites+12*16
+  dw  SpikesCharSprites+16*32,SpikesColSprites+16*16
+  dw  SpikesCharSprites+20*32,SpikesColSprites+20*16
+  dw  SpikesCharSprites+24*32,SpikesColSprites+24*16
+  dw  SpikesCharSprites+28*32,SpikesColSprites+28*16
+  dw  SpikesCharSprites+32*32,SpikesColSprites+32*16
+
+  dw  SpikesCharSprites+36*32,SpikesColSprites+36*16
+  dw  SpikesCharSprites+40*32,SpikesColSprites+40*16
+  dw  SpikesCharSprites+40*32,SpikesColSprites+40*16
+  dw  SpikesCharSprites+40*32,SpikesColSprites+40*16
+  dw  SpikesCharSprites+40*32,SpikesColSprites+40*16
+  dw  SpikesCharSprites+40*32,SpikesColSprites+40*16
+  dw  SpikesCharSprites+40*32,SpikesColSprites+40*16
+  dw  SpikesCharSprites+36*32,SpikesColSprites+36*16
+
+  dw  SpikesCharSprites+32*32,SpikesColSprites+32*16
+  dw  SpikesCharSprites+28*32,SpikesColSprites+28*16
+  dw  SpikesCharSprites+24*32,SpikesColSprites+24*16
+  dw  SpikesCharSprites+20*32,SpikesColSprites+20*16
+  dw  SpikesCharSprites+16*32,SpikesColSprites+16*16
+  dw  SpikesCharSprites+12*32,SpikesColSprites+12*16
+  dw  SpikesCharSprites+08*32,SpikesColSprites+08*16
+  dw  SpikesCharSprites+04*32,SpikesColSprites+04*16
+
+	SpikesCharSprites:
+	include "..\grapx\JumpDown\sprites\Spikes.tgs.gen"
+	SpikesColSprites:
+	include "..\grapx\JumpDown\sprites\Spikes.tcs.gen"
+
 SetBunnySpatCoordinates:
   ld    a,(BunnyX)
   ld    (spat+1+00*4),a
@@ -185,6 +465,7 @@ HandleBunnyDied:
   .Right:
   ld    a,(BunnyDied?)
   inc   a
+  ret   z
   ld    (BunnyDied?),a
   sub   20
 	ld		hl,BunnyCharSprites+72*32	;sprite 0 character table in VRAM
@@ -232,6 +513,7 @@ HandleBunnyDied:
   .Left:
   ld    a,(BunnyDied?)
   inc   a
+  ret   z
   ld    (BunnyDied?),a
   sub   20
 	ld		hl,BunnyCharSprites+96*32	;sprite 0 character table in VRAM
@@ -320,6 +602,13 @@ HandleBunnyJumpAndSetSpriteCharacterAndColor:
   ld    a,(Scroll27LinesDown?)
   or    a
   ret   z
+
+  ld    a,(JumpBunnyLeftOnTrampoline?)
+  or    a
+  jp    nz,JumpBunnyLeftOnTrampoline
+  ld    a,(JumpBunnyRightOnTrampoline?)
+  or    a
+  jp    nz,JumpBunnyRightOnTrampoline
 
   ld    a,(JumpBunnyLeft?)
   or    a
@@ -421,6 +710,136 @@ SlideOnIceBunnyRight:
   db    +0,+0,  +1,+0,  +1,+0,  +0,+1,  +1,+2,  +1,+1,  +0,+1,  +1,+1,  +1,+2,  +0,+1
   db    +1,+2,  +1,+2,  +0,+2,  +1,+3,  +1,+3,  +0,+3,  +1,+3
 
+
+
+
+JumpBunnyRightOnTrampoline:
+  ld    a,1
+  ld    (BunnyFacingRight?),a
+
+  call  .MoveBunnyRight
+  ld    a,(JumpBunnyRightOnTrampoline?)
+  inc   a
+  ld    (JumpBunnyRightOnTrampoline?),a
+
+  cp    18
+	ld		hl,BunnyCharSprites+12*32	;sprite 0 character table in VRAM
+	ld		de,BunnyColSprites+12*16	;sprite 0 character table in VRAM
+  jp    c,SetBunnyCharacterAndColor
+  cp    28
+	ld		hl,BunnyCharSprites+24*32	;sprite 0 character table in VRAM
+	ld		de,BunnyColSprites+24*16	;sprite 0 character table in VRAM
+  jp    c,SetBunnyCharacterAndColor
+  jp    z,.SecondJump
+  cp    28+20
+  ret   c
+
+  xor   a
+  ld    (JumpBunnyRightOnTrampoline?),a
+	ld		hl,BunnyCharSprites+00*32	;sprite 0 character table in VRAM
+	ld		de,BunnyColSprites+00*16	;sprite 0 character table in VRAM
+  jp    SetBunnyCharacterAndColor
+
+  .SecondJump:
+  ld    a,1
+  ld    (BuildUpNewRowJumpDownGame?),a
+  ld    a,27
+  ld    (Scroll27LinesDown?),a
+  ret
+
+  .MoveBunnyRight:
+  ld    a,(JumpBunnyRightOnTrampoline?)
+  add   a,a
+  ld    e,a
+  ld    d,0
+  ld    hl,.JumpRightTable-2
+  add   hl,de                               ;x increase
+  ld    a,(BunnyX)
+  add   a,(hl)
+  ld    (BunnyX),a
+  inc   hl                                  ;y increase
+  ld    a,(BunnyY)
+  add   a,(hl)
+  ld    (BunnyY),a
+  ret
+
+  .JumpRightTable:
+  db    +1,-5,  -0,-4,  +1,-4,  +1,-3,  -0,-3,  +1,-2,  +1,-2,  -0,-1,  +1,-1,  +1,+0
+  db    +1,+0,  +1,+1,  +1,+2,  +1,+1,  +1,+2,  +1,+2,  +1,+1,  +1,+2,  +1,+1,  +1,+2
+  db    +1,+2,  +1,+1,  +1,+2,  +1,+2,  +1,+3,  +1,+2,  +1,+2
+
+  db    -0,+3,  +1,+2,  -0,+2,  +1,+2,  -0,+3,  +1,+2,  +1,+2,  -0,+3,  +1,+2,  +1,+3
+  db    -0,+3,  +1,+2,  +1,+3,  -0,+3,  +1,+4,  +1,+3,  -0,+4,  +1,+3,  +1,+2,  -0,+0
+
+
+
+
+
+
+JumpBunnyLeftOnTrampoline:
+  xor   a
+  ld    (BunnyFacingRight?),a
+
+  call  .MoveBunnyLeft
+  ld    a,(JumpBunnyLeftOnTrampoline?)
+  inc   a
+  ld    (JumpBunnyLeftOnTrampoline?),a
+
+  cp    18
+	ld		hl,BunnyCharSprites+48*32	;sprite 0 character table in VRAM
+	ld		de,BunnyColSprites+48*16	;sprite 0 character table in VRAM
+  jp    c,SetBunnyCharacterAndColor
+  cp    28
+	ld		hl,BunnyCharSprites+60*32	;sprite 0 character table in VRAM
+	ld		de,BunnyColSprites+60*16	;sprite 0 character table in VRAM
+  jp    c,SetBunnyCharacterAndColor
+  jp    z,.SecondJump
+  cp    28+20
+  ret   c
+
+  xor   a
+  ld    (JumpBunnyLeftOnTrampoline?),a
+	ld		hl,BunnyCharSprites+36*32	;sprite 0 character table in VRAM
+	ld		de,BunnyColSprites+36*16	;sprite 0 character table in VRAM
+  jp    SetBunnyCharacterAndColor
+
+  .SecondJump:
+  ld    a,1
+  ld    (BuildUpNewRowJumpDownGame?),a
+  ld    a,27
+  ld    (Scroll27LinesDown?),a
+  ret
+
+  .MoveBunnyLeft:
+  ld    a,(JumpBunnyLeftOnTrampoline?)
+  add   a,a
+  ld    e,a
+  ld    d,0
+  ld    hl,.JumpLeftTable-2
+  add   hl,de                               ;x increase
+  ld    a,(BunnyX)
+  add   a,(hl)
+  ld    (BunnyX),a
+  inc   hl                                  ;y increase
+  ld    a,(BunnyY)
+  add   a,(hl)
+  ld    (BunnyY),a
+  ret
+
+  .JumpLeftTable:
+  db    -1,-5,  -0,-4,  -1,-4,  -1,-3,  -0,-3,  -1,-2,  -1,-2,  -0,-1,  -1,-1,  -1,+0
+  db    -1,+0,  -1,+1,  -1,+2,  -1,+1,  -1,+2,  -1,+2,  -1,+1,  -1,+2,  -1,+1,  -1,+2
+  db    -1,+2,  -1,+1,  -1,+2,  -1,+2,  -1,+3,  -1,+2,  -1,+2
+
+  db    -0,+3,  -1,+2,  -0,+2,  -1,+2,  -0,+3,  -1,+2,  -1,+2,  -0,+3,  -1,+2,  -1,+3
+  db    -0,+3,  -1,+2,  -1,+3,  -0,+3,  -1,+4,  -1,+3,  -0,+4,  -1,+3,  -1,+2,  -0,+0
+
+
+
+
+
+
+
 JumpBunnyLeft:
   xor   a
   ld    (BunnyFacingRight?),a
@@ -514,6 +933,42 @@ SlideOnIceBunnyLeft:
   db    -1,+0,  -0,+0,  -1,+0,  -1,+0,  -0,+0,  -1,+0,  -1,+0,  -0,+0,  -1,+0,  -1,+0
   db    -0,+0,  -1,+0,  -1,+0,  -0,+1,  -1,+2,  -1,+1,  -0,+1,  -1,+1,  -1,+2,  -0,+1
   db    -1,+2,  -1,+2,  -0,+2,  -1,+3,  -1,+3,  -0,+3,  -1,+3
+
+CheckShouldBunnyJumpOnTrampoline:
+  ld    a,(Scroll27LinesDown?)
+  or    a
+  ret   nz
+
+  ld    a,(FreeToUseObject2+BunnyJumpedOnTrampoline?)
+  or    a
+  jr    nz,.Jump
+
+  ld    a,(FreeToUseObject3+BunnyJumpedOnTrampoline?)
+  or    a
+  ret   z
+
+  .Jump:
+  ld    a,(BunnyFacingRight?)
+  or    a
+  jr    z,.JumpLeft
+
+  .JumpRight:
+  ld    a,1
+  ld    (JumpBunnyRightOnTrampoline?),a
+  ld    a,1
+  ld    (BuildUpNewRowJumpDownGame?),a
+  ld    a,27
+  ld    (Scroll27LinesDown?),a
+  ret
+
+  .JumpLeft:
+  ld    a,1
+  ld    (JumpBunnyLeftOnTrampoline?),a
+  ld    a,1
+  ld    (BuildUpNewRowJumpDownGame?),a
+  ld    a,27
+  ld    (Scroll27LinesDown?),a
+  ret
 
 CheckShouldBunnyJump:
   ld    a,(Scroll4RowsAtStartOfGame?)
@@ -728,6 +1183,8 @@ BuildUpBackgroundJumpDownGame:
   ld    a,(JumpDownGameTilesY)
   ld    (PutTileJumpDownGame+dy),a
 
+  call  .CheckForSpikeObject
+  call  .CheckForTrampolineObject
   call  .SetTileSXSY
 
   ld    hl,PutTileJumpDownGame
@@ -845,6 +1302,83 @@ BuildUpBackgroundJumpDownGame:
   ld    (BuildUpNewRowJumpDownGame?),a
   ret
 
+  .CheckForTrampolineObject:
+  ld    hl,(TileRowTablePointer)
+  ld    a,(hl)                          ;tilenumber
+  cp    JumpDownTrampolineTile
+  ret   nz
+
+  ld    a,(FreeToUseObject2+On?)
+  or    a
+  jr    z,.PutTrampoline1
+  ld    a,(FreeToUseObject3+On?)
+  or    a
+  jr    z,.PutTrampoline2
+  .q: jp .q
+
+  .PutTrampoline2:
+  ld    a,1
+  ld    (FreeToUseObject3+On?),a
+  ld    a,(JumpDownGameTilesX)
+  add   a,2
+  ld    (FreeToUseObject3+x),a
+
+  ld    a,(JumpDownGameTilesY)
+  add   a,6
+  ld    (FreeToUseObject3+y),a
+  ret
+
+  .PutTrampoline1:
+  ld    a,1
+  ld    (FreeToUseObject2+On?),a
+  ld    a,(JumpDownGameTilesX)
+  add   a,2
+  ld    (FreeToUseObject2+x),a
+
+  ld    a,(JumpDownGameTilesY)
+  add   a,6
+  ld    (FreeToUseObject2+y),a
+  ret
+
+
+  .CheckForSpikeObject:
+  ld    hl,(TileRowTablePointer)
+  ld    a,(hl)                          ;tilenumber
+  cp    JumpDownSpikeTile
+  ret   nz
+
+  ld    a,(FreeToUseObject0+On?)
+  or    a
+  jr    z,.PutSpike1
+  ld    a,(FreeToUseObject1+On?)
+  or    a
+  jr    z,.PutSpike2
+  .q2: jp .q2
+
+  .PutSpike2:
+  ld    a,1
+  ld    (FreeToUseObject1+On?),a
+  ld    a,(JumpDownGameTilesX)
+  add   a,9
+  ld    (FreeToUseObject1+x),a
+
+  ld    a,(JumpDownGameTilesY)
+  add   a,2
+  ld    (FreeToUseObject1+y),a
+  ret
+
+  .PutSpike1:
+  ld    a,1
+  ld    (FreeToUseObject0+On?),a
+  ld    a,(JumpDownGameTilesX)
+  add   a,9
+  ld    (FreeToUseObject0+x),a
+
+  ld    a,(JumpDownGameTilesY)
+  add   a,2
+  ld    (FreeToUseObject0+y),a
+  ret
+
   .SetTileSXSY:
   ;get sx,sy tile
   ld    hl,(TileRowTablePointer)
@@ -867,7 +1401,7 @@ ResetVariablesJumpDownGame:
   ld    bc,32
   ldir
 
-  ld    a,110-27-27
+  ld    a,110-27-27+1
   ld    (r23onLineIntJumpDownGame),a
   ld    a,20
   ld    (JumpDownGameTilesX),a
@@ -889,6 +1423,14 @@ ResetVariablesJumpDownGame:
   ld    (BunnySlidingOnIce?),a
   ld    (SpiderWeb3TimesPressed?),a
   ld    (AnimateSpiderWebJump?),a
+  ld    (FreeToUseObject2+BunnyJumpedOnTrampoline?),a
+  ld    (FreeToUseObject3+BunnyJumpedOnTrampoline?),a
+  ld    (FreeToUseObject0+On?),a
+  ld    (FreeToUseObject1+On?),a
+  ld    (FreeToUseObject2+On?),a
+  ld    (FreeToUseObject3+On?),a
+  ld    (JumpBunnyLeftOnTrampoline?),a
+  ld    (JumpBunnyRightOnTrampoline?),a
 
   ld    a,112
   ld    (BunnyX),a
@@ -916,10 +1458,50 @@ SetJumpDownGameSprites:
   dec   c
   jp    nz,.loop
 
+  ;set bunny sprites
 	ld		hl,BunnyCharSprites+0*32	;sprite 0 character table in VRAM
 	ld		de,BunnyColSprites+0*16	;sprite 0 character table in VRAM
   call  SetBunnyCharacterAndColor
+
+  ;set trampoline sprites
+	xor		a				;page 0/1
+	ld		hl,sprcharaddr+20*32	;sprite 0 character table in VRAM
+	call	SetVdp_Write
+
+  ld    hl,TrampolineCharSprites
+	ld		c,$98
+	call	outix128		;write sprite color of pointer and hand to vram
+
+	xor		a				;page 0/1
+	ld		hl,sprcoladdr+20*16	;sprite 0 color table in VRAM
+	call	SetVdp_Write
+
+  ld    hl,TrampolineColSprites
+	ld		c,$98
+	call	outix64		;write sprite color of pointer and hand to vram
+
+  ;set trampoline sprites
+	xor		a				;page 0/1
+	ld		hl,sprcharaddr+24*32	;sprite 0 character table in VRAM
+	call	SetVdp_Write
+
+  ld    hl,TrampolineCharSprites
+	ld		c,$98
+	call	outix128		;write sprite color of pointer and hand to vram
+
+	xor		a				;page 0/1
+	ld		hl,sprcoladdr+24*16	;sprite 0 color table in VRAM
+	call	SetVdp_Write
+
+  ld    hl,TrampolineColSprites
+	ld		c,$98
+	call	outix64		;write sprite color of pointer and hand to vram
   ret
+
+	TrampolineCharSprites:
+	include "..\grapx\JumpDown\sprites\Trampoline.tgs.gen"
+	TrampolineColSprites:
+	include "..\grapx\JumpDown\sprites\Trampoline.tcs.gen"
 
 SetBunnyCharacterAndColor:
   push  de
@@ -966,8 +1548,22 @@ BunnyDied:
   ld    (BunnyDied?),a
   ret
 
+BunnyDiedJustExplode:
+  ld    a,(BunnyDied?)
+  or    a
+  ret   nz
+  ld    a,80
+  ld    (BunnyDied?),a
+  ret
 
-CheckBunnyInLavaNothingOrIce:
+CheckBunnyInLavaNothingIceOrSpike:
+  ld    a,(JumpBunnyLeftOnTrampoline?)
+  or    a
+  ret   nz
+  ld    a,(JumpBunnyRightOnTrampoline?)
+  or    a
+  ret   nz
+
   call  GetTileBunnyStandsOn
   cp    JumpDownLavaTile
   jp    z,BunnyDied
@@ -975,7 +1571,21 @@ CheckBunnyInLavaNothingOrIce:
   jp    z,BunnyDied
   cp    JumpDownIceTile
   jr    z,.JumpedOnIce
+  cp    JumpDownSpikeTile
+  jr    z,.JumpedOnSpike
   ret
+
+  .JumpedOnSpike:
+  ld    a,(framecounter2)
+  srl   a                                   ;/2
+  and   31
+
+  ;frame 17  - 22 is fully extended spike
+  cp    17-4
+  ret   c
+  cp    23+3
+  ret   nc
+  jp    BunnyDiedJustExplode
 
   .JumpedOnIce:
   ld    a,(BunnyFacingRight?)
@@ -1005,12 +1615,14 @@ CheckBunnyInLavaNothingOrIce:
   ret
   ret
 
+JumpDownNothingTile: equ 0
 JumpDownTreeTile: equ 2
 JumpDownLavaTile: equ 5
-JumpDownNothingTile: equ 0
+JumpDownSpikeTile: equ 6
+JumpDownSpiderWebTile: equ 7
 JumpDownIceTile: equ 8
 JumpDownReverseControlsTile: equ 9
-JumpDownSpiderWebTile: equ 7
+JumpDownTrampolineTile: equ 13
 
 GetTileBunnyStandsOn:
   ld    a,(Scroll4RowsAtStartOfGame?)
@@ -1101,18 +1713,19 @@ TileSXSYTableJumpDownGame:
   db    000,056, 036,056,  072,056,  108,056,  144,056,  180,056,  216,056
   db    000,112, 036,112,  072,112,  108,112,  144,112,  180,112,  216,112
 
+;we can put 2 spike max in screen. we need 5 empty rows before we can put a new spike
 TileRowTable:
   db  000,000,000,000,000,000
   db    000,000,001,000,000
-  db  000,000,007,007,000,000
-  db    000,007,007,007,000
-  db  000,007,001,008,003,000
+  db  000,000,013,001,000,000
+  db    000,007,001,013,000
+  db  000,001,001,008,001,000
   db    001,007,001,003,001
-  db  001,008,008,007,001,001
+  db  001,008,008,001,001,001
   db    002,001,008,001,001
-  db  001,002,008,008,005,001
-  db    001,004,008,002,001
-  db  001,000,001,008,001,001
+  db  001,002,008,001,005,001
+  db    001,004,006,002,001
+  db  006,000,001,008,001,001
   db    001,002,001,001,001
   db  001,001,001,001,001,001
   db    001,001,001,008,001
