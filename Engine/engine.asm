@@ -3778,6 +3778,7 @@ NXPerSymbol:
 WriteSpatToVram:
 	xor		a				;page 0/1
 	ld		hl,sprattaddr	;sprite attribute table in VRAM ($17600)
+	ld		hl,(Mirrorspratttableaddress)	;sprite attribute table in VRAM ($17600)
 	call	SetVdp_Write
 	ld		hl,spat			;sprite attribute table
 	ld		c,$98

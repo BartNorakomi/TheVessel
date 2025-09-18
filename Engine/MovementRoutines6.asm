@@ -2,9 +2,6 @@
 
 Phase MovementRoutinesAddress
 
-
-
-
 JumpDownGameRoutine:
   ld    a,1
   ld    (framecounter),a                    ;we force framecounter to 1 so that the sf2 object handler doesn't swap page ever
@@ -14,23 +11,31 @@ JumpDownGameRoutine:
   inc  a
   ld    (framecounter2),a
 
+  call  swap_spat_col_and_char_table
   call  .HandlePhase                        ;load graphics, init variables
   call  CheckBunnyInLavaNothingIceOrSpike
   call  CheckBunnyOffScreen
   call  SetBunnySpatCoordinates
   call  CheckShouldBunnyJumpOnTrampoline
   call  CheckShouldBunnyJump
-halt
-halt
+;  call  BackdropGreen
+;  call  BackdropBlack
+;halt
+;halt
 ;  call  BackdropGreen
   call  HandleBunnyJumpAndSetSpriteCharacterAndColor
   call  HandleBunnyDied
+;  call  BackdropBlack
+
+;  call  BackdropRed
   call  HandleSpikeObject
   call  HandleTrampolineObject
 ;  call  BackdropBlack
+
   call  ScrollBackgroundJumpDownGame
   call  BuildUpBackgroundJumpDownGame
   call  Scroll4RowsAtStartOfGame
+  call  HandleScore
   ret
 
   .HandlePhase:
@@ -121,6 +126,424 @@ halt
 	db		1,0,0,1
 	db		14+ (14 * 16),0,$80
 
+DecreaseScoreWhenSittingStillTooLong:
+  ld    a,(Scroll27LinesDown?)
+  or    a
+  jr    nz,.NotSittingStill
+
+  ld    a,(JumpDownGameAmountOfFramesSittingStill)
+  inc   a
+  ld    (JumpDownGameAmountOfFramesSittingStill),a
+  and   31
+  ret   nz
+
+  ld    hl,(ScoreJumpDownGame)
+  ld    de,1
+  xor   a
+  sbc   hl,de
+  ret   c
+  ld    (ScoreJumpDownGame),hl
+  ret
+
+  .NotSittingStill:
+  xor   a
+  ld    (JumpDownGameAmountOfFramesSittingStill),a
+  ret
+
+HandleScore:
+  call  DecreaseScoreWhenSittingStillTooLong
+
+  ld    a,(Scroll4RowsAtStartOfGame?)
+  dec   a
+  jr    nz,.EndCheckIncreaseScore
+
+  ld    a,(Scroll27LinesDown?)
+  dec   a
+  jr    nz,.EndCheckIncreaseScore  
+
+  ld    a,(JumpDownGameSkipFirstScore?)
+  dec   a
+  jp    m,.GoScore
+  ld    (JumpDownGameSkipFirstScore?),a
+  jr    .EndCheckIncreaseScore
+
+  .GoScore:
+  ld    hl,(ScoreJumpDownGame)
+  ld    de,10
+  add   hl,de
+  ld    (ScoreJumpDownGame),hl
+  .EndCheckIncreaseScore:
+
+  ld    hl,(ScoreJumpDownGame)
+  call  NUM_TO_ASCII                      ;HL = 16-bit number (0-65535), Output: ASCII string stored at Ascii5Byte:
+  ;get 1st digit
+  ld    a,(Ascii5Byte+1)
+  call  .GetDigitTableInHL
+  ld    de,FreeToUseObject4+8+1
+  ld    bc,5
+  ldir
+
+  ;get 2nd digit
+  ld    a,(Ascii5Byte+2)
+  call  .GetDigitTableInHLShift2bitsLeft
+  ld    de,FreeToUseObject4+24+1
+  ld    bc,5
+  ldir
+
+  ;get 3d digit
+  ld    a,(Ascii5Byte+3)
+  call  .GetDigitTableInHL
+  ld    de,FreeToUseObject4+8+1 + 32
+  ld    bc,5
+  ldir
+
+  ;get 4th digit
+  ld    a,(Ascii5Byte+4)
+  call  .GetDigitTableInHLShift2bitsLeft
+  ld    de,FreeToUseObject4+24+1 + 32
+  ld    bc,5
+  ldir
+
+  ld    a,(r23onLineIntJumpDownGame)
+  ld    b,a
+
+  ld    hl,FreeToUseObject4
+
+  ld    a,118                         ;y
+  add   a,b
+  cp    216
+  jr    nz,.EndCheck216
+
+  inc   hl
+  inc   hl
+  add   a,2
+
+  .EndCheck216:
+  cp    215
+  jr    nz,.EndCheck215
+
+  inc   hl
+  inc   hl
+  add   a,2
+
+  .EndCheck215:
+
+  push  hl
+
+  ld    (spat+0+0*4),a
+  ld    (spat+0+1*4),a
+  inc   a
+  ld    (spat+0+2*4),a
+  ld    (spat+0+3*4),a
+
+  ;write sprite character
+	xor		a				;page 0/1
+  ld    hl,(Mirrorsprchatableaddress)
+  ld    de,0*32
+  add   hl,de
+	call	SetVdp_Write
+
+  pop   hl
+  push  hl
+	ld		c,$98
+	call	outix64		;write sprite color of pointer and hand to vram
+
+	xor		a				;page 0/1
+  ld    hl,(Mirrorsprchatableaddress)
+  ld    de,2*32
+  add   hl,de
+	call	SetVdp_Write
+
+  pop   hl
+	ld		c,$98
+	call	outix64		;write sprite color of pointer and hand to vram
+  ret
+
+  .GetDigitTableInHL:
+  sub   $30
+  ;digit in a
+  ld    b,a
+  add   a,a                               ;*2
+  add   a,a                               ;*4
+  add   a,b                               ;*5
+  ld    e,a
+  ld    d,0
+  ld    hl,Score0
+  add   hl,de                             ;hl now points to digit
+  ret
+
+  .GetDigitTableInHLShift2bitsLeft:
+  sub   $30
+  ;digit in a
+  ld    b,a
+  add   a,a                               ;*2
+  add   a,a                               ;*4
+  add   a,b                               ;*5
+  ld    e,a
+  ld    d,0
+  ld    hl,Score0Shift2bitsLeft
+  add   hl,de                             ;hl now points to digit
+  ret
+
+Score0:
+db  %00000110
+db  %00001001
+db  %00001001
+db  %00001001
+db  %00000110
+
+Score1:
+db  %00000010
+db  %00000110
+db  %00000010
+db  %00000010
+db  %00000111
+
+Score2:
+db  %00000110
+db  %00001001
+db  %00000010
+db  %00000100
+db  %00001111
+
+Score3:
+db  %00000110
+db  %00001001
+db  %00000010
+db  %00001001
+db  %00000110
+
+Score4:
+db  %00001001
+db  %00001001
+db  %00001111
+db  %00000001
+db  %00000001
+
+Score5:
+db  %00001111
+db  %00001000
+db  %00001110
+db  %00000001
+db  %00001110
+
+Score6:
+db  %00000111
+db  %00001000
+db  %00001110
+db  %00001001
+db  %00000110
+
+Score7:
+db  %00001111
+db  %00000001
+db  %00000010
+db  %00000100
+db  %00001000
+
+Score8:
+db  %00000110
+db  %00001001
+db  %00000110
+db  %00001001
+db  %00000110
+
+Score9:
+db  %00000110
+db  %00001001
+db  %00000111
+db  %00000001
+db  %00000110
+
+Score0Shift2bitsLeft:
+db  %00011000
+db  %00100100
+db  %00100100
+db  %00100100
+db  %00011000
+
+Score1Shift2bitsLeft:
+db  %00001000
+db  %00011000
+db  %00001000
+db  %00001000
+db  %00011100
+
+Score2Shift2bitsLeft:
+db  %00011000
+db  %00100100
+db  %00001000
+db  %00010000
+db  %00111100
+
+Score3Shift2bitsLeft:
+db  %00011000
+db  %00100100
+db  %00001000
+db  %00100100
+db  %00011000
+
+Score4Shift2bitsLeft:
+db  %00100100
+db  %00100100
+db  %00111100
+db  %00000100
+db  %00000100
+
+Score5Shift2bitsLeft:
+db  %00111100
+db  %00100000
+db  %00111000
+db  %00000100
+db  %00111000
+
+Score6Shift2bitsLeft:
+db  %00011100
+db  %00100000
+db  %00111000
+db  %00100100
+db  %00011000
+
+Score7Shift2bitsLeft:
+db  %00111100
+db  %00000100
+db  %00001000
+db  %00010000
+db  %00100000
+
+Score8Shift2bitsLeft:
+db  %00011000
+db  %00100100
+db  %00011000
+db  %00100100
+db  %00011000
+
+Score9Shift2bitsLeft:
+db  %00011000
+db  %00100100
+db  %00011100
+db  %00000100
+db  %00011000
+
+
+ScoreCharSprites:
+  db 0
+  db 0
+  db 28
+  db 33
+  db 57
+  db 5
+  db 60
+  db 0
+  db 0
+  db 6
+  db 9
+  db 9
+  db 9
+  db 6
+  db 0
+  db 0
+  db 0
+  db 0
+  db 230
+  db 9
+  db 9
+  db 9
+  db 230
+  db 0
+  db 0
+  db 24
+  db 36
+  db 36
+  db 36
+  db 24
+  db 0
+  db 0
+
+  db 0
+  db 0
+  db 7
+  db 4
+  db 7
+  db 4
+  db 4
+  db 0
+  db 0
+  db 6
+  db 9
+  db 9
+  db 9
+  db 6
+  db 0
+  db 0
+  db 0
+  db 0
+  db 28
+  db 161
+  db 60
+  db 161
+  db 156
+  db 0
+  db 0
+  db 24
+  db 36
+  db 36
+  db 36
+  db 24
+  db 0
+  db 0
+
+swap_spat_col_and_char_table:
+	ld		a,(vdp_0+5)     ;check current spat address
+  cp    %1110 1111      ;spat at $7600 (y=236)
+  jr    z,.SetSpriteTable1
+
+  .SetSpriteTable2:
+	ld		a,%1110 1111	                  ;reduce by value 16 = 16 lines lower, so %1110 1111 = color at 232, %1100 1111 = color at 216, %1010 1111 = color at 200 etc (spat = always color table + $200)  
+	ld		(vdp_0+5),a
+	di
+	out		($99),a		                      ;spr att table at $7600  (y=236)
+	ld		a,5+128
+	out		($99),a
+
+  ld		a,%0000 1111	                  ;every value = 16 lines, so %0000 1111 = char table at y=240, %0000 1110 = char table at y=224, %0000 1101 = char table at y=208 etc
+	ld		(vdp_0+6),a
+	out		($99),a		                      ;spr chr table at $7800 (y=240)
+	ld		a,6+128
+	ei
+	out		($99),a
+
+  ld    hl,$7400 - $800
+  ld    (Mirrorsprcoltableaddress),hl
+  ld    hl,$7600 - $800
+  ld    (Mirrorspratttableaddress),hl
+  ld    hl,$7800 - $800
+  ld    (Mirrorsprchatableaddress),hl
+  ret
+
+  .SetSpriteTable1:
+	ld		a,%1101 1111	                  ;reduce by value 16 = 16 lines lower, so %1110 1111 = color at 232, %1100 1111 = color at 216, %1010 1111 = color at 200 etc (spat = always color table + $200)  
+	ld		(vdp_0+5),a
+	di
+	out		($99),a		                      ;spr att table at $7600 - $800  (y=220)
+	ld		a,5+128
+	out		($99),a
+
+  ld		a,%0000 1110	                  ;every value = 16 lines, so %0000 1111 = char table at y=240, %0000 1110 = char table at y=224, %0000 1101 = char table at y=208 etc
+	ld		(vdp_0+6),a
+	out		($99),a		                      ;spr chr table at $7800 - $800 (y=224)
+	ld		a,6+128
+	ei
+	out		($99),a
+
+  ld    hl,$7400
+  ld    (Mirrorsprcoltableaddress),hl
+  ld    hl,$7600
+  ld    (Mirrorspratttableaddress),hl
+  ld    hl,$7800 
+  ld    (Mirrorsprchatableaddress),hl
+  ret
+
 CheckJumpDownGameObjectOutOfScreenTop:
   ld    a,(r23onLineIntJumpDownGame)
   ld    b,a
@@ -141,31 +564,31 @@ HandleTrampolineObject:
   ret
 
   .HandleTrampoline1:
-  ld    hl,spat+0+20*4                  ;y Trampoline 1
+  ld    hl,spat+0+24*4                  ;y Trampoline 1
   ld    a,(ix+On?)
   or    a
   jp    z,PutJumpDownGameObjectOutOfScreen
   call  CheckJumpDownGameObjectOutOfScreenTop
-  ld    hl,spat+1+20*4                  ;x Trampoline 1
+  ld    hl,spat+1+24*4                  ;x Trampoline 1
   call  CheckCollisionTrampoline
   call  AnimateTrampolineWhenBunnyJumpsOnIt
-  ld    hl,spat+1+20*4                  ;x Trampoline 1
+  ld    hl,spat+1+24*4                  ;x Trampoline 1
   jp    SetXYSpatTrampoline
 
   .HandleTrampoline2:
-  ld    hl,spat+0+24*4                  ;y Trampoline 2
+  ld    hl,spat+0+28*4                  ;y Trampoline 2
   ld    a,(ix+On?)
   or    a
   jp    z,PutJumpDownGameObjectOutOfScreen
   call  CheckJumpDownGameObjectOutOfScreenTop
-  ld    hl,spat+1+24*4                  ;x Trampoline 2
+  ld    hl,spat+1+28*4                  ;x Trampoline 2
   call  CheckCollisionTrampoline
   call  AnimateTrampolineWhenBunnyJumpsOnIt
-  ld    hl,spat+1+24*4                  ;x Trampoline 2
+  ld    hl,spat+1+28*4                  ;x Trampoline 2
   jp    SetXYSpatTrampoline
 
 CheckCollisionTrampoline:
-  ld    a,(spat+1)                      ;bunny x
+  ld    a,(spat+4*4+1)                      ;bunny x
   sub   a,30
   cp    (hl)
   ret   nc
@@ -174,7 +597,7 @@ CheckCollisionTrampoline:
   ret   c
 
   dec   hl                              ;y trampoline
-  ld    a,(spat+0)                      ;bunny y
+  ld    a,(spat+4*4+0)                      ;bunny y
   add   a,11+22
   cp    (hl)
   ret   nz
@@ -218,8 +641,11 @@ PutJumpDownGameObjectOutOfScreen:
   ld    de,4
   ld    a,(r23onLineIntJumpDownGame)
   sub   a,20
-
-  ld    (hl),a
+  cp    216
+  jr    nz,.EndCheck216
+  inc   a
+  .EndCheck216:
+  ld    (hl),a                          ;y object
   add   hl,de
   ld    (hl),a
   add   hl,de
@@ -244,6 +670,12 @@ SetXYSpatTrampoline:
   dec   hl                              ;y sprite
   ld    de,-4
   ld    a,(ix+y)
+
+  cp    216
+  jr    nz,.EndCheck216
+  inc   a
+  .EndCheck216:
+
   ld    (hl),a
   add   hl,de
   ld    (hl),a
@@ -261,30 +693,30 @@ HandleSpikeObject:
   ret
 
   .HandleSpike1:
-  ld    hl,spat+0+12*4                  ;y spike 1
+  ld    hl,spat+0+16*4                  ;y spike 1
   ld    a,(ix+On?)
   or    a
   jp    z,PutJumpDownGameObjectOutOfScreen
   call  CheckJumpDownGameObjectOutOfScreenTop
-  ld    hl,spat+0+12*4                  ;y spike 1
+  ld    hl,spat+0+16*4                  ;y spike 1
   call  SetXYSpatSpike
-  ld    a,(framecounter2)
-  and   1
-  ret   nz
+;  ld    a,(framecounter2)
+;  and   1
+;  ret   nz
   call  SetSpikeAnimationInHLDE
   jp    SetSpike1CharacterAndColor
 
   .HandleSpike2:
-  ld    hl,spat+0+16*4                  ;y spike 2
+  ld    hl,spat+0+20*4                  ;y spike 2
   ld    a,(ix+On?)
   or    a
   jp    z,PutJumpDownGameObjectOutOfScreen
   call  CheckJumpDownGameObjectOutOfScreenTop
-  ld    hl,spat+0+16*4                  ;y spike 2
+  ld    hl,spat+0+20*4                  ;y spike 2
   call  SetXYSpatSpike
-  ld    a,(framecounter2)
-  and   1
-  ret   nz
+;  ld    a,(framecounter2)
+;  and   1
+;  ret   nz
   call  SetSpikeAnimationInHLDE
   jp    SetSpike2CharacterAndColor
 
@@ -318,7 +750,10 @@ SetSpike1CharacterAndColor:
   push  hl
   ;write sprite character
 	xor		a				;page 0/1
-	ld		hl,sprcharaddr+12*32	;sprite 0 character table in VRAM
+  ld    hl,(Mirrorsprchatableaddress)
+  ld    de,16*32
+  add   hl,de
+
 	call	SetVdp_Write
 
   pop   hl
@@ -326,7 +761,10 @@ SetSpike1CharacterAndColor:
 	call	outix128		;write sprite color of pointer and hand to vram
 
 	xor		a				;page 0/1
-	ld		hl,sprcoladdr+12*16	;sprite 0 color table in VRAM
+  ld    hl,(Mirrorsprcoltableaddress)
+  ld    de,16*16
+  add   hl,de
+
 	call	SetVdp_Write
 
   pop   hl
@@ -339,7 +777,10 @@ SetSpike2CharacterAndColor:
   push  hl
   ;write sprite character
 	xor		a				;page 0/1
-	ld		hl,sprcharaddr+16*32	;sprite 0 character table in VRAM
+  ld    hl,(Mirrorsprchatableaddress)
+  ld    de,20*32
+  add   hl,de
+
 	call	SetVdp_Write
 
   pop   hl
@@ -347,7 +788,10 @@ SetSpike2CharacterAndColor:
 	call	outix128		;write sprite color of pointer and hand to vram
 
 	xor		a				;page 0/1
-	ld		hl,sprcoladdr+16*16	;sprite 0 color table in VRAM
+  ld    hl,(Mirrorsprcoltableaddress)
+  ld    de,20*16
+  add   hl,de
+
 	call	SetVdp_Write
 
   pop   hl
@@ -415,19 +859,19 @@ SetSpikeAnimationInHLDE:
 
 SetBunnySpatCoordinates:
   ld    a,(BunnyX)
-  ld    (spat+1+00*4),a
-  ld    (spat+1+01*4),a
   ld    (spat+1+04*4),a
   ld    (spat+1+05*4),a
   ld    (spat+1+08*4),a
   ld    (spat+1+09*4),a
+  ld    (spat+1+12*4),a
+  ld    (spat+1+13*4),a
   add   a,16
-  ld    (spat+1+02*4),a
-  ld    (spat+1+03*4),a
   ld    (spat+1+06*4),a
   ld    (spat+1+07*4),a
   ld    (spat+1+10*4),a
   ld    (spat+1+11*4),a
+  ld    (spat+1+14*4),a
+  ld    (spat+1+15*4),a
 
   ld    a,(BunnyY)
   cp    216
@@ -443,11 +887,6 @@ SetBunnySpatCoordinates:
   inc   a
   .EndCheck184:
 
-  ld    (spat+0+00*4),a
-  ld    (spat+0+01*4),a
-  ld    (spat+0+02*4),a
-  ld    (spat+0+03*4),a
-  add   a,16
   ld    (spat+0+04*4),a
   ld    (spat+0+05*4),a
   ld    (spat+0+06*4),a
@@ -457,6 +896,11 @@ SetBunnySpatCoordinates:
   ld    (spat+0+09*4),a
   ld    (spat+0+10*4),a
   ld    (spat+0+11*4),a
+  add   a,16
+  ld    (spat+0+12*4),a
+  ld    (spat+0+13*4),a
+  ld    (spat+0+14*4),a
+  ld    (spat+0+15*4),a
   ret
 
 ScrollBackgroundJumpDownGame:
@@ -526,7 +970,6 @@ HandleBunnyDied:
 	ld		de,BunnyColSprites+180*16	;sprite 0 character table in VRAM
   jp    c,SetBunnyCharacterAndColor
   ret
-
 
   .Left:
   ld    a,(BunnyDied?)
@@ -612,14 +1055,29 @@ SpiderWebJumpLeft:
 	ld		de,BunnyColSprites+36*16	;sprite 0 character table in VRAM
   jp    SetBunnyCharacterAndColor
 
+ShowBunnySittingStillSprite:
+  ld    a,(BunnyFacingRight?)
+  or    a
+  jr    nz,.Right
+
+  .Left:
+	ld		hl,BunnyCharSprites+36*32	;sprite 0 character table in VRAM
+	ld		de,BunnyColSprites+36*16	;sprite 0 character table in VRAM
+  jp    SetBunnyCharacterAndColor
+
+  .Right:
+	ld		hl,BunnyCharSprites+0*32	;sprite 0 character table in VRAM
+	ld		de,BunnyColSprites+0*16	;sprite 0 character table in VRAM
+  jp    SetBunnyCharacterAndColor
+
 HandleBunnyJumpAndSetSpriteCharacterAndColor:
+  ld    a,(BunnyDied?)
+  or    a
+  ret   nz
+
   ld    a,(AnimateSpiderWebJump?)
   or    a
   jp    nz,SpiderWebJump
-
-  ld    a,(Scroll27LinesDown?)
-  or    a
-  ret   z
 
   ld    a,(JumpBunnyLeftOnTrampoline?)
   or    a
@@ -633,7 +1091,9 @@ HandleBunnyJumpAndSetSpriteCharacterAndColor:
   jp    nz,JumpBunnyLeft
   ld    a,(JumpBunnyRight?)
   or    a
-  ret   z
+  jp    nz,JumpBunnyRight
+  jp    ShowBunnySittingStillSprite
+
 JumpBunnyRight:
   ld    a,1
   ld    (BunnyFacingRight?),a
@@ -1452,7 +1912,11 @@ ResetVariablesJumpDownGame:
   ld    (FreeToUseObject3+On?),a
   ld    (JumpBunnyLeftOnTrampoline?),a
   ld    (JumpBunnyRightOnTrampoline?),a
-
+  ld    (JumpDownGameAmountOfFramesSittingStill),a
+  ld    hl,0
+  ld    (ScoreJumpDownGame),hl
+  ld    a,1
+  ld    (JumpDownGameSkipFirstScore?),a
   ld    a,112
   ld    (BunnyX),a
   ld    a,230+2
@@ -1465,9 +1929,83 @@ ResetVariablesJumpDownGame:
   ret
 
 SetJumpDownGameSprites:
-  ;clear all sprite characters
+  call  .ClearAllSprites
+  call  .Color4NumberSpritesWhite
+  call  .SetTrampolineSprites
+  call  swap_spat_col_and_char_table
+  call  .ClearAllSprites
+  call  .Color4NumberSpritesWhite
+  call  .SetTrampolineSprites
+  ;copy score sprites to ram
+  ld    hl,ScoreCharSprites
+  ld    de,FreeToUseObject4
+  ld    bc,64
+  ldir
+
+  ld    a,116                         ;set x score sprites
+  ld    (spat+1+0*4),a
+  ld    (spat+1+2*4),a
+  add   a,12
+  ld    (spat+1+1*4),a
+  ld    (spat+1+3*4),a
+  ret
+
+  .SetTrampolineSprites:
 	xor		a				;page 0/1
-	ld		hl,sprcharaddr+0*32	;sprite 0 character table in VRAM
+  ld    hl,(Mirrorsprchatableaddress)
+  ld    de,24*32
+  add   hl,de
+
+	call	SetVdp_Write
+
+  ld    hl,TrampolineCharSprites
+	ld		c,$98
+	call	outix128		;write sprite color of pointer and hand to vram
+
+	xor		a				;page 0/1
+;	ld		hl,Mirrorsprcoltableaddress+24*16	;sprite 0 color table in VRAM
+
+  ld    hl,(Mirrorsprcoltableaddress)
+  ld    de,24*16
+  add   hl,de
+
+	call	SetVdp_Write
+
+  ld    hl,TrampolineColSprites
+	ld		c,$98
+	call	outix64		;write sprite color of pointer and hand to vram
+
+  ;set trampoline sprites
+	xor		a				;page 0/1
+;	ld		hl,Mirrorsprchatableaddress+28*32	;sprite 0 character table in VRAM
+
+  ld    hl,(Mirrorsprchatableaddress)
+  ld    de,28*32
+  add   hl,de
+
+	call	SetVdp_Write
+
+  ld    hl,TrampolineCharSprites
+	ld		c,$98
+	call	outix128		;write sprite color of pointer and hand to vram
+
+	xor		a				;page 0/1
+;	ld		hl,Mirrorsprcoltableaddress+28*16	;sprite 0 color table in VRAM
+
+  ld    hl,(Mirrorsprcoltableaddress)
+  ld    de,28*16
+  add   hl,de
+
+	call	SetVdp_Write
+
+  ld    hl,TrampolineColSprites
+	ld		c,$98
+	call	outix64		;write sprite color of pointer and hand to vram
+  ret
+
+  .ClearAllSprites:
+	xor		a				;page 0/1
+  ld    hl,(Mirrorsprchatableaddress)
 	call	SetVdp_Write
 
   ld    c,4
@@ -1478,45 +2016,27 @@ SetJumpDownGameSprites:
   djnz  .loop
   dec   c
   jp    nz,.loop
+  ret
 
-  ;set bunny sprites
-	ld		hl,BunnyCharSprites+0*32	;sprite 0 character table in VRAM
-	ld		de,BunnyColSprites+0*16	;sprite 0 character table in VRAM
-  call  SetBunnyCharacterAndColor
-
-  ;set trampoline sprites
+  .Color4NumberSpritesWhite:
 	xor		a				;page 0/1
-	ld		hl,sprcharaddr+20*32	;sprite 0 character table in VRAM
+  ld    hl,(Mirrorsprcoltableaddress)
+  ld    de,0*16
+  add   hl,de
+
 	call	SetVdp_Write
 
-  ld    hl,TrampolineCharSprites
-	ld		c,$98
-	call	outix128		;write sprite color of pointer and hand to vram
+  ld    b,16*2
+  .loop2:
+  ld    a,7
+  out   ($98),a
+  djnz  .loop2
 
-	xor		a				;page 0/1
-	ld		hl,sprcoladdr+20*16	;sprite 0 color table in VRAM
-	call	SetVdp_Write
-
-  ld    hl,TrampolineColSprites
-	ld		c,$98
-	call	outix64		;write sprite color of pointer and hand to vram
-
-  ;set trampoline sprites
-	xor		a				;page 0/1
-	ld		hl,sprcharaddr+24*32	;sprite 0 character table in VRAM
-	call	SetVdp_Write
-
-  ld    hl,TrampolineCharSprites
-	ld		c,$98
-	call	outix128		;write sprite color of pointer and hand to vram
-
-	xor		a				;page 0/1
-	ld		hl,sprcoladdr+24*16	;sprite 0 color table in VRAM
-	call	SetVdp_Write
-
-  ld    hl,TrampolineColSprites
-	ld		c,$98
-	call	outix64		;write sprite color of pointer and hand to vram
+  ld    b,16*2
+  .loop3:
+  ld    a,14
+  out   ($98),a
+  djnz  .loop3
   ret
 
 	TrampolineCharSprites:
@@ -1529,7 +2049,10 @@ SetBunnyCharacterAndColor:
   push  hl
   ;write sprite character
 	xor		a				;page 0/1
-	ld		hl,sprcharaddr+0*32	;sprite 0 character table in VRAM
+  ld    hl,(Mirrorsprchatableaddress)
+  ld    de,4*32
+  add   hl,de
+
 	call	SetVdp_Write
 
   pop   hl
@@ -1537,7 +2060,10 @@ SetBunnyCharacterAndColor:
 	call	outix384		;write sprite color of pointer and hand to vram
 
 	xor		a				;page 0/1
-	ld		hl,sprcoladdr+0*16	;sprite 0 color table in VRAM
+  ld    hl,(Mirrorsprcoltableaddress)
+  ld    de,4*16
+  add   hl,de
+
 	call	SetVdp_Write
 
   pop   hl
@@ -1643,8 +2169,8 @@ JumpDownSpikeTile: equ 6
 JumpDownSpiderWebTile: equ 7
 JumpDownIceTile: equ 8
 JumpDownReverseControlsTile: equ 9
-JumpDownSandTile: equ 11
-JumpDownTrampolineTile: equ 13
+JumpDownSandTile: equ 10
+JumpDownTrampolineTile: equ 11
 
 GetTileBunnyStandsOn:
   ld    a,(Scroll4RowsAtStartOfGame?)
@@ -1736,17 +2262,18 @@ TileSXSYTableJumpDownGame:
   db    000,112, 036,112,  072,112,  108,112,  144,112,  180,112,  216,112
 
 ;we can put 2 spike max in screen. we need 5 empty rows before we can put a new spike
+;preferably put 2 tiles in between trampolines (otherwise you get sprite overlap)
 TileRowTable:
   db  000,000,000,000,000,000
   db    000,000,001,000,000
-  db  000,000,013,011,000,000
-  db    000,007,001,013,000
-  db  000,001,011,008,001,000
-  db    001,007,001,003,001
+  db  000,000,011,001,000,000
+  db    000,007,006,001,000
+  db  000,001,001,001,001,000
+  db    011,007,001,003,001
   db  001,008,008,001,001,001
   db    002,001,008,001,001
   db  001,002,008,001,005,001
-  db    001,004,006,002,001
+  db    001,004,001,002,001
   db  006,000,001,008,001,001
   db    001,002,001,001,001
   db  001,001,001,001,001,001

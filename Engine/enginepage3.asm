@@ -1763,7 +1763,6 @@ EraseRowJumpDownGameCopy:
   db    216,000,027,000                 ;nx,--,ny,--
 	db		0+ (0 * 16),0,$c0
 
-
 STOPWAITSPACEPRESSED:
   call  PopulateControls
 ;
@@ -1857,9 +1856,14 @@ SetInterruptHandlerArcadeMachine:
   out   ($99),a 
   ret
 
-sprcoladdr:		equ	$7400
-sprattaddr:		equ	$7600
-sprcharaddr:	equ	$7800
+Mirrorsprcoltableaddress:    			ds  2
+Mirrorspratttableaddress:    			ds  2
+Mirrorsprchatableaddress:    			ds  2
+
+sprcoladdr:			equ	$7400	;$7400 - $7600 y=232 - 236
+sprattaddr:			equ	$7600	;$7600 - $7680 y=236 - 237
+sprcharaddr:		equ	$7800	;$7800 - $7c00 y=240 - 248
+
 SpriteInitialize:
 	ld		a,(vdp_0+1)
 	or		2			;sprites 16*16
@@ -1869,7 +1873,8 @@ SpriteInitialize:
 	ei
 	out		($99),a
 
-	ld		a,%1110 1111	;reduce by value 32 = 16 lines lower, so %1110 1111 = color at 232, %1100 1111 = color at 216, %1010 1111 = color at 200 etc (spat = always color table + $200)  
+	ld		a,%1110 1111	;reduce by value 16 = 16 lines lower, so %1110 1111 = color at 232, %1100 1111 = color at 216, %1010 1111 = color at 200 etc (spat = always color table + $200)  
+;sub 16
 	ld		(vdp_0+5),a
 	di
 ;	out		($99),a		                      ;spr att table to $17600
@@ -1882,9 +1887,10 @@ SpriteInitialize:
 	out		($99),a
 	ld		a,11+128
 	out		($99),a
-	
+	;sprite character table
 ;	ld		a,%0010 1111
-	ld		a,%0000 1111	;every value = 16 lines, so %0000 1111 = char table at y=240, %0000 1110 = char table at y=224, %0000 1101 = char table at y=208 etc 
+	ld		a,%0000 1111	;every value = 16 lines, so %0000 1111 = char table at y=240, %0000 1110 = char table at y=224, %0000 1101 = char table at y=208 etc
+;dec a
 	ld		(vdp_0+6),a
 ;	out		($99),a		                      ;spr chr table to $17800
 	out		($99),a		                      ;spr chr table to $7800
@@ -2149,12 +2155,6 @@ WaitVdpReady:
   ret
 
 currentpage:                ds  1
-sprcoltableaddress:         ds  2
-spratttableaddress:         ds  2
-sprchatableaddress:         ds  2
-invissprcoltableaddress:    ds  2
-invisspratttableaddress:    ds  2
-invissprchatableaddress:    ds  2
 
 SetPalette:
 	xor		a
@@ -2850,6 +2850,10 @@ SpiderWeb3TimesPressed?:	rb	1
 AnimateSpiderWebJump?:		rb	1
 JumpBunnyLeftOnTrampoline?:	rb	1
 JumpBunnyRightOnTrampoline?:	rb	1
+ScoreJumpDownGame:				rb	2
+JumpDownGameSkipFirstScore?:	rb	1
+JumpDownGameAmountOfFramesSittingStill:	rb	1
+
 
 endenginepage3variables:  equ $+enginepage3length
 org variables

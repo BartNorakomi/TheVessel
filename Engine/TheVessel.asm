@@ -365,12 +365,6 @@ ld  ix, REDCLK
 call EXTROM
 ld  (YearTientallen), a
 
-
-
-
-
-
-
 ;  ld    a,%1000 0001
 ;  ld		ix,$180     ;CHGCPU: A = LED 0 0 0 0 0 x x | ;%000 0000 = Z80 (ROM) mode, %0000 0001 = R800 ROM  mode, %0000 0010 = R800 DRAM mode
 ;  call	$15F
