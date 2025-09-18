@@ -1,6 +1,7 @@
-﻿# Hardcoded values — change these as needed
-$input = "map01.tmx"
-$output = "map01.map"
+﻿# Hardcoded values — change as needed
+$input  = "map01.tmx"
+$output = "map01converted.map"
+$packer = ".\pack.exe"   # pack.exe must be in the same folder as this script
 
 # Load the TMX file
 if (-not (Test-Path $input)) {
@@ -10,10 +11,10 @@ if (-not (Test-Path $input)) {
 
 [xml]$tmx = Get-Content -Path $input
 
-$width = [int]$tmx.map.width
-$height = [int]$tmx.map.height
-$mapSize = $width * $height
-$rawData = [byte[]]::new($mapSize)
+$width    = [int]$tmx.map.width
+$height   = [int]$tmx.map.height
+$mapSize  = $width * $height
+$rawData  = [byte[]]::new($mapSize)
 
 Write-Host "Converting '$input' ($width x $height) → '$output'"
 
@@ -34,13 +35,31 @@ if ($tileValues.Length -ne $mapSize) {
 
 # Convert tile GIDs to bytes
 for ($i = 0; $i -lt $mapSize; $i++) {
-    $gid = [int]$tileValues[$i]
+    $gid   = [int]$tileValues[$i]
     $value = $gid - 1
     if ($value -lt 0) { $value = 0 }
     $rawData[$i] = [byte]($value -band 0xFF)
 }
 
-# Write raw byte map
-Set-Content -Path $output -Value $rawData -Encoding Byte
+# Remove all bytes with value 0x14 (decimal 20)
+[byte[]]$filtered = $rawData | Where-Object { $_ -ne 0x14 }
 
-Write-Host "Done. Wrote $mapSize bytes to '$output'"
+# Write cleaned map file
+Set-Content -Path $output -Value $filtered -Encoding Byte
+
+Write-Host "Done. Wrote $($filtered.Length) bytes to '$output' (removed $($mapSize - $filtered.Length) bytes with value 0x14)"
+
+# --- Run pack.exe on the output file ---
+if (-not (Test-Path $packer)) {
+    Write-Error "Packer '$packer' not found in current folder."
+    exit 1
+}
+
+Write-Host "Packing '$output' with '$packer'..."
+& $packer $output
+if ($LASTEXITCODE -ne 0) {
+    Write-Error "Packing failed with exit code $LASTEXITCODE"
+    exit 1
+}
+
+Write-Host "Packing complete."

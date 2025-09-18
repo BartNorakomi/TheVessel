@@ -2,6 +2,10 @@
 
 Phase MovementRoutinesAddress
 
+;we can put 2 spike max in screen. we need 5 empty rows before we can put a new spike
+;preferably put 2 tiles in between trampolines (otherwise you get sprite overlap)
+
+
 JumpDownGameRoutine:
   ld    a,1
   ld    (framecounter),a                    ;we force framecounter to 1 so that the sf2 object handler doesn't swap page ever
@@ -10,6 +14,10 @@ JumpDownGameRoutine:
   ld    a,(framecounter2)
   inc  a
   ld    (framecounter2),a
+
+  ;mapdata is in ram at $8000
+  ld    a,(slot.page1rom)            	;all RAM except page 1
+  out   ($a8),a
 
   call  swap_spat_col_and_char_table
   call  .HandlePhase                        ;load graphics, init variables
@@ -1624,6 +1632,9 @@ EraseRowJumpDownGameStep1:
   add   a,60 ;56
   ld    (EraseRowJumpDownGameCopy+dy),a
 
+  ld    a,27
+  ld    (EraseRowJumpDownGameCopy+ny),a
+
   ld    hl,EraseRowJumpDownGameCopy
   call  DoCopy
   ret
@@ -1636,8 +1647,14 @@ EraseRowJumpDownGameStep2:
   cp    256-27
   ret   c
 
-  xor   a
-  ld    (EraseRowJumpDownGameCopy+dy),a
+;TOOOOOOOOO DOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO
+;use NEG or INV
+;  ld    a,(EraseRowJumpDownGameCopy+dy)
+;  ld    b,a
+;  xor   a
+;  sub   a,b
+;  ret   z
+;  ld    (EraseRowJumpDownGameCopy+ny),a
 
   ld    hl,EraseRowJumpDownGameCopy
   call  DoCopy
@@ -1882,17 +1899,21 @@ ResetVariablesJumpDownGame:
   ld    bc,32
   ldir
 
-  ld    a,110-27-27+1
+  ld    a,112
+  ld    (BunnyX),a
+  ld    a,232
+  ld    (BunnyY),a
+  ld    a,57
   ld    (r23onLineIntJumpDownGame),a
   ld    a,20
   ld    (JumpDownGameTilesX),a
-  ld    a,218-2
+  ld    a,216
   ld    (JumpDownGameTilesY),a
   ld    a,1
   ld    (Row6Wide?),a
   ld    (BuildUpNewRowJumpDownGame?),a
 
-  ld    hl,TileRowTable
+  ld    hl,$8000                          ;TileRowTable
   ld    (TileRowTablePointer),hl
 
   xor   a
@@ -1917,15 +1938,13 @@ ResetVariablesJumpDownGame:
   ld    (ScoreJumpDownGame),hl
   ld    a,1
   ld    (JumpDownGameSkipFirstScore?),a
-  ld    a,112
-  ld    (BunnyX),a
-  ld    a,230+2
-  ld    (BunnyY),a
+
 
   ld    a,18
   ld    (Scroll4RowsAtStartOfGame?),a
 
   call  SetJumpDownGameSprites
+  call  SetJumpDownGameMapAt8000InRam
   ret
 
 SetJumpDownGameSprites:
@@ -2260,107 +2279,5 @@ TileSXSYTableJumpDownGame:
   db    000,000, 036,000,  072,000,  108,000,  144,000,  180,000,  216,000
   db    000,056, 036,056,  072,056,  108,056,  144,056,  180,056,  216,056
   db    000,112, 036,112,  072,112,  108,112,  144,112,  180,112,  216,112
-
-;we can put 2 spike max in screen. we need 5 empty rows before we can put a new spike
-;preferably put 2 tiles in between trampolines (otherwise you get sprite overlap)
-TileRowTable:
-  db  000,000,000,000,000,000
-  db    000,000,001,000,000
-  db  000,000,011,001,000,000
-  db    000,007,006,001,000
-  db  000,001,001,001,001,000
-  db    011,007,001,003,001
-  db  001,008,008,001,001,001
-  db    002,001,008,001,001
-  db  001,002,008,001,005,001
-  db    001,004,001,002,001
-  db  006,000,001,008,001,001
-  db    001,002,001,001,001
-  db  001,001,001,001,001,001
-  db    001,001,001,008,001
-  db  002,001,001,008,001,001
-  db    002,001,000,001,001
-  db  002,001,001,001,001,001
-  db    002,001,001,001,001
-  db  002,001,001,001,000,001
-  db    002,001,001,001,001
-  db  001,001,001,001,001,001
-  db    001,001,001,001,000
-  db  001,001,001,001,001,001
-  db    001,001,001,001,001
-  db  001,001,001,001,001,001
-  db    000,001,001,001,001
-  db  000,001,001,001,001,001
-  db    001,001,001,001,001
-  db  001,001,001,001,001,001
-  db    001,001,001,001,001
-  db  001,001,000,001,001,001
-  db    001,001,000,001,001
-  db  001,001,001,001,001,001
-  db    001,001,001,001,001
-  db  001,001,001,001,001,001
-  db    001,001,001,001,001
-  db  002,001,001,001,001,001
-  db    002,001,001,001,001
-  db  002,001,001,001,001,001
-  db    002,001,001,001,001
-  db  002,001,001,001,001,001
-  db    002,001,001,001,001
-  db  001,001,001,001,001,001
-  db    001,001,001,001,001
-  db  001,001,001,001,001,001
-  db    001,001,001,001,001
-  db  001,001,001,001,001,001
-  db    001,001,001,001,001
-  db  001,001,001,001,001,001
-  db    001,001,001,001,001
-  db  001,001,001,001,001,001
-  db    001,001,001,001,001
-  db  001,001,001,001,001,001
-  db    001,001,001,001,001
-  db  001,001,001,001,001,001
-  db    001,001,001,001,001
-  db  001,001,001,001,001,001
-  db    001,001,001,001,001
-  db  002,001,001,001,001,001
-  db    002,001,001,001,001
-  db  002,001,001,001,001,001
-  db    002,001,001,001,001
-  db  002,001,001,001,001,001
-  db    002,001,001,001,001
-  db  001,001,001,001,001,001
-  db    001,001,001,001,001
-  db  001,001,001,001,001,001
-  db    001,001,001,001,001
-  db  001,001,001,001,001,001
-  db    001,001,001,001,001
-  db  001,001,001,001,001,001
-  db    001,001,001,001,001
-  db  001,001,001,001,001,001
-  db    001,001,001,001,001
-  db  001,001,001,001,001,001
-  db    001,001,001,001,001
-  db  001,001,001,001,001,001
-  db    001,001,001,001,001
-  db  001,001,001,001,001,001
-  db    001,001,001,001,001
-  db  002,001,001,001,001,001
-  db    002,001,001,001,001
-  db  002,001,001,001,001,001
-  db    002,001,001,001,001
-  db  002,001,001,001,001,001
-  db    002,001,001,001,001
-  db  001,001,001,001,001,001
-  db    001,001,001,001,001
-  db  001,001,001,001,001,001
-  db    001,001,001,001,001
-  db  001,001,001,001,001,001
-  db    001,001,001,001,001
-  db  001,001,001,001,001,001
-
-
-
-
-
 
 dephase

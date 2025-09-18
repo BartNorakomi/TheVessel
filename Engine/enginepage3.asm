@@ -1442,7 +1442,23 @@ SetGfxAt8000InRam:
   out   ($a8),a                         ;reset rom/ram settings of page 1+2
   ret
 
+SetJumpDownGameMapAt8000InRam:
+  ld    a,(slot.page1rom)            	;all RAM except page 1
+  out   ($a8),a
 
+  ld		a,(memblocks.1)
+  push  af
+
+	ld		a,JumpDownMap1Block
+  call  block12                       	;CARE!!! we can only switch block34 if page 1 is in rom  
+
+	ld		hl,JumpDownMap1Address
+	ld		de,$8000
+	call	Depack                          ;In: HL: source, DE: destination
+
+  pop   af
+  call  block12
+  ret
 
 
 
