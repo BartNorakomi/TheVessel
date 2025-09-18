@@ -169,7 +169,7 @@ HandleScore:
 
   .GoScore:
   ld    hl,(ScoreJumpDownGame)
-  ld    de,10
+  ld    de,5
   add   hl,de
   ld    (ScoreJumpDownGame),hl
   .EndCheckIncreaseScore:

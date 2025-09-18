@@ -3,11 +3,14 @@
         "height": 4300,
         "width": 2
     },
-    "activeFile": "C:/Users/bartf/OneDrive/Usas2/Archived20250314/maps/BU16.tmx",
+    "activeFile": "C:/Users/bartf/Documents/GitHub/TheVessel/grapx/jumpdown/map01.tmx",
     "expandedProjectPaths": [
         "."
     ],
     "fileStates": {
+        ":/automap-tiles.tsx": {
+            "scaleInDock": 1
+        },
         "C:/Users/bartf/Documents/GitHub/MSXHeroes/maps/GentleAutumnMap01.tmx": {
             "scale": 3,
             "selectedLayer": 10,
@@ -22,20 +25,41 @@
         "C:/Users/bartf/Documents/GitHub/MSXHeroes/maps/TilesGentleAutumn.tsx": {
             "scaleInDock": 1
         },
+        "C:/Users/bartf/Documents/GitHub/TheVessel/grapx/jumpdown/map01.tmx": {
+            "scale": 1.441156462585034,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 117.26693415152232,
+                "y": 294.20816615529856
+            }
+        },
+        "C:/Users/bartf/Documents/GitHub/TheVessel/grapx/jumpdown/map1.tmx": {
+            "scale": 1.441156462585034,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 70.7764928015105,
+                "y": 294.20816615529856
+            }
+        },
+        "C:/Users/bartf/Documents/GitHub/TheVessel/grapx/jumpdown/tiles.tsx": {
+            "dynamicWrapping": false,
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
         "C:/Users/bartf/OneDrive/Usas2/Archived20250314/maps/BT12.tmx": {
             "scale": 1.5,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 402.66666666666663,
-                "y": 948
+                "x": 128.33333333333331,
+                "y": 107.66666666666664
             }
         },
         "C:/Users/bartf/OneDrive/Usas2/Archived20250314/maps/BU16.tmx": {
             "scale": 1.5,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 90.66666666666663,
-                "y": 52
+                "x": 152,
+                "y": 107.33333333333334
             }
         },
         "C:/Users/bartf/OneDrive/Usas2/Archived20250314/maps/tilesheets/roomObjects.tsx": {
@@ -86,24 +110,33 @@
             }
         },
         "tileset.tsx": {
-            "scaleInDock": 3,
+            "scaleInDock": 1.5,
             "scaleInEditor": 1
         }
     },
-    "last.imagePath": "C:/Users/bartf/Documents/GitHub/TheVessel/grapx/drillinggame/maps",
+    "last.externalTilesetPath": "C:/Users/bartf/Documents/GitHub/TheVessel/grapx/drillinggame/maps",
+    "last.imagePath": "C:/Users/bartf/Documents/GitHub/TheVessel/grapx/jumpdown",
     "loadedWorlds": [
         "C:/Users/bartf/OneDrive/Usas2/Archived20250314/maps/KarniMata.world"
     ],
     "map.lastUsedFormat": "tmx",
+    "map.orientation": "3",
+    "map.tileHeight": 56,
+    "map.tileWidth": 36,
     "map.width": 8,
     "openFiles": [
         "C:/Users/bartf/OneDrive/Usas2/Archived20250314/maps/BT12.tmx",
-        "C:/Users/bartf/OneDrive/Usas2/Archived20250314/maps/BU16.tmx"
+        "C:/Users/bartf/OneDrive/Usas2/Archived20250314/maps/BU16.tmx",
+        "C:/Users/bartf/Documents/GitHub/TheVessel/grapx/jumpdown/tiles.tsx",
+        "C:/Users/bartf/Documents/GitHub/TheVessel/grapx/jumpdown/map01.tmx"
     ],
     "project": "drillinggame.tiled-project",
     "recentFiles": [
         "C:/Users/bartf/OneDrive/Usas2/Archived20250314/maps/BT12.tmx",
         "C:/Users/bartf/OneDrive/Usas2/Archived20250314/maps/BU16.tmx",
+        "C:/Users/bartf/Documents/GitHub/TheVessel/grapx/jumpdown/tiles.tsx",
+        "C:/Users/bartf/Documents/GitHub/TheVessel/grapx/jumpdown/map01.tmx",
+        "C:/Users/bartf/Documents/GitHub/TheVessel/grapx/jumpdown/map1.tmx",
         "map01.tmx",
         "map05.tmx",
         "map04.tmx",
@@ -112,5 +145,12 @@
         "tileset.tsx",
         "C:/Users/bartf/Documents/GitHub/MSXHeroes/maps/GentleAutumnMap01.tmx"
     ],
-    "tileset.lastUsedFormat": "tsx"
+    "tileset.lastUsedFilter": "Tiled tileset files (*.tsx *.xml)",
+    "tileset.lastUsedFormat": "tsx",
+    "tileset.tileSize": {
+        "height": 56,
+        "width": 36
+    },
+    "tileset.transparentColor": "#c7e7fd",
+    "tileset.useTransparentColor": true
 }
