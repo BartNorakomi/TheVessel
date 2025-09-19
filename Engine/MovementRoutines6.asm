@@ -101,13 +101,30 @@ JumpDownGameRoutine:
   xor   a
   ld    (Vdp_Write_HighPage?),a
 
+  ;set font at y=212 page 2
+  ld    hl,JumpDownFontPart1Address
+  ld    a,JumpDownFontGfxBlock
+  call  SetGfxAt8000InRam                             ;in: hl=adress in rom page 1, a=block, out: puts gfx in page 2 in ram at $8000
+
+  ld    a,1
+  ld    (Vdp_Write_HighPage?),a
+  ld    hl,$8000 + (000*128) + (000/2) - 128
+  ld    de,$0000 + (212*128) + (000/2) - 128
+  ld    bc,$0000 + (009*256) + (256/2)
+  call  CopyRamToVram                       ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
+  xor   a
+  ld    (Vdp_Write_HighPage?),a
+
   call  SetArcadeMachine
   call  ResetVariablesJumpDownGame
   ld    a,1
   ld    (SetArcadeGamePalette?),a           ;action on vblank: 1=set palette, 2=set palette and write spat to vram
-  call  SetInterruptHandlerJumpDownGame   	;sets Vblank and lineint for hud
-;  call  SetInterruptHandlerArcadeMachine   	;sets Vblank and lineint for hud
+;  call  SetInterruptHandlerJumpDownGame   	;sets Vblank and lineint for hud
+  call  SetInterruptHandlerArcadeMachine   	;sets Vblank and lineint for hud
   call  AddAFewClouds
+
+  jp    BackToTitleScreenJumpDown
+
   ret
 
   .ClearPage1:
@@ -2168,6 +2185,7 @@ ResetVariablesJumpDownGame:
   ld    de,ArcadeGamePalette
   ld    bc,32
   ldir
+  .SkipSetPalette:
 
   ld    a,112
   ld    (BunnyX),a
@@ -2208,7 +2226,7 @@ ResetVariablesJumpDownGame:
   ld    (ScoreJumpDownGame),hl
   ld    a,1
   ld    (JumpDownGameSkipFirstScore?),a
-
+  ld    (BunnyFacingRight?),a
 
   ld    a,18
   ld    (Scroll4RowsAtStartOfGame?),a
@@ -2584,6 +2602,12 @@ CheckGameOverJumpDownGame:
 	db		000,1,128+7,0
 	db		0,0,$d0
 
+.CopyGameOverScreenToPage1:
+	db		064,0,012,2
+	db		064,0,012,1
+	db		128,0,119,0
+	db		0,0,$98
+
   .GameOver:
   ld    hl,.CopyCurrentScreenToPage0
   ld    de,FreeToUseFastCopy0
@@ -2640,19 +2664,8 @@ CheckGameOverJumpDownGame:
   call  SetInterruptHandlerArcadeMachine   	;sets Vblank and lineint for hud
   call  WaitVblank
 
-
-
   ld    hl,.CopyPage0ToPage1
   call  DoCopy
-
-;hier nu eerst het game over scherm opbouwen
-
-;  ld    a,1*32 + 31
-;  ld    (PageOnNextVblank),a  ;set page
-
-
-  .q: jp .q
-
 
   ld    hl,JumpDownGameOverPart1Address
   ld    a,JumpDownGameOverGfxBlock
@@ -2703,51 +2716,55 @@ CheckGameOverJumpDownGame:
 
 
 
+
+
+
+
 ;check if current score is new highscore
-  ld    de,(ScoreBlockHitGame)
-  ld    hl,(HighScoreBlockHit)
+  ld    de,(ScoreJumpDownGame)
+  ld    hl,(HighScoreJumpDown)
   xor   a
   sbc   hl,de
   jr    nc,.EndCheckNewHighScore
-  ld    (HighScoreBlockHit),de
+  ld    (HighScoreJumpDown),de
   .EndCheckNewHighScore:
 
-;set completed % (highscore / 6500 * 100) = (highscore / 65)
-  ld    bc,(HighScoreBlockHit)
-  ld    de,65
+;set completed % (highscore / 1500 * 100) = (highscore / 15)
+  ld    bc,(HighScoreJumpDown)
+  ld    de,15
   call  DivideBCbyDE          ; Out: BC = result, HL = rest
   ld    a,c
   cp    101
   jr    c,.SetCompletePercentage
   ld    a,100
   .SetCompletePercentage:
-  ld    (BlockHitCompletePercentage),a
+  ld    (JumpDownCompletePercentage),a
 
+  ld    a,2
+  ld    (PutLetterNonTransparant+sPage),a
   call  .SetScore
   call  .SetBestScore
   call  .SetCompleted
   call  .SetPercentageSymbol
+  ld    a,1
+  ld    (PutLetterNonTransparant+sPage),a
+
+  ld    hl,.CopyGameOverScreenToPage1
+  call  DoCopy
+  call  WaitVdpReady
 
   ld    a,1*32 + 31
-	ld    (PageOnNextVblank),a
-  call  SpritesOff
+  ld    (PageOnNextVblank),a  ;set page
 
   xor   a
   ld    (freezecontrols?),a  
   call  STOPWAITSPACEPRESSED
 
-  jp    BackToTitleScreenBlockHit
-
-  .CopyScoreToPage1:
-  db    152,000,008,000                 ;sx,--,sy,spage
-  db    152,000,008,001                 ;dx,--,dy,dpage
-  db    032,000,006,000                 ;nx,--,ny,--
-  db    000,%0000 0000,$d0              ;fast copy -> Copy from right to left     
-  
+  jp    BackToTitleScreenJumpDown
 
   .PercentageSymbol:                     ;freely usable anywhere
-  db    151,000,060,001                 ;sx,--,sy,spage
-  db    000,000,107,001                 ;dx,--,dy,dpage
+  db    151,000,060,002                 ;sx,--,sy,spage
+  db    000,000,107,002                 ;dx,--,dy,dpage
   db    007,000,006,000                 ;nx,--,ny,--
   db    000,%0000 0000,$90              ;fast copy -> Copy from right to left     
   .SetPercentageSymbol:
@@ -2765,14 +2782,14 @@ CheckGameOverJumpDownGame:
   .CompletedDX: equ 148
   .CompletedDY: equ 105
   .SetCompleted:
-	ld    a,1
+	ld    a,2
   ld    (PutLetterNonTransparant+dPage),a             ;set page where to put text
   ld    a,.CompletedDX
   ld    (PutLetterNonTransparant+dx),a
   ld    a,.CompletedDY
   ld    (PutLetterNonTransparant+dy),a
 
-  ld    hl,(BlockHitCompletePercentage)
+  ld    hl,(JumpDownCompletePercentage)
   ld    h,0
   call  NUM_TO_ASCII                      ;HL = 16-bit number (0-65535), Output: ASCII string stored at Ascii5Byte:
   call  SetHLToAscii5ByteSkip0
@@ -2782,14 +2799,14 @@ CheckGameOverJumpDownGame:
   .BestScoreDX: equ 138 - 4
   .BestScoreDY: equ 079 + 13
   .SetBestScore:
-	ld    a,1
+	ld    a,2
   ld    (PutLetterNonTransparant+dPage),a             ;set page where to put text
   ld    a,.BestScoreDX
   ld    (PutLetterNonTransparant+dx),a
   ld    a,.BestScoreDY
   ld    (PutLetterNonTransparant+dy),a
 
-  ld    hl,(HighScoreBlockHit)
+  ld    hl,(HighScoreJumpDown)
   call  NUM_TO_ASCII                      ;HL = 16-bit number (0-65535), Output: ASCII string stored at Ascii5Byte:
   call  SetHLToAscii5ByteSkip0
   call  .PutTextLoopDark
@@ -2798,14 +2815,14 @@ CheckGameOverJumpDownGame:
   .ScoreDX: equ 138
   .ScoreDY: equ 079
   .SetScore:
-	ld    a,1
+	ld    a,2
   ld    (PutLetterNonTransparant+dPage),a             ;set page where to put text
   ld    a,.ScoreDX
   ld    (PutLetterNonTransparant+dx),a
   ld    a,.ScoreDY
   ld    (PutLetterNonTransparant+dy),a
 
-  ld    hl,(ScoreBlockHitGame)
+  ld    hl,(ScoreJumpDownGame)
   call  NUM_TO_ASCII                      ;HL = 16-bit number (0-65535), Output: ASCII string stored at Ascii5Byte:
   call  SetHLToAscii5ByteSkip0
   call  .PutTextLoopDark
@@ -2835,6 +2852,273 @@ CheckGameOverJumpDownGame:
   ld    (PutLetterNonTransparant+dx),a
   inc   hl
   jr    .PutTextLoopDark
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+;this routine puts jumpdown titlescreen in page 0, while game screen is in page 1 
+BackToTitleScreenJumpDown:
+  ;set buttons
+  ld    hl,JumpDownButtonsPart1Address
+  ld    a,JumpDownButtonsGfxBlock
+  call  SetGfxAt8000InRam                             ;in: hl=adress in rom page 1, a=block, out: puts gfx in page 2 in ram at $8000
+
+  call  WaitVblank
+  call  WaitVblank
+
+  ld    a,1
+  ld    (Vdp_Write_HighPage?),a
+  ld    hl,$8000 + (000*128) + (000/2) - 128
+  ld    de,$0000 + (221*128) + (000/2) - 128
+  ld    bc,$0000 + (015*256) + (256/2)              ;10 lines for the buttons
+  call  CopyRamToVram                       ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
+
+  call  WaitVblank
+  call  WaitVblank
+
+  ld    hl,$8000 + (015*128) + (000/2) - 128
+  ld    de,$0000 + (236*128) + (000/2) - 128
+  ld    bc,$0000 + (015*256) + (256/2)              ;10 lines for the buttons
+  call  CopyRamToVram                       ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
+  xor   a
+  ld    (Vdp_Write_HighPage?),a
+
+  ;set title screen
+  ld    hl,JumpDownTitleScreenPart1Address
+  ld    a,JumpDownTitleScreenGfxBlock
+  call  SetGfxAt8000InRam                             ;in: hl=adress in rom page 1, a=block, out: puts gfx in page 2 in ram at $8000
+
+  call  WaitVblank
+  call  WaitVblank
+
+  ld    hl,$8000 + (000*128) + (000/2) - 128
+  ld    de,$0000 + (000*128) + (000/2) - 128
+
+  ld    b,12                                        ;12 * 10 lines=120 lines
+  .loop:
+  push  bc
+  call  .Copy10lines
+  ld    bc,10*128
+  add   hl,bc
+  ex    de,hl
+  add   hl,bc
+  ex    de,hl
+  pop   bc
+  djnz  .loop
+
+  ld    bc,$0000 + (008*256) + (256/2)              ;8 more lines
+  call  CopyRamToVram                       ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
+
+  ld    hl,JumpDownTitleScreenPart2Address
+  ld    a,JumpDownTitleScreenGfxBlock
+  call  SetGfxAt8000InRam                             ;in: hl=adress in rom page 1, a=block, out: puts gfx in page 2 in ram at $8000
+
+  call  WaitVblank
+  call  WaitVblank
+
+  ld    hl,$8000 + (000*128) + (000/2) - 128
+  ld    de,$0000 + (128*128) + (000/2) - 128
+  ld    bc,$0000 + (007*256) + (256/2)              ;7 more lines
+  call  CopyRamToVram                       ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
+
+  ;set palette
+  ld    hl,.JumpDownTitleScreenPalette
+  ld    de,ArcadeGamePalette
+  ld    bc,32
+  ldir
+
+  ld    a,0*32 + 31
+	ld    (PageOnNextVblank),a
+  call  screenon
+
+  .Engine:
+  ld    a,(framecounter2)
+  inc   a
+  ld    (framecounter2),a
+  call  PopulateControls
+  call  .SelectButton
+  call  .BlinkPlayButton
+
+  xor   a
+  ld    hl,vblankintflag
+  .checkflag:
+  cp    (hl)
+  jr    z,.checkflag
+  ld    (hl),a
+  jp    .Engine
+
+  .SelectButton:
+;
+; bit	7	  6	  5		    4		    3		    2		  1		  0
+;		  0	  0	  trig-b	trig-a	right	  left	down	up	(joystick)
+;		  F5	F1	'M'		  space	  right	  left	down	up	(keyboard)
+;
+	ld		a,(NewPrContr)
+	bit		5,a           ;trig b pressed ?
+  jp    nz,.TriggerBPressed
+	bit		4,a           ;trig a pressed ?
+  jp    nz,.TriggerAPressed
+  ret
+  .TriggerBPressed:
+  ld    a,0                                ;back to arcade hall 1
+  ld    (CurrentRoom),a
+  ld    a,1
+  ld    (ChangeRoom?),a
+  pop   af
+
+  ld    hl,.spatReset
+  ld    de,spat
+  ld    bc,32*4
+  ldir
+  ret
+
+  .spatReset:						;sprite attribute table (y,x)
+	db		230,100,00,0	,230,100,04,0	,230,100,08,0	,230,116,12,0
+	db		230,116,16,0	,230,116,20,0	,230,100,24,0	,230,100,28,0
+	db		230,100,32,0	,230,116,36,0	,230,116,40,0	,230,116,44,0
+	db		230,132,48,0	,230,132,52,0	,230,230,56,0	,230,230,60,0
+
+	db		230,230,64,0	,230,230,68,0	,230,230,72,0	,230,230,76,0
+	db		230,230,80,0	,230,230,84,0	,230,230,88,0	,230,230,92,0
+	db		230,230,96,0	,230,230,100,0	,230,230,104,0	,230,230,108,0
+	db		230,230,112,0	,230,230,116,0	,230,230,120,0	,230,230,124,0
+
+
+  .TriggerAPressed:
+  ;load top part of arcade hall in play (just 7 lines)
+  ld    hl,BlockhitPart1Address
+  ld    a,BlockhitGfxBlock
+  call  SetGfxAt8000InRam                             ;in: hl=adress in rom page 1, a=block, out: puts gfx in page 2 in ram at $8000
+
+  ld    hl,$8000 + (000*128) + (000/2) - 128
+  ld    de,$0000 + (000*128) + (000/2) - 128
+  ld    bc,$0000 + (007*256) + (256/2)
+  call  CopyRamToVram                       ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
+
+  ;clear page 1 (light blue sky), then put arcade hall sides
+  ld    hl,JumpDownGameRoutine.ClearPage1
+  call  DoCopy
+  ld    hl,JumpDownGameRoutine.LeftGreenBar
+  call  DoCopy
+  ld    hl,JumpDownGameRoutine.LeftDarkGreenLine
+  call  DoCopy
+  ld    hl,JumpDownGameRoutine.RightGreenBar
+  call  DoCopy
+  ld    hl,JumpDownGameRoutine.RightDarkGreenLine
+  call  DoCopy
+
+  call  AddAFewClouds
+
+;  call  WriteSpatToVram
+;  call  SpritesOn
+
+;  call  WaitVdpReady
+  call  WaitVblank
+  call  WaitVblank
+
+  call  ResetVariablesJumpDownGame.SkipSetPalette
+  call  SetInterruptHandlerJumpDownGame   	;sets Vblank and lineint for hud
+
+  ld    hl,JumpDownPalette
+  ld    de,ArcadeGamePalette
+  ld    bc,32
+  ldir
+
+  pop   af
+  xor   a
+	ld		(NewPrContr),a
+  ret
+
+  .BlinkPlayButton:
+  ld    a,(framecounter2)
+  and   31
+  cp    2
+  jr    c,.Button2
+  cp    4
+  jr    c,.Button3
+  cp    6
+  jr    c,.Button4
+  cp    8
+  jr    c,.Button3
+  cp    10
+  jr    c,.Button2
+
+  .Button1:
+  ld    hl,.ShowButton1
+  call  DoCopy
+  ret
+
+  .Button2:
+  ld    hl,.ShowButton2
+  call  DoCopy
+  ret
+
+  .Button3:
+  ld    hl,.ShowButton3
+  call  DoCopy
+  ret
+
+  .Button4:
+  ld    hl,.ShowButton4
+  call  DoCopy
+  ret
+
+  .ShowButton1:
+  db    000,000,221,002                 ;sx,--,sy,spage
+  db    022,000,050,000                 ;dx,--,dy,dpage
+  db    058,000,030,000                 ;nx,--,ny,--
+  db    000,%0000 0000,$d0              ;fast copy -> Copy from right to left     
+
+  .ShowButton2:
+  db    058,000,221,002                 ;sx,--,sy,spage
+  db    022,000,050,000                 ;dx,--,dy,dpage
+  db    058,000,030,000                 ;nx,--,ny,--
+  db    000,%0000 0000,$d0              ;fast copy -> Copy from right to left    
+
+  .ShowButton3:
+  db    116,000,221,002                 ;sx,--,sy,spage
+  db    022,000,050,000                 ;dx,--,dy,dpage
+  db    058,000,030,000                 ;nx,--,ny,--
+  db    000,%0000 0000,$d0              ;fast copy -> Copy from right to left   
+
+  .ShowButton4:
+  db    174,000,221,002                 ;sx,--,sy,spage
+  db    022,000,050,000                 ;dx,--,dy,dpage
+  db    058,000,030,000                 ;nx,--,ny,--
+  db    000,%0000 0000,$d0              ;fast copy -> Copy from right to left   
+
+  .JumpDownTitleScreenPalette:
+  incbin "..\grapx\JumpDown\titlescreen\TitleScreen.sc5",$7680+7,32
+
+  .Copy10lines:
+  push  hl
+  push  de
+  ld    bc,$0000 + (010*256) + (256/2)
+  call  CopyRamToVram                       ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
+  call  WaitVblank
+  pop   de
+  pop   hl
+  ret
+
+
+
+
+
+
+
+
+
+
 
 
 

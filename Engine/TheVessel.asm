@@ -734,6 +734,7 @@ BlockHitTitleScreenGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomB
 JumpDownTilesGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
 JumpDownMap1Block:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
 JumpDownGameOverGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
+JumpDownFontGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
 	phase	$4000
 	PenguinBikeRaceTitleScreenPart1Address:
   incbin "..\grapx\penguinbikerace\titlescreen\TitleScreenPart1.sc5.pck"
@@ -753,20 +754,30 @@ JumpDownGameOverGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBloc
   incbin "..\grapx\JumpDown\map01converted.map.pck"
 	JumpDownGameOverPart1Address:
   incbin "..\grapx\JumpDown\GameOverPart1.sc5.pck"
+	JumpDownFontPart1Address:
+  incbin "..\grapx\JumpDown\FontPart1.sc5.pck"
 	.CheckBlockFull:	dw	$+$8000
 	dephase
 	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
 
-
 BunnySpritesBlockBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
+JumpDownTitleScreenGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
+JumpDownButtonsGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
 	phase	$4000
 	BunnyCharSprites: equ	$+$4000
 	include "..\grapx\JumpDown\sprites\Bunny.tgs.gen"
 	BunnyColSprites: equ	$+$4000
 	include "..\grapx\JumpDown\sprites\Bunny.tcs.gen"
+	JumpDownTitleScreenPart1Address:
+  incbin "..\grapx\JumpDown\titlescreen\TitleScreenPart1.sc5.pck"
+	JumpDownTitleScreenPart2Address:
+  incbin "..\grapx\JumpDown\titlescreen\TitleScreenPart2.sc5.pck"
+	JumpDownButtonsPart1Address:
+  incbin "..\grapx\JumpDown\titlescreen\ButtonsPart1.sc5.pck"
 	.CheckBlockFull:	dw	$+$8000
 	dephase
 	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
+
 
 
 

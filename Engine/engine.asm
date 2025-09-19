@@ -3773,7 +3773,7 @@ NXPerSymbol:
  
 WriteSpatToVram:
 	xor		a				;page 0/1
-	ld		hl,sprattaddr	;sprite attribute table in VRAM ($17600)
+;	ld		hl,sprattaddr	;sprite attribute table in VRAM ($17600)
 	ld		hl,(Mirrorspratttableaddress)	;sprite attribute table in VRAM ($17600)
 	call	SetVdp_Write
 	ld		hl,spat			;sprite attribute table
@@ -3914,7 +3914,8 @@ BallsPurchased:               db %0000 0000     ;b0=tennisball,b1=billiardball,b
 ;BallsPurchased:               db %1111 1111     ;b0=tennisball,b1=billiardball,b2=baseball,b3=soccerball,b4=volleyball,b5=bowlingball,b6=golfball,b7=beachball
 CurrentBallsSelected:         db 0              ;0=basketball,1=tennisball,2=billiardball,3=baseball,4=soccerball,5=volleyball,6=bowlingball,7=golfball,8=beachball
 
-HighScoreRoadFighter: db 0
+JumpDownCompletePercentage: db 0
+HighScoreJumpDown:          dw 0
 
 BlockHitCompletePercentage: db 0
 HighScoreBlockHit:          dw 0

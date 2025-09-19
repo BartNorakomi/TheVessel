@@ -61,6 +61,9 @@ ResetVariables:
 	ld		a,1															;main player on (he gets turned off when playing a game)
 	ld		(Object1+on?),a
 
+	ld		hl,sprattaddr	;sprite attribute table in VRAM ($17600)
+	ld		(Mirrorspratttableaddress),hl	;sprite attribute table in VRAM ($17600)
+
 	ld		hl,spat
 	ld		de,4
 	ld		b,32
