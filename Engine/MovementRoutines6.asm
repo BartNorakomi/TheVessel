@@ -23,7 +23,7 @@ JumpDownGameRoutine:
   call  .HandlePhase                        ;load graphics, init variables
   call  CheckBunnyInLavaNothingIceOrSpike
   call  CheckBunnyOffScreen
-  call  SetBunnySpatCoordinates
+
   call  CheckShouldBunnyJumpOnTrampoline
   call  CheckShouldBunnyJump
 ;  call  BackdropGreen
@@ -40,10 +40,15 @@ JumpDownGameRoutine:
   call  HandleTrampolineObject
 ;  call  BackdropBlack
 
+  call  PutEdgesOfArcadeMachineFrameBottom
+
   call  ScrollBackgroundJumpDownGame
   call  BuildUpBackgroundJumpDownGame
   call  Scroll4RowsAtStartOfGame
   call  HandleScore
+  call  SetBunnySpatCoordinates
+  call  PutEdgesOfArcadeMachineFrameTop
+  call  CheckGameOverJumpDownGame
   ret
 
   .HandlePhase:
@@ -102,6 +107,7 @@ JumpDownGameRoutine:
   ld    (SetArcadeGamePalette?),a           ;action on vblank: 1=set palette, 2=set palette and write spat to vram
   call  SetInterruptHandlerJumpDownGame   	;sets Vblank and lineint for hud
 ;  call  SetInterruptHandlerArcadeMachine   	;sets Vblank and lineint for hud
+  call  AddAFewClouds
   ret
 
   .ClearPage1:
@@ -133,6 +139,268 @@ JumpDownGameRoutine:
 	db		250,0,0,1
 	db		1,0,0,1
 	db		14+ (14 * 16),0,$80
+
+AddAFewClouds:
+  ld    hl,.Cloud1
+  call  DoCopy
+  ld    hl,.Cloud2
+  call  DoCopy
+  ld    hl,.Cloud3
+  call  DoCopy
+  ld    hl,.Cloud4
+  call  DoCopy
+  ld    hl,.Cloud5
+  call  DoCopy
+  ld    hl,.Cloud6
+  call  DoCopy
+  ret
+
+.Cloud1:
+	db		190,0,083,3
+	db		020,0,070,1
+	db		052,0,024,0
+	db		0,0,$d0	
+.Cloud2:
+	db		190,0,083,3
+	db		130,0,095,1
+	db		052,0,024,0
+	db		0,0,$d0	
+.Cloud3:
+	db		190,0,083,3
+	db		070,0,120,1
+	db		052,0,024,0
+	db		0,0,$d0	
+.Cloud4:
+	db		190,0,083,3
+	db		184,0,145,1
+	db		052,0,024,0
+	db		0,0,$d0	
+.Cloud5:
+	db		190,0,083,3
+	db		050,0,170,1
+	db		052,0,024,0
+	db		0,0,$d0	
+.Cloud6:
+	db		190,0,083,3
+	db		110,0,200,1
+	db		052,0,024,0
+	db		0,0,$d0	
+
+PutEdgesOfArcadeMachineFrameTop:
+  ld    a,(r23onLineIntJumpDownGame)
+  add   a,6
+  ld    d,a
+
+  ld    e,4                   ;x
+
+  ld    a,2                   ;page 1
+	bit   7,d
+	jp    z,.setpage
+	inc   a
+  .setpage:
+	ld    (blitpage),a
+	out   ($99),a               ;write page instellen
+	ld    a,14+128
+	out   ($99),a
+
+	srl   d                     ;write addres is de/2
+	rr    e
+	set   6,d                   ;set write access
+
+  ld    hl,.Pixels
+	ld    c,$98
+
+  ;left side of frame
+	ld    a,e                   ;start writing at x=4
+	out   ($99),a               ;set x to write to
+	ld    a,d
+	out   ($99),a               ;set y to write to
+  outi
+  outi
+
+  ld    a,122
+  add   a,e
+  ld    e,a
+
+  ;right side of frame
+	ld    a,e                   ;start writing at x=4
+	out   ($99),a               ;set x to write to
+	ld    a,d
+	out   ($99),a               ;set y to write to
+  outi
+  outi
+
+  ld    a,6
+  add   a,e
+  ld    e,a
+	jr    nc,.EndCheckOverFlow
+
+  inc   d
+	jp    p,.ContinueSamePage
+
+	set   6,d
+	res   7,d
+
+	ld    a,(blitpage)
+	xor   1
+	out   ($99),a               ;write page instellen
+	ld    a,14+128
+	out   ($99),a
+
+  .ContinueSamePage:
+  .EndCheckOverFlow:
+  ;left side of frame
+	ld    a,e                   ;start writing at x=4
+	out   ($99),a               ;set x to write to
+	ld    a,d
+	out   ($99),a               ;set y to write to
+  outi
+  outi
+
+  ld    a,122
+  add   a,e
+  ld    e,a
+
+  ;right side of frame
+	ld    a,e                   ;start writing at x=4
+	out   ($99),a               ;set x to write to
+	ld    a,d
+	out   ($99),a               ;set y to write to
+  outi
+  outi  
+  ret
+
+  .Pixels:  
+            db  13*16+14,00*16+00     ,00*16+00,14*16+13
+            db  13*16+13,14*16+00     ,00*16+14,13*16+13
+
+PutEdgesOfArcadeMachineFrameBottom:
+  ld    a,(r23onLineIntJumpDownGame)
+  add   a,132
+  ld    d,a
+
+  ld    e,4                   ;x
+
+  ld    a,2                   ;page 1
+	bit   7,d
+	jp    z,.setpage
+	inc   a
+  .setpage:
+	ld    (blitpage),a
+	out   ($99),a               ;write page instellen
+	ld    a,14+128
+	out   ($99),a
+
+	srl   d                     ;write addres is de/2
+	rr    e
+	set   6,d                   ;set write access
+
+  ld    hl,.Pixels
+	ld    c,$98
+
+  ;left side of frame
+	ld    a,e                   ;start writing at x=4
+	out   ($99),a               ;set x to write to
+	ld    a,d
+	out   ($99),a               ;set y to write to
+  outi
+  outi
+
+  ld    a,122
+  add   a,e
+  ld    e,a
+
+  ;right side of frame
+	ld    a,e                   ;start writing at x=4
+	out   ($99),a               ;set x to write to
+	ld    a,d
+	out   ($99),a               ;set y to write to
+  outi
+  outi
+
+  ld    a,6
+  add   a,e
+  ld    e,a
+	jr    nc,.EndCheckOverFlow
+
+  inc   d
+	jp    p,.ContinueSamePage
+
+	set   6,d
+	res   7,d
+
+	ld    a,(blitpage)
+	xor   1
+	out   ($99),a               ;write page instellen
+	ld    a,14+128
+	out   ($99),a
+
+  .ContinueSamePage:
+  .EndCheckOverFlow:
+  ;left side of frame
+	ld    a,e                   ;start writing at x=4
+	out   ($99),a               ;set x to write to
+	ld    a,d
+	out   ($99),a               ;set y to write to
+  outi
+  outi
+
+  ld    a,122
+  add   a,e
+  ld    e,a
+
+  ;right side of frame
+	ld    a,e                   ;start writing at x=4
+	out   ($99),a               ;set x to write to
+	ld    a,d
+	out   ($99),a               ;set y to write to
+  outi
+  outi  
+
+  ld    a,6
+  add   a,e
+  ld    e,a
+	jr    nc,.EndCheckOverFlow2
+
+  inc   d
+	jp    p,.ContinueSamePage2
+
+	set   6,d
+	res   7,d
+
+	ld    a,(blitpage)
+	xor   1
+	out   ($99),a               ;write page instellen
+	ld    a,14+128
+	out   ($99),a
+
+  .ContinueSamePage2:
+  .EndCheckOverFlow2:
+  ;left side of frame
+	ld    a,e                   ;start writing at x=4
+	out   ($99),a               ;set x to write to
+	ld    a,d
+	out   ($99),a               ;set y to write to
+  outi
+  outi
+
+  ld    a,122
+  add   a,e
+  ld    e,a
+
+  ;right side of frame
+	ld    a,e                   ;start writing at x=4
+	out   ($99),a               ;set x to write to
+	ld    a,d
+	out   ($99),a               ;set y to write to
+  outi
+  outi  
+  ret
+
+  .Pixels:  
+            db  13*16+14,00*16+00     ,00*16+00,14*16+13
+            db  13*16+13,14*16+00     ,00*16+14,13*16+13
+            db  13*16+13,13*16+14     ,14*16+13,13*16+13
 
 DecreaseScoreWhenSittingStillTooLong:
   ld    a,(Scroll27LinesDown?)
@@ -1629,11 +1897,14 @@ Scroll4RowsAtStartOfGame:
 
 EraseRowJumpDownGameStep1:
   ld    a,(JumpDownGameTilesY)
-  add   a,60 ;56
+  add   a,56 ;60 ;56
   ld    (EraseRowJumpDownGameCopy+dy),a
 
   ld    a,27
   ld    (EraseRowJumpDownGameCopy+ny),a
+
+;  ld    a,1+ (0 * 16)
+;  ld    (EraseRowJumpDownGameCopy+clr),a
 
   ld    hl,EraseRowJumpDownGameCopy
   call  DoCopy
@@ -1641,20 +1912,20 @@ EraseRowJumpDownGameStep1:
 
 EraseRowJumpDownGameStep2:
   ld    a,(JumpDownGameTilesY)
-  add   a,60 ;56
+  add   a,56 ; 60 ;56
   ld    (EraseRowJumpDownGameCopy+dy),a
 
-  cp    256-27
+  cp    256-26
   ret   c
 
-;TOOOOOOOOO DOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO
-;use NEG or INV
-;  ld    a,(EraseRowJumpDownGameCopy+dy)
-;  ld    b,a
-;  xor   a
-;  sub   a,b
-;  ret   z
-;  ld    (EraseRowJumpDownGameCopy+ny),a
+  add   27
+  ld    (EraseRowJumpDownGameCopy+ny),a
+
+  xor   a
+  ld    (EraseRowJumpDownGameCopy+dy),a
+
+;  ld    a,5+ (0 * 16)
+;  ld    (EraseRowJumpDownGameCopy+clr),a
 
   ld    hl,EraseRowJumpDownGameCopy
   call  DoCopy
@@ -1837,7 +2108,6 @@ BuildUpBackgroundJumpDownGame:
   add   a,6
   ld    (FreeToUseObject2+y),a
   ret
-
 
   .CheckForSpikeObject:
   ld    hl,(TileRowTablePointer)
@@ -2064,6 +2334,12 @@ SetJumpDownGameSprites:
 	include "..\grapx\JumpDown\sprites\Trampoline.tcs.gen"
 
 SetBunnyCharacterAndColor:
+  ld    a,(slot.page12rom)            	;all RAM except page 1+2
+  out   ($a8),a
+
+  ld    a,BunnySpritesBlockBlock       	;bunny sprites block
+  call  block34                       	;CARE!!! we can only switch block34 if page 1 is in rom  
+
   push  de
   push  hl
   ;write sprite character
@@ -2088,12 +2364,10 @@ SetBunnyCharacterAndColor:
   pop   hl
 	ld		c,$98
 	call	outix192		;write sprite color of pointer and hand to vram
-  ret
 
-	BunnyCharSprites:
-	include "..\grapx\JumpDown\sprites\Bunny.tgs.gen"
-	BunnyColSprites:
-	include "..\grapx\JumpDown\sprites\Bunny.tcs.gen"
+  ld    a,(slot.page1rom)            	;all RAM except page 1
+  out   ($a8),a
+  ret
 
 JumpDownPalette:
   incbin "..\grapx\JumpDown\tiles.sc5",$7680+7,32
@@ -2139,6 +2413,8 @@ CheckBunnyInLavaNothingIceOrSpike:
   jr    z,.JumpedOnIce
   cp    JumpDownSpikeTile
   jr    z,.JumpedOnSpike
+  cp    JumpDownCloudsTile
+  jp    nc,BunnyDied
   ret
 
   .JumpedOnSpike:
@@ -2190,6 +2466,7 @@ JumpDownIceTile: equ 8
 JumpDownReverseControlsTile: equ 9
 JumpDownSandTile: equ 10
 JumpDownTrampolineTile: equ 11
+JumpDownCloudsTile: equ 12
 
 GetTileBunnyStandsOn:
   ld    a,(Scroll4RowsAtStartOfGame?)
@@ -2279,5 +2556,292 @@ TileSXSYTableJumpDownGame:
   db    000,000, 036,000,  072,000,  108,000,  144,000,  180,000,  216,000
   db    000,056, 036,056,  072,056,  108,056,  144,056,  180,056,  216,056
   db    000,112, 036,112,  072,112,  108,112,  144,112,  180,112,  216,112
+
+CheckGameOverJumpDownGame:
+  ld    a,(BunnyDied?)
+  cp    140
+  jp    z,.GameOver
+
+;
+; bit	7	  6	  5		    4		    3		    2		  1		  0
+;		  0	  0	  trig-b	trig-a	right	  left	down	up	(joystick)
+;		  F5	F1	'M'		  space	  right	  left	down	up	(keyboard)
+;;
+	ld		a,(Controls)
+	bit		6,a           ;f1 pressed ?
+  jr    nz,.GameOver
+  ret
+
+.CopyCurrentScreenToPage0:
+	db		000,0,007,1
+	db		000,0,007,0
+	db		000,1,128,0
+	db		0,0,$d0
+
+.CopyPage0ToPage1:
+	db		000,0,000,0
+	db		000,0,000,1
+	db		000,1,128+7,0
+	db		0,0,$d0
+
+  .GameOver:
+  ld    hl,.CopyCurrentScreenToPage0
+  ld    de,FreeToUseFastCopy0
+  ld    bc,15
+  ldir  
+
+  ld    a,(r23onLineIntJumpDownGame)
+  add   a,7
+  ld    (FreeToUseFastCopy0+sy),a
+
+  ld    hl,FreeToUseFastCopy0
+  call  DoCopy
+
+  ld    a,(FreeToUseFastCopy0+ny)
+  ld    b,a
+  ld    a,(FreeToUseFastCopy0+sy)
+  add   a,b
+  jr    nc,.EndCheckFullyInScreen
+
+  ld    (FreeToUseFastCopy0+ny),a
+  ld    b,a
+  ld    a,128+7
+  sub   a,b
+  ld    (FreeToUseFastCopy0+dy),a
+  xor   a
+  ld    (FreeToUseFastCopy0+sy),a
+
+  call  WaitVblank
+  call  WaitVblank
+  call  WaitVblank
+  call  WaitVblank
+  call  WaitVblank
+  call  WaitVblank
+  call  WaitVblank
+  call  WaitVblank
+
+  ld    hl,FreeToUseFastCopy0
+  call  DoCopy
+  .EndCheckFullyInScreen:
+
+  call  WaitVblank
+  call  WaitVblank
+  call  WaitVblank
+  call  WaitVblank
+  call  WaitVblank
+  call  WaitVblank
+  call  WaitVblank
+  call  WaitVblank
+
+  ld    a,0*32 + 31
+  ld    (PageOnNextVblank),a  ;set page
+  xor   a
+  ld    (r23onVblank),a
+  call  SetInterruptHandlerArcadeMachine   	;sets Vblank and lineint for hud
+  call  WaitVblank
+
+
+
+  ld    hl,.CopyPage0ToPage1
+  call  DoCopy
+
+;hier nu eerst het game over scherm opbouwen
+
+;  ld    a,1*32 + 31
+;  ld    (PageOnNextVblank),a  ;set page
+
+
+  .q: jp .q
+
+
+  ld    hl,JumpDownGameOverPart1Address
+  ld    a,JumpDownGameOverGfxBlock
+  call  SetGfxAt8000InRam                             ;in: hl=adress in rom page 1, a=block, out: puts gfx in page 2 in ram at $8000
+
+  call  WaitVblank
+  call  WaitVblank
+
+  ld    a,1
+  ld    (Vdp_Write_HighPage?),a
+  ld    hl,$8000 + (000*128) + (000/2) - 128
+  ld    de,$0000 + (012*128) + (064/2) - 128
+  ld    bc,$0000 + (020*256) + (128/2)
+  call  CopyRamToVram                       ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
+  call  WaitVblank
+
+  ld    hl,$8000 + (020*128) + (000/2) - 128
+  ld    de,$0000 + (032*128) + (064/2) - 128
+  ld    bc,$0000 + (020*256) + (128/2)
+  call  CopyRamToVram                       ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
+  call  WaitVblank
+
+  ld    hl,$8000 + (040*128) + (000/2) - 128
+  ld    de,$0000 + (052*128) + (064/2) - 128
+  ld    bc,$0000 + (020*256) + (128/2)
+  call  CopyRamToVram                       ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
+  call  WaitVblank
+
+  ld    hl,$8000 + (060*128) + (000/2) - 128
+  ld    de,$0000 + (072*128) + (064/2) - 128
+  ld    bc,$0000 + (020*256) + (128/2)
+  call  CopyRamToVram                       ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
+  call  WaitVblank
+
+  ld    hl,$8000 + (080*128) + (000/2) - 128
+  ld    de,$0000 + (092*128) + (064/2) - 128
+  ld    bc,$0000 + (020*256) + (128/2)
+  call  CopyRamToVram                       ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
+  call  WaitVblank
+
+  ld    hl,$8000 + (100*128) + (000/2) - 128
+  ld    de,$0000 + (112*128) + (064/2) - 128
+  ld    bc,$0000 + (019*256) + (128/2)
+  call  CopyRamToVram                       ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
+  xor   a
+  ld    (Vdp_Write_HighPage?),a
+
+
+
+
+;check if current score is new highscore
+  ld    de,(ScoreBlockHitGame)
+  ld    hl,(HighScoreBlockHit)
+  xor   a
+  sbc   hl,de
+  jr    nc,.EndCheckNewHighScore
+  ld    (HighScoreBlockHit),de
+  .EndCheckNewHighScore:
+
+;set completed % (highscore / 6500 * 100) = (highscore / 65)
+  ld    bc,(HighScoreBlockHit)
+  ld    de,65
+  call  DivideBCbyDE          ; Out: BC = result, HL = rest
+  ld    a,c
+  cp    101
+  jr    c,.SetCompletePercentage
+  ld    a,100
+  .SetCompletePercentage:
+  ld    (BlockHitCompletePercentage),a
+
+  call  .SetScore
+  call  .SetBestScore
+  call  .SetCompleted
+  call  .SetPercentageSymbol
+
+  ld    a,1*32 + 31
+	ld    (PageOnNextVblank),a
+  call  SpritesOff
+
+  xor   a
+  ld    (freezecontrols?),a  
+  call  STOPWAITSPACEPRESSED
+
+  jp    BackToTitleScreenBlockHit
+
+  .CopyScoreToPage1:
+  db    152,000,008,000                 ;sx,--,sy,spage
+  db    152,000,008,001                 ;dx,--,dy,dpage
+  db    032,000,006,000                 ;nx,--,ny,--
+  db    000,%0000 0000,$d0              ;fast copy -> Copy from right to left     
+  
+
+  .PercentageSymbol:                     ;freely usable anywhere
+  db    151,000,060,001                 ;sx,--,sy,spage
+  db    000,000,107,001                 ;dx,--,dy,dpage
+  db    007,000,006,000                 ;nx,--,ny,--
+  db    000,%0000 0000,$90              ;fast copy -> Copy from right to left     
+  .SetPercentageSymbol:
+  ld    hl,.PercentageSymbol
+  ld    de,FreeToUseFastCopy0
+  ld    bc,15
+  ldir
+
+  ld    a,(PutLetterNonTransparant+dx)
+  ld    (FreeToUseFastCopy0+dx),a
+  ld    hl,FreeToUseFastCopy0
+  call  DoCopy
+  ret
+
+  .CompletedDX: equ 148
+  .CompletedDY: equ 105
+  .SetCompleted:
+	ld    a,1
+  ld    (PutLetterNonTransparant+dPage),a             ;set page where to put text
+  ld    a,.CompletedDX
+  ld    (PutLetterNonTransparant+dx),a
+  ld    a,.CompletedDY
+  ld    (PutLetterNonTransparant+dy),a
+
+  ld    hl,(BlockHitCompletePercentage)
+  ld    h,0
+  call  NUM_TO_ASCII                      ;HL = 16-bit number (0-65535), Output: ASCII string stored at Ascii5Byte:
+  call  SetHLToAscii5ByteSkip0
+  call  .PutTextLoopDark
+  ret
+
+  .BestScoreDX: equ 138 - 4
+  .BestScoreDY: equ 079 + 13
+  .SetBestScore:
+	ld    a,1
+  ld    (PutLetterNonTransparant+dPage),a             ;set page where to put text
+  ld    a,.BestScoreDX
+  ld    (PutLetterNonTransparant+dx),a
+  ld    a,.BestScoreDY
+  ld    (PutLetterNonTransparant+dy),a
+
+  ld    hl,(HighScoreBlockHit)
+  call  NUM_TO_ASCII                      ;HL = 16-bit number (0-65535), Output: ASCII string stored at Ascii5Byte:
+  call  SetHLToAscii5ByteSkip0
+  call  .PutTextLoopDark
+  ret
+
+  .ScoreDX: equ 138
+  .ScoreDY: equ 079
+  .SetScore:
+	ld    a,1
+  ld    (PutLetterNonTransparant+dPage),a             ;set page where to put text
+  ld    a,.ScoreDX
+  ld    (PutLetterNonTransparant+dx),a
+  ld    a,.ScoreDY
+  ld    (PutLetterNonTransparant+dy),a
+
+  ld    hl,(ScoreBlockHitGame)
+  call  NUM_TO_ASCII                      ;HL = 16-bit number (0-65535), Output: ASCII string stored at Ascii5Byte:
+  call  SetHLToAscii5ByteSkip0
+  call  .PutTextLoopDark
+  ret
+
+  .PutTextLoopDark:
+  ld    a,6
+  ld    (PutLetterNonTransparant+nx),a
+  ld    a,9
+  ld    (PutLetterNonTransparant+ny),a
+
+  ld    a,(hl)
+  cp    255
+  ret   z
+  sub   a,$30                             ;0=$30
+  add   a,a                               ;*2
+  add   a,a                               ;*4
+  add   a,a                               ;*8
+  ld    (PutLetterNonTransparant+sx),a
+  push  hl
+  ld    hl,PutLetterNonTransparant
+  call  DoCopy
+  pop   hl
+
+  ld    a,(PutLetterNonTransparant+dx)
+  add   a,7
+  ld    (PutLetterNonTransparant+dx),a
+  inc   hl
+  jr    .PutTextLoopDark
+
+
+
+
+
+
+
+  ret
 
 dephase
