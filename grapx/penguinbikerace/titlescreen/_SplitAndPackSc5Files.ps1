@@ -34,7 +34,37 @@ Get-ChildItem -Path . -Filter *.sc5 | Where-Object {
     Write-Host "Processed $fileName.sc5 -> Part1 & Part2 created"
 }
 
-# Step 2: Pack all .sc5 files that have "Part" in their name
+# Step 2: Remove all-FF 128-byte blocks from Part1 and Part2 files
+Get-ChildItem -Path . -Filter *.sc5 | Where-Object {
+    $_.BaseName -match "Part"
+} | ForEach-Object {
+    $filePath = $_.FullName
+    $bytes = [System.IO.File]::ReadAllBytes($filePath)
+
+    $blockSize = 128
+    $newBytes = New-Object System.Collections.Generic.List[byte]
+
+    for ($i = 0; $i -lt $bytes.Length; $i += $blockSize) {
+        $end = [Math]::Min($i + $blockSize, $bytes.Length)
+        $block = [byte[]]$bytes[$i..($end - 1)]   # cast to byte[]
+
+        # check if the block is entirely 0xFF
+        if (($block | Select-Object -Unique).Count -eq 1 -and $block[0] -eq 0xFF) {
+            continue
+        }
+
+        $newBytes.AddRange($block)
+    }
+
+    if ($newBytes.Count -lt $bytes.Length) {
+        [System.IO.File]::WriteAllBytes($filePath, $newBytes.ToArray())
+        Write-Host "Removed all-FF blocks from $($_.Name) -> $($newBytes.Count) bytes remain"
+    } else {
+        Write-Host "$($_.Name) unchanged"
+    }
+}
+
+# Step 3: Pack all .sc5 files that have "Part" in their name
 Get-ChildItem -Path . -Filter *.sc5 | Where-Object {
     $_.BaseName -match "Part"
 } | ForEach-Object {

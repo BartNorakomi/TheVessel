@@ -574,9 +574,22 @@ medicalbayTileMap:  						incbin "..\tools\tilemapmedicalbay.bin"
 	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
 
 sciencelabTileMapBlock:  				equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
+JoyStickLeftGfxBlock:						equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
+JoyStickRightGfxBlock:					equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
+JoyStickUpGfxBlock:							equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
+JoyStickDownGfxBlock:						equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
 	phase	$8000
 sciencelabTileMap:  						incbin "..\tools\tilemapsciencelab.bin"
 ;sciencelabTileMap:  						incbin "..\tools\tilemap.bin"
+	JoyStickLeftPart1Address:	equ	$-$4000
+  incbin "..\grapx\ArcadeMachine\JoyStickLeftPart1.sc5.pck"
+	JoyStickRightPart1Address:	equ	$-$4000
+  incbin "..\grapx\ArcadeMachine\JoyStickRightPart1.sc5.pck"
+	JoyStickUpPart1Address:	equ	$-$4000
+  incbin "..\grapx\ArcadeMachine\JoyStickUpPart1.sc5.pck"
+	JoyStickDownPart1Address:	equ	$-$4000
+  incbin "..\grapx\ArcadeMachine\JoyStickDownPart1.sc5.pck"
+	.CheckBlockFull:	dw	$+$4000
 	dephase
 	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
 
@@ -633,7 +646,16 @@ sciencelabIconsTotalGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /Rom
 	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
 
 sciencelabIconColonyExpansionGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
-  incbin "..\grapx\ship\sciencelab\icons\icons12.SC5",7,212 * 128      ;212 lines
+GreenButtonPressedGfxBlock:						equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
+YellowButtonPressedGfxBlock:						equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
+	phase	$4000
+  incbin "..\grapx\ship\sciencelab\icons\icons12.SC5",7,71 * 128      ;71 lines
+	GreenButtonPressedPart1Address:
+  incbin "..\grapx\ArcadeMachine\GreenButtonPressedPart1.sc5.pck"
+	YellowButtonPressedPart1Address:
+  incbin "..\grapx\ArcadeMachine\YellowButtonPressedPart1.sc5.pck"
+	.CheckBlockFull:	dw	$+$8000
+	dephase
 	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
 
 DrillingGameGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
@@ -658,7 +680,8 @@ BlockHitFontGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSiz
 BasketBallButtonsGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
 	phase	$4000
 	ArcadeMachinePart1Address:
-  incbin "..\grapx\ArcadeMachine\ArcadeMachinePart1.sc5.pck"
+;  incbin "..\grapx\ArcadeMachine\ArcadeMachinePart1.sc5.pck"
+  incbin "..\grapx\ArcadeMachine\JoyStickNormalPart1.sc5.pck"
 	CourtPart1Address:
   incbin "..\grapx\BasketBall\courtPart1.sc5.pck"
 	CourtPart2Address:
@@ -763,6 +786,7 @@ JumpDownFontGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSiz
 BunnySpritesBlockBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
 JumpDownTitleScreenGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
 JumpDownButtonsGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
+JumpDownTitleScreenTop7LinesGfxBlock: equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
 	phase	$4000
 	BunnyCharSprites: equ	$+$4000
 	include "..\grapx\JumpDown\sprites\Bunny.tgs.gen"
@@ -774,6 +798,8 @@ JumpDownButtonsGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlock
   incbin "..\grapx\JumpDown\titlescreen\TitleScreenPart2.sc5.pck"
 	JumpDownButtonsPart1Address:
   incbin "..\grapx\JumpDown\titlescreen\ButtonsPart1.sc5.pck"
+	JumpDownTitleScreenTop7LinesPart1Address:
+  incbin "..\grapx\JumpDown\titlescreen\titlescreenTop7LinesPart1.sc5.pck"
 	.CheckBlockFull:	dw	$+$8000
 	dephase
 	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block

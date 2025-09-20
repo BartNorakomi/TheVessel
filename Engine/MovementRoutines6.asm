@@ -56,26 +56,8 @@ JumpDownGameRoutine:
   ret   nz
   ld    (iy+ObjectPhase),1
 
-  ;load top part of arcade hall in play (just 7 lines)
-  ld    hl,BlockhitPart1Address
-  ld    a,BlockhitGfxBlock
-  call  SetGfxAt8000InRam                             ;in: hl=adress in rom page 1, a=block, out: puts gfx in page 2 in ram at $8000
-
-  ld    hl,$8000 + (000*128) + (000/2) - 128
-  ld    de,$0000 + (000*128) + (000/2) - 128
-  ld    bc,$0000 + (007*256) + (256/2)
-  call  CopyRamToVram                       ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
-
   ;clear page 1 (light blue sky), then put arcade hall sides
   ld    hl,.ClearPage1
-  call  DoCopy
-  ld    hl,.LeftGreenBar
-  call  DoCopy
-  ld    hl,.LeftDarkGreenLine
-  call  DoCopy
-  ld    hl,.RightGreenBar
-  call  DoCopy
-  ld    hl,.RightDarkGreenLine
   call  DoCopy
 
 ;set tiles in page 3
@@ -89,17 +71,18 @@ JumpDownGameRoutine:
   ld    de,$8000 + (000*128) + (000/2) - 128
   ld    bc,$0000 + (128*256) + (256/2)
   call  CopyRamToVram                       ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
-
-;  ld    hl,JumpDownTilesPart2Address
-;  ld    a,JumpDownTilesGfxBlock
-;  call  SetGfxAt8000InRam                             ;in: hl=adress in rom page 1, a=block, out: puts gfx in page 2 in ram at $8000
-
-;  ld    hl,$8000 + (000*128) + (000/2) - 128
-;  ld    de,$8000 + (128*128) + (000/2) - 128
-;  ld    bc,$0000 + (040*256) + (256/2)
-;  call  CopyRamToVram                       ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
   xor   a
   ld    (Vdp_Write_HighPage?),a
+
+  ;clear page 1 (light blue sky), then put arcade hall sides
+  ld    hl,.LeftGreenBar
+  call  DoCopy
+  ld    hl,.LeftDarkGreenLine
+  call  DoCopy
+  ld    hl,.RightGreenBar
+  call  DoCopy
+  ld    hl,.RightDarkGreenLine
+  call  DoCopy
 
   ;set font at y=212 page 2
   ld    hl,JumpDownFontPart1Address
@@ -116,16 +99,14 @@ JumpDownGameRoutine:
   ld    (Vdp_Write_HighPage?),a
 
   call  SetArcadeMachine
+  call  SetArcadeMachineJumpDown
   call  ResetVariablesJumpDownGame
   ld    a,1
   ld    (SetArcadeGamePalette?),a           ;action on vblank: 1=set palette, 2=set palette and write spat to vram
 ;  call  SetInterruptHandlerJumpDownGame   	;sets Vblank and lineint for hud
   call  SetInterruptHandlerArcadeMachine   	;sets Vblank and lineint for hud
   call  AddAFewClouds
-
   jp    BackToTitleScreenJumpDown
-
-  ret
 
   .ClearPage1:
 	db		0,0,0,0
@@ -156,6 +137,33 @@ JumpDownGameRoutine:
 	db		250,0,0,1
 	db		1,0,0,1
 	db		14+ (14 * 16),0,$80
+
+;jump down game     3 available - page 0= no button, page 2=joystick left, page 3=joystick right
+SetArcadeMachineJumpDown:
+  ;page 2
+  ld    hl,JoyStickLeftPart1Address
+  ld    a,JoyStickLeftGfxBlock
+  call  SetGfxAt8000InRam                             ;in: hl=adress in rom page 1, a=block, out: puts gfx in page 2 in ram at $8000
+
+  ld    a,1
+  ld    (Vdp_Write_HighPage?),a
+  ld    hl,$8000 + (000*128) + (000/2) - 128
+  ld    de,$0000 + (135*128) + (000/2) - 128
+  ld    bc,$0000 + (077*256) + (256/2)
+  call  CopyRamToVram                       ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
+
+  ;page 3
+  ld    hl,JoyStickRightPart1Address
+  ld    a,JoyStickRightGfxBlock
+  call  SetGfxAt8000InRam                             ;in: hl=adress in rom page 1, a=block, out: puts gfx in page 2 in ram at $8000
+
+  ld    hl,$8000 + (000*128) + (000/2) - 128
+  ld    de,$8000 + (135*128) + (000/2) - 128
+  ld    bc,$0000 + (077*256) + (256/2)
+  call  CopyRamToVram                       ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
+  xor   a
+  ld    (Vdp_Write_HighPage?),a
+  ret
 
 AddAFewClouds:
   ld    hl,.Cloud1
@@ -2993,11 +3001,10 @@ BackToTitleScreenJumpDown:
 	db		230,230,96,0	,230,230,100,0	,230,230,104,0	,230,230,108,0
 	db		230,230,112,0	,230,230,116,0	,230,230,120,0	,230,230,124,0
 
-
   .TriggerAPressed:
   ;load top part of arcade hall in play (just 7 lines)
-  ld    hl,BlockhitPart1Address
-  ld    a,BlockhitGfxBlock
+  ld    hl,JumpDownTitleScreenTop7LinesPart1Address
+  ld    a,JumpDownTitleScreenTop7LinesGfxBlock
   call  SetGfxAt8000InRam                             ;in: hl=adress in rom page 1, a=block, out: puts gfx in page 2 in ram at $8000
 
   ld    hl,$8000 + (000*128) + (000/2) - 128

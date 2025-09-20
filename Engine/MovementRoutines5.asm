@@ -45,12 +45,13 @@ BlockHitGameRoutine:
   ret   nz
   ld    (iy+ObjectPhase),1
 
+  ;set ingame gfx in page 1
   ld    hl,BlockhitPart1Address
   ld    a,BlockhitGfxBlock
   call  SetGfxAt8000InRam                             ;in: hl=adress in rom page 1, a=block, out: puts gfx in page 2 in ram at $8000
 
   ld    hl,$8000 + (000*128) + (000/2) - 128
-  ld    de,$0000 + (000*128) + (000/2) - 128
+  ld    de,$8000 + (000*128) + (000/2) - 128
   ld    bc,$0000 + (128*256) + (256/2)
   call  CopyRamToVram                       ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
 
@@ -59,22 +60,12 @@ BlockHitGameRoutine:
   call  SetGfxAt8000InRam                             ;in: hl=adress in rom page 1, a=block, out: puts gfx in page 2 in ram at $8000
 
   ld    hl,$8000 + (000*128) + (000/2) - 128
-  ld    de,$0000 + (128*128) + (000/2) - 128
+  ld    de,$8000 + (128*128) + (000/2) - 128
   ld    bc,$0000 + (007*256) + (256/2)
   call  CopyRamToVram                       ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
 
-  ;copy page 0 to page 1
-  xor   a
-  ld    (CopyPageToPage212High+sPage),a
-  ld    a,1
-  ld    (CopyPageToPage212High+dPage),a
-  ld    hl,CopyPageToPage212High
-  call  DoCopy
-
-  ;copy page 0 to page 2
-  ld    a,2
-  ld    (CopyPageToPage212High+dPage),a
-  ld    hl,CopyPageToPage212High
+  ;copy page 1 to page 2
+  ld    hl,.CopyPage1ToPage2
   call  DoCopy
 
   ;set cannon sprites in page 3
@@ -91,11 +82,8 @@ BlockHitGameRoutine:
   xor   a
   ld    (Vdp_Write_HighPage?),a
 
-  ;put cannon in screen
-;  ld    hl,PutCannon1RowHigher.Row3
-;  call  DoCopy
-
   call  SetArcadeMachine
+  call  SetArcadeMachineBlockHit
   call  ResetVariablesBlockHitGame
 
   ;set font at y=212 page 1
@@ -112,6 +100,49 @@ BlockHitGameRoutine:
   ld    (SetArcadeGamePalette?),a           ;action on vblank: 1=set palette, 2=set palette and write spat to vram
   call  SetInterruptHandlerArcadeMachine   	;sets Vblank and lineint for hud
   jp    BackToTitleScreenBlockHit
+
+.CopyPage1ToPage2:
+	db		0,0,0,1
+	db		0,0,0,2
+	db		0,1,135,0
+	db		0,0,$d0
+
+;block cannon:      4 available - page 0= no button, page 1=joystick up, page 2=joystick down, page 3=button A
+SetArcadeMachineBlockHit:
+  ;page 1
+  ld    hl,JoyStickUpPart1Address
+  ld    a,JoyStickUpGfxBlock
+  call  SetGfxAt8000InRam                             ;in: hl=adress in rom page 1, a=block, out: puts gfx in page 2 in ram at $8000
+
+  ld    hl,$8000 + (000*128) + (000/2) - 128
+  ld    de,$8000 + (135*128) + (000/2) - 128
+  ld    bc,$0000 + (077*256) + (256/2)
+  call  CopyRamToVram                       ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
+
+  ;page 2
+  ld    hl,JoyStickDownPart1Address
+  ld    a,JoyStickDownGfxBlock
+  call  SetGfxAt8000InRam                             ;in: hl=adress in rom page 1, a=block, out: puts gfx in page 2 in ram at $8000
+
+  ld    a,1
+  ld    (Vdp_Write_HighPage?),a
+  ld    hl,$8000 + (000*128) + (000/2) - 128
+  ld    de,$0000 + (135*128) + (000/2) - 128
+  ld    bc,$0000 + (077*256) + (256/2)
+  call  CopyRamToVram                       ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
+
+  ;page 3
+  ld    hl,YellowButtonPressedPart1Address
+  ld    a,YellowButtonPressedGfxBlock
+  call  SetGfxAt8000InRam                             ;in: hl=adress in rom page 1, a=block, out: puts gfx in page 2 in ram at $8000
+
+  ld    hl,$8000 + (000*128) + (000/2) - 128
+  ld    de,$8000 + (135*128) + (000/2) - 128
+  ld    bc,$0000 + (077*256) + (256/2)
+  call  CopyRamToVram                       ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
+  xor   a
+  ld    (Vdp_Write_HighPage?),a
+  ret
 
 SetScoreBlockHitGame:
 ;

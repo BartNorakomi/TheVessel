@@ -3839,6 +3839,7 @@ BasketBallGameRoutine:
   call  DoCopy
 
   call  SetArcadeMachine
+  call  SetArcadeMachineBasketBall
   call  SetInterruptHandlerArcadeMachine   	;sets Vblank and lineint for hud
 
   ;These calls starts at titlescreen, instead of directly ingame  
@@ -3975,6 +3976,43 @@ BasketBallGameRoutine:
   djnz  .loop
 
   call  LoadBallTypeAndPalette
+  ret
+
+;basketball game:   4 available - page 0= no button, page 1=joystick left, page 2=joystick right, page 3=button A
+SetArcadeMachineBasketBall:
+  ;page 1
+  ld    hl,JoyStickLeftPart1Address
+  ld    a,JoyStickLeftGfxBlock
+  call  SetGfxAt8000InRam                             ;in: hl=adress in rom page 1, a=block, out: puts gfx in page 2 in ram at $8000
+
+  ld    hl,$8000 + (000*128) + (000/2) - 128
+  ld    de,$8000 + (135*128) + (000/2) - 128
+  ld    bc,$0000 + (077*256) + (256/2)
+  call  CopyRamToVram                       ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
+
+  ;page 2
+  ld    hl,JoyStickRightPart1Address
+  ld    a,JoyStickRightGfxBlock
+  call  SetGfxAt8000InRam                             ;in: hl=adress in rom page 1, a=block, out: puts gfx in page 2 in ram at $8000
+
+  ld    a,1
+  ld    (Vdp_Write_HighPage?),a
+  ld    hl,$8000 + (000*128) + (000/2) - 128
+  ld    de,$0000 + (135*128) + (000/2) - 128
+  ld    bc,$0000 + (077*256) + (256/2)
+  call  CopyRamToVram                       ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
+
+  ;page 3
+  ld    hl,YellowButtonPressedPart1Address
+  ld    a,YellowButtonPressedGfxBlock
+  call  SetGfxAt8000InRam                             ;in: hl=adress in rom page 1, a=block, out: puts gfx in page 2 in ram at $8000
+
+  ld    hl,$8000 + (000*128) + (000/2) - 128
+  ld    de,$8000 + (135*128) + (000/2) - 128
+  ld    bc,$0000 + (077*256) + (256/2)
+  call  CopyRamToVram                       ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
+  xor   a
+  ld    (Vdp_Write_HighPage?),a
   ret
 
 LoadBallTypeAndPalette:

@@ -10,6 +10,14 @@ ConversationsOn?:                  	equ 1
 ;player idem
 ;bug als je in arcade 2 naar beneden loopt kom je soms in de biopod room terecht
 
+;arcade player hand movements
+;penguin bike race: 4 available - page 0= no button, page 1=button A, page 2=button B
+;block cannon:			4 available, but we can free more
+;block cannon:      4 available - page 0= no button, page 1=joystick up, page 2=joystick down, page 3=button A
+;basketball game:   4 available - page 0= no button, page 1=joystick left, page 2=joystick right, page 3=button A
+;										alternatively title screen+shop: button a, button b, key up, key down, key left, key right, no buttom
+;										alternatively in game: button a, button b, no buttom
+;jump down game:		4 available - button A, no button, key left, key right
 
 InitiateGame:
 ;  if  StartAtTitleScreen?

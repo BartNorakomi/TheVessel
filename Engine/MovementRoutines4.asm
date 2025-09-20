@@ -179,14 +179,15 @@ PenguinMovementRoutine:
   ld    (iy+ObjectPhase),1
 
   call  SetArcadeMachine
+  call  SetArcadeMachinePenguinGame
 
-  ;set penguin bike race page 0
+  ;set ingame gfx in page 1
   ld    hl,PenguinBikeRacePart1Address
   ld    a,PenguinBikeRaceGfxBlock
   call  SetGfxAt8000InRam                             ;in: hl=adress in rom page 1, a=block, out: puts gfx in page 2 in ram at $8000
 
   ld    hl,$8000 + (000*128) + (000/2) - 128
-  ld    de,$0000 + (000*128) + (000/2) - 128
+  ld    de,$8000 + (000*128) + (000/2) - 128
   ld    bc,$0000 + (128*256) + (256/2)
   call  CopyRamToVram                       ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
 
@@ -195,28 +196,12 @@ PenguinMovementRoutine:
   call  SetGfxAt8000InRam                             ;in: hl=adress in rom page 1, a=block, out: puts gfx in page 2 in ram at $8000
 
   ld    hl,$8000 + (000*128) + (000/2) - 128
-  ld    de,$0000 + (128*128) + (000/2) - 128
+  ld    de,$8000 + (128*128) + (000/2) - 128
   ld    bc,$0000 + (007*256) + (256/2)
   call  CopyRamToVram                       ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
 
-  ;copy page 0 to page 1
-  xor   a
-  ld    (CopyPageToPage212High+sPage),a
-  ld    a,1
-  ld    (CopyPageToPage212High+dPage),a
-  ld    hl,CopyPageToPage212High
-  call  DoCopy
-
-  ;copy page 0 to page 2
-  ld    a,2
-  ld    (CopyPageToPage212High+dPage),a
-  ld    hl,CopyPageToPage212High
-  call  DoCopy
-
-  ;copy page 0 to page 3
-  ld    a,3
-  ld    (CopyPageToPage212High+dPage),a
-  ld    hl,CopyPageToPage212High
+  ;copy page 1 to page 2
+  ld    hl,.CopyPage1ToPage2
   call  DoCopy
 
   call  SetPenguinBikeRaceSprites
@@ -231,11 +216,52 @@ PenguinMovementRoutine:
   ld    bc,$0000 + (009*256) + (256/2)
   call  CopyRamToVram                       ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
 
+  ;copy page 1 to page 3
+  ld    hl,.CopyPage1ToPage3
+  call  DoCopy
+
   call  SetInterruptHandlerArcadeMachine   	;sets Vblank and lineint for hud
 
   call  ResetVariablesPenguinRace
 ;  call  SpritesOff
   jp    BackToTitleScreenPenguinRace
+
+.CopyPage1ToPage2:
+	db		0,0,0,1
+	db		0,0,0,2
+	db		0,1,135,0
+	db		0,0,$d0
+
+.CopyPage1ToPage3:
+	db		0,0,0,1
+	db		0,0,0,3
+	db		0,1,135,0
+	db		0,0,$d0
+
+;penguin bike race: 4 available - page 0= no button, page 1=button A, page 2=button B
+SetArcadeMachinePenguinGame:
+  ld    hl,YellowButtonPressedPart1Address
+  ld    a,YellowButtonPressedGfxBlock
+  call  SetGfxAt8000InRam                             ;in: hl=adress in rom page 1, a=block, out: puts gfx in page 2 in ram at $8000
+
+  ld    hl,$8000 + (000*128) + (000/2) - 128
+  ld    de,$8000 + (135*128) + (000/2) - 128
+  ld    bc,$0000 + (077*256) + (256/2)
+  call  CopyRamToVram                       ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
+
+  ld    hl,GreenButtonPressedPart1Address
+  ld    a,GreenButtonPressedGfxBlock
+  call  SetGfxAt8000InRam                             ;in: hl=adress in rom page 1, a=block, out: puts gfx in page 2 in ram at $8000
+
+  ld    a,1
+  ld    (Vdp_Write_HighPage?),a
+  ld    hl,$8000 + (000*128) + (000/2) - 128
+  ld    de,$0000 + (135*128) + (000/2) - 128
+  ld    bc,$0000 + (077*256) + (256/2)
+  call  CopyRamToVram                       ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
+  xor   a
+  ld    (Vdp_Write_HighPage?),a
+  ret
 
 ;this routine puts penguin race titlescreen in page 0, while game screen is in page 1 
 BackToTitleScreenPenguinRace:
@@ -298,6 +324,8 @@ BackToTitleScreenPenguinRace:
 
   ld    a,0*32 + 31
 	ld    (PageOnNextVblank),a
+  call  WaitVblank
+  call  WaitVblank
   call  screenon
 
   .Engine:
