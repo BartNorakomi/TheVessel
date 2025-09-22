@@ -861,6 +861,8 @@ LineIntJumpDownGame:
   ld    hl,ArcadeMachinePalette         ;set palette
   call	SetPalette
 
+  call  HandleJoyStickAndButtons
+
   pop   hl
   pop   bc
   pop   af
@@ -890,6 +892,10 @@ InterruptHandlerArcadeMachine:
   ei
   ret
 
+
+;CurrentRoom:  db  21                    ;0=arcadehall1, 1=arcadehall2, 2=biopod, 3=hydroponicsbay, 4=hangarbay, 5=trainingdeck, 6=reactorchamber, 7=sleepingquarters, 8=armoryvault, 9=holodeck, 10=medicalbay
+;                                        ;11=sciencelab, 12=drillinggame, 13=upgrademenu, 14=drillinglocations, 15=racinggame, 16=racing game title screen, 17=racing game level progress, 18=racing game congratulations
+;                                        ;19=basketball game, 20=penguin bike race, 21=blockhit game, 22=jumpdown game
 PageOnLineIntArcadeMachine: db  0*32 + 31
 LineIntHeightArcadeMachine: equ 133
 LineIntArcadeMachine:
@@ -904,11 +910,156 @@ LineIntArcadeMachine:
   ld    hl,ArcadeMachinePalette
   call	SetPalette
 
+  call  HandleJoyStickAndButtons
+
   pop   hl
   pop   bc
   pop   af
   ei
   ret  
+
+;penguin bike race: 4 available - page 0= no button, page 1=button A, page 2=button B
+HandleJoyStickAndButtons:
+  ld    a,(CurrentRoom)
+  cp    19
+  jp    z,HandleJoyStickBasketBallGame
+  cp    20
+  jp    z,HandleJoyStickPenguinRaceGame
+  cp    21
+  jp    z,HandleJoyStickBlockHitGame
+  cp    22
+  jp    z,HandleJoyStickJumpDownGame
+  ret
+
+;basketball game:   4 available - page 0= no button, page 1=joystick left, page 2=joystick right, page 3=button A
+;										alternatively title screen+shop: button a, button b, key up, key down, key left, key right, no buttom
+;										alternatively in game: button a, button b, no buttom
+HandleJoyStickBasketBallGame:
+;
+; bit	7	  6	  5		    4		    3		    2		  1		  0
+;		  0	  0	  trig-b	trig-a	right	  left	down	up	(joystick)
+;		  F5	F1	'M'		  space	  right	  left	down	up	(keyboard)
+;
+	ld		a,(Controls)
+	bit		4,a           ;trigger a pressed ?
+  jr    nz,.TriggerA
+  and   %0000 1100
+  jr    z,.NoButtonPressed
+  cp    %0000 1000
+  jr    z,.RightPressed
+
+  .LeftPressed:
+  ld    a,1*32 + 31
+  ld    (PageOnLineIntArcadeMachine),a  ;set page
+  ret
+
+  .RightPressed:
+  ld    a,2*32 + 31
+  ld    (PageOnLineIntArcadeMachine),a  ;set page
+  ret
+
+  .TriggerA:
+  ld    a,3*32 + 31
+  ld    (PageOnLineIntArcadeMachine),a  ;set page
+  ret
+
+  .NoButtonPressed:
+  ld    a,0*32 + 31
+  ld    (PageOnLineIntArcadeMachine),a  ;set page
+  ret
+
+;jump down game     3 available - page 0= no button, page 2=joystick left, page 3=joystick right
+HandleJoyStickJumpDownGame:
+;
+; bit	7	  6	  5		    4		    3		    2		  1		  0
+;		  0	  0	  trig-b	trig-a	right	  left	down	up	(joystick)
+;		  F5	F1	'M'		  space	  right	  left	down	up	(keyboard)
+;
+	ld		a,(Controls)
+  and   %0000 1100
+  jr    z,.NoButtonPressed
+  cp    %0000 1000
+  jr    z,.RightPressed
+
+  .LeftPressed:
+  ld    a,2*32 + 31
+  ld    (PageOnLineIntArcadeMachine),a  ;set page
+  ret
+
+  .RightPressed:
+  ld    a,3*32 + 31
+  ld    (PageOnLineIntArcadeMachine),a  ;set page
+  ret
+
+  .NoButtonPressed:
+  ld    a,0*32 + 31
+  ld    (PageOnLineIntArcadeMachine),a  ;set page
+  ret
+
+;block cannon:      4 available - page 0= no button, page 1=joystick up, page 2=joystick down, page 3=button A
+HandleJoyStickBlockHitGame:
+;
+; bit	7	  6	  5		    4		    3		    2		  1		  0
+;		  0	  0	  trig-b	trig-a	right	  left	down	up	(joystick)
+;		  F5	F1	'M'		  space	  right	  left	down	up	(keyboard)
+;
+	ld		a,(Controls)
+	bit		4,a           ;trigger a pressed ?
+  jr    nz,.TriggerA
+  and   %0000 0011
+  jr    z,.NoButtonPressed
+  cp    %0000 0010
+  jr    z,.DownPressed
+
+  .UpPressed:
+  ld    a,1*32 + 31
+  ld    (PageOnLineIntArcadeMachine),a  ;set page
+  ret
+
+  .NoButtonPressed:
+  ld    a,0*32 + 31
+  ld    (PageOnLineIntArcadeMachine),a  ;set page
+  ret
+
+  .TriggerA:
+  ld    a,3*32 + 31
+  ld    (PageOnLineIntArcadeMachine),a  ;set page
+  ret
+
+  .DownPressed:
+  ld    a,2*32 + 31
+  ld    (PageOnLineIntArcadeMachine),a  ;set page
+  ret
+
+;penguin bike race: 4 available - page 0= no button, page 1=button A, page 2=button B
+HandleJoyStickPenguinRaceGame:
+;
+; bit	7	  6	  5		    4		    3		    2		  1		  0
+;		  0	  0	  trig-b	trig-a	right	  left	down	up	(joystick)
+;		  F5	F1	'M'		  space	  right	  left	down	up	(keyboard)
+;
+	ld		a,(Controls)
+	bit		4,a           ;trigger a pressed ?
+  jr    nz,.TriggerA
+	bit		5,a           ;trigger b pressed ?
+  jr    nz,.TriggerB
+
+  .NoButtonPressed:
+  ld    a,0*32 + 31
+  ld    (PageOnLineIntArcadeMachine),a  ;set page
+  ret
+
+  .TriggerA:
+  ld    a,1*32 + 31
+  ld    (PageOnLineIntArcadeMachine),a  ;set page
+  ret
+
+  .TriggerB:
+  ld    a,2*32 + 31
+  ld    (PageOnLineIntArcadeMachine),a  ;set page
+  ret
+
+
 
 ArcadeMachinePalette:
   incbin "..\grapx\ArcadeMachine\ArcadeMachine.sc5",$7680+7,32
@@ -3900,12 +4051,12 @@ CompareHLwithDE:
   ret
 
 StartSaveGameData:
-CurrentRoom:  db  20                    ;0=arcadehall1, 1=arcadehall2, 2=biopod, 3=hydroponicsbay, 4=hangarbay, 5=trainingdeck, 6=reactorchamber, 7=sleepingquarters, 8=armoryvault, 9=holodeck, 10=medicalbay
+CurrentRoom:  db  1                    ;0=arcadehall1, 1=arcadehall2, 2=biopod, 3=hydroponicsbay, 4=hangarbay, 5=trainingdeck, 6=reactorchamber, 7=sleepingquarters, 8=armoryvault, 9=holodeck, 10=medicalbay
                                         ;11=sciencelab, 12=drillinggame, 13=upgrademenu, 14=drillinglocations, 15=racinggame, 16=racing game title screen, 17=racing game level progress, 18=racing game congratulations
                                         ;19=basketball game, 20=penguin bike race, 21=blockhit game, 22=jumpdown game
 GamesPlayed:  db 9                      ;increases after leaving a game. max=255
 HighScoreTotalAverage: db 80            ;recruiter appears when 80 (%) is reached
-HighScoreBackroomGame:  db  100
+HighScoreBackroomGame:  db  000
 
 BasketballCompletePercentage: db 0
 HighScoreBasketball:          dw 0
@@ -3925,16 +4076,15 @@ HighScoreBikeRace:          dw 0
 PenguinGameLevelHighest:    db 1
 PenguinGameLapsHighest:     db 1
 
-
 ConvGirl: db %0000 0001                 ;conversations handled
 ConvCapGirl: db %0000 0000              ;conversations handled
 ConvGingerBoy: db %0000 0000            ;conversations handled
-;ConvHost: db %0000 0001                 ;conversations handled bit0=80% achieved 
-ConvHost: db %0000 0011                 ;conversations handled bit0=80% achieved 
+ConvHost: db %0000 0000                 ;conversations handled bit0=80% achieved 
+;ConvHost: db %0000 0011                 ;conversations handled bit0=80% achieved 
 ;ConvEntity: db %1000 0000               ;conversations handled bit 6=embryo check followup, bit 5=first time entering holodeck,bit 0+1+2=conversation arcade2
 ConvEntity: db %0000 0011               ;conversations handled bit 6=embryo check followup, bit 5=holodeck explainer,bit 0+1+2=conversation arcade2
-ConvEntityShipExplanations: db %1111 1111               ;conversations handled
-;ConvEntityShipExplanations: db %0000 0000               ;conversations handled, bit 6=holodeck explainer
+;ConvEntityShipExplanations: db %1111 1111               ;conversations handled
+ConvEntityShipExplanations: db %0000 0000               ;conversations handled, bit 6=holodeck explainer
 
 DateCurrentLogin: ds 6 
 DatePreviousLogin: ds 6

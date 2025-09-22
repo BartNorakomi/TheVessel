@@ -18,6 +18,13 @@ ConversationsOn?:                  	equ 1
 ;										alternatively title screen+shop: button a, button b, key up, key down, key left, key right, no buttom
 ;										alternatively in game: button a, button b, no buttom
 ;jump down game:		4 available - button A, no button, key left, key right
+;jump down game     3 available - page 0= no button, page 2=joystick left, page 3=joystick right
+
+;Je verlaat de Hangar in de drilling machine, je bevindt je op de planeet, je ziet dan een screenshot van de drilling machine op de planeet,
+;en dan heb je een interactie met de Sargeant.
+;en die geeft dan veel info over de planeet
+
+;denk toch eens na over een save systeem, gewoon handmatig met trig b menu openen en dan kun je saven
 
 InitiateGame:
 ;  if  StartAtTitleScreen?

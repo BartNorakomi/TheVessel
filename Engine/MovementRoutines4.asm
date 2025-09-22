@@ -354,7 +354,7 @@ BackToTitleScreenPenguinRace:
 	bit		5,a           ;trig b pressed ?
   jr    nz,.TriggerBPressed
 	bit		4,a           ;trig a pressed ?
-  jr    nz,.TriggerAPressed
+  jr    nz,.TriggerAUnPressed
   ret
   .TriggerBPressed:
   ld    a,0                                ;back to arcade hall 1
@@ -364,7 +364,7 @@ BackToTitleScreenPenguinRace:
   pop   af
   ret
 
-  .TriggerAPressed:
+  .TriggerAUnPressed:
   ;reset time, level and lap
   ld    hl,PenguinBikeRacePart1Address
   ld    a,PenguinBikeRaceGfxBlock
@@ -2496,10 +2496,5 @@ SetPenguinBikeRaceSprites:
 
 PenguinBikeRacePalette:
   incbin "..\grapx\penguinbikerace\PenguinBikeRace.sc5",$7680+7,32
-
-
-
-
-
 
 dephase

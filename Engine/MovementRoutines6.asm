@@ -60,7 +60,7 @@ JumpDownGameRoutine:
   ld    hl,.ClearPage1
   call  DoCopy
 
-;set tiles in page 3
+  ;set tiles in page 3
   ld    hl,JumpDownTilesPart1Address
   ld    a,JumpDownTilesGfxBlock
   call  SetGfxAt8000InRam                             ;in: hl=adress in rom page 1, a=block, out: puts gfx in page 2 in ram at $8000

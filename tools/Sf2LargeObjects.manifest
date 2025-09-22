@@ -182,7 +182,7 @@ Vesselright=@{
 		all=`
 	@{	name="Vesselright";
 		imagePath="vessel156x125right.bmp";
-		palettePath="..\grapx\ship\sleepingquarters\TheVessel.PL";
+		palettePath="..\grapx\arcadehall1\arcadehall.PL";
 		destinationPath="";
 		pixelFilePath="Vesselright.dat";
 		transparentColor=-1;fillcolor=15;
