@@ -3823,10 +3823,6 @@ RedheadboyPortraitBlock:          db  RedheadboyPortraitGfxBlock
 .Mouth: dw  $0000 + (013*256) + (022/2) ;nx,ny
         dw  $0000 + (064*128) + ((050+2)/2) - 128 ;dx,dy
         dw  $4000 + (033*128) + (102/2) - 128 | dw  $4000 + (047*128) + (102/2) - 128 | dw  $4000 + (061*128) + (102/2) - 128 ;sx,sy
-
-
-
-
 capgirlPortraitPalette:           incbin "..\grapx\characters\capgirl\portraittotal.SC5",$7680+7,32
 capgirlPortraitBlock:             db  capgirlPortraitGfxBlock
 .Eyes:  dw  $0000 + (012*256) + (040/2) ;nx,ny
