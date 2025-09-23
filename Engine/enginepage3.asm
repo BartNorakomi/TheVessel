@@ -95,7 +95,7 @@ ObjectGirl:  							db  1,110,050 | dw 000,000					,000        | db 255      ,Mo
 ObjectCapGirl:  					db  1,098,120 | dw 000,000					,000        | db 255      ,MovementRoutinesBlock | dw CapGirlMovementRoutine		| db 000,000 ,000, 000
 ObjectRedHeadBoy:  				db  1,102,220 | dw 000,000					,000        | db 255      ,MovementRoutinesBlock | dw RedHeadBoyMovementRoutine	| db 000,000 ,000, 000
 ObjectHost:  							db  1,000,000 | dw 000,000					,Host_0     | db 255      ,MovementRoutinesBlock | dw HostMovementRoutine				| db 000,000 ,000, 000
-ObjectWall:  							db  1,055,172 | dw 000,000					,Wall_0     | db 255      ,MovementRoutinesBlock | dw WallMovementRoutine				| db 000,000 ,000, 000
+ObjectWall:  							db  1,055,178 | dw 000,000					,Wall_0     | db 255      ,MovementRoutinesBlock | dw WallMovementRoutine				| db 000,000 ,000, 000
 ;ObjectWall:  							db  1,105,048 | dw 000,000					,Wall_0     | db 255      ,MovementRoutinesBlock | dw WallMovementRoutine				| db 000,000 ,000, 000
 
 ObjectBackRoomGame:  			db  1,095,118 | dw 000,000					,BRGame_0   | db 255			,MovementRoutinesBlock | dw BackRoomGameRoutine				| db 000,000 ,000, 000
@@ -1313,31 +1313,31 @@ SetFontUpgradeMenuThickPage1Y212:     	;set font at (0,212) page 0
   jp    CopyRomToVram          ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
 
 LoadOpenDoorGfx:
-  ld    hl,$4000 + (000*128) + (000/2) - 128
-  ld    de,$0000 + (072*128) + (104/2) - 128
-  ld    bc,$0000 + (083*256) + (046/2)
-  ld    a,OpenDoorGfxBlock         	        ;block to copy graphics from
-  call  CopyRomToVram                       ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
+  ld    hl,OpenDoorPart1Address
+  ld    a,OpenDoorGfxBlock
+  call  SetGfxAt8000InRam                             ;in: hl=adress in rom page 1, a=block, out: puts gfx in page 2 in ram at $8000
 
-  ld    hl,$4000 + (000*128) + (000/2) - 128
-  ld    de,$8000 + (072*128) + (104/2) - 128
-  ld    bc,$0000 + (083*256) + (046/2)
-  ld    a,OpenDoorGfxBlock         	        ;block to copy graphics from
-  call  CopyRomToVram                       ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
+  ld    hl,$8000 + (000*128) + (000/2) - 128
+  ld    de,$0000 + (057*128) + (108/2) - 128
+  ld    bc,$0000 + (099*256) + (048/2)
+  call  CopyRamToVram                       ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
 
-  ld    hl,$4000 + (000*128) + (000/2) - 128
-  ld    de,$0000 + (072*128) + (104/2) - 128
-  ld    bc,$0000 + (083*256) + (046/2)
+  ld    hl,$8000 + (000*128) + (000/2) - 128
+  ld    de,$8000 + (057*128) + (108/2) - 128
+  ld    bc,$0000 + (099*256) + (048/2)
+  call  CopyRamToVram                       ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
+
+  ld    hl,$8000 + (000*128) + (000/2) - 128
+  ld    de,$0000 + (057*128) + (108/2) - 128
+  ld    bc,$0000 + (099*256) + (048/2)
   ld    a,1
   ld    (Vdp_Write_HighPage?),a
-  ld    a,OpenDoorGfxBlock         	        ;block to copy graphics from
-  call  CopyRomToVram                       ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
+  call  CopyRamToVram                       ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
 
-  ld    hl,$4000 + (000*128) + (000/2) - 128
-  ld    de,$8000 + (072*128) + (104/2) - 128
-  ld    bc,$0000 + (083*256) + (046/2)
-  ld    a,OpenDoorGfxBlock         	        ;block to copy graphics from
-  call  CopyRomToVram                       ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
+  ld    hl,$8000 + (000*128) + (000/2) - 128
+  ld    de,$8000 + (057*128) + (108/2) - 128
+  ld    bc,$0000 + (099*256) + (048/2)
+  call  CopyRamToVram                       ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
   xor   a
   ld    (Vdp_Write_HighPage?),a
   ret

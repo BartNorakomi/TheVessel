@@ -667,8 +667,6 @@ DrillingGameHudBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSiz
   incbin "..\grapx\drillinggame\hud.SC5",7,028 * 128      ;032 lines
 	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
 
-
-
 ArcadeMachineGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
 BasketBallCourtGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
 PenguinBikeRaceGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
@@ -787,6 +785,7 @@ BunnySpritesBlockBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockS
 JumpDownTitleScreenGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
 JumpDownButtonsGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
 JumpDownTitleScreenTop7LinesGfxBlock: equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
+OpenDoorGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
 	phase	$4000
 	BunnyCharSprites: equ	$+$4000
 	include "..\grapx\JumpDown\sprites\Bunny.tgs.gen"
@@ -800,6 +799,8 @@ JumpDownTitleScreenTop7LinesGfxBlock: equ   ($-RomStartAddress) and (romsize-1) 
   incbin "..\grapx\JumpDown\titlescreen\ButtonsPart1.sc5.pck"
 	JumpDownTitleScreenTop7LinesPart1Address:
   incbin "..\grapx\JumpDown\titlescreen\titlescreenTop7LinesPart1.sc5.pck"
+	OpenDoorPart1Address:
+  incbin "..\grapx\arcadehall1\OpenDoorPart1.sc5.pck"
 	.CheckBlockFull:	dw	$+$8000
 	dephase
 	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
@@ -2070,10 +2071,6 @@ db 0,0
 
 ResourceOffloadPortraitGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
   incbin "..\grapx\ship\hangarbay\resourceoffload.SC5",7,099 * 128      ;98 lines
-	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
-
-OpenDoorGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
-  incbin "..\grapx\arcadehall1\opendoor.SC5",7,083 * 128      ;097 lines
 	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
 
 EntityTableGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize

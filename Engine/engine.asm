@@ -3799,20 +3799,22 @@ SetCharacter:
 
 TheVesselPortraitPalette:         incbin "..\grapx\characters\thevessel\portraittotal.SC5",$7680+7,32
 TheVesselPortraitBlock:           db  TheVesselPortraitGfxBlock
-.Eyes:  dw  $0000 + (011*256) + (032/2) ;nx,ny
-        dw  $0000 + (037*128) + ((046+2)/2) - 128 ;dx,dy
-        dw  $4000 + (000*128) + (102/2) - 128 | dw  $4000 + (012*128) + (102/2) - 128 | dw  $4000 + (024*128) + (102/2) - 128 ;sx,sy
-.Mouth: dw  $0000 + (016*256) + (022/2) ;nx,ny
-        dw  $0000 + (052*128) + ((050+2)/2) - 128 ;dx,dy
-        dw  $4000 + (036*128) + (102/2) - 128 | dw  $4000 + (053*128) + (102/2) - 128 | dw  $4000 + (070*128) + (102/2) - 128 ;sx,sy
+.Eyes:  dw  $0000 + (009*256) + (032/2) ;ny,nx
+        dw  $0000 + (040*128) + ((046+2)/2) - 128 ;dx,dy
+        dw  $4000 + (000*128) + (102/2) - 128 | dw  $4000 + (010*128) + (102/2) - 128 | dw  $4000 + (020*128) + (102/2) - 128 ;sx,sy
+.Mouth: dw  $0000 + (012*256) + (024/2) ;ny,nx
+        dw  $0000 + (055*128) + ((050+2)/2) - 128 ;dx,dy
+        dw  $4000 + (030*128) + (102/2) - 128 | dw  $4000 + (043*128) + (102/2) - 128 | dw  $4000 + (056*128) + (102/2) - 128 ;sx,sy
+
 GirlPortraitPalette:              incbin "..\grapx\characters\girl\portraittotal.SC5",$7680+7,32
 GirlPortraitBlock:                db  GirlPortraitGfxBlock
-.Eyes:  dw  $0000 + (012*256) + (032/2) ;nx,ny
-        dw  $0000 + (036*128) + ((038+2)/2) - 128 ;dx,dy
+.Eyes:  dw  $0000 + (012*256) + (032/2) ;ny,nx
+        dw  $0000 + (038*128) + ((040+2)/2) - 128 ;dx,dy
         dw  $4000 + (000*128) + (102/2) - 128 | dw  $4000 + (013*128) + (102/2) - 128 | dw  $4000 + (026*128) + (102/2) - 128 ;sx,sy
-.Mouth: dw  $0000 + (013*256) + (020/2) ;nx,ny
-        dw  $0000 + (050*128) + ((046+2)/2) - 128 ;dx,dy
-        dw  $4000 + (039*128) + (102/2) - 128 | dw  $4000 + (053*128) + (102/2) - 128 | dw  $4000 + (067*128) + (102/2) - 128 ;sx,sy
+.Mouth: dw  $0000 + (008*256) + (014/2) ;ny,nx
+        dw  $0000 + (055*128) + ((048+2)/2) - 128 ;dx,dy
+        dw  $4000 + (039*128) + (102/2) - 128 | dw  $4000 + (048*128) + (102/2) - 128 | dw  $4000 + (057*128) + (102/2) - 128 ;sx,sy
+
 RedheadboyPortraitPalette:        incbin "..\grapx\characters\Redheadboy\portraittotal.SC5",$7680+7,32
 RedheadboyPortraitBlock:          db  RedheadboyPortraitGfxBlock
 .Eyes:  dw  $0000 + (010*256) + (030/2) ;nx,ny
@@ -3821,22 +3823,33 @@ RedheadboyPortraitBlock:          db  RedheadboyPortraitGfxBlock
 .Mouth: dw  $0000 + (013*256) + (022/2) ;nx,ny
         dw  $0000 + (064*128) + ((050+2)/2) - 128 ;dx,dy
         dw  $4000 + (033*128) + (102/2) - 128 | dw  $4000 + (047*128) + (102/2) - 128 | dw  $4000 + (061*128) + (102/2) - 128 ;sx,sy
+
+
+
+
 capgirlPortraitPalette:           incbin "..\grapx\characters\capgirl\portraittotal.SC5",$7680+7,32
 capgirlPortraitBlock:             db  capgirlPortraitGfxBlock
-.Eyes:  dw  $0000 + (012*256) + (038/2) ;nx,ny
-        dw  $0000 + (030*128) + ((040+2)/2) - 128 ;dx,dy
+.Eyes:  dw  $0000 + (012*256) + (040/2) ;nx,ny
+        dw  $0000 + (032*128) + ((040+2)/2) - 128 ;dx,dy
         dw  $4000 + (000*128) + (102/2) - 128 | dw  $4000 + (013*128) + (102/2) - 128 | dw  $4000 + (026*128) + (102/2) - 128 ;sx,sy
-.Mouth: dw  $0000 + (012*256) + (022/2) ;nx,ny
-        dw  $0000 + (048*128) + ((050+2)/2) - 128 ;dx,dy
-        dw  $4000 + (039*128) + (102/2) - 128 | dw  $4000 + (052*128) + (102/2) - 128 | dw  $4000 + (065*128) + (102/2) - 128 ;sx,sy
+.Mouth: dw  $0000 + (011*256) + (018/2) ;nx,ny
+        dw  $0000 + (051*128) + ((052+2)/2) - 128 ;dx,dy
+        dw  $4000 + (039*128) + (102/2) - 128 | dw  $4000 + (051*128) + (102/2) - 128 | dw  $4000 + (063*128) + (102/2) - 128 ;sx,sy
+
+
+
+
+
+
+
 hostPortraitPalette:              incbin "..\grapx\characters\host\portraittotal.SC5",$7680+7,32
 hostPortraitBlock:                db  hostPortraitGfxBlock
-.Eyes:  dw  $0000 + (011*256) + (032/2) ;nx,ny
-        dw  $0000 + (034*128) + ((042+2)/2) - 128 ;dx,dy
-        dw  $4000 + (000*128) + (102/2) - 128 | dw  $4000 + (012*128) + (102/2) - 128 | dw  $4000 + (024*128) + (102/2) - 128 ;sx,sy
-.Mouth: dw  $0000 + (013*256) + (022/2) ;nx,ny
-        dw  $0000 + (051*128) + ((048+2)/2) - 128 ;dx,dy
-        dw  $4000 + (036*128) + (102/2) - 128 | dw  $4000 + (050*128) + (102/2) - 128 | dw  $4000 + (064*128) + (102/2) - 128 ;sx,sy
+.Eyes:  dw  $0000 + (009*256) + (030/2) ;ny,nx
+        dw  $0000 + (036*128) + ((040+2)/2) - 128 ;dx,dy
+        dw  $4000 + (000*128) + (102/2) - 128 | dw  $4000 + (010*128) + (102/2) - 128 | dw  $4000 + (020*128) + (102/2) - 128 ;sx,sy
+.Mouth: dw  $0000 + (009*256) + (016/2) ;nx,ny
+        dw  $0000 + (053*128) + ((050+2)/2) - 128 ;dx,dy
+        dw  $4000 + (030*128) + (102/2) - 128 | dw  $4000 + (040*128) + (102/2) - 128 | dw  $4000 + (050*128) + (102/2) - 128 ;sx,sy
 soldierPortraitPalette:           incbin "..\grapx\characters\soldier\portraittotal.SC5",$7680+7,32
 soldierPortraitBlock:             db  soldierPortraitGfxBlock
 .Eyes:  dw  $0000 + (015*256) + (034/2) ;nx,ny
@@ -4051,11 +4064,11 @@ CompareHLwithDE:
   ret
 
 StartSaveGameData:
-CurrentRoom:  db  1                    ;0=arcadehall1, 1=arcadehall2, 2=biopod, 3=hydroponicsbay, 4=hangarbay, 5=trainingdeck, 6=reactorchamber, 7=sleepingquarters, 8=armoryvault, 9=holodeck, 10=medicalbay
+CurrentRoom:  db  0                    ;0=arcadehall1, 1=arcadehall2, 2=biopod, 3=hydroponicsbay, 4=hangarbay, 5=trainingdeck, 6=reactorchamber, 7=sleepingquarters, 8=armoryvault, 9=holodeck, 10=medicalbay
                                         ;11=sciencelab, 12=drillinggame, 13=upgrademenu, 14=drillinglocations, 15=racinggame, 16=racing game title screen, 17=racing game level progress, 18=racing game congratulations
                                         ;19=basketball game, 20=penguin bike race, 21=blockhit game, 22=jumpdown game
 GamesPlayed:  db 9                      ;increases after leaving a game. max=255
-HighScoreTotalAverage: db 80            ;recruiter appears when 80 (%) is reached
+HighScoreTotalAverage: db 00            ;recruiter appears when 80 (%) is reached
 HighScoreBackroomGame:  db  000
 
 BasketballCompletePercentage: db 0

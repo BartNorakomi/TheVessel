@@ -2594,7 +2594,7 @@ BiopodEventRoutine:
 
 
 ArcadeHall1redlightPalette:                 ;palette file
-  incbin "..\grapx\arcadehall1\arcade1redlight.SC5",$7680+7,32
+  incbin "..\grapx\arcadehall1\RedLightPalette.SC5",$7680+7,32
 SirensRoutine:
   ld    a,1
   ld    (freezecontrols?),a
@@ -2606,6 +2606,12 @@ SirensRoutine:
   dec   a
   jp    z,.Phase1                           ;host walks towards the vessel
   ret
+
+  .SetOpenDoorGfxInRam:
+  ;set open door gfx in ram
+  ld    hl,OpenDoorPart1Address
+  ld    a,OpenDoorGfxBlock
+  jp    SetGfxAt8000InRam                             ;in: hl=adress in rom page 1, a=block, out: puts gfx in page 2 in ram at $8000
 
   .Phase1:                                  ;host walks towards the vessel
   ld    a,1
@@ -2630,14 +2636,16 @@ SirensRoutine:
   ld    a,(iy+Var1)
   inc   a
   ld    (iy+Var1),a
+  cp    1
+  jr    z,.SetOpenDoorGfxInRam
   cp    50+32
   jr    c,.CloseDoor
   cp    82+64+8
   jr    z,.EndPhase0
 
   .OpenDoor:
-  ld    hl,$4000 + (000*128) + (000/2) - 128
-  ld    bc,$0000 + (083*256) + (046/2)
+  ld    hl,$8000 + (000*128) + (000/2) - 128
+  ld    bc,$0000 + (099*256) + (048/2)
   ld    a,(PageOnNextVblank)                ;set page
   cp    0*32 + 31
   jr    z,.SetOpenDoorPage2
@@ -2649,21 +2657,18 @@ SirensRoutine:
   jr    z,.SetOpenDoorPage1
 
   .SetOpenDoorPage0:
-  ld    a,OpenDoorGfxBlock         	        ;block to copy graphics from
-  ld    de,$0000 + (072*128) + (104/2) - 128
-  jp    CopyRomToVram                       ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
+  ld    de,$0000 + (057*128) + (108/2) - 128
+  jp    CopyRamToVram                       ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
 
   .SetOpenDoorPage1:
-  ld    a,OpenDoorGfxBlock         	        ;block to copy graphics from
-  ld    de,$8000 + (072*128) + (104/2) - 128
-  jp    CopyRomToVram                       ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
+  ld    de,$8000 + (057*128) + (108/2) - 128
+  jp    CopyRamToVram                       ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
 
   .SetOpenDoorPage2:
   ld    a,1
   ld    (Vdp_Write_HighPage?),a
-  ld    a,OpenDoorGfxBlock         	        ;block to copy graphics from
-  ld    de,$0000 + (072*128) + (104/2) - 128
-  call  CopyRomToVram                       ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
+  ld    de,$0000 + (057*128) + (108/2) - 128
+  call  CopyRamToVram                       ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
   xor   a
   ld    (Vdp_Write_HighPage?),a
   ret
@@ -2671,9 +2676,8 @@ SirensRoutine:
   .SetOpenDoorPage3:
   ld    a,1
   ld    (Vdp_Write_HighPage?),a
-  ld    a,OpenDoorGfxBlock         	        ;block to copy graphics from
-  ld    de,$8000 + (072*128) + (104/2) - 128
-  call  CopyRomToVram                       ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
+  ld    de,$8000 + (057*128) + (108/2) - 128
+  call  CopyRamToVram                       ;in: hl->sx,sy, de->dx, dy, bc->NXAndNY
   xor   a
   ld    (Vdp_Write_HighPage?),a
   ret
