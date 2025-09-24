@@ -11,6 +11,7 @@ BlockHitGameRoutine:
   inc   a
   ld    (framecounter2),a
 
+  call  .HandlePhase                        ;load graphics, init variables
   call  MoveCannon
   call  AnimateBlockExplosion
   call  CheckInitiateExplosionEntireColumn
@@ -19,7 +20,6 @@ BlockHitGameRoutine:
   call  CheckProjectileHitsBlock
   call  CheckShootNewProjectile
   call  SetScoreBlockHitGame
-  call  .HandlePhase                        ;load graphics, init variables
 
 ;
 ; bit	7	  6	  5		    4		    3		    2		  1		  0
@@ -40,10 +40,13 @@ BlockHitGameRoutine:
   call  MoveBlocks
   ret
 
-  .HandlePhase:
+  .HandlePhase:  
   bit   0,(iy+ObjectPhase)
   ret   nz
   ld    (iy+ObjectPhase),1
+
+  call  WaitVblank
+  call  WaitVblank
 
   ;set ingame gfx in page 1
   ld    hl,BlockhitPart1Address
@@ -1604,6 +1607,7 @@ BackToTitleScreenBlockHit:
   jp    nz,.TriggerAPressed
   ret
   .TriggerBPressed:
+  call  ScreenOff
   ld    a,0                                ;back to arcade hall 1
   ld    (CurrentRoom),a
   ld    a,1

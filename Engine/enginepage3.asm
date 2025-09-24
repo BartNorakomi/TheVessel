@@ -4,6 +4,7 @@ StartAtTitleScreen?:                equ 0
 MusicOn?:                           equ 1
 Promo?:                             equ 0
 ConversationsOn?:                  	equ 1
+NeonHorizonArcadeVersion?:     			equ 1
 
 ;veel dithering, haal het er uit zo veel mogelijk
 ;even uit m'n hoofd, die linker griet met groen haar in de arcade. Die zag ik lang geleden al een keer langskomen hier. Die is wat ditherig
@@ -86,6 +87,26 @@ ResetVariables:
 	ld		(hl),230
 	add		hl,de
 	djnz	.ClearSpatLoop
+
+	;calculate highscore total average arcade hall 1
+	ld		hl,(BasketballCompletePercentage)
+	ld		h,0
+	ld		de,(JumpDownCompletePercentage)
+	ld		d,0
+	add		hl,de
+	ld		de,(BlockHitCompletePercentage)
+	ld		d,0
+	add		hl,de
+	ld		de,(BikeRaceCompletePercentage)
+	ld		d,0
+	add		hl,de
+
+	ld		de,320
+	xor		a
+	sbc		hl,de
+	ret		c
+	ld		a,1
+	ld		(HighScoreTotalAverageAtLeast80Percent?),a
 	ret
 
 INCLUDE "RePlayer.asm"
@@ -125,7 +146,7 @@ Objecthangarbay3: 				db  1,077,134 | dw 000,000	,hangarbay_2  			| db 001			,Mo
 EventTrainingdeck: 				db	1,$28,$7e | dw 000,000					,000        | db 255      ,MovementRoutinesBlock | dw TrainingdeckEventRoutine	| db 000,000 ,000, 000
 Objecttrainingdeck1: 			db  1,099,254 | dw 000,000	,trainingdeck_0  		| db 001			,MovementRoutinesBlock | dw trainingdeck1Routine			| db 000,000 ,000, 000
 Objecttrainingdeck2: 			db  1,087,000 | dw 000,000	,trainingdeck_1  		| db 001			,MovementRoutinesBlock | dw trainingdeck2Routine			| db 000,000 ,000, 000
-Objecttrainingdeck3: 			db  1,104,054 | dw 000,000	,trainingdeck_2  		| db 001			,MovementRoutinesBlock | dw trainingdeck3Routine			| db 000,000 ,000, 000
+Objecttrainingdeck3: 			db  1,104,054+28 | dw 000,000	,trainingdeck_2  		| db 001			,MovementRoutinesBlock | dw trainingdeck3Routine			| db 000,000 ,000, 000
 
 Eventreactorchamber:			db	1,$28,$7e | dw 000,000					,000        | db 255      ,MovementRoutinesBlock | dw reactorchamberEventRoutine| db 000,000 ,000, 000
 ;Objectreactorchamber1: 		db  1,030,128 | dw 000,000	,reactorchamber_0  	| db 001			,MovementRoutinesBlock | dw reactorchamber1Routine		| db 000,000 ,000, 000
@@ -953,9 +974,9 @@ PutObjectsArcadeHall2:
 	ret
 
 PutObjectsArcadeHall1:
-	ld		a,(HighScoreTotalAverage)
-	cp		80
-	jp		c,.HighScoreNot80Yet
+	ld		a,(HighScoreTotalAverageAtLeast80Percent?)
+	or		a
+	jp		z,.HighScoreNot80Yet
 
 	ld		a,(ConvHost)										;check if we have met the host already
 	bit		0,a
@@ -2619,17 +2640,7 @@ SetHLToAscii5ByteSkip0:
 NPCAniCount:     									db  0,0
 PlayerSpriteStand: 								dw  Rstanding
 StartConversation?:								db	0
-StartWakeUpEvent?:								db	1
 OffloadResources?:								db	0
-
-
-
-
-
-
-CurrentRacingGamePalette:	db	0 ; can be removed later
-
-
 
 endenginepage3:
 dephase
@@ -2887,6 +2898,7 @@ JumpBunnyRightOnTrampoline?:	rb	1
 ScoreJumpDownGame:				rb	2
 JumpDownGameSkipFirstScore?:	rb	1
 JumpDownGameAmountOfFramesSittingStill:	rb	1
+CurrentBallsSelectedAtEntranceOfShop:	rb	1
 
 
 endenginepage3variables:  equ $+enginepage3length

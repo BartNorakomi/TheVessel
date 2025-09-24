@@ -800,6 +800,7 @@ LineIntJumpDownGame:
   ld    (LineIntHeightJumpDownGame),a
 
   push ix | pop ix | push ix | pop ix | push ix | pop ix | push ix | pop ix | nop | nop | nop | nop | nop
+  di                                    ;when changing r#23 a new lineint can occur before we had time to adjusted the new lineint height, so i guess we should prevent that by disabling int
 
   ld    a,(VDP_8)                       ;sprites on
   and   %11111101
@@ -834,6 +835,7 @@ LineIntJumpDownGame:
   ld    a,LineIntHeightJumpDownGameTop
   ld    (LineIntHeightJumpDownGame),a
   ld    b,LineIntHeightJumpDownGameTop
+  di                                    ;when changing r#23 a new lineint can occur before we had time to adjusted the new lineint height, so i guess we should prevent that by disabling int
 
   ld    a,(PageOnLineIntArcadeMachine)  ;set page
   out   ($99),a
@@ -858,8 +860,17 @@ LineIntJumpDownGame:
   out   ($99),a
 
   push  hl
-  ld    hl,ArcadeMachinePalette         ;set palette
-  call	SetPalette
+  ld    hl,ArcadeMachinePalette
+;  call	SetPalette
+	xor		a
+	out		($99),a
+	ld		a,16+128
+	out		($99),a
+	ld		c,$9A
+  outi | outi | outi | outi | outi | outi | outi | outi
+  outi | outi | outi | outi | outi | outi | outi | outi
+  outi | outi | outi | outi | outi | outi | outi | outi
+  outi | outi | outi | outi | outi | outi | outi | outi
 
   call  HandleJoyStickAndButtons
 
@@ -902,13 +913,27 @@ LineIntArcadeMachine:
   push  bc
   push  hl
 
+  push  ix
+  pop   ix
+  push  ix
+  pop   ix
+
   ld    a,(PageOnLineIntArcadeMachine)
   out   ($99),a
   ld    a,2+128
   out   ($99),a  
 
   ld    hl,ArcadeMachinePalette
-  call	SetPalette
+;  call	SetPalette
+	xor		a
+	out		($99),a
+	ld		a,16+128
+	out		($99),a
+	ld		c,$9A
+  outi | outi | outi | outi | outi | outi | outi | outi
+  outi | outi | outi | outi | outi | outi | outi | outi
+  outi | outi | outi | outi | outi | outi | outi | outi
+  outi | outi | outi | outi | outi | outi | outi | outi
 
   call  HandleJoyStickAndButtons
 
@@ -1062,7 +1087,8 @@ HandleJoyStickPenguinRaceGame:
 
 
 ArcadeMachinePalette:
-  incbin "..\grapx\ArcadeMachine\ArcadeMachine.sc5",$7680+7,32
+  incbin "..\grapx\ArcadeMachine\JoyStickNormal.sc5",$7680+7,32
+;  incbin "..\grapx\ArcadeMachine\ArcadeMachine.sc5",$7680+7,32
 
 LineIntHeightDrillingGame:  equ 25
 LineIntDrillingGame:
@@ -2606,9 +2632,11 @@ HandleConversations:
   ;wait 4 frames with controls off before starting a conversation, this way the player sprite can go to standing pose
   ld    a,(WaitCenterScreenTimer)
   inc   a
-  and   3
   ld    (WaitCenterScreenTimer),a
+  cp    5
   ret   nz
+  xor   a
+  ld    (WaitCenterScreenTimer),a
   xor   a
   ld    (freezecontrols?),a
   ld    (StartConversation?),a
@@ -4060,27 +4088,27 @@ CompareHLwithDE:
   ret
 
 StartSaveGameData:
-CurrentRoom:  db  0                    ;0=arcadehall1, 1=arcadehall2, 2=biopod, 3=hydroponicsbay, 4=hangarbay, 5=trainingdeck, 6=reactorchamber, 7=sleepingquarters, 8=armoryvault, 9=holodeck, 10=medicalbay
+CurrentRoom:  db  5                    ;0=arcadehall1, 1=arcadehall2, 2=biopod, 3=hydroponicsbay, 4=hangarbay, 5=trainingdeck, 6=reactorchamber, 7=sleepingquarters, 8=armoryvault, 9=holodeck, 10=medicalbay
                                         ;11=sciencelab, 12=drillinggame, 13=upgrademenu, 14=drillinglocations, 15=racinggame, 16=racing game title screen, 17=racing game level progress, 18=racing game congratulations
                                         ;19=basketball game, 20=penguin bike race, 21=blockhit game, 22=jumpdown game
 GamesPlayed:  db 9                      ;increases after leaving a game. max=255
-HighScoreTotalAverage: db 00            ;recruiter appears when 80 (%) is reached
-HighScoreBackroomGame:  db  000
+HighScoreTotalAverageAtLeast80Percent?: db 00            ;recruiter appears when 80 (%) is reached
+HighScoreBackroomGame:  db  100
 
-BasketballCompletePercentage: db 0
+BasketballCompletePercentage: db 100
 HighScoreBasketball:          dw 0
 TotalCoinsBasketball:         dw 0
 BallsPurchased:               db %0000 0000     ;b0=tennisball,b1=billiardball,b2=baseball,b3=soccerball,b4=volleyball,b5=bowlingball,b6=golfball,b7=beachball
 ;BallsPurchased:               db %1111 1111     ;b0=tennisball,b1=billiardball,b2=baseball,b3=soccerball,b4=volleyball,b5=bowlingball,b6=golfball,b7=beachball
 CurrentBallsSelected:         db 0              ;0=basketball,1=tennisball,2=billiardball,3=baseball,4=soccerball,5=volleyball,6=bowlingball,7=golfball,8=beachball
 
-JumpDownCompletePercentage: db 0
+JumpDownCompletePercentage: db 100
 HighScoreJumpDown:          dw 0
 
-BlockHitCompletePercentage: db 0
+BlockHitCompletePercentage: db 100
 HighScoreBlockHit:          dw 0
 
-BikeRaceCompletePercentage: db 0
+BikeRaceCompletePercentage: db 20
 HighScoreBikeRace:          dw 0
 PenguinGameLevelHighest:    db 1
 PenguinGameLapsHighest:     db 1
@@ -4088,12 +4116,14 @@ PenguinGameLapsHighest:     db 1
 ConvGirl: db %0000 0001                 ;conversations handled
 ConvCapGirl: db %0000 0000              ;conversations handled
 ConvGingerBoy: db %0000 0000            ;conversations handled
-ConvHost: db %0000 0000                 ;conversations handled bit0=80% achieved 
-;ConvHost: db %0000 0011                 ;conversations handled bit0=80% achieved 
+;ConvHost: db %0000 0000                 ;conversations handled bit0=80% achieved 
+ConvHost: db %0000 0011                 ;conversations handled bit0=80% achieved 
 ;ConvEntity: db %1000 0000               ;conversations handled bit 6=embryo check followup, bit 5=first time entering holodeck,bit 0+1+2=conversation arcade2
 ConvEntity: db %0000 0011               ;conversations handled bit 6=embryo check followup, bit 5=holodeck explainer,bit 0+1+2=conversation arcade2
-;ConvEntityShipExplanations: db %1111 1111               ;conversations handled
-ConvEntityShipExplanations: db %0000 0000               ;conversations handled, bit 6=holodeck explainer
+ConvEntityShipExplanations: db %1111 1111               ;conversations handled
+;ConvEntityShipExplanations: db %0000 0000               ;conversations handled, bit 6=holodeck explainer
+
+StartWakeUpEvent?:								db	1
 
 DateCurrentLogin: ds 6 
 DatePreviousLogin: ds 6

@@ -405,14 +405,18 @@ RGettingUp:
   .HandlePhase:
   ld    a,(iy+ObjectPhase)
   or    a
-  jp    z,.Phase0                           ;wait until wake up
+  jp    z,.Phase0                           ;initiate fade in
   dec   a
-  jp    z,.Phase1                           ;animate waking up
+  jp    z,.Phase1                           ;fade in
   dec   a
-  jp    z,.Phase2                           ;
+  jp    z,.Phase2                           ;wait until wake up
+  dec   a
+  jp    z,.Phase3                           ;animate waking up
+  dec   a
+  jp    z,.Phase4                           ;stand up
   ret
 
-  .Phase2:                                  ;
+  .Phase4:                                  ;stand up
   ld    a,1
   ld    (Object2+on?),a                     ;here we can turn ObjectBiopod1 on
 
@@ -420,12 +424,12 @@ RGettingUp:
   add   a,5
   ld    (iy+y),a
   cp    100
-  jr    c,.EndCheckEndPhase2
+  jr    c,.EndCheckEndPhase4
 
   ld    (iy+y),102
   jp    Set_R_stand
 
-  .EndCheckEndPhase2:
+  .EndCheckEndPhase4:
   ld    a,(framecounter)                    ;at max 4 objects can be put in screen divided over 4 frames
   and   15
   ret   nz
@@ -433,8 +437,9 @@ RGettingUp:
   ld    hl,TheVesselrightrunning_5          ;starting pose
   ld    b,11                                ;animation steps
   call  AnimateObject                       ;in hl=starting pose, b=animation steps, uses: var1
+  ret
 
-  .Phase1:                                  ;animate waking up
+  .Phase3:                                  ;animate waking up
   ld    a,(framecounter)                    ;wait timer
   and   63
   ret   nz
@@ -445,7 +450,7 @@ RGettingUp:
 	ld		a,(iy+var1)
   or    a
   ret   nz
-  ld    (iy+ObjectPhase),2
+  ld    (iy+ObjectPhase),4
 
   ld    a,(iy+y)
   add   a,15
@@ -454,7 +459,7 @@ RGettingUp:
   ld    hl,TheVesselrightrunning_5
   jp    PutSpritePose                       ;in hl=spritepose, out writes spritepose to objecttable
 
-  .Phase0:                                  ;wait until wake up
+  .Phase2:                                  ;wait until wake up
   xor   a
   ld    (Object2+on?),a                     ;we have to turn ObjectBiopod1 off, so it doesn't block our player's software sprite
 
@@ -466,7 +471,47 @@ RGettingUp:
   and   127
   ld    (iy+var1),a                         ;wait timer
   ret   nz
+  ld    (iy+ObjectPhase),3
+  ret
+
+  .Phase1:                                  ;fade in
+  ld    a,(framecounter)                    ;wait timer
+  and   7
+  ret   nz
+
+  ld    a,(FadeStep)
+  dec   a
+  ld    (FadeStep),a
+  cp    -1
+  jp    z,.EndPhase1
+  ld    d,a                                 ;palette step (0=normal map palette, 7=completely black)
+
+  push  iy
+  ld    iy,CurrentPortraitPaletteFaded  ;faded palette
+  ld    b,16                            ;16 colors
+  ld    hl,CurrentPalette               ;actual palette
+  call  SetPaletteFadeStep.loop2
+  pop   iy
+
+  ld    hl,CurrentPortraitPaletteFaded
+  jp		SetPalette
+
+  .EndPhase1:
+  ld    (iy+ObjectPhase),2
+  ret
+
+  .Phase0:                                  ;initiate fade in
+  ld    a,8
+  ld    (FadeStep),a
   ld    (iy+ObjectPhase),1
+  xor   a
+  ld    (Object2+on?),a                     ;we have to turn ObjectBiopod1 off, so it doesn't block our player's software sprite
+
+  ld    hl,TheVesselgettingup_0
+  call  PutSpritePose                       ;in hl=spritepose, out writes spritepose to objecttable
+
+	ld		a,8
+	ld		(ScreenOnDelay),a								;amount of frames until screen turns on (we need some extra frames since we are fading in)
   ret
 
 LEnterDoor:
@@ -1384,9 +1429,9 @@ ArcadeHall1EventRoutine:
   ret
 
   .CheckPlayerEntersArcade2:
-	ld		a,(HighScoreTotalAverage)
-	cp		80
-  ret   c
+	ld		a,(HighScoreTotalAverageAtLeast80Percent?)
+  or    a
+  ret   z
 
   ld    a,(Object1+y)
   cp    54
@@ -1460,16 +1505,53 @@ ArcadeHall2EventRoutine:
 
   .InitiateWakeUp:
   ;ADD freeze controls, fade out
+  ld    a,1
+  ld    (freezecontrols?),a
+
+  call  .FadeOutScreen
+
   ld    a,(InitiateWakeUp?)
   inc   a
   ld    (InitiateWakeUp?),a
-  cp    50
+  cp    250
   ret   c
 
   ld    a,2
   ld    (CurrentRoom),a
   ld    a,1
   ld    (ChangeRoom?),a
+  ret
+
+  .FadeOutScreen:                                  ;fade out screen
+  ld    a,(InitiateWakeUp?)
+  cp    60
+  ret   c
+  jr    z,.ResetFadeStep
+
+  ld    a,(framecounter)                    ;wait timer
+  and   3
+  ret   nz
+
+  ld    a,(FadeStep)
+  inc   a
+  cp    8
+  ret   z
+  ld    (FadeStep),a
+  ld    d,a                                 ;palette step (0=normal map palette, 7=completely black)
+
+  push  iy
+  ld    iy,CurrentPortraitPaletteFaded  ;faded palette
+  ld    b,16                            ;16 colors
+  ld    hl,CurrentPalette               ;actual palette
+  call  SetPaletteFadeStep.loop2
+  pop   iy
+
+  ld    hl,CurrentPortraitPaletteFaded
+  jp		SetPalette
+
+.ResetFadeStep:
+  xor   a                                   ;palette step (0=normal map palette, 7=completely black)
+  ld    (FadeStep),a
   ret
 
 HydroponicsbayEventRoutine:
@@ -2765,15 +2847,36 @@ CheckStartConversationEntity:
   ld    (StartConversation?),a
   ret
 
-
 EntityaRoutine:
   call  .HandlePhase                        ;used to build up hologram table and set palette
 
   ld    hl,Entity_a                         ;starting pose
   call  AnimateEntity
 
-  call  CheckStartConversationEntity        ;out: nz=converstaion starts
+;check show conversation cloud and start conversation entity
+  ld    a,(Object1+x)                   ;player x
+  cp    206
+  ret   nc
+  cp    54
+  ret   c
+
+  ld    a,1
+  ld    (ShowConversationCloud?),a
+  ld    a,(iy+y)
+  ld    (Cloudy),a
+  ld    a,(iy+x)
+  ld    (Cloudx),a
+
+;
+; bit	7	  6	  5		    4		    3		    2		  1		  0
+;		  0	  0	  trig-b	trig-a	right	  left	down	up	(joystick)
+;		  F5	F1	'M'		  space	  right	  left	down	up	(keyboard)
+;
+	ld		a,(NewPrContr)
+	bit		4,a           ;trig a pressed ?
   ret   z
+  ld    a,1
+  ld    (StartConversation?),a
 
   ld    a,NPCConv1Block
   ld    (NPCConvBlock),a
@@ -2781,26 +2884,28 @@ EntityaRoutine:
   ld    hl,(TotalMinutesUntilLand)
   ld    a,l
   or    h
-  jr    z,.NPCConv013
+  jr    z,.NPCConv013                       ;We have arrived. Proxima Centauri b - orbital insertion successful.
+
   ld    hl,ConvEntity
   bit   1,(hl)
   jr    nz,.NPCConv012
+
   bit   0,(hl)
   jr    nz,.NPCConv011
 
   .NPCConv010:
   set   0,(hl)
-  ld    hl,NPCConv010
+  ld    hl,NPCConv010                       ;You have successfully completed all required training protocols. The simulation is now concluded
   ld    (NPCConvAddress),hl
   ret
 
-  .NPCConv011:                              ;execute if ConvEntity bit 0 is set
+  .NPCConv011:                              ;execute if ConvEntity bit 0 is set (So... what do I do now?)
   set   1,(hl)
   ld    hl,NPCConv011
   ld    (NPCConvAddress),hl
   ret
 
-  .NPCConv012:                              ;execute if ConvEntity bit 1 is set
+  .NPCConv012:                              ;execute if ConvEntity bit 1 is set (Still here. Anything new?)
 ; Code to convert total minutes to days, hours, minutes
     ; Load total minutes into HL
   ld    bc,(TotalMinutesUntilLand)            ;4320
@@ -2832,12 +2937,12 @@ EntityaRoutine:
   ld    a,(AsciiOutput+1)
   ld    (TextLandinMinutes+1),a
 
-  ld    hl,NPCConv012
+  ld    hl,NPCConv012                       ;Still here. Anything new?
   ld    (NPCConvAddress),hl
   ret
 
   .NPCConv013:                              ;execute if ship has landed
-  ld    hl,NPCConv013
+  ld    hl,NPCConv013                       ;We have arrived. Proxima Centauri b - orbital insertion successful
   ld    (NPCConvAddress),hl
   ld    a,1
   ld    (InitiateWakeUp?),a

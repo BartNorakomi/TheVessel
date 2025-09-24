@@ -20,7 +20,6 @@ JumpDownGameRoutine:
   out   ($a8),a
 
   call  swap_spat_col_and_char_table
-  call  .HandlePhase                        ;load graphics, init variables
   call  CheckBunnyInLavaNothingIceOrSpike
   call  CheckBunnyOffScreen
 
@@ -49,12 +48,16 @@ JumpDownGameRoutine:
   call  SetBunnySpatCoordinates
   call  PutEdgesOfArcadeMachineFrameTop
   call  CheckGameOverJumpDownGame
+  call  .HandlePhase                        ;load graphics, init variables
   ret
 
   .HandlePhase:
   bit   0,(iy+ObjectPhase)
   ret   nz
   ld    (iy+ObjectPhase),1
+
+  call  WaitVblank
+  call  WaitVblank
 
   ;clear page 1 (light blue sky), then put arcade hall sides
   ld    hl,.ClearPage1
@@ -452,6 +455,10 @@ DecreaseScoreWhenSittingStillTooLong:
   ret
 
 HandleScore:
+  ld    a,(BunnyDied?)
+  or    a
+  ret   nz
+
   call  DecreaseScoreWhenSittingStillTooLong
 
   ld    a,(Scroll4RowsAtStartOfGame?)
@@ -2594,7 +2601,7 @@ CheckGameOverJumpDownGame:
 ;		  F5	F1	'M'		  space	  right	  left	down	up	(keyboard)
 ;;
 	ld		a,(Controls)
-	bit		6,a           ;f1 pressed ?
+	bit		5,a           ;trigger b pressed ?
   jr    nz,.GameOver
   ret
 

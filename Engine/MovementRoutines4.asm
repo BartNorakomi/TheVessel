@@ -1,4 +1,3 @@
-;PenguinBikeRaceGameRoutine
 ;PenguinMovementRoutine
 
 Phase MovementRoutinesAddress
@@ -177,6 +176,9 @@ PenguinMovementRoutine:
   bit   0,(iy+ObjectPhase)
   ret   nz
   ld    (iy+ObjectPhase),1
+
+  call  WaitVblank
+  call  WaitVblank
 
   call  SetArcadeMachine
   call  SetArcadeMachinePenguinGame
@@ -357,6 +359,10 @@ BackToTitleScreenPenguinRace:
   jr    nz,.TriggerAUnPressed
   ret
   .TriggerBPressed:
+  xor   a
+  ld    (Controls),a
+	ld		(NewPrContr),a  
+
   ld    a,0                                ;back to arcade hall 1
   ld    (CurrentRoom),a
   ld    a,1
@@ -669,9 +675,9 @@ HandlePenguinGameOver:
 ; bit	7	  6	  5		    4		    3		    2		  1		  0
 ;		  0	  0	  trig-b	trig-a	right	  left	down	up	(joystick)
 ;		  F5	F1	'M'		  space	  right	  left	down	up	(keyboard)
-;;
+;
 	ld		a,(Controls)
-	bit		6,a           ;f1 pressed ?
+	bit		5,a           ;trigger b pressed ?
   jr    nz,.GameOver
 
   ld    a,(PenguinGameTime)
@@ -2464,10 +2470,11 @@ PenguinBikeRace_45:       db    PenguinBikeRaceframelistblock, PenguinBikeRacesp
 PenguinBikeRace_46:       db    PenguinBikeRaceframelistblock, PenguinBikeRacespritedatablock | dw    PenguinBikeRace_26_0
 PenguinBikeRace_47:       db    PenguinBikeRaceframelistblock, PenguinBikeRacespritedatablock | dw    PenguinBikeRace_25_0
 
-PenguinBikeRaceGameRoutine:
-  ret
 
 SetPenguinBikeRaceSprites:
+  call  WaitVblank
+  call  WaitVblank
+  
   ;write sprite character
 	xor		a				;page 0/1
 	ld		hl,sprcharaddr+0*32	;sprite 0 character table in VRAM

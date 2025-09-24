@@ -1,7 +1,5 @@
 ;UpgradeMenuEventRoutine
 ;DrillingLocationsRoutine
-;PenguinBikeRaceGameRoutine
-;BlockHitGameRoutine
 ;BasketMovementRoutine
 ;BasketBallGameRoutine
 ;BackToTitleScreenBasketBall
@@ -2332,6 +2330,9 @@ BackToTitleScreenBasketBall:
   ld    a,1*32 + 31
 	ld    (PageOnNextVblank),a
 
+  ld    a,(CurrentBallsSelected)
+  ld    (CurrentBallsSelectedAtEntranceOfShop),a
+
   .Engine2:
   ld    a,(framecounter2)
   inc   a
@@ -2476,10 +2477,10 @@ BackToTitleScreenBasketBall:
   ld    a,(CurrentBallsSelected)
   dec   a
   ret   m
-  cp    2
-  ret   z
-  cp    5
-  ret   z
+;  cp    2
+;  ret   z
+;  cp    5
+;  ret   z
   push  af
   call  .EraseSelectedShopButton
   pop   af
@@ -2489,10 +2490,10 @@ BackToTitleScreenBasketBall:
   .RightPressed2:
   ld    a,(CurrentBallsSelected)
   inc   a
-  cp    3
-  ret   z
-  cp    6
-  ret   z
+;  cp    3
+;  ret   z
+;  cp    6
+;  ret   z
   cp    9
   ret   z
   push  af
@@ -2507,6 +2508,10 @@ BackToTitleScreenBasketBall:
 ;		  0	  0	  trig-b	trig-a	right	  left	down	up	(joystick)
 ;		  F5	F1	'M'		  space	  right	  left	down	up	(keyboard)
 ;
+
+
+jr .EndCheckUpDown
+
 	ld		a,(NewPrContr)
   and   %0000 0011
   jr    z,.EndCheckUpDown
@@ -2541,6 +2546,8 @@ BackToTitleScreenBasketBall:
 ;		  F5	F1	'M'		  space	  right	  left	down	up	(keyboard)
 ;
 	ld		a,(NewPrContr)
+	bit		5,a           ;trig b pressed ?
+  jp    nz,.EndShop
 	bit		4,a           ;space pressed ?
   ret   z
 
@@ -2686,6 +2693,10 @@ BackToTitleScreenBasketBall:
   ld    (BallsPurchased),a            ;b0=tennisball,b1=billiardball,b2=baseball,b3=soccerball,b4=volleyball,b5=bowlingball,b6=golfball,b7=beachball
   call  .SetAmountOfCoinsShop
   ret
+
+  .EndShop:
+  ld    a,(CurrentBallsSelectedAtEntranceOfShop)
+  ld    (CurrentBallsSelected),a
 
   .CurrentBallIsInPosession:
   ;set palette
@@ -3475,9 +3486,9 @@ HandleBasketBallGameOver:
 ; bit	7	  6	  5		    4		    3		    2		  1		  0
 ;		  0	  0	  trig-b	trig-a	right	  left	down	up	(joystick)
 ;		  F5	F1	'M'		  space	  right	  left	down	up	(keyboard)
-;;
-;	ld		a,(Controls)
-;	bit		6,a           ;f1 pressed ?
+;
+	ld		a,(Controls)
+	bit		5,a           ;trigger b pressed ?
 ;  jr    nz,.GameOver
 
   ld    a,(basketballGameOver?)
@@ -3749,7 +3760,6 @@ BasketBallGameRoutine:
 
   call  .HandlePhase                        ;load graphics, init variables
   call  HandleBasketBallgameHud
-;  call  CheckEndArcadeGameTriggerB
   call  HandleBasketBall
   call  SetwallCoverUps
   call  SetBallShadow
@@ -3757,10 +3767,20 @@ BasketBallGameRoutine:
   call  HandleNet
   call  HandleBasketBallGameOver
   call  HandlePickUpCoin
+  call  .HandleTriggerBForGameOver
+  ret
 
-;call screenon
-;jp BackToTitleScreenBasketBall.StartShopMenu
-
+  .HandleTriggerBForGameOver:
+;
+; bit	7	  6	  5		    4		    3		    2		  1		  0
+;		  0	  0	  trig-b	trig-a	right	  left	down	up	(joystick)
+;		  F5	F1	'M'		  space	  right	  left	down	up	(keyboard)
+;
+	ld		a,(Controls)
+	bit		5,a           ;trigger b pressed ?
+  ret   z
+  ld    a,1
+  ld    (basketballtime),a
   ret
 
 .HandleBallShadowCoverUp:
@@ -3789,6 +3809,9 @@ BasketBallGameRoutine:
   bit   0,(iy+ObjectPhase)
   ret   nz
   ld    (iy+ObjectPhase),1
+
+  call  WaitVblank
+  call  WaitVblank
 
   ;set court in page 0
   ld    hl,CourtPart1Address
@@ -4979,23 +5002,5 @@ CheckBounceOnLeftRimRightSide:
 
 
 
-CheckEndArcadeGameTriggerB:
-;
-; bit	7	  6	  5		    4		    3		    2		  1		  0
-;		  0	  0	  trig-b	trig-a	right	  left	down	up	(joystick)
-;		  F5	F1	'M'		  space	  right	  left	down	up	(keyboard)
-;
-	ld		a,(NewPrContr)
-	bit		4,a           ;space pressed ?
-;  jr    nz,.end
-	bit		5,a           ;trig b pressed ?
-  ret   z
-
-  .end:
-  ld    a,0                                ;back to arcade hall 1
-  ld    (CurrentRoom),a
-  ld    a,1
-  ld    (ChangeRoom?),a
-  ret
 
 dephase

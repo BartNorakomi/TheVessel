@@ -4881,6 +4881,24 @@ RacingGameTitleScreenRoutine:
   call  .HandlePhase                           ;screen on, set int handler, init variables
   call  .GoAnimateSmoke
   call  .CheckStartGame
+  if    NeonHorizonArcadeVersion?
+  call  .CheckBackToArcade2
+  endif
+  ret
+
+  .CheckBackToArcade2:
+;
+; bit	7	  6	  5		    4		    3		    2		  1		  0
+;		  0	  0	  trig-b	trig-a	right	  left	down	up	(joystick)
+;		  F5	F1	'M'		  space	  right	  left	down	up	(keyboard)
+;
+	ld		a,(NewPrContr)
+	bit		5,a           ;trigger b pressed ?
+  ret   z
+  ld    a,1                                ;back to arcade hall 2
+  ld    (CurrentRoom),a
+  ld    a,1
+  ld    (ChangeRoom?),a 
   ret
 
   .LoadDifficultyUnlocked:
@@ -5395,23 +5413,18 @@ RacingGameLevelProgressRoutine:
 
   ret   nz
   ld    (iy+ObjectPhase),2
-	ld    a,%0000 0100  ;copy direction=left
-  ld    (FreeToUseFastCopy0+copydirection),a
-  ld    a,64+2
-  ld    (FreeToUseFastCopy0+sx),a
-  xor   a
-  ld    (FreeToUseFastCopy0+sy),a
-  ld    a,94+64+4
-  ld    (FreeToUseFastCopy0+dx),a
-  ld    a,74
-  ld    (FreeToUseFastCopy0+dy),a
-  ld    a,64+4
-  ld    (FreeToUseFastCopy0+nx),a
-  ld    a,64
-  ld    (FreeToUseFastCopy0+ny),a
-  ld    a,2
-  ld    (FreeToUseFastCopy0+sPage),a
+
+  ld    hl,.MoveLevelIcon
+  ld    de,FreeToUseFastCopy0
+  ld    bc,15
+  ldir
   ret
+
+  .MoveLevelIcon:
+  db    066,000,000,002                 ;sx,--,sy,spage
+  db    162,000,074,000                 ;dx,--,dy,dpage
+  db    068,000,064,000                 ;nx,--,ny,--
+  db    000,%0000 0100,$D0              ;fast copy -> Copy from right to left  
 
   .Phase0:                                  ;build up
   ld    (iy+ObjectPhase),1
@@ -5581,6 +5594,9 @@ SetNextLevelIconInPage2:
   ret
 
 RacingGameCongratulationsRoutine:
+  ld    a,100
+  ld    (HighScoreBackroomGame),a
+
   ld    a,1
   ld    (framecounter),a                    ;we force framecounter to 1 so that the sf2 object handler doesn't swap page ever
 
