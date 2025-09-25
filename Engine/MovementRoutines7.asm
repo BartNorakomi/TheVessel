@@ -39,6 +39,35 @@ InitiateTreadMillGame:
   jp    z,TreadMillGamePhase6               ;put background game  in page 0
   dec   a
   jp    z,TreadMillGamePhase7               ;fade in screen (in game)
+  dec   a
+  jp    z,TreadMillGamePhase8               ;put orcy sprite
+  ret
+
+TreadMillGamePhase8:
+  call  SpritesOn
+
+  ld    a,100                               ;x orcy
+  ld    (spat+1+0*4),a
+  ld    (spat+1+1*4),a
+  ld    a,100                               ;y orcy
+  ld    (spat+0+0*4),a
+  ld    (spat+0+1*4),a
+
+	xor		a				;page 0/1
+	ld		hl,sprcharaddr+0*32	;sprite 0 character table in VRAM
+	call	SetVdp_Write
+
+	ld		hl,BlockCharacter13PixWide	;sprite 0 character table in VRAM
+	ld		c,$98
+	call	outix64		;write sprite color of pointer and hand to vram
+
+	xor		a				;page 0/1
+	ld		hl,sprcoladdr+0*16	;sprite 0 color table in VRAM
+	call	SetVdp_Write
+
+	ld		hl,GreenBlockColor	;sprite 0 character table in VRAM
+	ld		c,$98
+	call	outix32	;write sprite color of pointer and hand to vram
   ret
 
 TreadMillGamePhase7:                        ;fade in screen (in game)
