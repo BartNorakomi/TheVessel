@@ -143,10 +143,10 @@ Objecthangarbay1: 				db  1,077,134 | dw 000,000	,hangarbay_0  			| db 001			,Mo
 Objecthangarbay2: 				db  1,077,134 | dw 000,000	,hangarbay_1  			| db 001			,MovementRoutinesBlock | dw hangarbay2Routine					| db 000,000 ,000, 000
 Objecthangarbay3: 				db  1,077,134 | dw 000,000	,hangarbay_2  			| db 001			,MovementRoutinesBlock | dw hangarbay3Routine					| db 000,000 ,000, 000
 
-EventTrainingdeck: 				db	1,$28,$7e | dw 000,000					,000        | db 255      ,MovementRoutinesBlock | dw TrainingdeckEventRoutine	| db 000,000 ,000, 000
-Objecttrainingdeck1: 			db  1,099,254 | dw 000,000	,trainingdeck_0  		| db 001			,MovementRoutinesBlock | dw trainingdeck1Routine			| db 000,000 ,000, 000
-Objecttrainingdeck2: 			db  1,087,000 | dw 000,000	,trainingdeck_1  		| db 001			,MovementRoutinesBlock | dw trainingdeck2Routine			| db 000,000 ,000, 000
-Objecttrainingdeck3: 			db  1,104,054+28 | dw 000,000	,trainingdeck_2  		| db 001			,MovementRoutinesBlock | dw trainingdeck3Routine			| db 000,000 ,000, 000
+EventTrainingdeck: 				db	1,$28,$7e | dw 000,000					,000        | db 255      ,MovementRoutines7Block | dw TrainingdeckEventRoutine	| db 000,000 ,000, 000
+Objecttrainingdeck1: 			db  1,099,254 | dw 000,000	,trainingdeck_0  		| db 001			,MovementRoutines7Block | dw trainingdeck1Routine			| db 000,000 ,000, 000
+Objecttrainingdeck2: 			db  1,087,000 | dw 000,000	,trainingdeck_1  		| db 001			,MovementRoutines7Block | dw trainingdeck2Routine			| db 000,000 ,000, 000
+Objecttrainingdeck3: 			db  1,104,054+28 | dw 000,000	,trainingdeck_2  		| db 001		,MovementRoutines7Block | dw trainingdeck3Routine			| db 000,000 ,000, 000
 
 Eventreactorchamber:			db	1,$28,$7e | dw 000,000					,000        | db 255      ,MovementRoutinesBlock | dw reactorchamberEventRoutine| db 000,000 ,000, 000
 ;Objectreactorchamber1: 		db  1,030,128 | dw 000,000	,reactorchamber_0  	| db 001			,MovementRoutinesBlock | dw reactorchamber1Routine		| db 000,000 ,000, 000
@@ -1049,7 +1049,8 @@ HydroponicsbayPalette:                    			;palette file
 HangarbayPalette:                    			;palette file
   incbin "..\grapx\ship\hangarbay\hangarbay.SC5",$7680+7,32
 TrainingdeckPalette:                    			;palette file
-  incbin "..\grapx\ship\trainingdeck\trainingdeck.SC5",$7680+7,32
+;  incbin "..\grapx\ship\trainingdeck\trainingdeck.SC5",$7680+7,32
+  incbin "..\grapx\ship\trainingdeck\trainingdeckActualColors.SC5",$7680+7,32
 reactorchamberPalette:                    			;palette file
   incbin "..\grapx\ship\reactorchamber\reactorchamber.SC5",$7680+7,32
 sleepingquartersPalette:                    			;palette file
@@ -1499,7 +1500,23 @@ SetJumpDownGameMapAt8000InRam:
   call  block12
   ret
 
+SetTraininDeckGameMapAt8000InRam:
+  ld    a,(slot.page1rom)            	;all RAM except page 1
+  out   ($a8),a
 
+  ld		a,(memblocks.1)
+  push  af
+
+	ld		a,TrainingDeckGameMap1Block
+  call  block12                       	;CARE!!! we can only switch block34 if page 1 is in rom  
+
+	ld		hl,TrainingDeckGameMap1
+	ld		de,$8000
+	call	Depack                          ;In: HL: source, DE: destination
+
+  pop   af
+  call  block12
+  ret
 
 
 
@@ -1817,6 +1834,12 @@ EraseRowJumpDownGameCopy:
   db    020,000,000,001                 ;dx,--,dy,dpage
   db    216,000,027,000                 ;nx,--,ny,--
 	db		0+ (0 * 16),0,$c0
+
+TrainingGameTile:
+	db		000,000,212,001
+	db		000,000,000,001
+	db		008,000,008,000
+	db		0,%0000 1000,$98	;copy direction up
 
 STOPWAITSPACEPRESSED:
   call  PopulateControls
@@ -2899,6 +2922,7 @@ ScoreJumpDownGame:				rb	2
 JumpDownGameSkipFirstScore?:	rb	1
 JumpDownGameAmountOfFramesSittingStill:	rb	1
 CurrentBallsSelectedAtEntranceOfShop:	rb	1
+TreadMillGameStep:				rb	1
 
 
 endenginepage3variables:  equ $+enginepage3length

@@ -1216,122 +1216,9 @@ CheckShowPressTrigAIconArcadeHall2:
   ld    (TriggerAx),a
   ret
 
-CheckPlayerNearArcadeMachine:
-  ld    a,(hl)                              ;y arcade machine
-  ld    (iy+y),a
-  inc   hl
-  ld    a,(hl)                              ;x arcade machine
-  ld    (iy+x),a
 
-  call  .CheckPlayerNear                    ;check if player is standing near NPC. out ;d=0(no collision), d=1(collision)
-  bit   0,d                                 ;d=0(no collision), d=1(collision)
-  ret
 
-.CheckPlayerNear:                           ;out ;d=0(no collision), d=1(collision)
-  ld    d,0                                 ;0=no collision, 1=collision
-  ld    hl,Object1                          ;player
 
-  inc   hl                                  ;y player
-  .CheckBottomSide:                         ;check collision bottom side
-  ld    a,(hl)
-  add   a,12
-  cp    (iy+1)                              ;y npc
-  ret   c
-  .CheckTopSide:                            ;check collision top  side
-  sub   a,21
-  cp    (iy+1)                              ;y npc
-  ret   nc
-
-  inc   hl                                  ;x player
-  .CheckRightSide:                          ;check collision right side
-  ld    a,(hl)
-  add   a,42-22
-  jr    c,.CheckLeftSide
-  cp    (iy+2)                              ;x npc
-  ret   c
-  .CheckLeftSide:                           ;check collision left side
-
-  ld    a,(hl)
-  sub   a,42-8
-  jr    c,.collision
-  cp    (iy+2)                              ;x npc
-  ret   nc
-
-  .collision:
-  ld    d,1                                 ;d=0(no collision), d=1(collision)
-  ret
-
-PutConversationCloud:
-  ld    a,(ShowConversationCloud?)
-  or    a
-  jr    z,.RemoveCloud
-  xor   a
-  ld    (ShowConversationCloud?),a
-
-  ld    a,(Cloudy)
-  ld    (spat+(4*002)+0),a
-  ld    (spat+(4*003)+0),a
-  ld    (spat+(4*004)+0),a
-  ld    (spat+(4*005)+0),a
-  ld    a,(Cloudx)
-  ld    (spat+(4*002)+1),a
-  ld    (spat+(4*003)+1),a
-  add   a,16
-  ld    (spat+(4*004)+1),a
-  ld    (spat+(4*005)+1),a
-  ret
-
-.RemoveCloud:
-  ld    a,230
-  ld    (spat+(4*002)+0),a
-  ld    (spat+(4*003)+0),a
-  ld    (spat+(4*004)+0),a
-  ld    (spat+(4*005)+0),a
-  ret
-
-PutPressTrigAIcon:
-  ld    a,(ShowPressTriggerAIcon?)
-  or    a
-  jr    z,.RemoveTriggerAIcon
-  xor   a
-  ld    (ShowPressTriggerAIcon?),a
-
-  ;hand y
-  ld    a,(framecounter)
-  and   31
-  cp    16
-  ld    b,1
-  jr    c,.go
-  ld    b,-1
-  .go:
-  ld    a,(TriggerAy)
-  add   a,b
-  sub   a,29
-  ld    (spat+(4*000)+0),a
-  ld    (spat+(4*001)+0),a
-
-  ld    a,(TriggerAy)
-  sub   a,14
-  ;button y
-  ld    (spat+(4*006)+0),a
-  ld    (spat+(4*007)+0),a
-  ;button x
-  ld    a,(TriggerAx)
-  ld    (spat+(4*006)+1),a
-  ld    (spat+(4*007)+1),a
-  ;hand x
-  sub   a,2
-  ld    (spat+(4*000)+1),a
-  ld    (spat+(4*001)+1),a
-  ret
-
-.RemoveTriggerAIcon:
-  ld    a,230
-  ld    (spat+(4*000)+0),a
-  ld    (spat+(4*001)+0),a
-  ld    (spat+(4*006)+0),a
-  ld    (spat+(4*007)+0),a
-  ret
 
 ArcadeHall1EventRoutine:
   call  .CheckPlayerEntersArcade2             ;check player enters the door to arcadehall2 
@@ -2289,79 +2176,6 @@ reactorchamberEventRoutine:
   ld    (ChangeRoom?),a
   ret
 
-trainingdecktreadmilly:   db 104
-trainingdecktreadmillx:   db 060 -8
-CheckShowPressTrigAIcontrainingdeck:
-  ld    hl,trainingdecktreadmilly
-  call  CheckPlayerNearArcadeMachine
-  ret   z
-
-  .PlayerIsNear:
-  ld    a,1
-  ld    (ShowPressTriggerAIcon?),a
-  ld    a,(iy+y)
-  ld    (TriggerAy),a
-  ld    a,(iy+x)
-  ld    (TriggerAx),a
-  ret
-
-TrainingdeckEventRoutine:
-  call  .CheckPlayerLeavingRoom             ;when y>116 player enters arcadehall1 
-
-  call  PutConversationCloud
-  call  CheckShowPressTrigAIcontrainingdeck
-  call  PutPressTrigAIcon
-  call  .HandleExplainerConversation
-  ret
-
-  .HandleExplainerConversation:
-  ld    hl,ConvEntityShipExplanations
-  bit   2,(hl)
-  ret   nz  
-  call  WaitCenterScreen                    ;this conversation starts when player is near the center of the room
-  set   2,(hl)
-
-  ld    a,1
-  ld    (StartConversation?),a
-  ld    a,NPCConv1Block
-  ld    (NPCConvBlock),a
-  ld    hl,NPCConv017
-  ld    (NPCConvAddress),hl
-  ret
-
-  .CheckPlayerLeavingRoom:
-  ld    a,(Object1+x)
-  cp    EdgeRoomRight
-  jr    nc,.hangarbay
-
-  ld    a,(Object1+x)
-  cp    EdgeRoomLeft+1
-  jr    c,.reactorchamber
-  ret
-
-  .reactorchamber:
-  ld    a,EnterRoomRight
-  ld    (Object1+x),a
-  ld    a,$5a-20
-  ld    (Object1+y),a
-
-  ld    a,6
-  ld    (CurrentRoom),a
-  ld    a,1
-  ld    (ChangeRoom?),a
-  ret
-
-  .hangarbay:
-  ld    a,EnterRoomLeft
-  ld    (Object1+x),a
-  ld    a,$5a
-  ld    (Object1+y),a
-
-  ld    a,4
-  ld    (CurrentRoom),a
-  ld    a,1
-  ld    (ChangeRoom?),a
-  ret
 
 CheckOffLoadResources:
   ld    a,(OffloadResources?)
@@ -3051,21 +2865,6 @@ hangarbay2Routine:
 
 hangarbay_2:        db    hangarbayframelistblock, hangarbayspritedatablock | dw    hangarbay_2_0
 hangarbay3Routine:
-  ret
-
-;right wall
-trainingdeck_0:        db    trainingdeckframelistblock, trainingdeckspritedatablock | dw    trainingdeck_0_0
-trainingdeck1Routine:
-  ret
-
-;left wall
-trainingdeck_1:        db    trainingdeckframelistblock, trainingdeckspritedatablock | dw    trainingdeck_1_0
-trainingdeck2Routine:
-  ret
-
-;treadmill
-trainingdeck_2:        db    trainingdeckframelistblock, trainingdeckspritedatablock | dw    trainingdeck_2_0
-trainingdeck3Routine:
   ret
 
 

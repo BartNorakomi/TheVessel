@@ -805,13 +805,34 @@ OpenDoorGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
 	dephase
 	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
 
-
-
-
-
-
-
-
+TrainingDeckGameTitleScreenGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
+TrainingDeckGameBackgroundGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
+TrainingDeckGameForegroundTilesGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
+TrainingDeckGameFrameGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
+TrainingDeckGameMap1Block:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
+TrainingDeckGamePlayerHeadGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
+	phase	$4000
+	TrainingDeckGameTitleScreenPart1Address:
+  incbin "..\grapx\ship\trainingdeck\titlescreen\TitleScreenPart1.sc5.pck"
+	TrainingDeckGameTitleScreenPart2Address:
+  incbin "..\grapx\ship\trainingdeck\titlescreen\TitleScreenPart2.sc5.pck"
+	TrainingDeckGameBackgroundPart1Address:
+  incbin "..\grapx\ship\trainingdeck\Background\BackgroundPart1.sc5.pck"
+	TrainingDeckGameBackgroundPart2Address:
+  incbin "..\grapx\ship\trainingdeck\Background\BackgroundPart2.sc5.pck"
+	TrainingDeckGameForegroundTilesPart1Address:
+  incbin "..\grapx\ship\trainingdeck\Background\ForegroundTilesPart1.sc5.pck"
+	TrainingDeckGameMap1:
+  incbin "..\grapx\ship\trainingdeck\Background\map01.map.pck"
+	TrainingDeckGameFramePart1Address:
+  incbin "..\grapx\ship\trainingdeck\Background\FramePart1.sc5.pck"
+	TrainingDeckGameFramePart2Address:
+  incbin "..\grapx\ship\trainingdeck\Background\FramePart2.sc5.pck"
+	TrainingDeckGamePlayerHeadPart1Address:
+  incbin "..\grapx\ship\trainingdeck\Background\PlayerHeadPart1.sc5.pck"
+	.CheckBlockFull:	dw	$+$8000
+	dephase
+	DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
 
 RacingGameFourMountainsGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
 RacingGameNightCityGfxBlock:  			equ   ($-RomStartAddress) and (romsize-1) /RomBlockSize
@@ -2317,6 +2338,11 @@ MovementRoutines5Block:	equ ($-RomStartAddress) and (romsize-1) /RomBlockSize ;$
 ;movement routines6
 MovementRoutines6Block:	equ ($-RomStartAddress) and (romsize-1) /RomBlockSize ;$04
 								include "MovementRoutines6.asm"  
+								DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
+
+;movement routines7
+MovementRoutines7Block:	equ ($-RomStartAddress) and (romsize-1) /RomBlockSize ;$04
+								include "MovementRoutines7.asm"  
 								DS RomBlockSize- $ and (RomBlockSize-1),-1	;fill remainder of block
 
 

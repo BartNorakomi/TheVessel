@@ -298,3 +298,19 @@ NPCConv043: ;first time inside holodeck simulation
   db    SwitchCharacter,CharacterPortraitAI,"Proceed when ready. Exiting the boundaries will return you to the present."  
   db    SwitchCharacter,CharacterPortraitVessel,"Just for a moment... I think I'll stay lost.",255  
 
+NPCConv044: ;training room <10% energy
+  db    SwitchCharacter,CharacterPortraitVessel,"Alright, let's start a training session."
+  db    SwitchCharacter,CharacterPortraitAI,"Training request denied. Current energy reserves are below 10%."
+  db    SwitchCharacter,CharacterPortraitAI,"Engaging in physical drills now would risk structural failure and reduce overall efficiency."
+  db    SwitchCharacter,CharacterPortraitVessel,"I just need a quick workout to stay sharp."
+  db    SwitchCharacter,CharacterPortraitAI,"Not advisable. Energy levels must exceed 10% before training is authorized."
+  db    SwitchCharacter,CharacterPortraitAI,"Recommendation: recover through rest. Resume training once operational safety thresholds are met."
+  db    SwitchCharacter,CharacterPortraitVessel,"...Understood. I'll recharge first.",255
+
+NPCConv045: ;training room consecutive day lockout
+  db    SwitchCharacter,CharacterPortraitVessel,"Reporting for another training session."
+  db    SwitchCharacter,CharacterPortraitAI,"Training request denied. Consecutive sessions are not permitted."
+  db    SwitchCharacter,CharacterPortraitAI,"Recovery protocols require a full rest day after training to prevent performance degradation."
+  db    SwitchCharacter,CharacterPortraitVessel,"But I can handle another round."
+  db    SwitchCharacter,CharacterPortraitAI,"Negative. Rest is mandatory. Training will be available again tomorrow."
+  db    SwitchCharacter,CharacterPortraitVessel,"Understood. I'll stand down for today.",255

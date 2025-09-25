@@ -1804,8 +1804,8 @@ RacingGameEnemySpeed:   equ 15
 
 ObjectTable:
 ;           on?,  y,  x,  sprite restore table                                ,sprite data,put on frame ,movement routine block,  movement routine,							 phase,var1,var2,var3
-Object1:  db  1,102,130 | dw Object1RestoreBackgroundTable,Object1RestoreTable,000        | db 000      ,MovementRoutinesBlock | dw VesselMovementRoutine			| db 000,000 ,000, 000
-;Object1:  db  1,102,200 | dw Object1RestoreBackgroundTable,Object1RestoreTable,000        | db 000      ,MovementRoutinesBlock | dw VesselMovementRoutine			| db 000,000 ,000, 000
+;Object1:  db  1,102,130 | dw Object1RestoreBackgroundTable,Object1RestoreTable,000        | db 000      ,MovementRoutinesBlock | dw VesselMovementRoutine			| db 000,000 ,000, 000
+Object1:  db  1,94,80 | dw Object1RestoreBackgroundTable,Object1RestoreTable,000        | db 000      ,MovementRoutinesBlock | dw VesselMovementRoutine			| db 000,000 ,000, 000
 Object2:  db  1,098,040 | dw Object3RestoreBackgroundTable,Object3RestoreTable,000        | db 001      ,MovementRoutinesBlock | dw GirlMovementRoutine       | db 000,000 ,000, 000
 Object3:  db  1,095,200 | dw Object4RestoreBackgroundTable,Object4RestoreTable,000        | db 002      ,MovementRoutinesBlock | dw CapGirlMovementRoutine    | db 000,000 ,000, 000
 Object4:  db  1,105,150 | dw Object2RestoreBackgroundTable,Object2RestoreTable,000        | db 003      ,MovementRoutinesBlock | dw RedHeadBoyMovementRoutine | db 000,000 ,000, 000
@@ -4086,6 +4086,125 @@ CompareHLwithDE:
   or    a
   sbc   hl,de
   ret
+
+PutConversationCloud:
+  ld    a,(ShowConversationCloud?)
+  or    a
+  jr    z,.RemoveCloud
+  xor   a
+  ld    (ShowConversationCloud?),a
+
+  ld    a,(Cloudy)
+  ld    (spat+(4*002)+0),a
+  ld    (spat+(4*003)+0),a
+  ld    (spat+(4*004)+0),a
+  ld    (spat+(4*005)+0),a
+  ld    a,(Cloudx)
+  ld    (spat+(4*002)+1),a
+  ld    (spat+(4*003)+1),a
+  add   a,16
+  ld    (spat+(4*004)+1),a
+  ld    (spat+(4*005)+1),a
+  ret
+
+.RemoveCloud:
+  ld    a,230
+  ld    (spat+(4*002)+0),a
+  ld    (spat+(4*003)+0),a
+  ld    (spat+(4*004)+0),a
+  ld    (spat+(4*005)+0),a
+  ret
+
+PutPressTrigAIcon:
+  ld    a,(ShowPressTriggerAIcon?)
+  or    a
+  jr    z,.RemoveTriggerAIcon
+  xor   a
+  ld    (ShowPressTriggerAIcon?),a
+
+  ;hand y
+  ld    a,(framecounter)
+  and   31
+  cp    16
+  ld    b,1
+  jr    c,.go
+  ld    b,-1
+  .go:
+  ld    a,(TriggerAy)
+  add   a,b
+  sub   a,29
+  ld    (spat+(4*000)+0),a
+  ld    (spat+(4*001)+0),a
+
+  ld    a,(TriggerAy)
+  sub   a,14
+  ;button y
+  ld    (spat+(4*006)+0),a
+  ld    (spat+(4*007)+0),a
+  ;button x
+  ld    a,(TriggerAx)
+  ld    (spat+(4*006)+1),a
+  ld    (spat+(4*007)+1),a
+  ;hand x
+  sub   a,2
+  ld    (spat+(4*000)+1),a
+  ld    (spat+(4*001)+1),a
+  ret
+
+.RemoveTriggerAIcon:
+  ld    a,230
+  ld    (spat+(4*000)+0),a
+  ld    (spat+(4*001)+0),a
+  ld    (spat+(4*006)+0),a
+  ld    (spat+(4*007)+0),a
+  ret
+
+CheckPlayerNearArcadeMachine:
+  ld    a,(hl)                              ;y arcade machine
+  ld    (iy+y),a
+  inc   hl
+  ld    a,(hl)                              ;x arcade machine
+  ld    (iy+x),a
+
+  call  .CheckPlayerNear                    ;check if player is standing near NPC. out ;d=0(no collision), d=1(collision)
+  bit   0,d                                 ;d=0(no collision), d=1(collision)
+  ret
+
+.CheckPlayerNear:                           ;out ;d=0(no collision), d=1(collision)
+  ld    d,0                                 ;0=no collision, 1=collision
+  ld    hl,Object1                          ;player
+
+  inc   hl                                  ;y player
+  .CheckBottomSide:                         ;check collision bottom side
+  ld    a,(hl)
+  add   a,12
+  cp    (iy+1)                              ;y npc
+  ret   c
+  .CheckTopSide:                            ;check collision top  side
+  sub   a,21
+  cp    (iy+1)                              ;y npc
+  ret   nc
+
+  inc   hl                                  ;x player
+  .CheckRightSide:                          ;check collision right side
+  ld    a,(hl)
+  add   a,42-22
+  jr    c,.CheckLeftSide
+  cp    (iy+2)                              ;x npc
+  ret   c
+  .CheckLeftSide:                           ;check collision left side
+
+  ld    a,(hl)
+  sub   a,42-8
+  jr    c,.collision
+  cp    (iy+2)                              ;x npc
+  ret   nc
+
+  .collision:
+  ld    d,1                                 ;d=0(no collision), d=1(collision)
+  ret
+
+
 
 StartSaveGameData:
 CurrentRoom:  db  5                    ;0=arcadehall1, 1=arcadehall2, 2=biopod, 3=hydroponicsbay, 4=hangarbay, 5=trainingdeck, 6=reactorchamber, 7=sleepingquarters, 8=armoryvault, 9=holodeck, 10=medicalbay
