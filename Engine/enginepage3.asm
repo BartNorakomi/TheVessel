@@ -2923,7 +2923,12 @@ JumpDownGameSkipFirstScore?:	rb	1
 JumpDownGameAmountOfFramesSittingStill:	rb	1
 CurrentBallsSelectedAtEntranceOfShop:	rb	1
 TreadMillGameStep:				rb	1
-
+OrcyX:										rb	1
+OrcyY:										rb	1
+OrcyFacingRIght?:					rb	1
+OrcyPhase:								rb	1
+OrcyAnimationStep:				rb	1
+OrcyVerticalMovementSpeed:rb	1
 
 endenginepage3variables:  equ $+enginepage3length
 org variables
