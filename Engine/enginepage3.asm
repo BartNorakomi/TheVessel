@@ -68,6 +68,7 @@ ResetVariables:
   ld    (AnimateRoad?),a
   ld    (ReturnFromNPCConversation?),a
   ld    (SetArcadeGamePalette?),a
+  ld    (TreadMillGameStep),a
   ld    hl,ConvSoldier									;conversations handled bit0=intro, bit1=low fuel, bit2=low fuel short, bit3=low energy, bit4=high radiation, bit5=storage full
   res   2,(hl)
   res   4,(hl)
@@ -2929,6 +2930,8 @@ OrcyFacingRIght?:					rb	1
 OrcyPhase:								rb	1
 OrcyAnimationStep:				rb	1
 OrcyVerticalMovementSpeed:rb	1
+PlayerRunningOnTreadmillSpeed:rb	1
+TreadMillRunAnimationCounter:	rb	1
 
 endenginepage3variables:  equ $+enginepage3length
 org variables

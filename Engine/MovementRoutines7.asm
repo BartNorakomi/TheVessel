@@ -12,8 +12,8 @@ InitiateTreadMillGame:
   xor   a
   ld    (freezecontrols?),a
 
-  call  PopulateControls
   call  .HandlePhase
+  call  PopulateControls
 
   xor   a
   ld    hl,vblankintflag
@@ -40,15 +40,134 @@ InitiateTreadMillGame:
   dec   a
   jp    z,TreadMillGamePhase7               ;fade in screen (in game)
   dec   a
-  jp    z,TreadMillGamePhase8               ;load orcy sprite, sprites on, clear spat, set orcy starting pos
+  jp    z,TreadMillGamePhase8               ;reset variables, load coverup and key sprites, sprites on, clear spat, set orcy starting pos
   dec   a
   jp    z,TreadMillGamePhase9               ;move orcy
   ret
 
 TreadMillGamePhase9:
-  call  HandleOrcyPhase
+  call  AnimatePlayerRunningOnTreadmill
   call  SetOrcyInSpat
-  call  WriteSpatToVram
+  call  HandleTeleportThroughEdgesMap
+  call  BackdropGreen
+  call  HandleOrcyPhase
+  call  BackdropBlack
+  pop   af                                  ;add this pop if we want the normal/sf2 engine to stay active
+  ret
+
+AnimatePlayerRunningOnTreadmill:
+  ld    hl,LrunningOnTreadMill
+  ld    (PlayerSpriteStand),hl
+
+;
+; bit	7	  6	  5		    4		    3		    2		  1		  0
+;		  0	  0	  trig-b	trig-a	right	  left	down	up	(joystick)
+;		  F5	F1	'M'		  space	  right	  left	down	up	(keyboard)
+;
+	ld		a,(Controls)
+  and   %0000 1100
+  jr    z,.EndRunning
+  cp    %0000 1100
+  jr    z,.EndRunning
+
+  ld    a,(PlayerRunningOnTreadmillSpeed)
+  inc   a
+  cp    140
+  jp    z,.EndCheckMaximumSpeedReached
+  ld    (PlayerRunningOnTreadmillSpeed),a
+  .EndCheckMaximumSpeedReached:
+
+  .AnimateRunning:
+  ld    a,(PlayerRunningOnTreadmillSpeed)
+  ld    b,a
+
+  ld    a,(TreadMillRunAnimationCounter)
+  sub   a,b
+  ld    (TreadMillRunAnimationCounter),a
+  ret   nc
+  ld    a,180
+  ld    (TreadMillRunAnimationCounter),a
+
+  ld    hl,TheVesselleftrunning_0           ;starting pose
+  ld    b,11                                ;animation steps
+  push  iy
+  ld    iy,Object1
+  call  .AnimateObject                      ;in hl=starting pose, b=animation steps, uses: var1
+  pop   iy
+  ret
+  .EndRunning:
+  ld    a,(PlayerRunningOnTreadmillSpeed)
+  dec   a
+  cp    20
+  jp    c,.StandStill
+  ld    (PlayerRunningOnTreadmillSpeed),a
+  jr    .AnimateRunning
+  .StandStill:
+  push  iy
+  ld    iy,Object1
+  ld    hl,TheVesselleftidle_0
+  ld    (iy+7),l
+  ld    (iy+8),h
+  pop   iy
+  ret
+
+  .AnimateObject:                              ;in hl=starting pose, b=animation steps, uses: var1
+	ld		a,(iy+var1)
+  inc   a
+  cp    b                                   ;animation steps
+  jr    nz,.endchecklastframe
+  xor   a
+  .endchecklastframe:
+	ld		(iy+var1),a
+  add   a,a                                 ;*2
+  add   a,a                                 ;*4 ;each spritepose has 4 bytes
+  ld    e,a
+  ld    d,0
+  add   hl,de
+  ld    (iy+7),l
+  ld    (iy+8),h
+  ret
+
+HandleTeleportThroughEdgesMap:
+  ld    a,(OrcyX)
+  cp    $1f
+  jr    c,.ExitLeft
+  cp    $b9+1+4
+  jr    nc,.ExitRight
+
+  ld    a,(OrcyVerticalMovementSpeed)
+  or    a
+  jp    p,.EndCheckJumpingUp  
+  ld    a,(OrcyY)
+  cp    $fa
+  jr    z,.ExitTop    
+  .EndCheckJumpingUp:
+
+  ld    a,(OrcyY)
+  cp    $80
+  ret   c
+  cp    $80+5
+  jr    c,.ExitBottom
+  ret
+
+  .ExitTop:
+  ld    a,$81
+  ld    (OrcyY),a
+  ret
+
+  .ExitBottom:
+  ld    a,-16
+  ld    (OrcyY),a
+  ret
+
+  .ExitRight:
+  ld    a,$1f
+  ld    (OrcyX),a
+  ret
+
+  .ExitLeft:
+  ld    a,$b9+4
+  ld    (OrcyX),a
   ret
 
 HandleOrcyPhase:
@@ -68,7 +187,7 @@ HandleOrcyPhase:
   ret
 
 OrcyStandingRight:
-  ld    ix,OrcyRunningRightAnimationTable
+  ld    ix,OrcyRunningRightAnimationTable.RightStanding
   call  SetOrcySprite
 ;
 ; bit	7	  6	  5		    4		    3		    2		  1		  0
@@ -81,12 +200,14 @@ OrcyStandingRight:
 	ld		a,(Controls)
   and   %0000 1100
   ret   z
+  cp    %0000 1100
+  ret   z
   cp    %0000 1000
   jp    z,SetOrcyRunningRight  
   jp    SetOrcyRunningLeft  
 
 OrcyStandingLeft:
-  ld    ix,OrcyRunningLeftAnimationTable
+  ld    ix,OrcyRunningLeftAnimationTable.LeftStanding
   call  SetOrcySprite
 ;
 ; bit	7	  6	  5		    4		    3		    2		  1		  0
@@ -98,6 +219,8 @@ OrcyStandingLeft:
   jp    nz,SetOrcyJumpingLeft
 	ld		a,(Controls)
   and   %0000 1100
+  ret   z
+  cp    %0000 1100
   ret   z
   cp    %0000 1000
   jp    z,SetOrcyRunningRight  
@@ -116,26 +239,31 @@ OrcyRunningRight:
 	ld		a,(Controls)
   and   %0000 1100
   jp    z,SetOrcyStandingRight
+  cp    %0000 1100
+  jp    z,SetOrcyStandingRight
   cp    %0000 0100
   jp    z,SetOrcyRunningLeft
   call  MoveOrcyRightAndCheckCollision
+
   ;check orcy falls off platform
-  ld    b,LeftOffsetOrcy
+  ld    b,LeftOffsetOrcy+3
   ld    c,19
   call  CheckTileCollisionOrcy            ;in: b=x offset in pixels, c=y offset in pixels, out: z=no collision
   ret   nz
-
-  ld    b,RightOffsetOrcy
+  ld    b,RightOffsetOrcy-3
   ld    c,19
   call  CheckTileCollisionOrcy            ;in: b=x offset in pixels, c=y offset in pixels, out: z=no collision
   jp    z,SetOrcyFallingRight
   ret
 
-
 MoveOrcyRightAndCheckCollision:
   ld    a,(OrcyX)
   inc   a
   ld    (OrcyX),a
+
+  ld    a,(OrcyY)
+  cp    200
+  ret   nc
 
   ld    b,RightOffsetOrcy
   ld    c,017
@@ -147,7 +275,8 @@ MoveOrcyRightAndCheckCollision:
   ret   z
   .Collision:
   ld    a,(OrcyX)
-  dec   a
+  and   %1111 1000
+  inc   a
   ld    (OrcyX),a
   ret
 
@@ -159,6 +288,7 @@ OrcyRunningRightAnimationTable:
   dw  OrcyCharSprites+04*64, OrcyColSprites+04*32
   dw  OrcyCharSprites+05*64, OrcyColSprites+05*32
   dw  OrcyCharSprites+06*64, OrcyColSprites+06*32
+  .RightStanding:
   dw  OrcyCharSprites+07*64, OrcyColSprites+07*32
 
 AnimateOrcyRunningRight:
@@ -191,17 +321,18 @@ OrcyRunningLeft:
 	ld		a,(Controls)
   and   %0000 1100
   jp    z,SetOrcyStandingLeft
+  cp    %0000 1100
+  jp    z,SetOrcyStandingLeft
   cp    %0000 1000
   jp    z,SetOrcyRunningRight
   call  MoveOrcyLeftAndCheckCollision
 
   ;check orcy falls off platform
-  ld    b,LeftOffsetOrcy
+  ld    b,LeftOffsetOrcy+3
   ld    c,19
   call  CheckTileCollisionOrcy            ;in: b=x offset in pixels, c=y offset in pixels, out: z=no collision
   ret   nz
-
-  ld    b,RightOffsetOrcy
+  ld    b,RightOffsetOrcy-3
   ld    c,19
   call  CheckTileCollisionOrcy            ;in: b=x offset in pixels, c=y offset in pixels, out: z=no collision
   jp    z,SetOrcyFallingLeft
@@ -211,6 +342,10 @@ MoveOrcyLeftAndCheckCollision:
   ld    a,(OrcyX)
   dec   a
   ld    (OrcyX),a
+
+  ld    a,(OrcyY)
+  cp    200
+  ret   nc
 
   ld    b,LeftOffsetOrcy
   ld    c,017
@@ -222,19 +357,21 @@ MoveOrcyLeftAndCheckCollision:
   ret   z
   .Collision:
   ld    a,(OrcyX)
-  inc   a
+  and   %1111 1000
+  add   a,7
   ld    (OrcyX),a
   ret
 
 OrcyRunningLeftAnimationTable:
-  dw  OrcyCharSprites+08*64, OrcyColSprites+08*32
-  dw  OrcyCharSprites+09*64, OrcyColSprites+09*32
-  dw  OrcyCharSprites+10*64, OrcyColSprites+10*32
-  dw  OrcyCharSprites+11*64, OrcyColSprites+11*32
-  dw  OrcyCharSprites+12*64, OrcyColSprites+12*32
-  dw  OrcyCharSprites+13*64, OrcyColSprites+13*32
-  dw  OrcyCharSprites+14*64, OrcyColSprites+14*32
   dw  OrcyCharSprites+15*64, OrcyColSprites+15*32
+  dw  OrcyCharSprites+14*64, OrcyColSprites+14*32
+  dw  OrcyCharSprites+13*64, OrcyColSprites+13*32
+  dw  OrcyCharSprites+12*64, OrcyColSprites+12*32
+  dw  OrcyCharSprites+11*64, OrcyColSprites+11*32
+  dw  OrcyCharSprites+10*64, OrcyColSprites+10*32
+  dw  OrcyCharSprites+09*64, OrcyColSprites+09*32
+  .LeftStanding:
+  dw  OrcyCharSprites+08*64, OrcyColSprites+08*32
 
 AnimateOrcyRunningLeft:
   ld    a,(framecounter2)
@@ -263,6 +400,8 @@ OrcyJumpingRight:
 	ld		a,(Controls)
   and   %0000 1100
   jr    z,.EndCheckMoveHorizontally
+  cp    %0000 1100
+  jp    z,.EndCheckMoveHorizontally
   cp    %0000 1000
   jr    z,.Right
   .Left:
@@ -284,16 +423,19 @@ OrcyJumpingRight:
   jp    CheckCollisionWhileJumpingUp
 
 CheckCollisionWhileFallingDown:
-  ld    b,LeftOffsetOrcy
+  ld    a,(OrcyY)
+  cp    200
+  ret   nc
+
+  ld    b,LeftOffsetOrcy+3
   ld    c,19
   call  CheckTileCollisionOrcy            ;in: b=x offset in pixels, c=y offset in pixels, out: z=no collision
   jr    nz,.Collision
-  ld    b,RightOffsetOrcy
+  ld    b,RightOffsetOrcy-3
   ld    c,19
   call  CheckTileCollisionOrcy            ;in: b=x offset in pixels, c=y offset in pixels, out: z=no collision
   ret   z
   .Collision:
-
   ld    a,(OrcyY)
   sub   3
   and   %1111 1000                        ;snap to tile
@@ -308,11 +450,11 @@ CheckCollisionWhileFallingDown:
 LeftOffsetOrcy:   equ 01
 RightOffsetOrcy:  equ 14
 CheckCollisionWhileJumpingUp:
-  ld    b,LeftOffsetOrcy
+  ld    b,LeftOffsetOrcy+3
   ld    c,+6
   call  CheckTileCollisionOrcy            ;in: b=x offset in pixels, c=y offset in pixels, out: z=no collision
   jr    nz,.Collision
-  ld    b,RightOffsetOrcy
+  ld    b,RightOffsetOrcy-3
   ld    c,+6
   call  CheckTileCollisionOrcy            ;in: b=x offset in pixels, c=y offset in pixels, out: z=no collision
   ret   z
@@ -338,6 +480,8 @@ OrcyJumpingLeft:
 	ld		a,(Controls)
   and   %0000 1100
   jr    z,.EndCheckMoveHorizontally
+  cp    %0000 1100
+  jp    z,.EndCheckMoveHorizontally
   cp    %0000 1000
   jr    z,.Right
   .Left:
@@ -464,7 +608,7 @@ SetOrcyFallingLeft:
 
 SetOrcySprite:
 	xor		a				;page 0/1
-	ld		hl,sprcharaddr+0*32	;sprite 0 character table in VRAM
+	ld		hl,sprcharaddr+30*32	;sprite 0 character table in VRAM
 	call	SetVdp_Write
 
   ld    l,(ix+0)
@@ -473,7 +617,7 @@ SetOrcySprite:
 	call	outix64		;write sprite color of pointer and hand to vram
 
 	xor		a				;page 0/1
-	ld		hl,sprcoladdr+0*16	;sprite 0 color table in VRAM
+	ld		hl,sprcoladdr+30*16	;sprite 0 color table in VRAM
 	call	SetVdp_Write
 
   ld    l,(ix+2)
@@ -482,13 +626,20 @@ SetOrcySprite:
 	call	outix32	;write sprite color of pointer and hand to vram
   ret
 
+	OrcyCharSprites:
+	include "..\grapx\ship\trainingdeck\sprites\Orcy.tgs.gen"
+	OrcyColSprites:
+	include "..\grapx\ship\trainingdeck\sprites\Orcy.tcs.gen"
+
+OrcyYSpat:  equ spat+0+30*4
+OrcyXSpat:  equ spat+1+30*4
 SetOrcyInSpat:
   ld    a,(OrcyX)
-  ld    (spat+1+0*4),a
-  ld    (spat+1+1*4),a
+  ld    (OrcyXSpat),a
+  ld    (OrcyXSpat+4),a
   ld    a,(OrcyY)
-  ld    (spat+0+0*4),a
-  ld    (spat+0+1*4),a
+  ld    (OrcyYSpat),a
+  ld    (OrcyYSpat+4),a
   ret
 
 CheckTileCollisionOrcy:                     ;in: b=x offset in pixels, c=y offset in pixels, out: z=no collision
@@ -543,37 +694,64 @@ TreadMillGamePhase8:
 
   call  SpritesOn
 
-  ld    a,100                               ;x orcy
+  ld    a,050                               ;x orcy
   ld    (OrcyX),a
-  ld    a,100                               ;y orcy
+  ld    a,120                               ;y orcy
   ld    (OrcyY),a
 
+  ld    a,$89                               ;x orcy
+  ld    (OrcyX),a
+  ld    a,$7e                               ;y orcy
+  ld    (OrcyY),a
+
+  ld    a,1
+  ld    (PlayerRunningOnTreadmillSpeed),a
+
   call  SetOrcyStandingRight
-
-	xor		a				;page 0/1
-	ld		hl,sprcharaddr+0*32	;sprite 0 character table in VRAM
-	call	SetVdp_Write
-
-	ld		hl,OrcyCharSprites	;sprite 0 character table in VRAM
-	ld		c,$98
-	call	outix64		;write sprite color of pointer and hand to vram
-
-	xor		a				;page 0/1
-	ld		hl,sprcoladdr+0*16	;sprite 0 color table in VRAM
-	call	SetVdp_Write
-
-	ld		hl,OrcyColSprites	;sprite 0 character table in VRAM
-	ld		c,$98
-	call	outix32	;write sprite color of pointer and hand to vram
+  call  SetCoverupSprites
 
   ld    a,9
   ld    (TreadMillGameStep),a
   ret
 
-	OrcyCharSprites:
-	include "..\grapx\ship\trainingdeck\sprites\Orcy.tgs.gen"
-	OrcyColSprites:
-	include "..\grapx\ship\trainingdeck\sprites\Orcy.tcs.gen"
+SetCoverupSprites:
+	xor		a				;page 0/1
+	ld		hl,sprcharaddr+0*32	;sprite 0 character table in VRAM
+	call	SetVdp_Write
+
+  ld    hl,CoverupCharSprites
+	ld		c,$98
+	call	outix192		;write sprite color of pointer and hand to vram
+
+	xor		a				;page 0/1
+	ld		hl,sprcoladdr+0*16	;sprite 0 color table in VRAM
+	call	SetVdp_Write
+
+  ld    hl,CoverupColSprites
+	ld		c,$98
+	call	outix96	;write sprite color of pointer and hand to vram
+
+  ld    a,60-29                        ;x coverup sprite
+  ld    (spat+1+0*4),a
+  ld    (spat+1+1*4),a
+  ld    (spat+1+2*4),a
+  ld    (spat+1+3*4),a
+  ld    (spat+1+4*4),a
+  ld    (spat+1+5*4),a
+  ld    a,20-30                        ;y coverup sprite
+  ld    (spat+0+0*4),a
+  ld    (spat+0+1*4),a
+  ld    (spat+0+2*4),a
+  add   a,16  
+  ld    (spat+0+3*4),a
+  ld    (spat+0+4*4),a
+  ld    (spat+0+5*4),a  
+  ret
+
+	CoverupCharSprites:
+	include "..\grapx\ship\trainingdeck\sprites\CoverupSprites.tgs.gen"
+	CoverupColSprites:
+	include "..\grapx\ship\trainingdeck\sprites\CoverupSprites.tcs.gen"
 
 TreadMillGamePhase7:                        ;fade in screen (in game)
   ld    a,(framecounter2)                   ;wait timer
@@ -667,6 +845,11 @@ TreadMillGamePhase6:                        ;build up game
 
   call  SetTraininDeckGameMapAt8000InRam
 
+  ld    hl,.CopyFrameAndGameToPage2
+  call  DoCopy
+  ld    hl,.CopyFrameAndGameToPage3
+  call  DoCopy
+
   ld    hl,.PutPlayerHead
   call  DoCopy
 
@@ -686,6 +869,18 @@ TreadMillGamePhase6:                        ;build up game
   .CopyFrameAndGameToPage0:
 	db		024,000,000,001
 	db		024,000,000,000
+	db		184,000,150,000
+	db		000,000,$d0
+
+  .CopyFrameAndGameToPage2:
+	db		024,000,000,001
+	db		024,000,000,002
+	db		184,000,150,000
+	db		000,000,$d0
+
+  .CopyFrameAndGameToPage3:
+	db		024,000,000,001
+	db		024,000,000,003
 	db		184,000,150,000
 	db		000,000,$d0
 
@@ -942,6 +1137,10 @@ TreadMillGameTitleScreenPalette:
   PlayerXOnTreadmill: equ 72
   PlayerYOnTreadmill: equ 93
 TrainingdeckEventRoutine:
+  ld    a,(TreadMillGameStep)
+  or    a
+  jp    nz,InitiateTreadMillGame
+
   call  .CheckPlayerLeavingRoom             ;when y>116 player enters arcadehall1 
   call  PutConversationCloud
   call  CheckShowPressTrigAIcontrainingdeck
@@ -982,8 +1181,7 @@ TrainingdeckEventRoutine:
 
   ld    a,1
   ld    (TreadMillGameStep),a
-
-  jp    InitiateTreadMillGame
+  ret
 
   .CheckStepOnTreadMill:
   ld    a,(ShowPressTriggerAIcon?)
@@ -1005,10 +1203,8 @@ TrainingdeckEventRoutine:
   
   ld    hl,(Energy)
   sbc   hl,bc
-  jr    c,.GoStepOnTreadMill
+  jr    nc,.GoStepOnTreadMill
   
-jr    .GoStepOnTreadMill
-
   ld    a,1
   ld    (StartConversation?),a
   ld    a,NPCConv1Block

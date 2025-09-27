@@ -274,6 +274,14 @@ LayDownAndGoHeal:
   ld    (Object3+on?),a                     ;hackjob, turn on bed
   ret
 
+LrunningOnTreadMill:
+  ;this forces a swap every frame
+  ld    a,3
+  ld    (framecounter),a
+  ld    a,3
+  ld    (Object1+PutOnFrame),a
+  ret
+
 GoingToSleep:
   .HandlePhase:
   ld    a,(iy+ObjectPhase)
